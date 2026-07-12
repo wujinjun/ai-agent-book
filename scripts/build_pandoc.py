@@ -4,9 +4,11 @@
 from __future__ import annotations
 
 import argparse
+import re
 import shutil
 import subprocess
 import sys
+import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -81,7 +83,56 @@ def build_epub(pandoc: str, source: Path) -> Path:
             str(output),
         ]
     )
+    inject_epub_svg_fallbacks(output, ROOT)
     return output
+
+
+def inject_epub_svg_fallbacks(epub_path: Path, root: Path) -> Path:
+    """Embed SVG sources that Pandoc leaves as raw picture references."""
+
+    source_pattern = re.compile(r'srcset="assets/diagrams/svg/(?P<name>[^"/]+\.svg)"')
+    with zipfile.ZipFile(epub_path) as archive:
+        infos = archive.infolist()
+        content = {info.filename: archive.read(info.filename) for info in infos}
+
+    svg_names: set[str] = set()
+    for name, payload in list(content.items()):
+        if not name.startswith("EPUB/text/") or not name.endswith(".xhtml"):
+            continue
+        text = payload.decode("utf-8")
+
+        def replace_source(match: re.Match[str]) -> str:
+            svg_name = match.group("name")
+            svg_names.add(svg_name)
+            return f'srcset="../media/{svg_name}"'
+
+        content[name] = source_pattern.sub(replace_source, text).encode("utf-8")
+
+    opf_name = "EPUB/content.opf"
+    opf = content[opf_name].decode("utf-8")
+    items: list[str] = []
+    for svg_name in sorted(svg_names):
+        source = root / "assets/diagrams/svg" / svg_name
+        if not source.is_file():
+            raise RuntimeError(f"EPUB SVG 源文件不存在：{source}")
+        content[f"EPUB/media/{svg_name}"] = source.read_bytes()
+        item_id = "svg_" + re.sub(r"[^a-zA-Z0-9]+", "_", svg_name)
+        items.append(
+            f'    <item id="{item_id}" href="media/{svg_name}" '
+            'media-type="image/svg+xml" />'
+        )
+    if items:
+        opf = opf.replace("</manifest>", "\n".join(items) + "\n  </manifest>", 1)
+        content[opf_name] = opf.encode("utf-8")
+
+    temporary = epub_path.with_suffix(".tmp.epub")
+    with zipfile.ZipFile(temporary, "w") as output:
+        for info in infos:
+            output.writestr(info, content.pop(info.filename))
+        for name, payload in sorted(content.items()):
+            output.writestr(name, payload, compress_type=zipfile.ZIP_DEFLATED)
+    temporary.replace(epub_path)
+    return epub_path
 
 
 def build_print_html(pandoc: str, source: Path) -> Path:
