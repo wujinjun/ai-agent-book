@@ -1,0 +1,5 @@
+flowchart LR
+    Event --> Flow["CrewAI Flow: deterministic state"]
+    Flow --> ResearchCrew["Crew: exploratory subtask"]
+    ResearchCrew --> Artifact
+    Artifact --> Validate --> Next

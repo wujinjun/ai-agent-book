@@ -1,0 +1,3 @@
+flowchart LR
+    Request --> State["Typed State"] --> Model["Model Gateway"] --> Decision["Validated Decision"] --> Tools["Tool Registry"] --> State
+    Decision --> Final["Final Output"]

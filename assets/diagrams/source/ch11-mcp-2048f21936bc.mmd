@@ -1,0 +1,6 @@
+flowchart LR
+    Host["Agent Host"] --> Client["MCP Client"]
+    Client <-->|"能力发现与调用"| Server["MCP Server"]
+    Server --> Tool["Tool：动作"]
+    Server --> Resource["Resource：可读取数据"]
+    Server --> Prompt["Prompt：可复用模板"]

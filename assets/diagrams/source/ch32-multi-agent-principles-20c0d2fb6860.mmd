@@ -1,0 +1,10 @@
+stateDiagram-v2
+    [*] --> Ready
+    Ready --> Running
+    Running --> Waiting
+    Waiting --> Ready: dependency/approval arrives
+    Running --> Reviewed
+    Reviewed --> Ready: revisions required
+    Reviewed --> Done: accepted
+    Waiting --> Failed: deadlock/timeout
+    Running --> Failed: budget/error

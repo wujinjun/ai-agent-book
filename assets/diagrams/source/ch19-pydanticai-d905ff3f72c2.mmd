@@ -1,0 +1,5 @@
+flowchart LR
+    Request --> Agent --> Model
+    Agent --> Dependencies["Typed Dependencies"]
+    Agent --> Tools["Validated Tools"]
+    Model --> Output["Typed Output"] --> Service["FastAPI/Business"]

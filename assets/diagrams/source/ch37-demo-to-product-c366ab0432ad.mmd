@@ -1,0 +1,9 @@
+flowchart LR
+    Need["用户问题"] --> Contract["结果与边界契约"]
+    Contract --> UX["交互与控制"]
+    UX --> Runtime["Agent Runtime"]
+    Runtime --> Evidence["答案 / 引用 / 状态"]
+    Evidence --> Feedback["用户与线上反馈"]
+    Feedback --> Eval["离线评估与回归"]
+    Eval --> Release["灰度发布 / 回滚"]
+    Release --> UX

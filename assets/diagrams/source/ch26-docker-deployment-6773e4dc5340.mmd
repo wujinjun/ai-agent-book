@@ -1,0 +1,8 @@
+flowchart TB
+    Internet --> Proxy["Nginx/Ingress TLS"] --> API
+    API --> Worker
+    API --> Postgres
+    Worker --> Redis
+    Worker --> Model["Model Gateway"]
+    API --> Observe["Logs/Metrics/Traces"]
+    Worker --> Observe

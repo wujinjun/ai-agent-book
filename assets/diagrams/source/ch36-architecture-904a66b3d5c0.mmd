@@ -1,0 +1,13 @@
+stateDiagram-v2
+    [*] --> Queued
+    Queued --> Running: worker acquired
+    Running --> WaitingApproval: risky action
+    WaitingApproval --> Running: approved
+    WaitingApproval --> Cancelled: rejected/expired
+    Running --> Retrying: retryable failure
+    Retrying --> Running: backoff elapsed
+    Running --> Succeeded: terminal output
+    Running --> Failed: non-retryable failure
+    Succeeded --> [*]
+    Failed --> [*]
+    Cancelled --> [*]

@@ -1,0 +1,12 @@
+flowchart TB
+    Client["Web / CLI / API Client"] --> API["API 与身份边界"]
+    API --> Runtime["Agent Runtime"]
+    Runtime --> Workflow["Workflow / State Machine"]
+    Runtime --> Tools["Tool Registry 与 Policy"]
+    Runtime --> Gateway["Model Gateway"]
+    Runtime --> Memory["Memory Service"]
+    Workflow --> Queue["Queue / Worker"]
+    Tools --> External["MCP / REST / Database"]
+    Memory --> Data[("PostgreSQL / Vector / Redis")]
+    Runtime --> Observe["Trace / Metrics / Audit"]
+    Observe --> Eval["Evaluation Service"]

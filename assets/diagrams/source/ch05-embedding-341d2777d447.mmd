@@ -1,0 +1,10 @@
+flowchart LR
+    Docs["文档"] --> Parse["解析与清洗"]
+    Parse --> Chunk["切分 + Metadata"]
+    Chunk --> Embed["Embedding"]
+    Embed --> Index["向量索引"]
+    Query["查询"] --> QEmbed["查询向量"]
+    QEmbed --> Index
+    Index --> Candidates["候选片段"]
+    Candidates --> Rerank["重排与权限过滤"]
+    Rerank --> Context["带来源的上下文"]

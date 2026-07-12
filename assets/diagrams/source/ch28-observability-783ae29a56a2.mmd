@@ -1,0 +1,4 @@
+flowchart LR
+    Run --> Turn --> ModelSpan["Model: tokens/cost/latency"]
+    Turn --> ToolSpan["Tool: args hash/status/latency"]
+    Run --> Eval["Outcome/Eval"]

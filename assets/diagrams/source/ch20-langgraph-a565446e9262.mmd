@@ -1,0 +1,9 @@
+stateDiagram-v2
+    [*] --> Plan
+    Plan --> Research
+    Research --> Review
+    Review --> Research: 证据不足
+    Review --> Approval: 高风险
+    Approval --> Write: 人工通过
+    Review --> Write: 通过
+    Write --> [*]

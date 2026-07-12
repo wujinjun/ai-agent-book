@@ -1,0 +1,10 @@
+sequenceDiagram
+    participant C as MCP Client
+    participant S as MCP Server
+    C->>S: initialize(version, capabilities, clientInfo)
+    S-->>C: version, capabilities, serverInfo
+    C->>S: initialized notification
+    C->>S: tools/list or resources/list
+    S-->>C: paginated capabilities
+    C->>S: tools/call or resources/read
+    S-->>C: result or JSON-RPC error

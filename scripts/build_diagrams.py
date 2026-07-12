@@ -35,6 +35,7 @@ def build_diagrams(root: Path, *, executable: str = "mmdc") -> int:
         records.extend(extract_diagrams(entry.path, markdown))
 
     config = root / "templates/mermaid-config.json"
+    puppeteer_config = root / "templates/puppeteer-config.json"
     for record in records:
         source = asset_root / record.source_asset
         svg = asset_root / record.svg_path
@@ -44,6 +45,8 @@ def build_diagrams(root: Path, *, executable: str = "mmdc") -> int:
         png.parent.mkdir(parents=True, exist_ok=True)
         source.write_text(record.source, encoding="utf-8")
         for output, scale in ((svg, "1"), (png, "2")):
+            if output.is_file() and output.stat().st_size > 0:
+                continue
             command = [
                 renderer,
                 "-i",
@@ -52,6 +55,8 @@ def build_diagrams(root: Path, *, executable: str = "mmdc") -> int:
                 str(output),
                 "-c",
                 str(config),
+                "-p",
+                str(puppeteer_config),
                 "-b",
                 "white",
                 "-s",

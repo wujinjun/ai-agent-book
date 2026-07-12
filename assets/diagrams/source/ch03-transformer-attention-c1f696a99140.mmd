@@ -1,0 +1,9 @@
+flowchart LR
+    X["输入 Token 表示 + 位置信息"] --> Q["Query 投影"]
+    X --> K["Key 投影"]
+    X --> V["Value 投影"]
+    Q --> Score["相关性与归一化"]
+    K --> Score
+    Score --> Mix["加权组合"]
+    V --> Mix
+    Mix --> FFN["前馈网络、残差与归一化"]

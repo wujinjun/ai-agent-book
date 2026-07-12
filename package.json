@@ -1,0 +1,7 @@
+{
+  "name": "ai-agent-book-publication",
+  "private": true,
+  "devDependencies": {
+    "@mermaid-js/mermaid-cli": "11.4.2"
+  }
+}

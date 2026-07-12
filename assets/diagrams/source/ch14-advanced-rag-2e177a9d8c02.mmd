@@ -1,0 +1,4 @@
+flowchart LR
+    Q["问题"] --> Rewrite["改写/多查询"] --> Hybrid["稀疏+稠密"] --> Filter["元数据/权限"] --> Rerank["重排"] --> Compress["上下文压缩"] --> Answer["回答+引用"]
+    Rerank --> Judge{"证据足够？"}
+    Judge -->|否| Correct["纠错检索/人工"] --> Hybrid

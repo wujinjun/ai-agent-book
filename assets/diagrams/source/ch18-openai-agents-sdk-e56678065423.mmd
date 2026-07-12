@@ -1,0 +1,7 @@
+flowchart LR
+    Agent["Agent: instructions/tools/output"] --> Runner
+    Runner --> Tools
+    Runner --> Handoff
+    Runner --> Guardrails
+    Runner --> Session
+    Runner --> Trace

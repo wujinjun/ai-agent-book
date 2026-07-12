@@ -1,0 +1,8 @@
+flowchart LR
+    Context["已有 Token 上下文"] --> Forward["Transformer 前向计算"]
+    Forward --> Distribution["下一个 Token 概率分布"]
+    Distribution --> Decode["Temperature / Top-p / 约束解码"]
+    Decode --> Token["选择一个 Token"]
+    Token --> Append["追加到上下文"]
+    Append -->|未达到停止条件| Forward
+    Append -->|达到停止条件| Output["完成输出"]

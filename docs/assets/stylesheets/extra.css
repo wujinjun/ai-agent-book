@@ -188,7 +188,10 @@ body {
 }
 
 .md-typeset .mermaid,
-.book-diagram {
+.md-typeset figure.book-diagram {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
   margin: 1.6rem 0;
   padding: 1rem;
   border: 1px solid var(--book-border);
@@ -199,8 +202,15 @@ body {
   overflow-x: auto;
 }
 
+.book-diagram picture {
+  display: block;
+  width: 100%;
+}
+
 .book-diagram img,
 .md-typeset .mermaid svg {
+  display: block;
+  width: 100%;
   max-width: 100%;
   height: auto;
   cursor: zoom-in;
@@ -283,7 +293,7 @@ body {
   }
 
   .md-content__inner {
-    padding-inline: 0.2rem;
+    padding-inline: 0.9rem;
   }
 
   .md-typeset {

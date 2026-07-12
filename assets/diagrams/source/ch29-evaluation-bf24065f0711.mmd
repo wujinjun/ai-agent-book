@@ -1,0 +1,3 @@
+flowchart LR
+    Change --> Offline["unit + golden eval"] --> Safety --> Canary --> AB["A/B or shadow"] --> Release
+    AB --> Monitor["online outcomes"] --> Dataset["new failure cases"] --> Offline

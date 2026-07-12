@@ -1,0 +1,8 @@
+flowchart LR
+    Slice["固定垂直切片"] --> A["候选 A"]
+    Slice --> B["候选 B"]
+    Dataset["同一黄金集与故障注入"] --> A
+    Dataset --> B
+    A --> Score["质量 / 延迟 / 成本 / 恢复 / 可维护性"]
+    B --> Score
+    Score --> ADR["记录决策与复审条件"]

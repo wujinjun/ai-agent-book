@@ -1,0 +1,13 @@
+sequenceDiagram
+    participant C as Client
+    participant A as FastAPI
+    participant Q as Queue
+    participant W as Worker
+    C->>A: POST /runs + Idempotency-Key
+    A->>Q: enqueue(run_id)
+    A-->>C: 202 queued
+    W->>Q: claim
+    W->>W: Agent + checkpoint
+    W-->>A: progress events
+    C->>A: GET /runs/{id}/events
+    A-->>C: SSE progress/tool/final/error

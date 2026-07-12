@@ -1,0 +1,13 @@
+sequenceDiagram
+    participant U as User
+    participant A as Agent API
+    participant W as Worker
+    participant P as Approval Service
+    U->>A: 创建任务
+    A->>W: 入队(run_id)
+    W-->>U: status / partial result
+    W->>P: 请求批准外部写操作
+    P-->>U: 展示目标、参数与风险
+    U->>P: 批准或拒绝
+    P-->>W: signed decision
+    W-->>U: completed / cancelled / failed

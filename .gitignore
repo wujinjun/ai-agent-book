@@ -1,5 +1,7 @@
 .env
 .venv/
+.venv
+node_modules/
 .worktrees/
 .superpowers/
 .data/
