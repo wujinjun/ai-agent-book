@@ -8,7 +8,12 @@ Agent 是模型、状态、动作、观察与控制循环的组合。本章学�
 
 ## 核心概念与架构图
 
+Agent Runtime 是受控状态机，而不是模型无限生成文本的循环。下图先给出最小状态转换，再逐步展开自主范围、转交和恢复机制。
+
 ```mermaid
+%% id: agent-observation-action-state-loop
+%% title: Agent 的观察动作状态循环
+%% alt: Agent Runtime 在观察、决策、动作、转交、完成和失败状态之间受控转换
 stateDiagram-v2
     [*] --> Observe
     Observe --> Decide
@@ -25,6 +30,63 @@ stateDiagram-v2
 State 保存任务、历史、预算和审批状态；Observation 是工具或环境反馈；Action 是受控动作；Runtime 负责循环与终止。ReAct 交替决策和行动，Planning 先生成步骤，Reflection/Reviewer 检查结果。它们是模式，不保证自动提高质量。
 
 Workflow 预先规定节点和转移，适合合规、可预测任务；Autonomous Agent 让模型动态选择路径，适合难以枚举且失败可控的问题。生产系统常采用“确定性骨架 + 局部模型决策”。
+
+系统设计时应先决定需要多大的自主范围，而不是默认采用开放循环。
+
+```mermaid
+%% id: workflow-autonomy-selection
+%% title: Workflow 与自主 Agent 选择决策
+%% alt: 根据路径可枚举性、风险、审计要求和环境不确定性选择工作流或受限自主 Agent
+flowchart TD
+    Task[待实现任务] --> Known{主要路径可枚举}
+    Known -->|是| Risk{副作用或合规风险高}
+    Risk -->|是| Workflow[确定性 Workflow]
+    Risk -->|否| Hybrid[Workflow 骨架加局部模型路由]
+    Known -->|否| Recover{失败可检测且可恢复}
+    Recover -->|是| Agent[受预算约束的自主 Agent]
+    Recover -->|否| Human[缩小范围或人工流程]
+```
+
+开放式 Agent 适合路径未知但结果可验证的局部问题；高风险或不可恢复流程应优先使用显式状态机。
+
+```mermaid
+%% id: agent-routing-handoff-control
+%% title: Routing 与 Handoff 控制关系
+%% alt: Router 按任务和能力选择处理器，Handoff 传递最小共享状态并由 Supervisor 保留终止控制
+flowchart LR
+    Input[任务与结构化状态] --> Router{能力路由}
+    Router --> Research[研究处理器]
+    Router --> Code[代码处理器]
+    Router --> Human[人工处理器]
+    Research --> Handoff[受控 Handoff]
+    Code --> Handoff
+    Handoff --> Supervisor[Supervisor 校验状态与预算]
+    Supervisor --> Finish[完成]
+    Supervisor --> Router
+```
+
+Handoff 不应复制全部聊天历史，而应传递目标、已验证事实、产物引用和剩余预算。Supervisor 始终保留授权与终止权。
+
+```mermaid
+%% id: agent-termination-recovery-state
+%% title: Agent 终止与失败恢复状态机
+%% alt: 运行中的 Agent 因完成、预算耗尽、可恢复错误、审批等待或不可恢复失败进入不同状态
+stateDiagram-v2
+    [*] --> Running
+    Running --> Completed: 验收通过
+    Running --> WaitingApproval: 高风险动作
+    WaitingApproval --> Running: 批准
+    WaitingApproval --> Cancelled: 拒绝或超时
+    Running --> Recovering: 可恢复故障
+    Recovering --> Running: 从安全 checkpoint 恢复
+    Recovering --> Failed: 重试用尽
+    Running --> Failed: 预算耗尽或策略拒绝
+    Completed --> [*]
+    Cancelled --> [*]
+    Failed --> [*]
+```
+
+终止器覆盖步数、时间、Token、费用和无新增证据等条件。恢复只能从已确认的 checkpoint 继续，已产生副作用的动作不能盲目重放。
 
 ## 最小示例与完整工程示例
 

@@ -8,7 +8,12 @@ Tool Calling 让模型生成结构化动作意图，真正的函数由宿主程�
 
 ## 核心概念、原理与流程图
 
+一次工具调用横跨模型提议和宿主程序执行两个世界。下图突出运行时在两者之间承担的校验、授权、超时和观察回传职责。
+
 ```mermaid
+%% id: tool-calling-runtime-loop
+%% title: Tool Calling 运行时闭环
+%% alt: 用户任务经运行时和模型提出工具调用，完成校验授权执行并把观察结果回传模型
 sequenceDiagram
     participant U as User
     participant R as Runtime
@@ -25,6 +30,57 @@ sequenceDiagram
 ```
 
 模型不执行函数。运行时必须拒绝未知工具、校验参数、限制步数和预算。并行只适合互不依赖且无共享副作用的调用；写操作通常需要幂等键和明确顺序。重试边界位于可判定的暂时故障，权限错误和业务拒绝不应重试。
+
+工具循环之后还需要三个确定性控制面：依赖分析、故障分类和权限审批。下面的图把这些控制点独立出来。
+
+```mermaid
+%% id: parallel-tool-dependency-plan
+%% title: 并行工具调用依赖图
+%% alt: 独立只读工具可以并行执行而创建订单与支付订单因数据依赖必须串行
+flowchart LR
+    Task[组合任务] --> Weather[查询天气]
+    Task --> FX[查询汇率]
+    Task --> Create[创建订单]
+    Weather --> Join[汇总观察]
+    FX --> Join
+    Create --> Pay[支付订单]
+    Pay --> Join
+```
+
+并发依据是数据依赖和副作用，而不是模型是否一次返回多个调用。共享写入、顺序依赖和非幂等动作必须串行。
+
+```mermaid
+%% id: tool-error-retry-idempotency-decision
+%% title: 工具错误、重试与幂等决策
+%% alt: 按超时暂时故障、权限拒绝和业务错误分类并结合幂等能力决定是否安全重试
+flowchart TD
+    Failure[工具调用失败] --> Type{失败类型}
+    Type -->|超时或暂时故障| Safe{动作可幂等重放}
+    Type -->|限流| Backoff[退避并计入预算]
+    Type -->|权限拒绝| Deny[停止并审计]
+    Type -->|业务拒绝| Observe[回传结构化观察]
+    Safe -->|是| Retry[使用同一幂等键重试]
+    Safe -->|否或未知| Reconcile[查询外部状态或人工核对]
+```
+
+超时不等于动作没有发生。写工具只有在幂等键或状态核对机制存在时才可自动重试，否则可能产生重复副作用。
+
+```mermaid
+%% id: tool-permission-approval-gates
+%% title: 工具权限与人工审批门禁
+%% alt: 模型提出动作后按工具白名单、主体资源授权、风险等级和人工审批逐级放行
+flowchart LR
+    Proposal[模型提出动作] --> Allow{工具在白名单}
+    Allow -->|否| Reject[拒绝并记录]
+    Allow -->|是| Auth{主体有资源权限}
+    Auth -->|否| Reject
+    Auth -->|是| Risk{风险等级}
+    Risk -->|只读| Execute[受限执行]
+    Risk -->|可逆写入| Policy[策略检查] --> Execute
+    Risk -->|不可逆写入| Human[人工审批] --> Execute
+```
+
+工具选择只是动作建议，不构成授权。鉴权必须绑定调用主体和具体资源，高风险写入还需展示参数摘要供人工确认。
 
 ## 最小示例与完整工程示例
 

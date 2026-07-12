@@ -11,6 +11,9 @@ Prompt 是模型调用中的指令与上下文组织，不是能绕开数据和�
 System、User、Assistant 消息表达不同来源，但具体优先级以平台协议为准。清晰 Prompt 应写明任务、输入边界、禁止事项、输出契约与失败策略。Few-shot 用示例展示边界，适合难以用规则表述的格式；示例过多会增加成本并把偶然模式带入输出。角色设定可以补充语境，却不能授予模型真实权限或专业资质。
 
 ```mermaid
+%% id: prompt-context-assembly-boundary
+%% title: Prompt 上下文组装与信任边界
+%% alt: 展示系统策略、用户任务、示例和不可信资料进入模型前的组装与校验关系
 flowchart LR
     Policy["系统策略"] --> Assemble["上下文组装"]
     Task["用户任务"] --> Assemble
@@ -20,6 +23,57 @@ flowchart LR
 ```
 
 图中策略、任务与资料必须标注来源。Prompt Injection 的核心是数据试图改变指令层级；Indirect Injection 则来自网页、邮件或文档。模型层拒绝不能代替工具权限。
+
+下面三张图分别回答指令冲突如何裁决、Prompt 如何发布，以及注入攻击怎样跨越数据边界。它们把容易混在一段提示词里的不同工程职责拆开。
+
+```mermaid
+%% id: instruction-precedence-conflict-resolution
+%% title: 指令层级与冲突裁决
+%% alt: 从平台策略到外部资料逐级判断指令优先级并在冲突时拒绝或请求确认
+flowchart TD
+    P[平台与系统策略] --> A[应用指令]
+    A --> U[用户请求]
+    U --> D[工具与检索资料]
+    D --> C{是否与上层冲突}
+    C -->|否| E[执行受控任务]
+    C -->|是且可按规则裁决| R[采用高优先级规则]
+    C -->|是且事实不确定| H[停止并请求人工确认]
+```
+
+指令优先级不是字符串出现顺序。运行时先标记来源，再按平台协议和应用规则裁决；外部资料只能提供事实候选，不能提升权限或改写目标。
+
+```mermaid
+%% id: prompt-version-release-lifecycle
+%% title: Prompt 版本发布生命周期
+%% alt: 展示模板变更从版本化、离线评估、安全测试、灰度发布到监控回滚的闭环
+flowchart LR
+    Edit[模板与 Schema 变更] --> Version[生成不可变版本]
+    Version --> Offline[黄金集离线评估]
+    Offline --> Security[注入与边界测试]
+    Security --> Canary[小流量灰度]
+    Canary --> Observe{质量成本是否达标}
+    Observe -->|是| Release[扩大发布]
+    Observe -->|否| Rollback[回滚旧版本]
+```
+
+版本必须同时绑定模板、示例、输出契约与评估结果。模型升级和 Prompt 升级分开发布，才能在回归时准确定位原因。
+
+```mermaid
+%% id: prompt-injection-defense-layers
+%% title: Prompt Injection 攻击路径与纵深防御
+%% alt: 外部恶意内容经过上下文进入模型后仍需经过输出校验、授权和工具隔离才能产生副作用
+flowchart LR
+    Attack[网页邮件文档中的恶意指令] --> Context[不可信上下文]
+    Context --> Model[模型决策]
+    Model --> Validate[结构与业务校验]
+    Validate --> Authorize[主体与资源授权]
+    Authorize --> Sandbox[工具白名单与沙箱]
+    Sandbox --> Effect[外部副作用]
+    Policy[系统策略] -.约束.-> Model
+    Approval[人工审批] -.高风险门禁.-> Effect
+```
+
+任何单层防御都可能失效。可靠系统让模型只能提出动作，由确定性校验、授权、沙箱和审批共同决定动作能否执行。
 
 ## 最小示例与完整工程示例
 

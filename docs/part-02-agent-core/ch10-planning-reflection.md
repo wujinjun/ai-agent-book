@@ -8,7 +8,12 @@
 
 ## 核心概念与流程图
 
+复杂任务的规划价值来自可验证的分解和局部恢复。下面的主闭环显示 Planner、Executor 与 Reviewer 如何围绕证据推进，而不是用一段自然语言计划替代执行控制。
+
 ```mermaid
+%% id: plan-execute-review-replan-loop
+%% title: 规划执行评审与重规划闭环
+%% alt: 目标经 Planner 形成任务队列，由 Executor 产出证据并经 Reviewer 决定完成或局部重规划
 flowchart LR
     Goal["目标"] --> Planner["Planner：可验证步骤与依赖"]
     Planner --> Queue["就绪任务"] --> Executor["Executor"]
@@ -19,6 +24,60 @@ flowchart LR
 ```
 
 好计划把目标拆成有明确输入、产出和验收的任务，并表达依赖。动态规划根据观察更新后续步骤，但不能无边界重写目标。Planner 与 Executor 分离有助于审计；Reviewer 应使用独立标准和证据，而不是只询问“做得好吗”。
+
+计划首先是一张可验证的依赖图，运行时只调度依赖已经满足的节点。
+
+```mermaid
+%% id: planning-task-dependency-dag
+%% title: 研究任务依赖 DAG
+%% alt: 问题定义后搜索与资料读取形成证据表，冲突核对完成后才能撰写和评审报告
+flowchart LR
+    Define[定义问题与验收] --> SearchA[搜索来源 A]
+    Define --> SearchB[搜索来源 B]
+    SearchA --> ReadA[读取与摘录]
+    SearchB --> ReadB[读取与摘录]
+    ReadA --> Evidence[结构化证据表]
+    ReadB --> Evidence
+    Evidence --> Conflict[冲突核对]
+    Conflict --> Draft[撰写报告]
+    Draft --> Review[独立评审]
+```
+
+节点应有稳定 ID、输入引用、允许工具、预算和验收条件。依赖图还能避免失败后从头执行所有步骤。
+
+```mermaid
+%% id: bounded-replanning-scope
+%% title: 受限重规划范围
+%% alt: 某任务失败时仅使失败节点及其下游失效并保留已经验证的并行分支和证据
+flowchart LR
+    A[已验证来源 A] --> E[证据合并]
+    B[来源 B 读取失败] --> R[替换来源或调整步骤]
+    R --> B2[新来源 B]
+    B2 --> E
+    E --> Report[报告]
+    A -.保持有效.-> Report
+```
+
+重规划只能修改失败节点及其下游，不能扩大目标、增加未授权工具或提高预算；已验证产物按输入哈希复用。
+
+```mermaid
+%% id: planner-executor-reviewer-separation
+%% title: Planner、Executor 与 Reviewer 职责分离
+%% alt: Planner 输出计划，Executor 使用受限工具生成产物，Reviewer 根据独立标准和证据判定通过或返修
+sequenceDiagram
+    participant P as Planner
+    participant R as Runtime
+    participant E as Executor
+    participant V as Reviewer
+    P->>R: 任务 DAG 与验收条件
+    R->>E: 就绪任务、工具和预算
+    E-->>R: 产物、证据与执行记录
+    R->>V: 产物 + 独立 rubric
+    V-->>R: 通过 / 局部返修 / 拒绝
+    R-->>P: 仅在需要时提交失败上下文
+```
+
+职责分离的价值是可审计和减少共同盲点。Reviewer 不持有执行密钥，也不应直接重写全部产物。
 
 ## 最小示例与完整工程示例
 

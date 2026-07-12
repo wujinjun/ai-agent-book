@@ -96,11 +96,51 @@ files:
       - {id: embedding-index-version-lifecycle, section: 切分与模型选择, relation: flow, disposition: diagram}
       - {id: similarity-to-evidence-validation-boundary, section: 检索评估与调试, relation: decision, disposition: diagram}
 
-  docs/part-02-agent-core/ch06-prompt-engineering.md: {group: part-02, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-02-agent-core/ch07-structured-output.md: {group: part-02, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-02-agent-core/ch08-tool-calling.md: {group: part-02, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-02-agent-core/ch09-agent-runtime.md: {group: part-02, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-02-agent-core/ch10-planning-reflection.md: {group: part-02, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-02-agent-core/ch06-prompt-engineering.md:
+    group: part-02
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: prompt-context-assembly-boundary, section: 核心概念与原理, relation: architecture, disposition: diagram}
+      - {id: instruction-precedence-conflict-resolution, section: 核心概念与原理, relation: decision, disposition: diagram}
+      - {id: prompt-version-release-lifecycle, section: 核心概念与原理, relation: flow, disposition: diagram}
+      - {id: prompt-injection-defense-layers, section: 核心概念与原理, relation: security, disposition: diagram}
+  docs/part-02-agent-core/ch07-structured-output.md:
+    group: part-02
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: structured-output-validation-loop, section: 核心概念与原理, relation: flow, disposition: diagram}
+      - {id: structured-output-four-validation-layers, section: 从语法正确到业务可用, relation: hierarchy, disposition: diagram}
+      - {id: structured-output-error-decision, section: 从语法正确到业务可用, relation: decision, disposition: diagram}
+      - {id: streaming-partial-object-state, section: 从语法正确到业务可用, relation: state, disposition: diagram}
+  docs/part-02-agent-core/ch08-tool-calling.md:
+    group: part-02
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: tool-calling-runtime-loop, section: 核心概念原理与流程图, relation: sequence, disposition: diagram}
+      - {id: parallel-tool-dependency-plan, section: 核心概念原理与流程图, relation: data, disposition: diagram}
+      - {id: tool-error-retry-idempotency-decision, section: 核心概念原理与流程图, relation: decision, disposition: diagram}
+      - {id: tool-permission-approval-gates, section: 核心概念原理与流程图, relation: security, disposition: diagram}
+  docs/part-02-agent-core/ch09-agent-runtime.md:
+    group: part-02
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: agent-observation-action-state-loop, section: 核心概念与架构图, relation: state, disposition: diagram}
+      - {id: workflow-autonomy-selection, section: 核心概念与架构图, relation: decision, disposition: diagram}
+      - {id: agent-routing-handoff-control, section: 核心概念与架构图, relation: architecture, disposition: diagram}
+      - {id: agent-termination-recovery-state, section: 核心概念与架构图, relation: state, disposition: diagram}
+  docs/part-02-agent-core/ch10-planning-reflection.md:
+    group: part-02
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: plan-execute-review-replan-loop, section: 核心概念与流程图, relation: flow, disposition: diagram}
+      - {id: planning-task-dependency-dag, section: 核心概念与流程图, relation: data, disposition: diagram}
+      - {id: bounded-replanning-scope, section: 核心概念与流程图, relation: flow, disposition: diagram}
+      - {id: planner-executor-reviewer-separation, section: 核心概念与流程图, relation: sequence, disposition: diagram}
 
   docs/part-03-rag-and-memory/ch11-mcp.md: {group: part-03, minimum_diagrams: 4, review_status: pending, requirements: []}
   docs/part-03-rag-and-memory/ch12-mcp-server.md: {group: part-03, minimum_diagrams: 4, review_status: pending, requirements: []}
