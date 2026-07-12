@@ -561,6 +561,116 @@
     "png_path": "png/ch31-cost-performance-32bbc7e91362.png"
   },
   {
+    "source_path": "projects/01-minimal-assistant/README.md",
+    "index": 1,
+    "title": "项目1：最小 AI Assistant 图 1",
+    "alt": "项目1：最小 AI Assistant 图 1",
+    "diagram_id": "readme-d9f58b347a1d",
+    "source": "sequenceDiagram\n    participant U as User\n    participant S as AssistantSession\n    participant M as Model Adapter\n    U->>S: prompt\n    S->>S: append history\n    S->>M: messages + config\n    M-->>S: delta events\n    S-->>U: stream + usage\n",
+    "source_asset": "source/readme-d9f58b347a1d.mmd",
+    "svg_path": "svg/readme-d9f58b347a1d.svg",
+    "png_path": "png/readme-d9f58b347a1d.png"
+  },
+  {
+    "source_path": "projects/02-weather-tool-agent/README.md",
+    "index": 1,
+    "title": "项目2：天气与工具调用 Agent 图 1",
+    "alt": "项目2：天气与工具调用 Agent 图 1",
+    "diagram_id": "readme-1c7a8b7702c4",
+    "source": "flowchart LR\n    User --> Runtime --> Schema{\"参数有效？\"}\n    Schema -->|否| Repair[\"有限修复\"]\n    Schema -->|是| Weather[\"WeatherService\"]\n    Weather --> Retry{\"瞬时错误？\"}\n    Retry -->|是且预算内| Weather\n    Retry -->|否| Result[\"来源 + attempts\"]\n",
+    "source_asset": "source/readme-1c7a8b7702c4.mmd",
+    "svg_path": "svg/readme-1c7a8b7702c4.svg",
+    "png_path": "png/readme-1c7a8b7702c4.png"
+  },
+  {
+    "source_path": "projects/03-mcp-local-agent/README.md",
+    "index": 1,
+    "title": "项目3：MCP 本地工具 Agent 图 1",
+    "alt": "项目3：MCP 本地工具 Agent 图 1",
+    "diagram_id": "readme-38e4e1bc253c",
+    "source": "flowchart LR\n    Client[\"MCP Client\"] --> Discover[\"能力发现\"] --> Policy[\"根目录 / 只读策略\"]\n    Policy --> File[\"read_file\"]\n    Policy --> System[\"system_info\"]\n    Policy --> SQL[\"参数化 catalog query\"]\n    File --> Result[\"Content + Audit\"]\n    SQL --> Result\n",
+    "source_asset": "source/readme-38e4e1bc253c.mmd",
+    "svg_path": "svg/readme-38e4e1bc253c.svg",
+    "png_path": "png/readme-38e4e1bc253c.png"
+  },
+  {
+    "source_path": "projects/04-knowledge-agent/README.md",
+    "index": 1,
+    "title": "项目4：企业知识库 Agent 图 1",
+    "alt": "项目4：企业知识库 Agent 图 1",
+    "diagram_id": "readme-fd4063dd6998",
+    "source": "flowchart LR\n    Files[\"PDF / Office / Markdown\"] --> Parse --> Chunk --> Index\n    Query --> ACL[\"Tenant / ACL Filter\"] --> Retrieve --> Rerank\n    Index --> Retrieve\n    Rerank --> Answer[\"Grounded Answer\"] --> Citation[\"document + page + score\"]\n",
+    "source_asset": "source/readme-fd4063dd6998.mmd",
+    "svg_path": "svg/readme-fd4063dd6998.svg",
+    "png_path": "png/readme-fd4063dd6998.png"
+  },
+  {
+    "source_path": "projects/05-code-review-agent/README.md",
+    "index": 1,
+    "title": "项目5：代码 Review Agent 图 1",
+    "alt": "项目5：代码 Review Agent 图 1",
+    "diagram_id": "readme-617164aa2754",
+    "source": "flowchart LR\n    Repo --> Diff --> Static[\"Deterministic Rules\"] --> Findings\n    Diff --> LLM[\"LLM Reviewer Adapter\"] --> Findings\n    Findings --> Deduplicate --> Report[\"line + rule + risk\"]\n    Report --> Approval{\"允许评论 PR？\"}\n",
+    "source_asset": "source/readme-617164aa2754.mmd",
+    "svg_path": "svg/readme-617164aa2754.svg",
+    "png_path": "png/readme-617164aa2754.png"
+  },
+  {
+    "source_path": "projects/06-office-agent/README.md",
+    "index": 1,
+    "title": "项目6：自动办公 Agent 图 1",
+    "alt": "项目6：自动办公 Agent 图 1",
+    "diagram_id": "readme-83696dad1492",
+    "source": "flowchart LR\n    Mail[\"Mail Read\"] --> Summary --> Draft\n    Calendar[\"Calendar Read\"] --> Draft\n    Draft --> Approval{\"Human Approval\"}\n    Approval -->|拒绝| Audit\n    Approval -->|绑定草稿的令牌| Send[\"External Write\"] --> Audit\n",
+    "source_asset": "source/readme-83696dad1492.mmd",
+    "svg_path": "svg/readme-83696dad1492.svg",
+    "png_path": "png/readme-83696dad1492.png"
+  },
+  {
+    "source_path": "projects/07-stock-research-agent/README.md",
+    "index": 1,
+    "title": "项目7：股票研究 Agent 图 1",
+    "alt": "项目7：股票研究 Agent 图 1",
+    "diagram_id": "readme-586ccf131360",
+    "source": "flowchart LR\n    Market[\"Market Data + as_of\"] --> Facts\n    Filings[\"Filings / News + source\"] --> Facts\n    Facts --> Indicators --> Inference[\"显式标注推断\"]\n    Facts --> Report\n    Inference --> Report[\"研究报告 + 免责声明\"]\n",
+    "source_asset": "source/readme-586ccf131360.mmd",
+    "svg_path": "svg/readme-586ccf131360.svg",
+    "png_path": "png/readme-586ccf131360.png"
+  },
+  {
+    "source_path": "projects/08-research-workflow/README.md",
+    "index": 1,
+    "title": "项目8：LangGraph 研究工作流 Agent 图 1",
+    "alt": "项目8：LangGraph 研究工作流 Agent 图 1",
+    "diagram_id": "readme-6796e371dd33",
+    "source": "stateDiagram-v2\n    [*] --> Plan\n    Plan --> Search\n    Search --> Read\n    Read --> Review\n    Review --> Search: evidence insufficient\n    Review --> Write: approved\n    Write --> [*]\n",
+    "source_asset": "source/readme-6796e371dd33.mmd",
+    "svg_path": "svg/readme-6796e371dd33.svg",
+    "png_path": "png/readme-6796e371dd33.png"
+  },
+  {
+    "source_path": "projects/09-multi-agent-dev-team/README.md",
+    "index": 1,
+    "title": "项目9：Multi-Agent 软件开发团队 图 1",
+    "alt": "项目9：Multi-Agent 软件开发团队 图 1",
+    "diagram_id": "readme-20946f2e9431",
+    "source": "flowchart LR\n    Product --> State[(\"Versioned Shared State\")]\n    Planner --> State\n    Coder --> Sandbox --> State\n    Tester --> State\n    Reviewer --> Gate{\"tests passed AND reviewed?\"}\n    State --> Gate -->|yes| Stop\n",
+    "source_asset": "source/readme-20946f2e9431.mmd",
+    "svg_path": "svg/readme-20946f2e9431.svg",
+    "png_path": "png/readme-20946f2e9431.png"
+  },
+  {
+    "source_path": "projects/10-enterprise-platform/README.md",
+    "index": 1,
+    "title": "项目10：企业级 Agent 平台 图 1",
+    "alt": "项目10：企业级 Agent 平台 图 1",
+    "diagram_id": "readme-086e67b53b91",
+    "source": "flowchart TB\n    User --> Auth[\"OIDC / Tenant Policy\"] --> API\n    API --> Queue --> Runtime\n    Runtime --> Tools[\"Tool / MCP Registry\"]\n    Runtime --> RAG\n    Runtime --> Model[\"Model Gateway\"]\n    Runtime --> Trace\n    API --> DB[(\"PostgreSQL / pgvector\")]\n    Queue --> Redis[(Redis)]\n",
+    "source_asset": "source/readme-086e67b53b91.mmd",
+    "svg_path": "svg/readme-086e67b53b91.svg",
+    "png_path": "png/readme-086e67b53b91.png"
+  },
+  {
     "source_path": "docs/part-07-advanced/ch32-multi-agent-principles.md",
     "index": 1,
     "title": "第32章：Multi-Agent 原理 图 1",

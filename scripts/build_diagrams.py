@@ -14,7 +14,7 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from ai_agent_book.book_manifest import load_book_entries  # noqa: E402
+from ai_agent_book.book_manifest import load_publication_entries  # noqa: E402
 from ai_agent_book.diagram_pipeline import extract_diagrams, write_manifest  # noqa: E402
 
 
@@ -30,7 +30,7 @@ def build_diagrams(root: Path, *, executable: str = "mmdc") -> int:
 
     asset_root = root / "assets/diagrams"
     records = []
-    for entry in load_book_entries(root / "mkdocs.yml"):
+    for entry in load_publication_entries(root / "mkdocs.yml"):
         markdown = (root / entry.path).read_text(encoding="utf-8")
         records.extend(extract_diagrams(entry.path, markdown))
 

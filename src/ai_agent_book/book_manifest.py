@@ -64,6 +64,40 @@ def load_book_entries(config_path: Path) -> list[BookEntry]:
     return entries
 
 
+def load_publication_entries(config_path: Path) -> list[BookEntry]:
+    """Return book navigation with all ten project READMEs inserted after Part VI."""
+
+    config_path = config_path.resolve()
+    root = config_path.parent
+    book_entries = load_book_entries(config_path)
+    project_entries: list[BookEntry] = []
+    for readme in sorted((root / "projects").glob("[0-9][0-9]-*/README.md")):
+        relative = readme.relative_to(root)
+        source = readme.read_text(encoding="utf-8")
+        heading = next(
+            (
+                line.removeprefix("# ").strip()
+                for line in source.splitlines()
+                if line.startswith("# ")
+            ),
+            readme.parent.name,
+        )
+        project_entries.append(BookEntry(heading, relative, 1))
+    if len(project_entries) != 10:
+        raise ValueError(f"expected 10 project READMEs, found {len(project_entries)}")
+
+    result: list[BookEntry] = []
+    inserted = False
+    for entry in book_entries:
+        result.append(entry)
+        if entry.path == Path("docs/part-06-projects/index.md"):
+            result.extend(project_entries)
+            inserted = True
+    if not inserted:
+        raise ValueError("Part VI index is missing from MkDocs navigation")
+    return result
+
+
 def _flatten_nav(
     nodes: list[Any],
     *,

@@ -1,0 +1,7 @@
+flowchart LR
+    Client["MCP Client"] --> Discover["能力发现"] --> Policy["根目录 / 只读策略"]
+    Policy --> File["read_file"]
+    Policy --> System["system_info"]
+    Policy --> SQL["参数化 catalog query"]
+    File --> Result["Content + Audit"]
+    SQL --> Result

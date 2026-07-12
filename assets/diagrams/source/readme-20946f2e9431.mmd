@@ -1,0 +1,7 @@
+flowchart LR
+    Product --> State[("Versioned Shared State")]
+    Planner --> State
+    Coder --> Sandbox --> State
+    Tester --> State
+    Reviewer --> Gate{"tests passed AND reviewed?"}
+    State --> Gate -->|yes| Stop

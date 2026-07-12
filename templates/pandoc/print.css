@@ -1,0 +1,62 @@
+@page {
+  size: A4;
+  margin: 20mm 18mm 22mm;
+  @bottom-center { content: counter(page); color: #718096; font-size: 9pt; }
+}
+html { font-size: 10.5pt; }
+body {
+  max-width: none;
+  margin: 0;
+  color: #182534;
+  font-family: "Hiragino Sans GB", "PingFang SC", "STHeiti", sans-serif;
+  line-height: 1.72;
+}
+h1, h2, h3 { color: #172433; line-height: 1.28; break-after: avoid-page; }
+h1 { margin-top: 0; font-size: 24pt; }
+h2 { margin-top: 1.8em; padding-top: 0.35em; border-top: 0.5pt solid #dce3ea; font-size: 16pt; }
+h3 { font-size: 12.5pt; }
+p, li { orphans: 3; widows: 3; }
+a { color: #315f87; text-decoration: none; }
+header#title-block-header {
+  display: flex;
+  min-height: 235mm;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  break-after: page;
+}
+header#title-block-header h1 { font-size: 30pt; letter-spacing: -0.03em; }
+header#title-block-header .subtitle { color: #627184; font-size: 15pt; }
+nav#TOC {
+  columns: 2;
+  column-gap: 14mm;
+  font-size: 8.5pt;
+  break-after: page;
+}
+nav#TOC > h2 { column-span: all; margin-bottom: 10mm; border-top: 0; }
+nav#TOC ul { margin: 0; padding-left: 1.2em; }
+nav#TOC li { margin: 0.18em 0; break-inside: avoid; }
+nav#TOC a { color: #34495e; }
+section.level1 { break-before: page; }
+pre {
+  padding: 8pt;
+  border: 0.5pt solid #dce3ea;
+  border-radius: 5pt;
+  background: #f6f8fa;
+  font-family: Menlo, Monaco, monospace;
+  font-size: 8pt;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+code { font-family: Menlo, Monaco, monospace; font-size: 0.92em; }
+table { width: 100%; border-collapse: collapse; font-size: 8.5pt; break-inside: avoid-page; }
+th, td { padding: 5pt; border: 0.5pt solid #dce3ea; vertical-align: top; }
+th { background: #edf2f6; }
+figure, .book-diagram { width: 100%; margin: 12pt auto; text-align: center; break-inside: avoid-page; }
+figure img, .book-diagram img { display: block; max-width: 100%; max-height: 210mm; margin: auto; }
+figcaption { margin-top: 5pt; color: #627184; font-size: 8pt; }
+.page-break { break-before: page; }
+@media print {
+  a[href^="http"]::after { content: ""; }
+}

@@ -1,0 +1,24 @@
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  color: #182534;
+  line-height: 1.75;
+  margin: 5%;
+}
+h1, h2, h3 { color: #172433; line-height: 1.3; }
+h1 { break-before: page; }
+pre {
+  padding: 0.8em;
+  border: 1px solid #dce3ea;
+  border-radius: 0.4em;
+  background: #f6f8fa;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+code { font-family: Menlo, Monaco, Consolas, monospace; }
+table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+th, td { padding: 0.45em; border: 1px solid #dce3ea; }
+th { background: #edf2f6; }
+figure, .book-diagram { margin: 1.2em auto; text-align: center; }
+figure img, .book-diagram img { max-width: 100%; height: auto; }
+figcaption { color: #627184; font-size: 0.85em; }
+.page-break { break-before: page; }

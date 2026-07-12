@@ -1,0 +1,9 @@
+flowchart TB
+    User --> Auth["OIDC / Tenant Policy"] --> API
+    API --> Queue --> Runtime
+    Runtime --> Tools["Tool / MCP Registry"]
+    Runtime --> RAG
+    Runtime --> Model["Model Gateway"]
+    Runtime --> Trace
+    API --> DB[("PostgreSQL / pgvector")]
+    Queue --> Redis[(Redis)]

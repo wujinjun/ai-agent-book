@@ -1,0 +1,6 @@
+flowchart LR
+    Mail["Mail Read"] --> Summary --> Draft
+    Calendar["Calendar Read"] --> Draft
+    Draft --> Approval{"Human Approval"}
+    Approval -->|拒绝| Audit
+    Approval -->|绑定草稿的令牌| Send["External Write"] --> Audit
