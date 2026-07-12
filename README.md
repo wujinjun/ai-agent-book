@@ -69,6 +69,7 @@ mypy src
 
 ```bash
 npm ci
+python scripts/build_index.py
 python scripts/build_diagrams.py --mmdc node_modules/.bin/mmdc
 python scripts/build_html.py
 python -m http.server 8000 --directory output/html
@@ -89,6 +90,7 @@ npm ci
 
 ```bash
 python scripts/build_diagrams.py --mmdc node_modules/.bin/mmdc
+python scripts/build_index.py
 ./scripts/build-pdf.sh
 ./scripts/build-epub.sh
 PYTHONPATH=src python scripts/audit_publication.py all output

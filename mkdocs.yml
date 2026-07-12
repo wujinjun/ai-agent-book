@@ -101,6 +101,7 @@ nav:
       - 第36章 Agent 架构设计: part-07-advanced/ch36-architecture.md
       - 第37章 从 Demo 到产品: part-07-advanced/ch37-demo-to-product.md
       - 第38章 技术选型: part-07-advanced/ch38-selection-guide.md
+  - 全书索引: book-index.md
   - 术语表: glossary.md
   - 参考资料: references.md
   - 项目状态: project-status.md

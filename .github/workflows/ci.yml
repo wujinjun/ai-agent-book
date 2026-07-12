@@ -35,6 +35,8 @@ jobs:
           .venv/bin/mypy src/ai_agent_book projects/10-enterprise-platform/api.py
       - name: Build documentation and publications
         run: |
+          PYTHONPATH=src .venv/bin/python scripts/build_index.py
+          git diff --exit-code -- docs/glossary.md docs/references.md docs/book-index.md
           .venv/bin/python scripts/build_diagrams.py --mmdc node_modules/.bin/mmdc
           .venv/bin/python scripts/build_html.py
           .venv/bin/python scripts/build_pandoc.py all
