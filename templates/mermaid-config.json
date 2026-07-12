@@ -1,0 +1,24 @@
+{
+  "theme": "base",
+  "themeVariables": {
+    "fontFamily": "Inter, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif",
+    "primaryColor": "#e8f0f8",
+    "primaryTextColor": "#172433",
+    "primaryBorderColor": "#6d89a6",
+    "lineColor": "#647b91",
+    "secondaryColor": "#f4f7fa",
+    "tertiaryColor": "#ffffff",
+    "background": "#ffffff",
+    "mainBkg": "#e8f0f8",
+    "nodeBorder": "#6d89a6",
+    "clusterBkg": "#f4f7fa",
+    "clusterBorder": "#b7c5d3",
+    "edgeLabelBackground": "#ffffff"
+  },
+  "flowchart": {
+    "curve": "basis",
+    "htmlLabels": false,
+    "nodeSpacing": 42,
+    "rankSpacing": 54
+  }
+}
