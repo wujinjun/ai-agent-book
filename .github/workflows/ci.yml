@@ -1,0 +1,30 @@
+name: textbook-ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Create the same virtual environment used by project smoke tests
+        run: python -m venv .venv
+      - name: Install locked dependencies
+        run: .venv/bin/pip install -e '.[dev,docs,publish]'
+      - name: Test root suite and all ten project suites
+        run: PYTHONPATH=src .venv/bin/pytest tests projects/*/tests -q
+      - name: Lint and type-check
+        run: |
+          .venv/bin/ruff check .
+          .venv/bin/mypy src/ai_agent_book projects/10-enterprise-platform/api.py
+      - name: Build documentation and publications
+        run: |
+          .venv/bin/mkdocs build --strict
+          PYTHONPATH=src .venv/bin/python scripts/build_publications.py --format all

@@ -1,0 +1,61 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ai-agent-book"
+version = "0.1.0"
+description = "《AI Agent 从零到实战：原理、工程与项目（2026版）》配套代码"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "CC-BY-NC-SA-4.0"}
+dependencies = [
+  "pydantic==2.11.7",
+  "httpx==0.28.1",
+  "fastapi==0.116.1",
+  "uvicorn==0.35.0",
+  "pypdf==5.7.0",
+  "langgraph==1.2.9",
+  "SQLAlchemy==2.0.51",
+  "psycopg[binary]==3.3.4",
+  "redis==8.0.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==8.4.1", "pytest-asyncio==1.0.0", "ruff==0.12.2", "mypy==1.16.1"]
+docs = ["mkdocs-material==9.6.14", "mkdocs-mermaid2-plugin==1.2.1"]
+publish = ["reportlab==4.4.2", "pdfplumber==0.11.7", "pypdf==5.7.0", "EbookLib==0.19"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ai_agent_book"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["ai_agent_book"]
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = ["reportlab.*", "ebooklib.*", "markdown.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["langgraph.*", "langchain_core.*", "langsmith.*"]
+follow_imports = "skip"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["redis.*", "sqlalchemy.*", "psycopg.*"]
+ignore_missing_imports = true

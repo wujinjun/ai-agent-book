@@ -1,0 +1,93 @@
+# 第22章：CrewAI、AutoGen 与其他 Multi-Agent 框架
+
+最后核对日期：2026-07-11；依据 CrewAI、AutoGen 与 Microsoft Semantic Kernel 官方文档核对。
+
+## 导读、目标与前置知识
+本章比较 CrewAI、AutoGen、Semantic Kernel 等角色协作与任务编排方案，重点是通信、成本、调试和“不使用 Multi-Agent”的判断。
+
+学习目标是为真实任务选择或拒绝 Multi-Agent 框架。前置知识为第9、10、20章。
+
+## 核心原理与架构
+```mermaid
+flowchart TB
+    Supervisor --> Researcher
+    Supervisor --> Coder
+    Supervisor --> Reviewer
+    Researcher --> Shared["Typed Shared State"]
+    Coder --> Shared
+    Reviewer --> Shared
+```
+角色只有在能力、权限、上下文或验收职责确实不同才有价值。CrewAI 常用角色/任务组织，AutoGen 强调可对话 Agent，Semantic Kernel 提供企业应用编排与插件抽象；实际能力随版本变化。
+
+## 最小与完整工程
+先以单 Agent + 两工具建立基线，再实现 Supervisor/Worker，比较成功率、Token、延迟和重复消息。共享状态使用 Schema，消息只携带任务所需内容，终止由运行时而非角色自觉决定。
+
+## 误区、调试、实践与安全
+更多角色不等于更聪明；“辩论”可能放大共同错误；自然语言聊天难以保证状态一致。调试通信图、重复调用和终止原因。不同 Agent 使用最小权限，Reviewer 不持有执行密钥。
+
+## 总结、练习、面试与阅读
+
+### Multi-Agent 框架解决的问题
+
+框架主要提供 Agent/Role 定义、任务分配、消息协议、共享状态、终止、工具、模型客户端和可观测。它们不能证明角色之间存在独立知识，也不能自动避免死循环。多 Agent 只有在上下文隔离、权限隔离、并行专业任务或独立 Reviewer 带来可测收益时成立。
+
+### CrewAI：Crews 与 Flows
+
+官方把 Crews 定位为角色与任务协作，把 Flows 定位为更明确的事件驱动控制、State、条件与恢复。开放研究可用 Crew，审核/集成流程更适合 Flow，常见生产形态是 Flow 提供确定性骨架，在少数节点调用 Crew。
+
+Agent 配置角色、目标和 tools，Task 定义目标与 expected output，Process 决定顺序/层级，Crew 组合它们。角色描述只是 Prompt，不是权限；Tool allowlist 仍由运行时。Flow State 应类型化，不依赖角色对话作为事实源。
+
+```mermaid
+flowchart LR
+    Event --> Flow["CrewAI Flow: deterministic state"]
+    Flow --> ResearchCrew["Crew: exploratory subtask"]
+    ResearchCrew --> Artifact
+    Artifact --> Validate --> Next
+```
+
+### AutoGen：Core 与 AgentChat
+
+当前官方文档区分 AgentChat 与 Core。AgentChat 提供 AssistantAgent、Teams、messages、state 与 termination，适合快速构建对话式单/多 Agent；Core 是事件驱动运行时，适合更可扩展的消息和分布式系统。Extensions 提供模型客户端、MCP Workbench 与 Docker code executor 等。
+
+AgentChat 的 Agent 有状态，`run()` 会更新内部 history；调用方应传新任务而非每次重复完整历史。Team 必须配置 termination condition，保存/恢复 State 时绑定会话和租户。执行模型生成代码使用隔离容器、资源限制和无秘密环境。
+
+```python
+# 当前 AutoGen AgentChat 的结构示例；模型客户端配置按部署环境提供。
+from autogen_agentchat.agents import AssistantAgent
+
+agent = AssistantAgent(
+    name="reviewer",
+    model_client=model_client,
+    tools=[read_diff],
+    system_message="Review only the supplied diff and return typed findings.",
+)
+result = await agent.run(task="Review change set 42")
+```
+
+### Semantic Kernel：Plugin 与 Orchestration
+
+Semantic Kernel 用 Plugin 封装 native code、OpenAPI 或 MCP 能力，和企业依赖注入较契合。Agent Framework 提供 Agent 抽象；官方 Agent Orchestration 文档列出 Concurrent、Sequential、Handoff、Group Chat 和 Magentic 等模式。2026-07-11 官方页面仍明确标注部分 Orchestration 能力为 experimental/prerelease，生产选型必须固定版本并接受变更风险。
+
+Plugin 描述函数输入、输出与副作用，但授权仍在服务内部。Kernel/Runtime 管模型与消息，企业项目要把领域服务接口与框架 Plugin 分开。
+
+### 框架比较
+
+| 维度 | CrewAI | AutoGen | Semantic Kernel |
+|---|---|---|---|
+| 主要抽象 | Role/Task/Crew/Flow | AgentChat/Core/Team | Kernel/Plugin/Agent/Orchestration |
+| 强项 | 角色任务与结构 Flow | 消息、事件与研究型协作 | .NET/企业 DI、Plugin 集成 |
+| 状态风险 | Crew 对话替代 State | Stateful Agent/Team history | 实验 Orchestration 变化 |
+| 适用 | 内容/研究 + Flow | 多 Agent 原型与事件系统 | Microsoft/.NET 企业应用 |
+
+表格只描述当前总体定位，社区活跃、API 稳定和许可要在决策当天重查。不要根据 GitHub Star 或演示角色数量选型。
+
+### 成本、终止与调试
+
+共享预算器限制总模型调用、Token、工具、时间和消息。终止条件包括任务验收、最大回合、无进展、重复消息、Policy 拒绝和人工停止。无进展可以比较 Artifact/State 哈希，而不是仅检测相同句子。
+
+调试保存消息拓扑、sender/recipient、任务 ID、Artifact 版本、工具 Trace 和终止原因。每个角色的 Prompt 单独测试，团队测试再覆盖通信。Reviewer 使用独立 rubric，但若与 Coder 是同一模型和证据，应承认其相关性。
+
+### 常见误区与安全
+
+常见误区包括角色越多越好、群聊产生的共识等于事实、多个同模型 Agent 等于独立专家，以及框架 Memory 自动保持一致。外部动作仍需 Policy/审批，Agent 凭证最小化，消息不转发 secret，代码执行使用 Sandbox。若单 Agent + tools 达到相同成功率，应选择更简单方案。
+总结：Multi-Agent 框架放大协作能力，也放大消息、状态、成本和安全复杂度。练习：用单 Agent 和两种团队方案完成同一任务，证明净收益，否则回退。面试：共享状态和消息历史如何区分？如何避免无效对话？实验性框架能力如何进入生产？延伸阅读：[CrewAI](https://docs.crewai.com/)、[AutoGen](https://microsoft.github.io/autogen/stable/)、[Semantic Kernel Agent Orchestration](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-orchestration/) 官方文档。代码目录：`projects/09-multi-agent-dev-team/`。

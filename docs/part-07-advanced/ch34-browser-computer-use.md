@@ -1,0 +1,95 @@
+# 第34章：Browser Agent 与 Computer Use
+
+最后核对日期：2026-07-11。
+
+## 导读、目标与前置知识
+浏览器和桌面 Agent 通过 DOM、截图、OCR 与 UI 动作工作。本章处理页面变化、错误恢复、登录凭证、人工确认和测试。
+
+学习目标是掌握核心观察—动作循环，并实现一个需要审批的表单示例。前置知识为 Web、权限和第30章。
+
+## 架构
+```mermaid
+flowchart LR
+    Observe["DOM/Screenshot/OCR"] --> Decide --> Policy --> Action["click/type/navigate"] --> Observe
+    Policy --> Approval["purchase/send/delete approval"]
+```
+DOM 定位语义元素，截图覆盖画布和视觉状态，OCR 是不可靠补充。动作之后必须重新观察，不能假设点击成功。
+
+## 最小与完整工程
+最小任务读取公开页面标题。工程版为每步保存页面 URL、元素证据和动作结果，使用稳定语义选择器，处理弹窗、导航和超时。测试站点注入布局变化、延迟与失败。
+
+## 误区、调试、实践与安全
+坐标点击脆弱；登录成功不代表有权执行所有操作；验证码不应绕过。凭证由浏览器/秘密系统持有，模型不读取明文；发送、购买、删除前展示具体对象并确认。
+
+## 总结、练习、面试与阅读
+
+### Observation：DOM、Screenshot 与 OCR
+
+DOM 提供角色、名称、层级和可交互属性，适合稳定选择；Screenshot 覆盖 canvas、图表、视觉遮挡与布局；OCR 从像素恢复文本但有识别误差。Agent 根据任务组合，不能把 OCR 当页面权威数据，也不能只靠 DOM 判断元素是否可见。
+
+```mermaid
+flowchart LR
+    Page --> DOM["DOM/accessibility tree"]
+    Page --> Shot["Screenshot"] --> OCR
+    DOM --> Observation
+    Shot --> Observation
+    OCR --> Observation
+    Observation --> Policy --> Action --> Verify["re-observe"]
+```
+
+Observation 保存 URL、标题、选中元素语义、截图引用、时间和登录主体。页面内容可能包含 Prompt Injection，始终视为数据。
+
+### 元素定位与动作
+
+优先使用 accessibility role + name、label、稳定 data-testid 或明确 DOM 关系，最后才用 CSS/XPath，坐标点击是视觉应用的退路。选择器匹配多个元素时停止并缩小，不随机点击第一个。
+
+动作协议是类型化 union：navigate、click、type、select、scroll、upload、download 和 wait。每个动作有目标证据、timeout 和风险。输入密码不把明文返回模型，由凭证管理器/浏览器填充。
+
+```json
+{
+  "action": "click",
+  "target": {"role": "button", "name": "提交审批"},
+  "expected": {"url_contains": "/review", "text": "等待审批"}
+}
+```
+
+动作后重新观察并验证 expected。点击成功的驱动返回不等于业务状态改变；页面可能弹错、导航失败或被遮挡。
+
+### 网页变化与错误恢复
+
+页面会动态加载、A/B、换语言和更新 DOM。等待语义条件而不是固定 sleep，例如元素可见、网络状态或 URL 变化。错误恢复最多重新定位、刷新或回到已知 checkpoint，次数有限。重复提交前查询当前状态或使用幂等键。
+
+浏览器崩溃时恢复 session 要考虑登录与未提交表单。高风险流程不从模糊页面状态继续，转人工确认。
+
+### 登录、凭证与会话
+
+已有浏览器 session 代表用户身份，但 Agent 仍遵守任务授权。Cookie、token、密码和验证码不进入 Prompt/日志。OAuth scope 最小，退出/切换账号后清理 session。MFA 与验证码交给用户，不尝试绕过。
+
+自动化使用专门测试账号与隔离 profile。共享浏览器可能包含私人 tab 和扩展，不在未授权情况下读取。
+
+### Human Approval 与操作安全
+
+发送邮件、发布内容、购买、删除、权限修改和不可逆提交前显示页面、对象、金额/收件人、字段差异与证据。批准绑定当前页面状态和动作参数，页面变化后重新确认。
+
+下载文件进入隔离目录，扫描类型/大小；上传只允许指定文件；浏览器导航使用域名 allowlist 防钓鱼和数据外传。剪贴板读写也属于敏感能力。
+
+### Browser Agent 测试
+
+建立本地测试站点，覆盖正常 DOM、延迟、元素重命名、弹窗、遮挡、登录过期、提交失败和重复点击。断言最终业务状态、动作数、审批和 Audit，不只断言点击调用。视觉回归截图帮助发现布局，但不替代语义断言。
+
+```python
+async def test_submit_requires_approval(browser_agent):
+    result = await browser_agent.run("提交报销单")
+    assert result.status == "approval_required"
+    assert result.pending_action.target == "提交审批"
+    assert result.audit_events[-1].kind == "approval.requested"
+```
+
+### Computer Use 与桌面应用
+
+桌面应用缺少 DOM 时依赖截图、OCR、窗口树和坐标，风险更高。操作前确认前台应用和窗口标题，避免键盘输入落入错误窗口。OS 权限、文件选择器和系统对话框由明确规则处理。终端或原生 API 可完成的任务优先专用工具，Computer Use 作为最后一公里。
+
+### 常见误区、调试与安全
+
+常见误区：坐标稳定、登录即拥有授权、动作返回成功即完成、验证码可以自动处理。调试保存操作前后截图/DOM、选择器、URL 与事件，不保存凭证。页面诱导 Agent 上传文件或粘贴 Secret 时，Policy 拒绝。
+总结：Browser/Computer Use 是观察—动作—再观察的受控闭环。练习：为表单提交设计确认、幂等和布局变化测试。面试：DOM 与视觉定位如何互补？动作后为何必须观察？如何安全使用已有登录 session？延伸阅读：Web Accessibility、Playwright/WebDriver、安全浏览器自动化和 Human-in-the-Loop 资料。代码目录：项目6、8。
