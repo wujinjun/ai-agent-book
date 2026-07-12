@@ -19,11 +19,13 @@ dependencies = [
   "SQLAlchemy==2.0.51",
   "psycopg[binary]==3.3.4",
   "redis==8.0.1",
+  "PyYAML==6.0.2",
+  "beautifulsoup4==4.15.0",
 ]
 
 [project.optional-dependencies]
 dev = ["pytest==8.4.1", "pytest-asyncio==1.0.0", "ruff==0.12.2", "mypy==1.16.1"]
-docs = ["mkdocs-material==9.6.14", "mkdocs-mermaid2-plugin==1.2.1"]
+docs = ["mkdocs-material==9.6.14"]
 publish = ["reportlab==4.4.2", "pdfplumber==0.11.7", "pypdf==5.7.0", "EbookLib==0.19"]
 
 [tool.hatch.build.targets.wheel]
@@ -48,7 +50,7 @@ packages = ["ai_agent_book"]
 mypy_path = "src"
 
 [[tool.mypy.overrides]]
-module = ["reportlab.*", "ebooklib.*", "markdown.*"]
+module = ["reportlab.*", "ebooklib.*", "markdown.*", "bs4.*", "yaml.*"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]

@@ -3,7 +3,7 @@ from pathlib import Path
 import yaml
 
 from ai_agent_book.book_manifest import _MkDocsNavigationLoader
-from scripts.build_html import prepare_html_sources
+from scripts.build_html import prepare_html_sources, write_build_config
 
 ROOT = Path(__file__).parents[1]
 
@@ -45,3 +45,16 @@ def test_html_source_preparation_replaces_mermaid_with_portable_picture(tmp_path
     assert '<source type="image/svg+xml"' in source
     assert "../../assets/diagrams/svg/" in source
     assert (prepared / "assets/diagrams/manifest.json").is_file()
+    project = prepared / "part-06-projects/project-01.md"
+    assert project.is_file()
+    assert "```mermaid" not in project.read_text(encoding="utf-8")
+
+
+def test_temporary_mkdocs_config_adds_all_ten_project_pages(tmp_path: Path) -> None:
+    prepared = prepare_html_sources(ROOT, tmp_path / "docs")
+    config_path = write_build_config(ROOT, prepared, tmp_path / "mkdocs.yml")
+    config = config_path.read_text(encoding="utf-8")
+
+    assert config.count("part-06-projects/project-") == 10
+    assert "项目1：最小 AI Assistant" in config
+    assert "项目10：企业级 Agent 平台" in config

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import shutil
 import subprocess
 import sys
@@ -36,6 +37,8 @@ def build_diagrams(root: Path, *, executable: str = "mmdc") -> int:
 
     config = root / "templates/mermaid-config.json"
     puppeteer_config = root / "templates/puppeteer-config.json"
+    puppeteer_options = json.loads(puppeteer_config.read_text(encoding="utf-8"))
+    configured_browser = Path(str(puppeteer_options.get("executablePath", "")))
     for record in records:
         source = asset_root / record.source_asset
         svg = asset_root / record.svg_path
@@ -55,13 +58,16 @@ def build_diagrams(root: Path, *, executable: str = "mmdc") -> int:
                 str(output),
                 "-c",
                 str(config),
-                "-p",
-                str(puppeteer_config),
                 "-b",
                 "white",
                 "-s",
                 scale,
             ]
+            if configured_browser.is_file():
+                command[command.index("-b"):command.index("-b")] = [
+                    "-p",
+                    str(puppeteer_config),
+                ]
             try:
                 subprocess.run(command, check=True, capture_output=True, text=True, timeout=30)
             except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:

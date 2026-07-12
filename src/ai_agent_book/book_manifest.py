@@ -9,7 +9,7 @@ from typing import Any
 import yaml
 
 
-class _MkDocsNavigationLoader(yaml.SafeLoader):
+class _MkDocsNavigationLoader(yaml.SafeLoader):  # type: ignore[misc]
     """Safe YAML loader that treats MkDocs callable references as plain strings."""
 
 

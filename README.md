@@ -2,7 +2,7 @@
 
 这是一套面向软件工程师的中文技术教材工程。它不把 Agent 等同于某个框架，也不把能调用一次模型的脚本包装成生产系统；全书从 LLM 的生成机制出发，依次讨论结构化输出、工具调用、MCP、RAG、Memory、工作流、多 Agent，以及测试、部署、可观测性和安全治理。
 
-> 当前版本为 **0.1.0 / 第一阶段**。第一章第一节可作为正式讲义阅读，其余完成度请以 [`PROJECT_STATUS.md`](PROJECT_STATUS.md) 为准。文件存在不代表章节已经完成。
+> 当前版本为 **0.2.0 / 多格式出版预览版**。第 1—38 章、十个项目和新版 HTML/PDF/EPUB 出版管线均已建立；自动验证与仍需人工执行的阅读器检查以 [`PROJECT_STATUS.md`](PROJECT_STATUS.md) 为准。
 
 ## 适合与不适合的读者
 
@@ -16,7 +16,7 @@
 
 ## 技术栈
 
-教材默认 Python 3.12，使用 Pydantic、httpx、FastAPI、PostgreSQL、Redis、pgvector、Docker、pytest、Ruff、mypy 与 MkDocs Material。框架章节覆盖原生 API、OpenAI Agents SDK、PydanticAI、LangGraph、LangChain、LlamaIndex、CrewAI、AutoGen 与 Semantic Kernel，但不会将其中任何一个描述为唯一答案。
+教材默认 Python 3.12，使用 Pydantic、httpx、FastAPI、PostgreSQL、Redis、pgvector、Docker、pytest、Ruff、mypy 与 MkDocs Material。出版工具使用 Mermaid CLI 11.4.2、Pandoc 3.x 与 Chrome Headless。框架章节覆盖原生 API、OpenAI Agents SDK、PydanticAI、LangGraph、LangChain、LlamaIndex、CrewAI、AutoGen 与 Semantic Kernel，但不会将其中任何一个描述为唯一答案。
 
 ## 完整目录
 
@@ -68,21 +68,40 @@ mypy src
 ## 启动文档网站
 
 ```bash
-mkdocs serve
+npm ci
+python scripts/build_diagrams.py --mmdc node_modules/.bin/mmdc
+python scripts/build_html.py
+python -m http.server 8000 --directory output/html
 ```
 
-浏览器访问 `http://127.0.0.1:8000`。发布前使用 `mkdocs build --strict` 检查导航与链接。
+浏览器访问 `http://127.0.0.1:8000`。新版 HTML 是三栏开发者文档布局；Mermaid 在构建时预渲染为 SVG 与 2x PNG，因此离线阅读不依赖 Mermaid JavaScript 或外部 CDN。开发时仍可使用 `mkdocs serve` 快速预览原稿，但正式产物必须运行上述脚本。
 
 ## 生成 PDF 与 EPUB
 
-安装项目的 `publish` 依赖后运行；生成流程不要求 Pandoc 或 LaTeX：
+先安装 Node.js 22、Pandoc 3.x 和 Google Chrome/Chromium。macOS 可运行：
 
 ```bash
-./scripts/build-pdf.sh
-./scripts/build-epub.sh
+brew install pandoc
+npm ci
 ```
 
-产物写入 `output/pdf/ai-agent-book-2026.pdf` 与 `output/epub/ai-agent-book-2026.epub`。
+然后生成图形与出版产物：
+
+```bash
+python scripts/build_diagrams.py --mmdc node_modules/.bin/mmdc
+./scripts/build-pdf.sh
+./scripts/build-epub.sh
+PYTHONPATH=src python scripts/audit_publication.py all output
+```
+
+产物写入：
+
+- `output/html/`：可离线部署的 MkDocs HTML；
+- `output/intermediate/print.html`：Pandoc 生成的独立打印 HTML；
+- `output/pdf/ai-agent-book-2026.pdf`：Pandoc 打印 HTML 经 Chrome 输出的 A4 PDF；
+- `output/epub/ai-agent-book-2026.epub`：带 SVG 首选图和 PNG 回退的 EPUB3。
+
+如果图形未变化，构建器会按内容哈希复用缓存。缺少 Mermaid CLI、Pandoc、Chrome 或字体时，脚本会明确退出，不会退回旧 ReportLab 文本版或把 Mermaid 源码放进 EPUB。
 
 ## 贡献与版本说明
 

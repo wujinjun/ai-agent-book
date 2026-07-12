@@ -5,6 +5,17 @@ from pypdf import PdfReader
 
 from ai_agent_book.publications import BookChapter, build_epub, build_pdf
 
+ROOT = Path(__file__).parents[1]
+
+
+def test_default_publication_scripts_use_pandoc_pipeline() -> None:
+    pdf_script = (ROOT / "scripts/build-pdf.sh").read_text(encoding="utf-8")
+    epub_script = (ROOT / "scripts/build-epub.sh").read_text(encoding="utf-8")
+
+    assert "scripts/build_pandoc.py pdf" in pdf_script
+    assert "scripts/build_pandoc.py epub" in epub_script
+    assert "build_publications.py" not in pdf_script + epub_script
+
 
 def test_pdf_contains_title_and_page_number(tmp_path: Path) -> None:
     output = tmp_path / "book.pdf"

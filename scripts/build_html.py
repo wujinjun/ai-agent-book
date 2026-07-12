@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import shutil
 import subprocess
@@ -14,7 +15,7 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from ai_agent_book.book_manifest import load_book_entries  # noqa: E402
+from ai_agent_book.book_manifest import load_publication_entries  # noqa: E402
 from ai_agent_book.diagram_pipeline import extract_diagrams, replace_mermaid  # noqa: E402
 
 
@@ -34,9 +35,15 @@ def prepare_html_sources(root: Path, destination: Path) -> Path:
         raise FileNotFoundError("图形清单不存在；请先运行 scripts/build_diagrams.py。")
     shutil.copytree(diagrams_source, diagrams_target, dirs_exist_ok=True)
 
-    for entry in load_book_entries(root / "mkdocs.yml"):
+    for entry in load_publication_entries(root / "mkdocs.yml"):
         original = root / entry.path
-        prepared = destination / entry.path.relative_to("docs")
+        if entry.path.parts[0] == "docs":
+            relative_output = entry.path.relative_to("docs")
+        else:
+            project_number = entry.path.parent.name.split("-", 1)[0]
+            relative_output = Path(f"part-06-projects/project-{project_number}.md")
+        prepared = destination / relative_output
+        prepared.parent.mkdir(parents=True, exist_ok=True)
         markdown = original.read_text(encoding="utf-8")
         diagrams = extract_diagrams(entry.path, markdown)
         relative_assets = Path(
@@ -59,6 +66,20 @@ def write_build_config(root: Path, docs_dir: Path, output: Path) -> Path:
     config = config.replace(
         "custom_dir: overrides",
         f"custom_dir: {(root / 'overrides').as_posix()}",
+        1,
+    )
+    project_lines = ["  - 第六篇 完整项目实战:", "      - 导读: part-06-projects/index.md"]
+    for entry in load_publication_entries(root / "mkdocs.yml"):
+        if entry.path.parts[0] != "projects":
+            continue
+        project_number = entry.path.parent.name.split("-", 1)[0]
+        title = json.dumps(entry.title, ensure_ascii=False)
+        project_lines.append(
+            f"      - {title}: part-06-projects/project-{project_number}.md"
+        )
+    config = config.replace(
+        "  - 第六篇 完整项目实战: part-06-projects/index.md",
+        "\n".join(project_lines),
         1,
     )
     output.parent.mkdir(parents=True, exist_ok=True)
