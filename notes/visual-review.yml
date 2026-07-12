@@ -1,14 +1,54 @@
 version: 1
 policy: docs/superpowers/specs/2026-07-12-full-book-visual-review-design.md
 files:
-  docs/index.md: {group: guides, minimum_diagrams: 1, review_status: pending, requirements: []}
-  docs/part-01-foundations/index.md: {group: guides, minimum_diagrams: 1, review_status: pending, requirements: []}
-  docs/part-02-agent-core/index.md: {group: guides, minimum_diagrams: 1, review_status: pending, requirements: []}
-  docs/part-03-rag-and-memory/index.md: {group: guides, minimum_diagrams: 1, review_status: pending, requirements: []}
-  docs/part-04-frameworks/index.md: {group: guides, minimum_diagrams: 1, review_status: pending, requirements: []}
-  docs/part-05-engineering/index.md: {group: guides, minimum_diagrams: 1, review_status: pending, requirements: []}
-  docs/part-06-projects/index.md: {group: guides, minimum_diagrams: 1, review_status: pending, requirements: []}
-  docs/part-07-advanced/index.md: {group: guides, minimum_diagrams: 1, review_status: pending, requirements: []}
+  docs/index.md:
+    group: guides
+    minimum_diagrams: 1
+    review_status: completed
+    requirements:
+      - {id: book-learning-capability-map, section: AI Agent 从零到实战, relation: hierarchy, disposition: diagram}
+  docs/part-01-foundations/index.md:
+    group: guides
+    minimum_diagrams: 1
+    review_status: completed
+    requirements:
+      - {id: foundations-capability-dependencies, section: "第一篇：LLM 与 AI Agent 基础", relation: concept, disposition: diagram}
+  docs/part-02-agent-core/index.md:
+    group: guides
+    minimum_diagrams: 1
+    review_status: completed
+    requirements:
+      - {id: prompt-to-agent-control-stack, section: "第二篇：Prompt、工具与 Agent 核心机制", relation: flow, disposition: diagram}
+  docs/part-03-rag-and-memory/index.md:
+    group: guides
+    minimum_diagrams: 1
+    review_status: completed
+    requirements:
+      - {id: external-context-and-state-map, section: "第三篇：MCP、RAG 与 Memory", relation: architecture, disposition: diagram}
+  docs/part-04-frameworks/index.md:
+    group: guides
+    minimum_diagrams: 1
+    review_status: completed
+    requirements:
+      - {id: agent-framework-abstraction-layers, section: "第四篇：Agent 框架", relation: hierarchy, disposition: diagram}
+  docs/part-05-engineering/index.md:
+    group: guides
+    minimum_diagrams: 1
+    review_status: completed
+    requirements:
+      - {id: agent-production-engineering-loop, section: "第五篇：Agent 工程化", relation: flow, disposition: diagram}
+  docs/part-06-projects/index.md:
+    group: guides
+    minimum_diagrams: 1
+    review_status: completed
+    requirements:
+      - {id: ten-project-capability-progression, section: "第六篇：完整项目实战", relation: hierarchy, disposition: diagram}
+  docs/part-07-advanced/index.md:
+    group: guides
+    minimum_diagrams: 1
+    review_status: completed
+    requirements:
+      - {id: advanced-agent-productization-map, section: "第七篇：高级主题", relation: flow, disposition: diagram}
 
   docs/part-01-foundations/ch01-what-is-llm.md: {group: part-01, minimum_diagrams: 4, review_status: pending, requirements: []}
   docs/part-01-foundations/ch02-token-and-context.md: {group: part-01, minimum_diagrams: 4, review_status: pending, requirements: []}

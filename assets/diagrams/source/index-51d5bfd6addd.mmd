@@ -1,0 +1,11 @@
+%% id: external-context-and-state-map
+%% title: 外部上下文与持久状态地图
+%% alt: Agent Runtime 通过 MCP 连接能力，通过 RAG 检索证据，通过 Memory 保留状态并使用向量数据库
+flowchart TB
+    Agent["Agent Runtime"] --> MCP["MCP<br/>发现并调用能力"]
+    Agent --> RAG["RAG<br/>按问题获取证据"]
+    Agent --> Memory["Memory<br/>跨步骤与会话保留信息"]
+    MCP --> Systems["文件 / 数据库 / 外部服务"]
+    RAG --> Vector["向量库与关键词索引"]
+    Memory --> Store["会话库 / Memory Store"]
+    Memory -.检索式记忆.-> Vector

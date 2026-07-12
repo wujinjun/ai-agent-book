@@ -1,5 +1,24 @@
 # 第五篇：Agent 工程化
 
+生产质量来自持续闭环，而不是部署完成这一单点事件。下图把服务、数据、运行、观测、评估、安全和成本连接成反馈回路。
+
+```mermaid
+%% id: agent-production-engineering-loop
+%% title: Agent 生产工程闭环
+%% alt: Agent 服务依赖数据和任务基础设施，运行信号进入观测与评估，再反馈安全成本和发布策略
+flowchart LR
+    Service["FastAPI 服务"] --> Data["PostgreSQL / Redis / pgvector"]
+    Data --> Jobs["异步任务与 Checkpoint"]
+    Jobs --> Deploy["容器与 CI/CD"]
+    Deploy --> Observe["Log / Metric / Trace"]
+    Observe --> Eval["Evaluation / Regression"]
+    Eval --> Guard["安全与 Guardrails"]
+    Guard --> Budget["成本与性能预算"]
+    Budget -.路由与配置反馈.-> Service
+```
+
+沿实线读取一次生产运行，虚线表示观测证据必须回到模型路由、超时、缓存和发布配置；没有反馈回路的 Agent 只能算一次性演示。
+
 | 章 | 主题 | 必须回答的问题 | 状态 |
 |---:|---|---|---|
 | 23 | [Python 工程基础](ch23-python-engineering.md) | 类型、异步、配置、日志和测试 | 初稿完成 |

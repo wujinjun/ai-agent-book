@@ -1,0 +1,12 @@
+%% id: agent-production-engineering-loop
+%% title: Agent 生产工程闭环
+%% alt: Agent 服务依赖数据和任务基础设施，运行信号进入观测与评估，再反馈安全成本和发布策略
+flowchart LR
+    Service["FastAPI 服务"] --> Data["PostgreSQL / Redis / pgvector"]
+    Data --> Jobs["异步任务与 Checkpoint"]
+    Jobs --> Deploy["容器与 CI/CD"]
+    Deploy --> Observe["Log / Metric / Trace"]
+    Observe --> Eval["Evaluation / Regression"]
+    Eval --> Guard["安全与 Guardrails"]
+    Guard --> Budget["成本与性能预算"]
+    Budget -.路由与配置反馈.-> Service

@@ -46,11 +46,12 @@ def prepare_html_sources(root: Path, destination: Path) -> Path:
         prepared.parent.mkdir(parents=True, exist_ok=True)
         markdown = original.read_text(encoding="utf-8")
         diagrams = extract_diagrams(entry.path, markdown)
-        relative_assets = Path(
-            os.path.relpath(destination / "assets/diagrams", prepared.parent)
+        output_directory = (
+            prepared.parent if prepared.name == "index.md" else prepared.parent / prepared.stem
         )
-        if prepared.parent != destination:
-            relative_assets = Path("..") / relative_assets
+        relative_assets = Path(
+            os.path.relpath(destination / "assets/diagrams", output_directory)
+        )
         prepared.write_text(
             replace_mermaid(markdown, diagrams, relative_assets),
             encoding="utf-8",

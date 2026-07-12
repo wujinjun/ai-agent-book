@@ -48,6 +48,9 @@ def test_html_source_preparation_replaces_mermaid_with_portable_picture(tmp_path
     project = prepared / "part-06-projects/project-01.md"
     assert project.is_file()
     assert "```mermaid" not in project.read_text(encoding="utf-8")
+    part_index = prepared / "part-01-foundations/index.md"
+    assert "../assets/diagrams/svg/" in part_index.read_text(encoding="utf-8")
+    assert "../../assets/diagrams/svg/" not in part_index.read_text(encoding="utf-8")
 
 
 def test_temporary_mkdocs_config_adds_all_ten_project_pages(tmp_path: Path) -> None:

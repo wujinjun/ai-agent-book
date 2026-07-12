@@ -2,6 +2,24 @@
 
 本篇从“自然语言输出不可靠”这一问题出发，逐层建立 Agent 的控制边界。
 
+下图说明控制边界如何逐步增强：Prompt 约束意图，Schema 约束数据，Tool Runtime 约束动作，Agent Loop 和规划器约束长任务。
+
+```mermaid
+%% id: prompt-to-agent-control-stack
+%% title: 从 Prompt 到 Agent Loop 的控制栈
+%% alt: Prompt 进入结构化输出和工具运行时，再由 Agent 循环与规划评审形成受控长任务
+flowchart LR
+    Prompt["Prompt / Context"] --> Schema["Structured Output"]
+    Schema --> Tool["Tool Calling Runtime"]
+    Tool --> Loop["Agent Loop"]
+    Loop --> Plan["Planning / Reflection"]
+    Schema -.校验失败.-> Retry["有限重试"]
+    Tool -.高风险动作.-> Approval["人工审批"]
+    Plan -.未达目标.-> Loop
+```
+
+主链表示能力逐层组合，虚线表示生产系统必须显式处理的失败与审批路径；模型输出不能绕过这些软件边界直接产生副作用。
+
 | 章 | 主题 | 核心产出 | 状态 |
 |---:|---|---|---|
 | 6 | [Prompt Engineering](ch06-prompt-engineering.md) | 可版本化、可评估的上下文模板 | 初稿完成 |

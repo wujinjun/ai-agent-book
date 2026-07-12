@@ -1,5 +1,23 @@
 # 第三篇：MCP、RAG 与 Memory
 
+MCP、RAG 与 Memory 都向 Agent 提供外部上下文，但解决的问题和生命周期不同。下图按连接、检索、记忆与存储边界组织这些能力。
+
+```mermaid
+%% id: external-context-and-state-map
+%% title: 外部上下文与持久状态地图
+%% alt: Agent Runtime 通过 MCP 连接能力，通过 RAG 检索证据，通过 Memory 保留状态并使用向量数据库
+flowchart TB
+    Agent["Agent Runtime"] --> MCP["MCP<br/>发现并调用能力"]
+    Agent --> RAG["RAG<br/>按问题获取证据"]
+    Agent --> Memory["Memory<br/>跨步骤与会话保留信息"]
+    MCP --> Systems["文件 / 数据库 / 外部服务"]
+    RAG --> Vector["向量库与关键词索引"]
+    Memory --> Store["会话库 / Memory Store"]
+    Memory -.检索式记忆.-> Vector
+```
+
+从 Agent Runtime 向下阅读：MCP 管连接协议，RAG 管查询时证据，Memory 管跨时间状态；向量数据库只是可被后两者使用的存储与索引实现。
+
 | 章 | 主题 | 核心问题 | 状态 |
 |---:|---|---|---|
 | 11 | [MCP 基础](ch11-mcp.md) | 协议怎样统一暴露能力？ | 初稿完成/需核查 |

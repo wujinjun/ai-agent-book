@@ -1,0 +1,12 @@
+%% id: advanced-agent-productization-map
+%% title: 高级 Agent 从能力扩展到产品化的路径
+%% alt: Multi-Agent、Coding、Browser 和多模态能力进入统一架构，再经过产品边界与技术选型形成可维护产品
+flowchart LR
+    Multi["Multi-Agent 协调"] --> Architecture["Agent 架构设计"]
+    Coding["Agentic Coding"] --> Architecture
+    Browser["Browser / Computer Use"] --> Architecture
+    Modal["多模态感知"] --> Architecture
+    Architecture --> Product["从 Demo 到产品"]
+    Product --> Selection["技术选型与演进"]
+    Architecture -.状态 / 权限 / 观测.-> Control["统一控制面"]
+    Control --> Product

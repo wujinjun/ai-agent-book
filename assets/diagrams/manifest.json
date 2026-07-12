@@ -1,7 +1,32 @@
 [
   {
+    "source_path": "docs/index.md",
+    "index": 1,
+    "semantic_id": "book-learning-capability-map",
+    "title": "从模型能力到生产 Agent 的学习地图",
+    "alt": "七篇课程从大模型基础，经工具检索框架与工程化，进入项目实践和高级产品能力",
+    "diagram_id": "index-07bb5ed6a0fb",
+    "source": "%% id: book-learning-capability-map\n%% title: 从模型能力到生产 Agent 的学习地图\n%% alt: 七篇课程从大模型基础，经工具检索框架与工程化，进入项目实践和高级产品能力\nflowchart LR\n    F[\"第一篇<br/>LLM 基础\"] --> C[\"第二篇<br/>Agent 核心\"]\n    C --> K[\"第三篇<br/>MCP / RAG / Memory\"]\n    K --> W[\"第四篇<br/>框架与工作流\"]\n    W --> E[\"第五篇<br/>工程化与治理\"]\n    E --> P[\"第六篇<br/>十个完整项目\"]\n    P --> A[\"第七篇<br/>高级架构与产品\"]\n    F -.模型边界.-> E\n    C -.控制边界.-> P\n    K -.数据边界.-> A\n",
+    "source_asset": "source/index-07bb5ed6a0fb.mmd",
+    "svg_path": "svg/index-07bb5ed6a0fb.svg",
+    "png_path": "png/index-07bb5ed6a0fb.png"
+  },
+  {
+    "source_path": "docs/part-01-foundations/index.md",
+    "index": 1,
+    "semantic_id": "foundations-capability-dependencies",
+    "title": "LLM 基础能力依赖图",
+    "alt": "Token 与上下文进入 Transformer，生成机制产生文本，Embedding 支持语义检索并共同约束 Agent",
+    "diagram_id": "index-3e510d23f8a7",
+    "source": "%% id: foundations-capability-dependencies\n%% title: LLM 基础能力依赖图\n%% alt: Token 与上下文进入 Transformer，生成机制产生文本，Embedding 支持语义检索并共同约束 Agent\nflowchart LR\n    Token[\"Token 与上下文\"] --> Transformer[\"Transformer / Attention\"]\n    Transformer --> Generation[\"生成与采样\"]\n    Text[\"文本与文档\"] --> Embedding[\"Embedding 表示\"]\n    Embedding --> Retrieval[\"语义检索\"]\n    Generation --> Boundary[\"模型能力边界\"]\n    Retrieval --> Boundary\n    Boundary --> Agent[\"可受控的 Agent 输入\"]\n",
+    "source_asset": "source/index-3e510d23f8a7.mmd",
+    "svg_path": "svg/index-3e510d23f8a7.svg",
+    "png_path": "png/index-3e510d23f8a7.png"
+  },
+  {
     "source_path": "docs/part-01-foundations/ch01-what-is-llm.md",
     "index": 1,
+    "semantic_id": "ch01-what-is-llm-diagram-1",
     "title": "第1章 第1节：什么是大语言模型？ 图 1",
     "alt": "第1章 第1节：什么是大语言模型？ 图 1",
     "diagram_id": "ch01-what-is-llm-f812e8c27d94",
@@ -13,6 +38,7 @@
   {
     "source_path": "docs/part-01-foundations/ch01-what-is-llm.md",
     "index": 2,
+    "semantic_id": "ch01-what-is-llm-diagram-2",
     "title": "第1章 第1节：什么是大语言模型？ 图 2",
     "alt": "第1章 第1节：什么是大语言模型？ 图 2",
     "diagram_id": "ch01-what-is-llm-2716ceabb701",
@@ -24,6 +50,7 @@
   {
     "source_path": "docs/part-01-foundations/ch02-token-and-context.md",
     "index": 1,
+    "semantic_id": "ch02-token-and-context-diagram-1",
     "title": "第2章：Token、Tokenizer 与上下文窗口 图 1",
     "alt": "第2章：Token、Tokenizer 与上下文窗口 图 1",
     "diagram_id": "ch02-token-and-context-b68b4941756a",
@@ -35,6 +62,7 @@
   {
     "source_path": "docs/part-01-foundations/ch03-transformer-attention.md",
     "index": 1,
+    "semantic_id": "ch03-transformer-attention-diagram-1",
     "title": "第3章：Transformer 与 Attention 图 1",
     "alt": "第3章：Transformer 与 Attention 图 1",
     "diagram_id": "ch03-transformer-attention-c1f696a99140",
@@ -46,6 +74,7 @@
   {
     "source_path": "docs/part-01-foundations/ch04-generation.md",
     "index": 1,
+    "semantic_id": "ch04-generation-diagram-1",
     "title": "第4章：LLM 生成机制 图 1",
     "alt": "第4章：LLM 生成机制 图 1",
     "diagram_id": "ch04-generation-c673f19a000f",
@@ -57,6 +86,7 @@
   {
     "source_path": "docs/part-01-foundations/ch05-embedding.md",
     "index": 1,
+    "semantic_id": "ch05-embedding-diagram-1",
     "title": "第5章：Embedding 与语义表示 图 1",
     "alt": "第5章：Embedding 与语义表示 图 1",
     "diagram_id": "ch05-embedding-341d2777d447",
@@ -66,8 +96,21 @@
     "png_path": "png/ch05-embedding-341d2777d447.png"
   },
   {
+    "source_path": "docs/part-02-agent-core/index.md",
+    "index": 1,
+    "semantic_id": "prompt-to-agent-control-stack",
+    "title": "从 Prompt 到 Agent Loop 的控制栈",
+    "alt": "Prompt 进入结构化输出和工具运行时，再由 Agent 循环与规划评审形成受控长任务",
+    "diagram_id": "index-de0531f53dac",
+    "source": "%% id: prompt-to-agent-control-stack\n%% title: 从 Prompt 到 Agent Loop 的控制栈\n%% alt: Prompt 进入结构化输出和工具运行时，再由 Agent 循环与规划评审形成受控长任务\nflowchart LR\n    Prompt[\"Prompt / Context\"] --> Schema[\"Structured Output\"]\n    Schema --> Tool[\"Tool Calling Runtime\"]\n    Tool --> Loop[\"Agent Loop\"]\n    Loop --> Plan[\"Planning / Reflection\"]\n    Schema -.校验失败.-> Retry[\"有限重试\"]\n    Tool -.高风险动作.-> Approval[\"人工审批\"]\n    Plan -.未达目标.-> Loop\n",
+    "source_asset": "source/index-de0531f53dac.mmd",
+    "svg_path": "svg/index-de0531f53dac.svg",
+    "png_path": "png/index-de0531f53dac.png"
+  },
+  {
     "source_path": "docs/part-02-agent-core/ch06-prompt-engineering.md",
     "index": 1,
+    "semantic_id": "ch06-prompt-engineering-diagram-1",
     "title": "第6章：Prompt Engineering 与 Context Engineering 图 1",
     "alt": "第6章：Prompt Engineering 与 Context Engineering 图 1",
     "diagram_id": "ch06-prompt-engineering-6a19ef8ef032",
@@ -79,6 +122,7 @@
   {
     "source_path": "docs/part-02-agent-core/ch07-structured-output.md",
     "index": 1,
+    "semantic_id": "ch07-structured-output-diagram-1",
     "title": "第7章：Structured Output 图 1",
     "alt": "第7章：Structured Output 图 1",
     "diagram_id": "ch07-structured-output-d7a682e36346",
@@ -90,6 +134,7 @@
   {
     "source_path": "docs/part-02-agent-core/ch07-structured-output.md",
     "index": 2,
+    "semantic_id": "ch07-structured-output-diagram-2",
     "title": "第7章：Structured Output 图 2",
     "alt": "第7章：Structured Output 图 2",
     "diagram_id": "ch07-structured-output-a40e2d0cc793",
@@ -101,6 +146,7 @@
   {
     "source_path": "docs/part-02-agent-core/ch08-tool-calling.md",
     "index": 1,
+    "semantic_id": "ch08-tool-calling-diagram-1",
     "title": "第8章：Function Calling 与 Tool Calling 图 1",
     "alt": "第8章：Function Calling 与 Tool Calling 图 1",
     "diagram_id": "ch08-tool-calling-ee9841619383",
@@ -112,6 +158,7 @@
   {
     "source_path": "docs/part-02-agent-core/ch09-agent-runtime.md",
     "index": 1,
+    "semantic_id": "ch09-agent-runtime-diagram-1",
     "title": "第9章：Agent 的基本结构 图 1",
     "alt": "第9章：Agent 的基本结构 图 1",
     "diagram_id": "ch09-agent-runtime-1baa5079688b",
@@ -123,6 +170,7 @@
   {
     "source_path": "docs/part-02-agent-core/ch10-planning-reflection.md",
     "index": 1,
+    "semantic_id": "ch10-planning-reflection-diagram-1",
     "title": "第10章：Planning、Reflection 与任务分解 图 1",
     "alt": "第10章：Planning、Reflection 与任务分解 图 1",
     "diagram_id": "ch10-planning-reflection-cd018b3c84a4",
@@ -132,8 +180,21 @@
     "png_path": "png/ch10-planning-reflection-cd018b3c84a4.png"
   },
   {
+    "source_path": "docs/part-03-rag-and-memory/index.md",
+    "index": 1,
+    "semantic_id": "external-context-and-state-map",
+    "title": "外部上下文与持久状态地图",
+    "alt": "Agent Runtime 通过 MCP 连接能力，通过 RAG 检索证据，通过 Memory 保留状态并使用向量数据库",
+    "diagram_id": "index-51d5bfd6addd",
+    "source": "%% id: external-context-and-state-map\n%% title: 外部上下文与持久状态地图\n%% alt: Agent Runtime 通过 MCP 连接能力，通过 RAG 检索证据，通过 Memory 保留状态并使用向量数据库\nflowchart TB\n    Agent[\"Agent Runtime\"] --> MCP[\"MCP<br/>发现并调用能力\"]\n    Agent --> RAG[\"RAG<br/>按问题获取证据\"]\n    Agent --> Memory[\"Memory<br/>跨步骤与会话保留信息\"]\n    MCP --> Systems[\"文件 / 数据库 / 外部服务\"]\n    RAG --> Vector[\"向量库与关键词索引\"]\n    Memory --> Store[\"会话库 / Memory Store\"]\n    Memory -.检索式记忆.-> Vector\n",
+    "source_asset": "source/index-51d5bfd6addd.mmd",
+    "svg_path": "svg/index-51d5bfd6addd.svg",
+    "png_path": "png/index-51d5bfd6addd.png"
+  },
+  {
     "source_path": "docs/part-03-rag-and-memory/ch11-mcp.md",
     "index": 1,
+    "semantic_id": "ch11-mcp-diagram-1",
     "title": "第11章：MCP 基础 图 1",
     "alt": "第11章：MCP 基础 图 1",
     "diagram_id": "ch11-mcp-2048f21936bc",
@@ -145,6 +206,7 @@
   {
     "source_path": "docs/part-03-rag-and-memory/ch11-mcp.md",
     "index": 2,
+    "semantic_id": "ch11-mcp-diagram-2",
     "title": "第11章：MCP 基础 图 2",
     "alt": "第11章：MCP 基础 图 2",
     "diagram_id": "ch11-mcp-be25def473ed",
@@ -156,6 +218,7 @@
   {
     "source_path": "docs/part-03-rag-and-memory/ch12-mcp-server.md",
     "index": 1,
+    "semantic_id": "ch12-mcp-server-diagram-1",
     "title": "第12章：MCP Server 实战 图 1",
     "alt": "第12章：MCP Server 实战 图 1",
     "diagram_id": "ch12-mcp-server-345400e58113",
@@ -167,6 +230,7 @@
   {
     "source_path": "docs/part-03-rag-and-memory/ch13-rag.md",
     "index": 1,
+    "semantic_id": "ch13-rag-diagram-1",
     "title": "第13章：RAG 基础 图 1",
     "alt": "第13章：RAG 基础 图 1",
     "diagram_id": "ch13-rag-31bf0c9dc0a7",
@@ -178,6 +242,7 @@
   {
     "source_path": "docs/part-03-rag-and-memory/ch13-rag.md",
     "index": 2,
+    "semantic_id": "ch13-rag-diagram-2",
     "title": "第13章：RAG 基础 图 2",
     "alt": "第13章：RAG 基础 图 2",
     "diagram_id": "ch13-rag-9bff8960dfe4",
@@ -189,6 +254,7 @@
   {
     "source_path": "docs/part-03-rag-and-memory/ch14-advanced-rag.md",
     "index": 1,
+    "semantic_id": "ch14-advanced-rag-diagram-1",
     "title": "第14章：RAG 高级技术 图 1",
     "alt": "第14章：RAG 高级技术 图 1",
     "diagram_id": "ch14-advanced-rag-2e177a9d8c02",
@@ -200,6 +266,7 @@
   {
     "source_path": "docs/part-03-rag-and-memory/ch15-memory.md",
     "index": 1,
+    "semantic_id": "ch15-memory-diagram-1",
     "title": "第15章：Memory 图 1",
     "alt": "第15章：Memory 图 1",
     "diagram_id": "ch15-memory-ce6fdd047da7",
@@ -211,6 +278,7 @@
   {
     "source_path": "docs/part-03-rag-and-memory/ch16-vector-databases.md",
     "index": 1,
+    "semantic_id": "ch16-vector-databases-diagram-1",
     "title": "第16章：向量数据库 图 1",
     "alt": "第16章：向量数据库 图 1",
     "diagram_id": "ch16-vector-databases-5f35165d8c55",
@@ -222,6 +290,7 @@
   {
     "source_path": "docs/part-03-rag-and-memory/ch16-vector-databases.md",
     "index": 2,
+    "semantic_id": "ch16-vector-databases-diagram-2",
     "title": "第16章：向量数据库 图 2",
     "alt": "第16章：向量数据库 图 2",
     "diagram_id": "ch16-vector-databases-4faab6526048",
@@ -231,8 +300,21 @@
     "png_path": "png/ch16-vector-databases-4faab6526048.png"
   },
   {
+    "source_path": "docs/part-04-frameworks/index.md",
+    "index": 1,
+    "semantic_id": "agent-framework-abstraction-layers",
+    "title": "Agent 框架抽象层与责任边界",
+    "alt": "原生模型 API 之上依次增加类型化运行时、图工作流、检索组合和多 Agent 协作抽象",
+    "diagram_id": "index-67dd243d6d86",
+    "source": "%% id: agent-framework-abstraction-layers\n%% title: Agent 框架抽象层与责任边界\n%% alt: 原生模型 API 之上依次增加类型化运行时、图工作流、检索组合和多 Agent 协作抽象\nflowchart TB\n    Multi[\"多 Agent 协作<br/>CrewAI / AutoGen / SK\"]\n    Workflow[\"状态图工作流<br/>LangGraph\"]\n    Data[\"检索与数据组合<br/>LangChain / LlamaIndex\"]\n    Typed[\"类型化 Agent Runtime<br/>Agents SDK / PydanticAI\"]\n    Native[\"原生模型 API / Tool Calling\"]\n    Native --> Typed --> Workflow --> Multi\n    Native --> Data --> Workflow\n",
+    "source_asset": "source/index-67dd243d6d86.mmd",
+    "svg_path": "svg/index-67dd243d6d86.svg",
+    "png_path": "png/index-67dd243d6d86.png"
+  },
+  {
     "source_path": "docs/part-04-frameworks/ch17-native-api.md",
     "index": 1,
+    "semantic_id": "ch17-native-api-diagram-1",
     "title": "第17章：原生 API 构建 Agent 图 1",
     "alt": "第17章：原生 API 构建 Agent 图 1",
     "diagram_id": "ch17-native-api-c39afc3dc471",
@@ -244,6 +326,7 @@
   {
     "source_path": "docs/part-04-frameworks/ch17-native-api.md",
     "index": 2,
+    "semantic_id": "ch17-native-api-diagram-2",
     "title": "第17章：原生 API 构建 Agent 图 2",
     "alt": "第17章：原生 API 构建 Agent 图 2",
     "diagram_id": "ch17-native-api-799468d74230",
@@ -255,6 +338,7 @@
   {
     "source_path": "docs/part-04-frameworks/ch18-openai-agents-sdk.md",
     "index": 1,
+    "semantic_id": "ch18-openai-agents-sdk-diagram-1",
     "title": "第18章：OpenAI Agents SDK 图 1",
     "alt": "第18章：OpenAI Agents SDK 图 1",
     "diagram_id": "ch18-openai-agents-sdk-e56678065423",
@@ -266,6 +350,7 @@
   {
     "source_path": "docs/part-04-frameworks/ch18-openai-agents-sdk.md",
     "index": 2,
+    "semantic_id": "ch18-openai-agents-sdk-diagram-2",
     "title": "第18章：OpenAI Agents SDK 图 2",
     "alt": "第18章：OpenAI Agents SDK 图 2",
     "diagram_id": "ch18-openai-agents-sdk-1026db4f79a4",
@@ -277,6 +362,7 @@
   {
     "source_path": "docs/part-04-frameworks/ch19-pydanticai.md",
     "index": 1,
+    "semantic_id": "ch19-pydanticai-diagram-1",
     "title": "第19章：PydanticAI 图 1",
     "alt": "第19章：PydanticAI 图 1",
     "diagram_id": "ch19-pydanticai-d905ff3f72c2",
@@ -288,6 +374,7 @@
   {
     "source_path": "docs/part-04-frameworks/ch19-pydanticai.md",
     "index": 2,
+    "semantic_id": "ch19-pydanticai-diagram-2",
     "title": "第19章：PydanticAI 图 2",
     "alt": "第19章：PydanticAI 图 2",
     "diagram_id": "ch19-pydanticai-05dd775c6651",
@@ -299,6 +386,7 @@
   {
     "source_path": "docs/part-04-frameworks/ch20-langgraph.md",
     "index": 1,
+    "semantic_id": "ch20-langgraph-diagram-1",
     "title": "第20章：LangGraph 图 1",
     "alt": "第20章：LangGraph 图 1",
     "diagram_id": "ch20-langgraph-a565446e9262",
@@ -310,6 +398,7 @@
   {
     "source_path": "docs/part-04-frameworks/ch20-langgraph.md",
     "index": 2,
+    "semantic_id": "ch20-langgraph-diagram-2",
     "title": "第20章：LangGraph 图 2",
     "alt": "第20章：LangGraph 图 2",
     "diagram_id": "ch20-langgraph-bc102ae10469",
@@ -321,6 +410,7 @@
   {
     "source_path": "docs/part-04-frameworks/ch21-langchain-llamaindex.md",
     "index": 1,
+    "semantic_id": "ch21-langchain-llamaindex-diagram-1",
     "title": "第21章：LangChain 与 LlamaIndex 图 1",
     "alt": "第21章：LangChain 与 LlamaIndex 图 1",
     "diagram_id": "ch21-langchain-llamaindex-de4a9ebe7a45",
@@ -332,6 +422,7 @@
   {
     "source_path": "docs/part-04-frameworks/ch21-langchain-llamaindex.md",
     "index": 2,
+    "semantic_id": "ch21-langchain-llamaindex-diagram-2",
     "title": "第21章：LangChain 与 LlamaIndex 图 2",
     "alt": "第21章：LangChain 与 LlamaIndex 图 2",
     "diagram_id": "ch21-langchain-llamaindex-bad4c3635b5e",
@@ -343,6 +434,7 @@
   {
     "source_path": "docs/part-04-frameworks/ch22-multi-agent-frameworks.md",
     "index": 1,
+    "semantic_id": "ch22-multi-agent-frameworks-diagram-1",
     "title": "第22章：CrewAI、AutoGen 与其他 Multi-Agent 框架 图 1",
     "alt": "第22章：CrewAI、AutoGen 与其他 Multi-Agent 框架 图 1",
     "diagram_id": "ch22-multi-agent-frameworks-73bae4e482e9",
@@ -354,6 +446,7 @@
   {
     "source_path": "docs/part-04-frameworks/ch22-multi-agent-frameworks.md",
     "index": 2,
+    "semantic_id": "ch22-multi-agent-frameworks-diagram-2",
     "title": "第22章：CrewAI、AutoGen 与其他 Multi-Agent 框架 图 2",
     "alt": "第22章：CrewAI、AutoGen 与其他 Multi-Agent 框架 图 2",
     "diagram_id": "ch22-multi-agent-frameworks-35fb60f4350f",
@@ -363,8 +456,21 @@
     "png_path": "png/ch22-multi-agent-frameworks-35fb60f4350f.png"
   },
   {
+    "source_path": "docs/part-05-engineering/index.md",
+    "index": 1,
+    "semantic_id": "agent-production-engineering-loop",
+    "title": "Agent 生产工程闭环",
+    "alt": "Agent 服务依赖数据和任务基础设施，运行信号进入观测与评估，再反馈安全成本和发布策略",
+    "diagram_id": "index-d38305e9d89c",
+    "source": "%% id: agent-production-engineering-loop\n%% title: Agent 生产工程闭环\n%% alt: Agent 服务依赖数据和任务基础设施，运行信号进入观测与评估，再反馈安全成本和发布策略\nflowchart LR\n    Service[\"FastAPI 服务\"] --> Data[\"PostgreSQL / Redis / pgvector\"]\n    Data --> Jobs[\"异步任务与 Checkpoint\"]\n    Jobs --> Deploy[\"容器与 CI/CD\"]\n    Deploy --> Observe[\"Log / Metric / Trace\"]\n    Observe --> Eval[\"Evaluation / Regression\"]\n    Eval --> Guard[\"安全与 Guardrails\"]\n    Guard --> Budget[\"成本与性能预算\"]\n    Budget -.路由与配置反馈.-> Service\n",
+    "source_asset": "source/index-d38305e9d89c.mmd",
+    "svg_path": "svg/index-d38305e9d89c.svg",
+    "png_path": "png/index-d38305e9d89c.png"
+  },
+  {
     "source_path": "docs/part-05-engineering/ch23-python-engineering.md",
     "index": 1,
+    "semantic_id": "ch23-python-engineering-diagram-1",
     "title": "第23章：Python Agent 工程基础 图 1",
     "alt": "第23章：Python Agent 工程基础 图 1",
     "diagram_id": "ch23-python-engineering-3fd7e099b602",
@@ -376,6 +482,7 @@
   {
     "source_path": "docs/part-05-engineering/ch24-fastapi.md",
     "index": 1,
+    "semantic_id": "ch24-fastapi-diagram-1",
     "title": "第24章：FastAPI 服务化 图 1",
     "alt": "第24章：FastAPI 服务化 图 1",
     "diagram_id": "ch24-fastapi-b9aa25d6435f",
@@ -387,6 +494,7 @@
   {
     "source_path": "docs/part-05-engineering/ch24-fastapi.md",
     "index": 2,
+    "semantic_id": "ch24-fastapi-diagram-2",
     "title": "第24章：FastAPI 服务化 图 2",
     "alt": "第24章：FastAPI 服务化 图 2",
     "diagram_id": "ch24-fastapi-bb4bd6054568",
@@ -398,6 +506,7 @@
   {
     "source_path": "docs/part-05-engineering/ch25-storage.md",
     "index": 1,
+    "semantic_id": "ch25-storage-diagram-1",
     "title": "第25章：数据存储 图 1",
     "alt": "第25章：数据存储 图 1",
     "diagram_id": "ch25-storage-1c5714156485",
@@ -409,6 +518,7 @@
   {
     "source_path": "docs/part-05-engineering/ch25-storage.md",
     "index": 2,
+    "semantic_id": "ch25-storage-diagram-2",
     "title": "第25章：数据存储 图 2",
     "alt": "第25章：数据存储 图 2",
     "diagram_id": "ch25-storage-322b513971ae",
@@ -420,6 +530,7 @@
   {
     "source_path": "docs/part-05-engineering/ch26-docker-deployment.md",
     "index": 1,
+    "semantic_id": "ch26-docker-deployment-diagram-1",
     "title": "第26章：Docker 与部署 图 1",
     "alt": "第26章：Docker 与部署 图 1",
     "diagram_id": "ch26-docker-deployment-6773e4dc5340",
@@ -431,6 +542,7 @@
   {
     "source_path": "docs/part-05-engineering/ch27-job-queues.md",
     "index": 1,
+    "semantic_id": "ch27-job-queues-diagram-1",
     "title": "第27章：异步任务与工作队列 图 1",
     "alt": "第27章：异步任务与工作队列 图 1",
     "diagram_id": "ch27-job-queues-8444a5d8ee33",
@@ -442,6 +554,7 @@
   {
     "source_path": "docs/part-05-engineering/ch27-job-queues.md",
     "index": 2,
+    "semantic_id": "ch27-job-queues-diagram-2",
     "title": "第27章：异步任务与工作队列 图 2",
     "alt": "第27章：异步任务与工作队列 图 2",
     "diagram_id": "ch27-job-queues-8a6d8b3b5162",
@@ -453,6 +566,7 @@
   {
     "source_path": "docs/part-05-engineering/ch28-observability.md",
     "index": 1,
+    "semantic_id": "ch28-observability-diagram-1",
     "title": "第28章：Observability 图 1",
     "alt": "第28章：Observability 图 1",
     "diagram_id": "ch28-observability-783ae29a56a2",
@@ -464,6 +578,7 @@
   {
     "source_path": "docs/part-05-engineering/ch28-observability.md",
     "index": 2,
+    "semantic_id": "ch28-observability-diagram-2",
     "title": "第28章：Observability 图 2",
     "alt": "第28章：Observability 图 2",
     "diagram_id": "ch28-observability-f9da0e21f4cd",
@@ -475,6 +590,7 @@
   {
     "source_path": "docs/part-05-engineering/ch28-observability.md",
     "index": 3,
+    "semantic_id": "ch28-observability-diagram-3",
     "title": "第28章：Observability 图 3",
     "alt": "第28章：Observability 图 3",
     "diagram_id": "ch28-observability-631ac8d742a0",
@@ -486,6 +602,7 @@
   {
     "source_path": "docs/part-05-engineering/ch29-evaluation.md",
     "index": 1,
+    "semantic_id": "ch29-evaluation-diagram-1",
     "title": "第29章：Agent Evaluation 图 1",
     "alt": "第29章：Agent Evaluation 图 1",
     "diagram_id": "ch29-evaluation-aacdae7b7b4c",
@@ -497,6 +614,7 @@
   {
     "source_path": "docs/part-05-engineering/ch29-evaluation.md",
     "index": 2,
+    "semantic_id": "ch29-evaluation-diagram-2",
     "title": "第29章：Agent Evaluation 图 2",
     "alt": "第29章：Agent Evaluation 图 2",
     "diagram_id": "ch29-evaluation-8ba681c40454",
@@ -508,6 +626,7 @@
   {
     "source_path": "docs/part-05-engineering/ch29-evaluation.md",
     "index": 3,
+    "semantic_id": "ch29-evaluation-diagram-3",
     "title": "第29章：Agent Evaluation 图 3",
     "alt": "第29章：Agent Evaluation 图 3",
     "diagram_id": "ch29-evaluation-bf24065f0711",
@@ -519,6 +638,7 @@
   {
     "source_path": "docs/part-05-engineering/ch30-security.md",
     "index": 1,
+    "semantic_id": "ch30-security-diagram-1",
     "title": "第30章：安全与 Guardrails 图 1",
     "alt": "第30章：安全与 Guardrails 图 1",
     "diagram_id": "ch30-security-6a867638fe48",
@@ -530,6 +650,7 @@
   {
     "source_path": "docs/part-05-engineering/ch30-security.md",
     "index": 2,
+    "semantic_id": "ch30-security-diagram-2",
     "title": "第30章：安全与 Guardrails 图 2",
     "alt": "第30章：安全与 Guardrails 图 2",
     "diagram_id": "ch30-security-87e7e4437551",
@@ -541,6 +662,7 @@
   {
     "source_path": "docs/part-05-engineering/ch31-cost-performance.md",
     "index": 1,
+    "semantic_id": "ch31-cost-performance-diagram-1",
     "title": "第31章：成本与性能优化 图 1",
     "alt": "第31章：成本与性能优化 图 1",
     "diagram_id": "ch31-cost-performance-5358cb080d98",
@@ -552,6 +674,7 @@
   {
     "source_path": "docs/part-05-engineering/ch31-cost-performance.md",
     "index": 2,
+    "semantic_id": "ch31-cost-performance-diagram-2",
     "title": "第31章：成本与性能优化 图 2",
     "alt": "第31章：成本与性能优化 图 2",
     "diagram_id": "ch31-cost-performance-32bbc7e91362",
@@ -561,8 +684,21 @@
     "png_path": "png/ch31-cost-performance-32bbc7e91362.png"
   },
   {
+    "source_path": "docs/part-06-projects/index.md",
+    "index": 1,
+    "semantic_id": "ten-project-capability-progression",
+    "title": "十个项目的能力进阶路线",
+    "alt": "项目一到三建立模型工具与协议能力，项目四到七扩展知识业务和审批，项目八到十进入工作流多 Agent 与平台",
+    "diagram_id": "index-6ffa9d43fa5e",
+    "source": "%% id: ten-project-capability-progression\n%% title: 十个项目的能力进阶路线\n%% alt: 项目一到三建立模型工具与协议能力，项目四到七扩展知识业务和审批，项目八到十进入工作流多 Agent 与平台\nflowchart LR\n    P1[\"1 最小助手\"] --> P2[\"2 工具 Agent\"] --> P3[\"3 MCP Agent\"]\n    P3 --> P4[\"4 知识库\"]\n    P3 --> P5[\"5 Code Review\"]\n    P3 --> P6[\"6 自动办公\"]\n    P4 --> P7[\"7 股票研究\"]\n    P4 --> P8[\"8 研究工作流\"]\n    P5 --> P9[\"9 开发团队\"]\n    P6 --> P10[\"10 企业平台\"]\n    P8 --> P10\n    P9 --> P10\n",
+    "source_asset": "source/index-6ffa9d43fa5e.mmd",
+    "svg_path": "svg/index-6ffa9d43fa5e.svg",
+    "png_path": "png/index-6ffa9d43fa5e.png"
+  },
+  {
     "source_path": "projects/01-minimal-assistant/README.md",
     "index": 1,
+    "semantic_id": "readme-diagram-1",
     "title": "项目1：最小 AI Assistant 图 1",
     "alt": "项目1：最小 AI Assistant 图 1",
     "diagram_id": "readme-d9f58b347a1d",
@@ -574,6 +710,7 @@
   {
     "source_path": "projects/02-weather-tool-agent/README.md",
     "index": 1,
+    "semantic_id": "readme-diagram-1",
     "title": "项目2：天气与工具调用 Agent 图 1",
     "alt": "项目2：天气与工具调用 Agent 图 1",
     "diagram_id": "readme-1c7a8b7702c4",
@@ -585,6 +722,7 @@
   {
     "source_path": "projects/03-mcp-local-agent/README.md",
     "index": 1,
+    "semantic_id": "readme-diagram-1",
     "title": "项目3：MCP 本地工具 Agent 图 1",
     "alt": "项目3：MCP 本地工具 Agent 图 1",
     "diagram_id": "readme-38e4e1bc253c",
@@ -596,6 +734,7 @@
   {
     "source_path": "projects/04-knowledge-agent/README.md",
     "index": 1,
+    "semantic_id": "readme-diagram-1",
     "title": "项目4：企业知识库 Agent 图 1",
     "alt": "项目4：企业知识库 Agent 图 1",
     "diagram_id": "readme-fd4063dd6998",
@@ -607,6 +746,7 @@
   {
     "source_path": "projects/05-code-review-agent/README.md",
     "index": 1,
+    "semantic_id": "readme-diagram-1",
     "title": "项目5：代码 Review Agent 图 1",
     "alt": "项目5：代码 Review Agent 图 1",
     "diagram_id": "readme-617164aa2754",
@@ -618,6 +758,7 @@
   {
     "source_path": "projects/06-office-agent/README.md",
     "index": 1,
+    "semantic_id": "readme-diagram-1",
     "title": "项目6：自动办公 Agent 图 1",
     "alt": "项目6：自动办公 Agent 图 1",
     "diagram_id": "readme-83696dad1492",
@@ -629,6 +770,7 @@
   {
     "source_path": "projects/07-stock-research-agent/README.md",
     "index": 1,
+    "semantic_id": "readme-diagram-1",
     "title": "项目7：股票研究 Agent 图 1",
     "alt": "项目7：股票研究 Agent 图 1",
     "diagram_id": "readme-586ccf131360",
@@ -640,6 +782,7 @@
   {
     "source_path": "projects/08-research-workflow/README.md",
     "index": 1,
+    "semantic_id": "readme-diagram-1",
     "title": "项目8：LangGraph 研究工作流 Agent 图 1",
     "alt": "项目8：LangGraph 研究工作流 Agent 图 1",
     "diagram_id": "readme-6796e371dd33",
@@ -651,6 +794,7 @@
   {
     "source_path": "projects/09-multi-agent-dev-team/README.md",
     "index": 1,
+    "semantic_id": "readme-diagram-1",
     "title": "项目9：Multi-Agent 软件开发团队 图 1",
     "alt": "项目9：Multi-Agent 软件开发团队 图 1",
     "diagram_id": "readme-20946f2e9431",
@@ -662,6 +806,7 @@
   {
     "source_path": "projects/10-enterprise-platform/README.md",
     "index": 1,
+    "semantic_id": "readme-diagram-1",
     "title": "项目10：企业级 Agent 平台 图 1",
     "alt": "项目10：企业级 Agent 平台 图 1",
     "diagram_id": "readme-086e67b53b91",
@@ -671,8 +816,21 @@
     "png_path": "png/readme-086e67b53b91.png"
   },
   {
+    "source_path": "docs/part-07-advanced/index.md",
+    "index": 1,
+    "semantic_id": "advanced-agent-productization-map",
+    "title": "高级 Agent 从能力扩展到产品化的路径",
+    "alt": "Multi-Agent、Coding、Browser 和多模态能力进入统一架构，再经过产品边界与技术选型形成可维护产品",
+    "diagram_id": "index-da5ec1bb49be",
+    "source": "%% id: advanced-agent-productization-map\n%% title: 高级 Agent 从能力扩展到产品化的路径\n%% alt: Multi-Agent、Coding、Browser 和多模态能力进入统一架构，再经过产品边界与技术选型形成可维护产品\nflowchart LR\n    Multi[\"Multi-Agent 协调\"] --> Architecture[\"Agent 架构设计\"]\n    Coding[\"Agentic Coding\"] --> Architecture\n    Browser[\"Browser / Computer Use\"] --> Architecture\n    Modal[\"多模态感知\"] --> Architecture\n    Architecture --> Product[\"从 Demo 到产品\"]\n    Product --> Selection[\"技术选型与演进\"]\n    Architecture -.状态 / 权限 / 观测.-> Control[\"统一控制面\"]\n    Control --> Product\n",
+    "source_asset": "source/index-da5ec1bb49be.mmd",
+    "svg_path": "svg/index-da5ec1bb49be.svg",
+    "png_path": "png/index-da5ec1bb49be.png"
+  },
+  {
     "source_path": "docs/part-07-advanced/ch32-multi-agent-principles.md",
     "index": 1,
+    "semantic_id": "ch32-multi-agent-principles-diagram-1",
     "title": "第32章：Multi-Agent 原理 图 1",
     "alt": "第32章：Multi-Agent 原理 图 1",
     "diagram_id": "ch32-multi-agent-principles-4da888f2bf03",
@@ -684,6 +842,7 @@
   {
     "source_path": "docs/part-07-advanced/ch32-multi-agent-principles.md",
     "index": 2,
+    "semantic_id": "ch32-multi-agent-principles-diagram-2",
     "title": "第32章：Multi-Agent 原理 图 2",
     "alt": "第32章：Multi-Agent 原理 图 2",
     "diagram_id": "ch32-multi-agent-principles-555fb934139f",
@@ -695,6 +854,7 @@
   {
     "source_path": "docs/part-07-advanced/ch32-multi-agent-principles.md",
     "index": 3,
+    "semantic_id": "ch32-multi-agent-principles-diagram-3",
     "title": "第32章：Multi-Agent 原理 图 3",
     "alt": "第32章：Multi-Agent 原理 图 3",
     "diagram_id": "ch32-multi-agent-principles-20c0d2fb6860",
@@ -706,6 +866,7 @@
   {
     "source_path": "docs/part-07-advanced/ch33-agentic-coding.md",
     "index": 1,
+    "semantic_id": "ch33-agentic-coding-diagram-1",
     "title": "第33章：Agentic Coding 图 1",
     "alt": "第33章：Agentic Coding 图 1",
     "diagram_id": "ch33-agentic-coding-bc14e220e597",
@@ -717,6 +878,7 @@
   {
     "source_path": "docs/part-07-advanced/ch33-agentic-coding.md",
     "index": 2,
+    "semantic_id": "ch33-agentic-coding-diagram-2",
     "title": "第33章：Agentic Coding 图 2",
     "alt": "第33章：Agentic Coding 图 2",
     "diagram_id": "ch33-agentic-coding-38962832395c",
@@ -728,6 +890,7 @@
   {
     "source_path": "docs/part-07-advanced/ch34-browser-computer-use.md",
     "index": 1,
+    "semantic_id": "ch34-browser-computer-use-diagram-1",
     "title": "第34章：Browser Agent 与 Computer Use 图 1",
     "alt": "第34章：Browser Agent 与 Computer Use 图 1",
     "diagram_id": "ch34-browser-computer-use-c950b3ff6bbf",
@@ -739,6 +902,7 @@
   {
     "source_path": "docs/part-07-advanced/ch34-browser-computer-use.md",
     "index": 2,
+    "semantic_id": "ch34-browser-computer-use-diagram-2",
     "title": "第34章：Browser Agent 与 Computer Use 图 2",
     "alt": "第34章：Browser Agent 与 Computer Use 图 2",
     "diagram_id": "ch34-browser-computer-use-0de550fcc11e",
@@ -750,6 +914,7 @@
   {
     "source_path": "docs/part-07-advanced/ch35-multimodal.md",
     "index": 1,
+    "semantic_id": "ch35-multimodal-diagram-1",
     "title": "第35章：多模态 Agent 图 1",
     "alt": "第35章：多模态 Agent 图 1",
     "diagram_id": "ch35-multimodal-9031cb58286d",
@@ -761,6 +926,7 @@
   {
     "source_path": "docs/part-07-advanced/ch35-multimodal.md",
     "index": 2,
+    "semantic_id": "ch35-multimodal-diagram-2",
     "title": "第35章：多模态 Agent 图 2",
     "alt": "第35章：多模态 Agent 图 2",
     "diagram_id": "ch35-multimodal-07f7d9bdcdd5",
@@ -772,6 +938,7 @@
   {
     "source_path": "docs/part-07-advanced/ch36-architecture.md",
     "index": 1,
+    "semantic_id": "ch36-architecture-diagram-1",
     "title": "第36章：Agent 架构设计 图 1",
     "alt": "第36章：Agent 架构设计 图 1",
     "diagram_id": "ch36-architecture-0b6858140144",
@@ -783,6 +950,7 @@
   {
     "source_path": "docs/part-07-advanced/ch36-architecture.md",
     "index": 2,
+    "semantic_id": "ch36-architecture-diagram-2",
     "title": "第36章：Agent 架构设计 图 2",
     "alt": "第36章：Agent 架构设计 图 2",
     "diagram_id": "ch36-architecture-904a66b3d5c0",
@@ -794,6 +962,7 @@
   {
     "source_path": "docs/part-07-advanced/ch37-demo-to-product.md",
     "index": 1,
+    "semantic_id": "ch37-demo-to-product-diagram-1",
     "title": "第37章：从 Demo 到产品 图 1",
     "alt": "第37章：从 Demo 到产品 图 1",
     "diagram_id": "ch37-demo-to-product-c366ab0432ad",
@@ -805,6 +974,7 @@
   {
     "source_path": "docs/part-07-advanced/ch37-demo-to-product.md",
     "index": 2,
+    "semantic_id": "ch37-demo-to-product-diagram-2",
     "title": "第37章：从 Demo 到产品 图 2",
     "alt": "第37章：从 Demo 到产品 图 2",
     "diagram_id": "ch37-demo-to-product-6ee6888fa9aa",
@@ -816,6 +986,7 @@
   {
     "source_path": "docs/part-07-advanced/ch38-selection-guide.md",
     "index": 1,
+    "semantic_id": "ch38-selection-guide-diagram-1",
     "title": "第38章：技术选型指南 图 1",
     "alt": "第38章：技术选型指南 图 1",
     "diagram_id": "ch38-selection-guide-7a3077f60063",
@@ -827,6 +998,7 @@
   {
     "source_path": "docs/part-07-advanced/ch38-selection-guide.md",
     "index": 2,
+    "semantic_id": "ch38-selection-guide-diagram-2",
     "title": "第38章：技术选型指南 图 2",
     "alt": "第38章：技术选型指南 图 2",
     "diagram_id": "ch38-selection-guide-707d221b8fd3",
