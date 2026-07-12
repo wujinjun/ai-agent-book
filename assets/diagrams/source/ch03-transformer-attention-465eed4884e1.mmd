@@ -1,0 +1,12 @@
+%% id: qkv-attention-information-routing
+%% title: Query、Key、Value 的信息路由
+%% alt: 输入表示分别投影为 Query Key Value，Query 与 Key 形成权重，再用权重组合 Value 并进入前馈残差层
+flowchart LR
+    X["输入 Token 表示 + 位置信息"] --> Q["Query 投影"]
+    X --> K["Key 投影"]
+    X --> V["Value 投影"]
+    Q --> Score["相关性与归一化"]
+    K --> Score
+    Score --> Mix["加权组合"]
+    V --> Mix
+    Mix --> FFN["前馈网络、残差与归一化"]

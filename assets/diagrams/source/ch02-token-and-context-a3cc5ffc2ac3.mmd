@@ -1,0 +1,13 @@
+%% id: context-retention-strategy-decision
+%% title: 截断、滑动窗口、摘要与检索的选择树
+%% alt: 内容先判断是否为安全规则当前问题或结构化事实，再按近期连续性和可重建性选择固定保留窗口摘要或检索
+flowchart TB
+    Item["待处理上下文"] --> Pinned{"安全规则 / 当前问题 / Schema？"}
+    Pinned -->|是| Keep["固定保留并预留预算"]
+    Pinned -->|否| Fact{"订单号 / 审批状态等精确事实？"}
+    Fact -->|是| Structured["写入结构化存储并按需读取"]
+    Fact -->|否| Recent{"近期连续对话？"}
+    Recent -->|是| Window["滑动窗口"]
+    Recent -->|否| Rebuild{"可以从原始来源重建？"}
+    Rebuild -->|是| Retrieve["保存引用并按需检索"]
+    Rebuild -->|否| Summary["带版本摘要 + 保留原始记录"]

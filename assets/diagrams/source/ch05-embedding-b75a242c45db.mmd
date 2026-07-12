@@ -1,0 +1,13 @@
+%% id: sparse-dense-hybrid-retrieval
+%% title: 稀疏、稠密与混合检索的候选融合
+%% alt: 查询同时进入关键词和向量检索，两路候选经过归一化融合权限过滤和重排后返回相关片段
+flowchart LR
+    Query["查询"] --> Sparse["稀疏检索<br/>关键词 / 编号"]
+    Query --> Dense["稠密检索<br/>语义向量"]
+    Sparse --> Fuse["分数归一化与融合"]
+    Dense --> Fuse
+    Fuse --> ACL["权限 / Metadata 过滤"]
+    ACL --> Rerank["Reranker"]
+    Rerank --> Top["Top-k 片段 + 来源"]
+    Eval["真实查询评估集"] -.调融合权重.-> Fuse
+    Eval -.调候选深度.-> Rerank

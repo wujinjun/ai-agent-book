@@ -1,0 +1,11 @@
+%% id: autoregressive-sampling-loop
+%% title: 自回归采样与停止循环
+%% alt: 当前上下文产生概率分布，经采样过滤选择 Token 并追加，循环直到结束标记停止序列或长度上限
+flowchart LR
+    C["当前上下文"] --> P["下一个 Token 概率"]
+    P --> Filter["Temperature / Top-p / Top-k"]
+    Filter --> Pick["选择 Token"]
+    Pick --> Append["追加到上下文"]
+    Append --> Stop{"结束、停止序列或长度上限？"}
+    Stop -->|否| P
+    Stop -->|是| Output["完整输出"]

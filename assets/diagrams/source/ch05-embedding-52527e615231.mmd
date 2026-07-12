@@ -1,0 +1,13 @@
+%% id: embedding-semantic-search-pipeline
+%% title: 文档与查询的 Embedding 检索链路
+%% alt: 文档解析切分并生成向量写入索引，查询生成向量检索候选，再经权限过滤重排形成带来源上下文
+flowchart LR
+    Docs["文档"] --> Parse["解析与清洗"]
+    Parse --> Chunk["切分 + Metadata"]
+    Chunk --> Embed["Embedding"]
+    Embed --> Index["向量索引"]
+    Query["查询"] --> QEmbed["查询向量"]
+    QEmbed --> Index
+    Index --> Candidates["候选片段"]
+    Candidates --> Rerank["重排与权限过滤"]
+    Rerank --> Context["带来源的上下文"]

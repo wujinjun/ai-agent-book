@@ -1,0 +1,12 @@
+%% id: token-cost-latency-density-tradeoff
+%% title: Token 数量、成本、延迟与信息密度的权衡
+%% alt: Token 增加通常推高计算成本和延迟，但有效信息密度可能因噪声和重复材料下降
+flowchart LR
+    More["追加更多 Token"] --> Compute["计算与传输增加"]
+    Compute --> Cost["请求成本上升"]
+    Compute --> Latency["首 Token / 总延迟上升"]
+    More --> Noise["重复与无关材料增加"]
+    Noise --> Density["有效信息密度下降"]
+    Density --> Quality["关键证据更难被利用"]
+    Select["清洗 / 检索 / 排序"] --> Density
+    Budget["固定预算与输出预留"] --> Cost

@@ -1,0 +1,17 @@
+%% id: structured-output-validation-retry
+%% title: 结构化输出校验与有限重试状态
+%% alt: 模型候选先解析 JSON，再验证 Schema 和业务规则，失败时携带错误有限重试，超过预算后终止
+stateDiagram-v2
+    [*] --> Generating
+    Generating --> Parsing
+    Parsing --> SchemaValidation: JSON 可解析
+    Parsing --> Retry: 语法错误
+    SchemaValidation --> BusinessValidation: 类型与字段通过
+    SchemaValidation --> Retry: Schema 错误
+    BusinessValidation --> Accepted: 业务约束通过
+    BusinessValidation --> Rejected: 权限或事实规则失败
+    Retry --> Generating: 未超过次数和时限
+    Retry --> Failed: 预算耗尽
+    Accepted --> [*]
+    Rejected --> [*]
+    Failed --> [*]

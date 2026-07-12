@@ -50,11 +50,51 @@ files:
     requirements:
       - {id: advanced-agent-productization-map, section: "第七篇：高级主题", relation: flow, disposition: diagram}
 
-  docs/part-01-foundations/ch01-what-is-llm.md: {group: part-01, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-01-foundations/ch02-token-and-context.md: {group: part-01, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-01-foundations/ch03-transformer-attention.md: {group: part-01, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-01-foundations/ch04-generation.md: {group: part-01, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-01-foundations/ch05-embedding.md: {group: part-01, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-01-foundations/ch01-what-is-llm.md:
+    group: part-01
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: ai-ml-dl-llm-hierarchy, section: "1. AI、机器学习与深度学习的关系", relation: hierarchy, disposition: diagram}
+      - {id: autoregressive-token-generation-loop, section: "6. 下一个 Token 预测", relation: flow, disposition: diagram}
+      - {id: llm-training-alignment-runtime-lifecycle, section: "9. 预训练、微调和对齐", relation: flow, disposition: diagram}
+      - {id: llm-product-agent-system-map, section: "12. 完整技术关系图", relation: concept, disposition: diagram}
+  docs/part-01-foundations/ch02-token-and-context.md:
+    group: part-01
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: tokenizer-context-budget-pipeline, section: 核心概念与原理, relation: flow, disposition: diagram}
+      - {id: context-window-memory-boundary, section: 核心概念与原理, relation: architecture, disposition: diagram}
+      - {id: token-cost-latency-density-tradeoff, section: "成本、延迟与信息密度", relation: concept, disposition: diagram}
+      - {id: context-retention-strategy-decision, section: "截断、摘要与 Context Engineering", relation: decision, disposition: diagram}
+  docs/part-01-foundations/ch03-transformer-attention.md:
+    group: part-01
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: rnn-to-transformer-evolution, section: 从序列递归到 Attention, relation: comparison, disposition: diagram}
+      - {id: qkv-attention-information-routing, section: 从序列递归到 Attention, relation: data, disposition: diagram}
+      - {id: multi-head-parallel-views, section: 从序列递归到 Attention, relation: architecture, disposition: diagram}
+      - {id: decoder-only-prefill-decode-flow, section: "编码器、解码器与掩码", relation: flow, disposition: diagram}
+  docs/part-01-foundations/ch04-generation.md:
+    group: part-01
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: autoregressive-sampling-loop, section: 概率分布与采样, relation: flow, disposition: diagram}
+      - {id: decoding-parameter-decision-tree, section: 概率分布与采样, relation: decision, disposition: diagram}
+      - {id: structured-output-validation-retry, section: 结构化输出与推理模型, relation: state, disposition: diagram}
+      - {id: streaming-response-state-machine, section: "停止、长度与流式状态", relation: state, disposition: diagram}
+  docs/part-01-foundations/ch05-embedding.md:
+    group: part-01
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: embedding-semantic-search-pipeline, section: "表示、距离与检索", relation: data, disposition: diagram}
+      - {id: sparse-dense-hybrid-retrieval, section: "表示、距离与检索", relation: architecture, disposition: diagram}
+      - {id: embedding-index-version-lifecycle, section: 切分与模型选择, relation: flow, disposition: diagram}
+      - {id: similarity-to-evidence-validation-boundary, section: 检索评估与调试, relation: decision, disposition: diagram}
 
   docs/part-02-agent-core/ch06-prompt-engineering.md: {group: part-02, minimum_diagrams: 4, review_status: pending, requirements: []}
   docs/part-02-agent-core/ch07-structured-output.md: {group: part-02, minimum_diagrams: 4, review_status: pending, requirements: []}

@@ -1,0 +1,13 @@
+%% id: similarity-to-evidence-validation-boundary
+%% title: 从向量相似度到可用证据的验证边界
+%% alt: 高相似候选还需验证权限版本时间和主张支持关系，全部通过后才成为可引用证据，否则拒绝或继续检索
+flowchart LR
+    Score["高向量相似度"] --> Relevant{"语义确实相关？"}
+    Relevant -->|否| Drop["丢弃候选"]
+    Relevant -->|是| Access{"租户与权限允许？"}
+    Access -->|否| Deny["拒绝且不进入日志正文"]
+    Access -->|是| Fresh{"版本与时间有效？"}
+    Fresh -->|否| Refresh["更新索引或标记过期"]
+    Fresh -->|是| Support{"支持当前事实主张？"}
+    Support -->|否| Search["继续检索 / 无答案"]
+    Support -->|是| Evidence["可引用证据"]

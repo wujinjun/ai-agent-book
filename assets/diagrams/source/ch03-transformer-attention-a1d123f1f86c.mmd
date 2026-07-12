@@ -1,0 +1,12 @@
+%% id: multi-head-parallel-views
+%% title: Multi-Head Attention 的并行视角
+%% alt: 同一输入进入多个独立注意力头，每个头学习不同投影与关系，输出拼接后再统一投影
+flowchart LR
+    X["同一输入表示"] --> H1["Head 1<br/>一组 Q/K/V 投影"]
+    X --> H2["Head 2<br/>另一组 Q/K/V 投影"]
+    X --> HN["Head N<br/>更多关系视角"]
+    H1 --> Cat["Concat"]
+    H2 --> Cat
+    HN --> Cat
+    Cat --> O["输出投影"]
+    O --> Residual["残差 + 归一化"]
