@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import html
 import json
 import re
 from dataclasses import asdict, dataclass
@@ -19,6 +20,7 @@ HEADING = re.compile(r"^#\s+(?P<title>.+?)\s*$", re.MULTILINE)
 class DiagramRecord:
     source_path: str
     index: int
+    semantic_id: str
     title: str
     alt: str
     diagram_id: str
@@ -48,15 +50,19 @@ def extract_diagrams(source_path: Path, markdown: str) -> list[DiagramRecord]:
     records: list[DiagramRecord] = []
     for index, match in enumerate(MERMAID_FENCE.finditer(markdown), start=1):
         normalized = normalize_mermaid(match.group("source"))
+        metadata = parse_mermaid_metadata(normalized)
         digest = hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:12]
         diagram_id = f"{slug}-{digest}"
-        title = f"{chapter_title} 图 {index}"
+        title = metadata.get("title", f"{chapter_title} 图 {index}")
+        alt = metadata.get("alt", title)
+        semantic_id = metadata.get("id", f"{slug}-diagram-{index}")
         records.append(
             DiagramRecord(
                 source_path=source_path.as_posix(),
                 index=index,
+                semantic_id=semantic_id,
                 title=title,
-                alt=title,
+                alt=alt,
                 diagram_id=diagram_id,
                 source=normalized,
                 source_asset=f"source/{diagram_id}.mmd",
@@ -65,6 +71,19 @@ def extract_diagrams(source_path: Path, markdown: str) -> list[DiagramRecord]:
             )
         )
     return records
+
+
+def parse_mermaid_metadata(source: str) -> dict[str, str]:
+    """Read leading ``%% key: value`` metadata comments from Mermaid source."""
+
+    metadata: dict[str, str] = {}
+    for line in source.splitlines():
+        match = re.match(r"^%%\s*(id|title|alt):\s*(.+?)\s*$", line)
+        if match:
+            metadata[match.group(1)] = match.group(2)
+        elif line.strip() and not line.lstrip().startswith("%%"):
+            break
+    return metadata
 
 
 def replace_mermaid(markdown: str, diagrams: list[DiagramRecord], asset_root: Path) -> str:
@@ -80,9 +99,9 @@ def replace_mermaid(markdown: str, diagrams: list[DiagramRecord], asset_root: Pa
             '<figure class="book-diagram">\n'
             "<picture>\n"
             f'<source type="image/svg+xml" srcset="{svg}">\n'
-            f'<img src="{png}" alt="{diagram.alt}" loading="lazy">\n'
+            f'<img src="{png}" alt="{html.escape(diagram.alt, quote=True)}" loading="lazy">\n'
             "</picture>\n"
-            f"<figcaption>{diagram.title}</figcaption>\n"
+            f"<figcaption>{html.escape(diagram.title)}</figcaption>\n"
             "</figure>"
         )
 

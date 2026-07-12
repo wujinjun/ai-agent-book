@@ -45,3 +45,22 @@ def test_manifest_records_portable_assets(tmp_path: Path) -> None:
     assert payload[0]["source_path"] == "docs/runtime.md"
     assert payload[0]["svg_path"].endswith(".svg")
     assert payload[0]["png_path"].endswith(".png")
+
+
+def test_semantic_metadata_controls_caption_alt_and_review_id() -> None:
+    source = """# Runtime
+
+```mermaid
+%% id: agent-runtime-state-loop
+%% title: Agent Runtime 状态循环
+%% alt: 请求进入规划和工具执行，失败后有限重试，成功后结束
+stateDiagram-v2
+    [*] --> Planning
+```
+"""
+
+    diagram = extract_diagrams(Path("docs/runtime.md"), source)[0]
+
+    assert diagram.semantic_id == "agent-runtime-state-loop"
+    assert diagram.title == "Agent Runtime 状态循环"
+    assert diagram.alt.startswith("请求进入规划")

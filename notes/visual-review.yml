@@ -1,0 +1,66 @@
+version: 1
+policy: docs/superpowers/specs/2026-07-12-full-book-visual-review-design.md
+files:
+  docs/index.md: {group: guides, minimum_diagrams: 1, review_status: pending, requirements: []}
+  docs/part-01-foundations/index.md: {group: guides, minimum_diagrams: 1, review_status: pending, requirements: []}
+  docs/part-02-agent-core/index.md: {group: guides, minimum_diagrams: 1, review_status: pending, requirements: []}
+  docs/part-03-rag-and-memory/index.md: {group: guides, minimum_diagrams: 1, review_status: pending, requirements: []}
+  docs/part-04-frameworks/index.md: {group: guides, minimum_diagrams: 1, review_status: pending, requirements: []}
+  docs/part-05-engineering/index.md: {group: guides, minimum_diagrams: 1, review_status: pending, requirements: []}
+  docs/part-06-projects/index.md: {group: guides, minimum_diagrams: 1, review_status: pending, requirements: []}
+  docs/part-07-advanced/index.md: {group: guides, minimum_diagrams: 1, review_status: pending, requirements: []}
+
+  docs/part-01-foundations/ch01-what-is-llm.md: {group: part-01, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-01-foundations/ch02-token-and-context.md: {group: part-01, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-01-foundations/ch03-transformer-attention.md: {group: part-01, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-01-foundations/ch04-generation.md: {group: part-01, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-01-foundations/ch05-embedding.md: {group: part-01, minimum_diagrams: 4, review_status: pending, requirements: []}
+
+  docs/part-02-agent-core/ch06-prompt-engineering.md: {group: part-02, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-02-agent-core/ch07-structured-output.md: {group: part-02, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-02-agent-core/ch08-tool-calling.md: {group: part-02, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-02-agent-core/ch09-agent-runtime.md: {group: part-02, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-02-agent-core/ch10-planning-reflection.md: {group: part-02, minimum_diagrams: 4, review_status: pending, requirements: []}
+
+  docs/part-03-rag-and-memory/ch11-mcp.md: {group: part-03, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-03-rag-and-memory/ch12-mcp-server.md: {group: part-03, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-03-rag-and-memory/ch13-rag.md: {group: part-03, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-03-rag-and-memory/ch14-advanced-rag.md: {group: part-03, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-03-rag-and-memory/ch15-memory.md: {group: part-03, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-03-rag-and-memory/ch16-vector-databases.md: {group: part-03, minimum_diagrams: 4, review_status: pending, requirements: []}
+
+  docs/part-04-frameworks/ch17-native-api.md: {group: part-04, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-04-frameworks/ch18-openai-agents-sdk.md: {group: part-04, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-04-frameworks/ch19-pydanticai.md: {group: part-04, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-04-frameworks/ch20-langgraph.md: {group: part-04, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-04-frameworks/ch21-langchain-llamaindex.md: {group: part-04, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-04-frameworks/ch22-multi-agent-frameworks.md: {group: part-04, minimum_diagrams: 4, review_status: pending, requirements: []}
+
+  docs/part-05-engineering/ch23-python-engineering.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-05-engineering/ch24-fastapi.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-05-engineering/ch25-storage.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-05-engineering/ch26-docker-deployment.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-05-engineering/ch27-job-queues.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-05-engineering/ch28-observability.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-05-engineering/ch29-evaluation.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-05-engineering/ch30-security.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-05-engineering/ch31-cost-performance.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}
+
+  docs/part-07-advanced/ch32-multi-agent-principles.md: {group: part-07, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-07-advanced/ch33-agentic-coding.md: {group: part-07, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-07-advanced/ch34-browser-computer-use.md: {group: part-07, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-07-advanced/ch35-multimodal.md: {group: part-07, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-07-advanced/ch36-architecture.md: {group: part-07, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-07-advanced/ch37-demo-to-product.md: {group: part-07, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-07-advanced/ch38-selection-guide.md: {group: part-07, minimum_diagrams: 4, review_status: pending, requirements: []}
+
+  projects/01-minimal-assistant/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
+  projects/02-weather-tool-agent/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
+  projects/03-mcp-local-agent/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
+  projects/04-knowledge-agent/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
+  projects/05-code-review-agent/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
+  projects/06-office-agent/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
+  projects/07-stock-research-agent/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
+  projects/08-research-workflow/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
+  projects/09-multi-agent-dev-team/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
+  projects/10-enterprise-platform/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
