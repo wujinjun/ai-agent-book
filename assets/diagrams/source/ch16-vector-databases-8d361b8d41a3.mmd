@@ -1,0 +1,12 @@
+%% id: vector-database-selection-decision
+%% title: 向量数据库选型决策
+%% alt: 根据原型阶段、既有 PostgreSQL、事务过滤需求、数据规模和运维能力选择 FAISS Chroma pgvector 或专用托管服务
+flowchart TD
+    Need[向量检索需求] --> Prototype{本地原型或离线实验}
+    Prototype -->|是| Local[FAISS 或 Chroma]
+    Prototype -->|否| PG{已有 PostgreSQL 且需事务 JOIN RLS}
+    PG -->|是且规模可控| Pgvector[pgvector]
+    PG -->|否或超大规模| Ops{具备专用集群运维能力}
+    Ops -->|是| Dedicated[Milvus 等独立服务]
+    Ops -->|否| Managed[托管向量服务]
+    Managed --> Check[复核数据驻留费用与锁定]

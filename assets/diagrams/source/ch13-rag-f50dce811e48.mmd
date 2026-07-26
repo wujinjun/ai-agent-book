@@ -1,0 +1,11 @@
+%% id: rag-hybrid-retrieval-acl-pipeline
+%% title: 带权限过滤的混合检索链路
+%% alt: 查询经规范化和租户权限过滤后并行执行稀疏稠密检索再融合重排生成引用
+flowchart TB
+    Query --> Normalize["normalize/classify"]
+    Normalize --> ACL["tenant + ACL filter"]
+    ACL --> Sparse
+    ACL --> Dense
+    Sparse --> Fuse
+    Dense --> Fuse
+    Fuse --> Rerank --> Evidence["evidence with location/version"] --> Generate --> VerifyCitation

@@ -1,0 +1,11 @@
+%% id: memory-type-boundaries
+%% title: Agent 记忆类型与边界
+%% alt: 区分运行状态会话摘要长期偏好语义事实情景事件和受控程序性知识的存储位置
+flowchart TB
+    Agent[Agent 任务] --> Short[短期：Run State 与近期上下文]
+    Agent --> Session[会话：摘要与未完成事项]
+    Agent --> Long[长期 Memory Store]
+    Long --> Preference[用户偏好]
+    Long --> Semantic[语义事实]
+    Long --> Episode[情景事件]
+    Procedure[程序性流程] --> Config[受控配置或 Skill]

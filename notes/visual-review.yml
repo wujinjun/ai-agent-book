@@ -142,12 +142,60 @@ files:
       - {id: bounded-replanning-scope, section: 核心概念与流程图, relation: flow, disposition: diagram}
       - {id: planner-executor-reviewer-separation, section: 核心概念与流程图, relation: sequence, disposition: diagram}
 
-  docs/part-03-rag-and-memory/ch11-mcp.md: {group: part-03, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-03-rag-and-memory/ch12-mcp-server.md: {group: part-03, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-03-rag-and-memory/ch13-rag.md: {group: part-03, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-03-rag-and-memory/ch14-advanced-rag.md: {group: part-03, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-03-rag-and-memory/ch15-memory.md: {group: part-03, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-03-rag-and-memory/ch16-vector-databases.md: {group: part-03, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-03-rag-and-memory/ch11-mcp.md:
+    group: part-03
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: mcp-host-client-server-capabilities, section: 核心概念原理与架构图, relation: architecture, disposition: diagram}
+      - {id: mcp-initialization-capability-call-sequence, section: 数据层传输层与生命周期, relation: sequence, disposition: diagram}
+      - {id: mcp-transport-trust-boundaries, section: 数据层传输层与生命周期, relation: security, disposition: diagram}
+      - {id: mcp-rest-function-calling-relationship, section: 数据层传输层与生命周期, relation: architecture, disposition: diagram}
+  docs/part-03-rag-and-memory/ch12-mcp-server.md:
+    group: part-03
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: mcp-server-policy-execution-sequence, section: 核心原理与流程, relation: sequence, disposition: diagram}
+      - {id: mcp-server-layered-architecture, section: 核心原理与流程, relation: architecture, disposition: diagram}
+      - {id: mcp-server-error-taxonomy, section: 核心原理与流程, relation: decision, disposition: diagram}
+      - {id: mcp-server-test-deploy-gates, section: 核心原理与流程, relation: flow, disposition: diagram}
+  docs/part-03-rag-and-memory/ch13-rag.md:
+    group: part-03
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: rag-end-to-end-pipeline, section: 原理与架构图, relation: data, disposition: diagram}
+      - {id: rag-hybrid-retrieval-acl-pipeline, section: Chunk索引与检索, relation: architecture, disposition: diagram}
+      - {id: rag-index-version-release, section: Chunk索引与检索, relation: flow, disposition: diagram}
+      - {id: rag-failure-localization-tree, section: Chunk索引与检索, relation: decision, disposition: diagram}
+  docs/part-03-rag-and-memory/ch14-advanced-rag.md:
+    group: part-03
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: advanced-rag-adaptive-pipeline, section: 原理与流程图, relation: flow, disposition: diagram}
+      - {id: advanced-rag-technique-selection, section: 原理与流程图, relation: decision, disposition: diagram}
+      - {id: corrective-agentic-rag-control-loop, section: 原理与流程图, relation: state, disposition: diagram}
+      - {id: advanced-rag-evaluation-matrix, section: 原理与流程图, relation: hierarchy, disposition: diagram}
+  docs/part-03-rag-and-memory/ch15-memory.md:
+    group: part-03
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: memory-write-retrieve-governance-loop, section: 核心原理与架构图, relation: flow, disposition: diagram}
+      - {id: memory-type-boundaries, section: 核心原理与架构图, relation: hierarchy, disposition: diagram}
+      - {id: memory-write-gate-decision, section: 核心原理与架构图, relation: decision, disposition: diagram}
+      - {id: memory-deletion-propagation, section: 核心原理与架构图, relation: data, disposition: diagram}
+  docs/part-03-rag-and-memory/ch16-vector-databases.md:
+    group: part-03
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: vector-index-version-query-flow, section: 误区调试安全与图, relation: flow, disposition: diagram}
+      - {id: ann-exact-recall-benchmark, section: HNSW与IVF, relation: comparison, disposition: diagram}
+      - {id: vector-database-selection-decision, section: HNSW与IVF, relation: decision, disposition: diagram}
+      - {id: embedding-model-index-migration, section: HNSW与IVF, relation: flow, disposition: diagram}
 
   docs/part-04-frameworks/ch17-native-api.md: {group: part-04, minimum_diagrams: 4, review_status: pending, requirements: []}
   docs/part-04-frameworks/ch18-openai-agents-sdk.md: {group: part-04, minimum_diagrams: 4, review_status: pending, requirements: []}

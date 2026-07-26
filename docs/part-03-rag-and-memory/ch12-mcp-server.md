@@ -8,7 +8,13 @@
 学习目标是能够实现并测试一个最小示例，再把它扩展为具备策略、可观测和部署边界的完整工程。
 
 ## 核心原理与流程
+
+MCP Server 不只是协议端点，它还需要策略、领域服务和后端适配层。主时序图显示每次调用必须经过的控制点。
+
 ```mermaid
+%% id: mcp-server-policy-execution-sequence
+%% title: MCP Server 策略校验与执行时序
+%% alt: Client 调用经 Server、Policy 校验后访问 Backend 并返回结构化结果的完整时序
 sequenceDiagram
     participant C as Client
     participant S as Server
@@ -22,6 +28,55 @@ sequenceDiagram
     B-->>S: 结果
     S-->>C: 结构化响应
 ```
+
+协议成功不代表业务成功；参数、权限、超时和上游错误都需要稳定错误码并进入 Trace。
+
+```mermaid
+%% id: mcp-server-layered-architecture
+%% title: MCP Server 分层架构
+%% alt: 协议适配层依次连接策略层、领域服务和文件数据库外部服务适配器
+flowchart TB
+    Client[MCP Client] --> Protocol[协议层：消息 Schema 错误映射]
+    Protocol --> Policy[Policy：身份 scope 资源审批]
+    Policy --> Domain[领域服务：查询与动作]
+    Domain --> File[文件适配器]
+    Domain --> DB[数据库适配器]
+    Domain --> HTTP[外部 HTTP 适配器]
+    Observe[日志指标 Trace] -.贯穿.-> Protocol
+    Observe -.贯穿.-> Domain
+```
+
+分层使 SDK 或协议升级不会迫使领域逻辑重写，也让安全测试能够直接覆盖 Policy 与 Adapter 边界。
+
+```mermaid
+%% id: mcp-server-error-taxonomy
+%% title: MCP Server 错误分类与处理
+%% alt: 将协议参数策略业务上游和内部错误分别映射为拒绝、观察、有限重试或告警
+flowchart TD
+    Error[调用失败] --> Kind{错误类别}
+    Kind -->|协议或参数| Invalid[稳定错误码 不重试]
+    Kind -->|策略拒绝| Denied[拒绝 审计 不泄露细节]
+    Kind -->|业务错误| Business[结构化结果交给 Host]
+    Kind -->|上游暂时故障| Retry[按幂等性有限重试]
+    Kind -->|内部错误| Incident[通用响应 内部告警]
+```
+
+把所有异常都包装成文本会迫使模型猜测处理方式。稳定 code 与 retryable 字段让 Host 保持确定性控制。
+
+```mermaid
+%% id: mcp-server-test-deploy-gates
+%% title: MCP Server 测试与部署门禁
+%% alt: Server 从单元协议安全和负载测试进入容器加固灰度发布与线上观测的质量门禁
+flowchart LR
+    Unit[领域与 Policy 单元测试] --> Protocol[协议互操作测试]
+    Protocol --> Security[越权路径注入 SSRF 测试]
+    Security --> Load[并发取消重启测试]
+    Load --> Harden[非 root 只读文件系统 Secret]
+    Harden --> Canary[兼容 Client 灰度]
+    Canary --> Observe[指标 Trace 与回滚]
+```
+
+部署验收必须同时证明协议兼容和最小权限。只通过 happy-path 的 `tools/call` 不能作为生产发布证据。
 
 ## 最小与完整工程
 最小实现只读固定目录并拒绝 `..` 越界。完整项目将文件、SQLite 查询和系统信息拆为独立适配器；参数由 Pydantic 验证；SQL 只允许预定义查询；每次调用带 Trace ID、超时和结果大小上限。GitHub、股票等外部工具使用接口和 Mock，测试无需账号。

@@ -8,7 +8,13 @@
 学习目标是理解每项技术的核心机制、替代方案和评估成本，并能拒绝没有基线证据的复杂化。前置知识为第13章。
 
 ## 原理与流程图
+
+高级 RAG 应从可测失败出发选择增强节点。主图展示查询增强、混合召回、重排压缩和纠错检索之间的关系。
+
 ```mermaid
+%% id: advanced-rag-adaptive-pipeline
+%% title: 高级 RAG 自适应检索链路
+%% alt: 问题经改写混合检索权限过滤重排压缩后按证据充分性决定回答或纠错检索
 flowchart LR
     Q["问题"] --> Rewrite["改写/多查询"] --> Hybrid["稀疏+稠密"] --> Filter["元数据/权限"] --> Rerank["重排"] --> Compress["上下文压缩"] --> Answer["回答+引用"]
     Rerank --> Judge{"证据足够？"}
@@ -16,6 +22,61 @@ flowchart LR
 ```
 
 Parent-Child 用小块定位、大块回答；Query Rewriting 处理表达差异，但可能漂移意图；Multi-Query 提高召回却增加成本；Reranker 用更贵模型精排少量候选。Graph RAG 适合关系密集语料，并非普通文档默认方案。
+
+```mermaid
+%% id: advanced-rag-technique-selection
+%% title: 高级 RAG 技术选择决策
+%% alt: 根据召回不足、上下文断裂、排序噪声、证据过长或关系密集选择对应增强技术
+flowchart TD
+    Failure[基线失败样本] --> Kind{主要失败}
+    Kind -->|表达不匹配| Rewrite[Query Rewrite 或 Multi-Query]
+    Kind -->|关键词与语义互补| Hybrid[Hybrid Search]
+    Kind -->|命中片段缺上下文| Parent[Parent-Child]
+    Kind -->|候选顺序差| Rerank[Reranker]
+    Kind -->|上下文过长| Compress[Context Compression]
+    Kind -->|跨文档关系密集| Graph[Graph RAG 评估]
+    Rewrite --> Eval[对基线做成本质量评估]
+    Hybrid --> Eval
+    Parent --> Eval
+    Rerank --> Eval
+    Compress --> Eval
+    Graph --> Eval
+```
+
+每种技术对应特定失败模式。没有真实基线和分层指标时，增加节点只会增加延迟、费用和新的不可观测错误。
+
+```mermaid
+%% id: corrective-agentic-rag-control-loop
+%% title: Corrective 与 Agentic RAG 控制循环
+%% alt: Router 选择受授权检索器并评估新增证据，在轮数预算内改写查询否则拒答或转人工
+stateDiagram-v2
+    [*] --> Route
+    Route --> Retrieve: 选择授权数据源
+    Retrieve --> Judge: 候选与来源
+    Judge --> Answer: 证据充分
+    Judge --> Rewrite: 证据不足且有新方向
+    Rewrite --> Route: 轮数预算剩余
+    Judge --> Abstain: 无新增证据或预算耗尽
+    Answer --> [*]
+    Abstain --> [*]
+```
+
+循环必须限制检索轮数、来源域和新增证据阈值。拒答是控制路径的一部分，不应通过重复搜索掩盖语料缺失。
+
+```mermaid
+%% id: advanced-rag-evaluation-matrix
+%% title: 高级 RAG 分层评估矩阵
+%% alt: 摄取检索重排生成和系统层分别以质量指标与延迟成本安全指标进行发布比较
+flowchart LR
+    Ingest[摄取：解析与引用位置] --> Retrieval[检索：Recall MRR nDCG]
+    Retrieval --> Ranking[重排：相关性与排序增益]
+    Ranking --> Generation[生成：正确性 Faithfulness 引用]
+    Generation --> System[系统：P95 成本 权限与拒答]
+    Baseline[简单基线] -.逐层对比.-> Retrieval
+    Candidate[候选策略] -.逐层对比.-> Retrieval
+```
+
+发布判断同时看质量、成本、延迟和安全。最终回答分数提高但跨租户过滤或尾延迟退化，仍不能发布。
 
 ## 最小与完整工程、调试与评估
 完整工程先建立基线，再逐项开启策略。检索评估用 Recall@k、MRR/nDCG，回答评估看正确性、Faithfulness 和引用。每项优化必须在真实查询集证明收益，并记录延迟和费用。Agentic RAG 允许动态选择检索器，但需限制轮数和来源域。

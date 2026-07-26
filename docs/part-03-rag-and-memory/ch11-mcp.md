@@ -6,7 +6,13 @@
 MCP 用统一协议连接模型应用与上下文能力。本章目标是区分 Client、Server、Tool、Resource、Prompt、Transport 和生命周期。前置知识为第8章。
 
 ## 核心概念、原理与架构图
+
+MCP 把宿主、协议客户端与能力服务器分层。下图先界定组件职责，随后再展开生命周期、传输和安全边界。
+
 ```mermaid
+%% id: mcp-host-client-server-capabilities
+%% title: MCP Host、Client、Server 与能力原语
+%% alt: Agent Host 通过 MCP Client 发现 Server 暴露的 Tool、Resource 和 Prompt 能力
 flowchart LR
     Host["Agent Host"] --> Client["MCP Client"]
     Client <-->|"能力发现与调用"| Server["MCP Server"]
@@ -43,6 +49,9 @@ MCP 数据层使用 JSON-RPC 表达请求、响应和通知，传输层负责消
 2025-11-25 规范中的 Server 能力包括 prompts、resources、tools、logging、completions 和实验性的 tasks 等；Client 能力可包括 roots、sampling、elicitation 与 tasks。能力发现只描述协议支持，不表示调用获得业务授权。Client 应按当前用户与任务过滤能力集合，Server 对每次读取和动作重新鉴权。
 
 ```mermaid
+%% id: mcp-initialization-capability-call-sequence
+%% title: MCP 初始化、能力发现与调用时序
+%% alt: MCP Client 与 Server 从初始化协商到能力列表和工具资源调用的完整交互顺序
 sequenceDiagram
     participant C as MCP Client
     participant S as MCP Server
@@ -54,6 +63,42 @@ sequenceDiagram
     C->>S: tools/call or resources/read
     S-->>C: result or JSON-RPC error
 ```
+
+初始化只完成协议版本与能力协商，不授予业务访问权。每次具体调用仍需绑定用户身份、资源范围和审批状态。
+
+本地与远程传输的信任边界不同，不能只把 stdio 换成 HTTP 地址而沿用同一安全假设。
+
+```mermaid
+%% id: mcp-transport-trust-boundaries
+%% title: stdio 与 Streamable HTTP 信任边界
+%% alt: 对比本地子进程 stdio 的进程权限边界和远程 HTTP 的网络认证 Origin 与令牌边界
+flowchart TB
+    subgraph Local[stdio 本地边界]
+        Host[Host 进程] --> Child[受限 Server 子进程]
+        Child --> FS[允许的文件与环境]
+    end
+    subgraph Remote[Streamable HTTP 远程边界]
+        Client[远程 Client] --> TLS[TLS 与 Origin 校验]
+        TLS --> Auth[认证与 token audience]
+        Auth --> Server[远程 MCP Server]
+    end
+```
+
+stdio 依赖子进程继承权限和 stdout 协议纯净性；远程传输增加网络暴露、身份验证、令牌目标和连接限流等控制。
+
+```mermaid
+%% id: mcp-rest-function-calling-relationship
+%% title: MCP、REST 与 Function Calling 的分工
+%% alt: 模型通过 Function Calling 提出动作，Host 使用 MCP 发现调用能力，MCP Adapter 复用 REST 业务服务
+flowchart LR
+    Model[模型] -->|Function Calling 提议| Host[Agent Host 与 Policy]
+    Host -->|MCP 发现和调用| Adapter[MCP Server Adapter]
+    Adapter -->|受控 API 请求| REST[既有 REST 业务服务]
+    REST --> DB[(权威数据与业务规则)]
+    DB --> REST --> Adapter --> Host --> Model
+```
+
+Function Calling 是模型输出机制，MCP 是上下文能力协议，REST 是通用服务接口。组合使用时，既有业务鉴权和审计不应被 Adapter 绕过。
 
 ## Tool、Resource 与 Prompt 的控制模型
 

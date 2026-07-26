@@ -1,0 +1,13 @@
+%% id: corrective-agentic-rag-control-loop
+%% title: Corrective 与 Agentic RAG 控制循环
+%% alt: Router 选择受授权检索器并评估新增证据，在轮数预算内改写查询否则拒答或转人工
+stateDiagram-v2
+    [*] --> Route
+    Route --> Retrieve: 选择授权数据源
+    Retrieve --> Judge: 候选与来源
+    Judge --> Answer: 证据充分
+    Judge --> Rewrite: 证据不足且有新方向
+    Rewrite --> Route: 轮数预算剩余
+    Judge --> Abstain: 无新增证据或预算耗尽
+    Answer --> [*]
+    Abstain --> [*]

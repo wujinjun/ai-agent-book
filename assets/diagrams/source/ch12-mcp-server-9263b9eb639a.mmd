@@ -1,0 +1,10 @@
+%% id: mcp-server-error-taxonomy
+%% title: MCP Server 错误分类与处理
+%% alt: 将协议参数策略业务上游和内部错误分别映射为拒绝、观察、有限重试或告警
+flowchart TD
+    Error[调用失败] --> Kind{错误类别}
+    Kind -->|协议或参数| Invalid[稳定错误码 不重试]
+    Kind -->|策略拒绝| Denied[拒绝 审计 不泄露细节]
+    Kind -->|业务错误| Business[结构化结果交给 Host]
+    Kind -->|上游暂时故障| Retry[按幂等性有限重试]
+    Kind -->|内部错误| Incident[通用响应 内部告警]

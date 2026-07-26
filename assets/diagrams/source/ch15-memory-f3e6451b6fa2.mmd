@@ -1,0 +1,8 @@
+%% id: memory-write-retrieve-governance-loop
+%% title: Memory 写入、检索与治理闭环
+%% alt: 对话动作事件经写入判定进入结构化向量存储并按任务检索，同时支持过期删除和用户控制
+flowchart LR
+    Event["对话/动作"] --> Gate["写入判定"] --> Store["结构化+向量存储"]
+    Store --> Retrieve["按任务检索"] --> Context["短期上下文"]
+    Store --> TTL["过期/删除/纠错"]
+    User["用户控制"] --> TTL

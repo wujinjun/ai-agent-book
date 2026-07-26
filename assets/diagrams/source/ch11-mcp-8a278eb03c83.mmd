@@ -1,0 +1,13 @@
+%% id: mcp-initialization-capability-call-sequence
+%% title: MCP 初始化、能力发现与调用时序
+%% alt: MCP Client 与 Server 从初始化协商到能力列表和工具资源调用的完整交互顺序
+sequenceDiagram
+    participant C as MCP Client
+    participant S as MCP Server
+    C->>S: initialize(version, capabilities, clientInfo)
+    S-->>C: version, capabilities, serverInfo
+    C->>S: initialized notification
+    C->>S: tools/list or resources/list
+    S-->>C: paginated capabilities
+    C->>S: tools/call or resources/read
+    S-->>C: result or JSON-RPC error

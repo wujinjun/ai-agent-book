@@ -28,7 +28,13 @@ LIMIT :top_k;
 参数必须绑定而不是拼接。生产环境还要结合 Row Level Security 或受控数据访问层，避免调用者漏写租户过滤。
 
 ## 误区、调试、安全与图
+
+向量索引的每次写入和查询都必须携带文档、模型与权限版本。下面的生命周期图展示这些版本如何共同决定可用结果。
+
 ```mermaid
+%% id: vector-index-version-query-flow
+%% title: 向量索引版本与查询链路
+%% alt: 文档版本经指定 Embedding 模型写入索引版本并在查询时结合权限过滤返回来源和分数
 flowchart LR
     Write["文档版本"] --> Embed["模型版本"] --> Index["索引版本"] --> Query["过滤+近邻"] --> Result["来源+分数"]
 ```
@@ -49,6 +55,9 @@ HNSW 把向量组织为多层小世界图。构建参数影响连接数量和索
 IVF 先训练聚类中心，把向量分配到倒排桶，查询只探测部分桶。桶数、探测数和训练样本影响效果。IVF 适合大规模数据和批处理，也可配合量化压缩。数据分布明显变化时，旧聚类可能退化，需要重训和重建索引。
 
 ```mermaid
+%% id: ann-exact-recall-benchmark
+%% title: 精确检索与 ANN 召回基准
+%% alt: 同一数据集分别生成精确 top-k 真值和 HNSW IVF 近似结果并比较 Recall 与尾延迟吞吐
 flowchart LR
     Dataset --> Exact["Exact baseline"] --> Truth["top-k ground truth"]
     Dataset --> Build["HNSW / IVF build"] --> ANN["ANN query"]
@@ -56,6 +65,42 @@ flowchart LR
     ANN --> Compare
     ANN --> Latency["P50/P95/P99 + throughput"]
 ```
+
+基准必须用精确结果作为真值，否则只能测到速度，无法知道近似索引漏掉了哪些邻居。
+
+```mermaid
+%% id: vector-database-selection-decision
+%% title: 向量数据库选型决策
+%% alt: 根据原型阶段、既有 PostgreSQL、事务过滤需求、数据规模和运维能力选择 FAISS Chroma pgvector 或专用托管服务
+flowchart TD
+    Need[向量检索需求] --> Prototype{本地原型或离线实验}
+    Prototype -->|是| Local[FAISS 或 Chroma]
+    Prototype -->|否| PG{已有 PostgreSQL 且需事务 JOIN RLS}
+    PG -->|是且规模可控| Pgvector[pgvector]
+    PG -->|否或超大规模| Ops{具备专用集群运维能力}
+    Ops -->|是| Dedicated[Milvus 等独立服务]
+    Ops -->|否| Managed[托管向量服务]
+    Managed --> Check[复核数据驻留费用与锁定]
+```
+
+选型结论必须由真实规模、过滤选择性、更新率、并发和 SLA 的 spike 支撑，不能只按功能列表决定。
+
+```mermaid
+%% id: embedding-model-index-migration
+%% title: Embedding 模型与索引迁移
+%% alt: 新 Embedding 模型在独立集合回填向量并双读评估，通过后切换流量且保留旧索引回滚
+flowchart LR
+    Old[旧模型与 active 索引] --> Serve[线上服务]
+    Snapshot[同一文档快照] --> NewEmbed[新模型离线回填]
+    NewEmbed --> NewIndex[独立候选索引]
+    NewIndex --> Dual[双读黄金集与影子流量]
+    Dual --> Gate{召回延迟权限均达标}
+    Gate -->|是| Switch[原子切换]
+    Gate -->|否| Old
+    Switch --> Rollback[观察期保留旧索引]
+```
+
+不同模型和维度的向量不能混在同一空间。独立构建、双读比较和可回滚切换是安全迁移的基本边界。
 
 ### 产品选型边界
 

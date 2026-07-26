@@ -1,0 +1,15 @@
+%% id: rag-failure-localization-tree
+%% title: RAG 回答错误定位树
+%% alt: 从语料存在性开始逐层检查解析切分过滤召回重排上下文采用和引用支持关系
+flowchart TD
+    Wrong[回答错误或无依据] --> Source{权威语料存在且最新}
+    Source -->|否| Data[修复数据源]
+    Source -->|是| Parse{解析与 Chunk 完整}
+    Parse -->|否| Ingest[修复摄取]
+    Parse -->|是| Retrieve{正确证据进入候选}
+    Retrieve -->|否| Search[检查 ACL 查询与召回]
+    Retrieve -->|是| Context{证据进入上下文}
+    Context -->|否| Rank[检查重排与预算]
+    Context -->|是| Use{回答采用且引用支持}
+    Use -->|否| Generate[修复生成与引用校验]
+    Use -->|是| Done[重新检查任务定义]

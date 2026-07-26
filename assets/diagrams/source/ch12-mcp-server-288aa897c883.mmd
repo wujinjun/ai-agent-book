@@ -1,0 +1,10 @@
+%% id: mcp-server-test-deploy-gates
+%% title: MCP Server 测试与部署门禁
+%% alt: Server 从单元协议安全和负载测试进入容器加固灰度发布与线上观测的质量门禁
+flowchart LR
+    Unit[领域与 Policy 单元测试] --> Protocol[协议互操作测试]
+    Protocol --> Security[越权路径注入 SSRF 测试]
+    Security --> Load[并发取消重启测试]
+    Load --> Harden[非 root 只读文件系统 Secret]
+    Harden --> Canary[兼容 Client 灰度]
+    Canary --> Observe[指标 Trace 与回滚]

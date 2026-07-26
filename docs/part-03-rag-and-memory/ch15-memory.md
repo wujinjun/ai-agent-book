@@ -8,14 +8,72 @@ Memory 让 Agent 跨步骤或会话保存有用状态。本章区分短期、长
 学习目标是实现一个可运行的长期偏好示例，并能说明哪些数据不应写入。前置知识为第2、9、13章。
 
 ## 核心原理与架构图
+
+Memory 是带治理的数据生命周期。主图展示事件如何通过写入门禁进入存储、按任务检索，并最终被纠错或删除。
+
 ```mermaid
+%% id: memory-write-retrieve-governance-loop
+%% title: Memory 写入、检索与治理闭环
+%% alt: 对话动作事件经写入判定进入结构化向量存储并按任务检索，同时支持过期删除和用户控制
 flowchart LR
     Event["对话/动作"] --> Gate["写入判定"] --> Store["结构化+向量存储"]
     Store --> Retrieve["按任务检索"] --> Context["短期上下文"]
     Store --> TTL["过期/删除/纠错"]
     User["用户控制"] --> TTL
 ```
+
 短期记忆通常是当前状态与近期消息；长期记忆在外部存储。语义记忆保存事实，情景记忆保存事件。Memory 与 RAG 都检索外部内容，但 Memory 强调由交互产生、随时间治理的状态。
+
+```mermaid
+%% id: memory-type-boundaries
+%% title: Agent 记忆类型与边界
+%% alt: 区分运行状态会话摘要长期偏好语义事实情景事件和受控程序性知识的存储位置
+flowchart TB
+    Agent[Agent 任务] --> Short[短期：Run State 与近期上下文]
+    Agent --> Session[会话：摘要与未完成事项]
+    Agent --> Long[长期 Memory Store]
+    Long --> Preference[用户偏好]
+    Long --> Semantic[语义事实]
+    Long --> Episode[情景事件]
+    Procedure[程序性流程] --> Config[受控配置或 Skill]
+```
+
+高风险业务事实应进入权威状态库而不是依靠语义召回。程序性知识也应版本化维护，不能让模型把偶然经验自动固化为规则。
+
+```mermaid
+%% id: memory-write-gate-decision
+%% title: 长期记忆写入门禁
+%% alt: 根据信息未来价值稳定性用户同意敏感性来源置信和冲突判断是否写入长期记忆
+flowchart TD
+    Candidate[交互中的候选信息] --> Useful{未来任务有用且稳定}
+    Useful -->|否| Skip[仅保留当前上下文]
+    Useful -->|是| Consent{用户同意且用途明确}
+    Consent -->|否| Skip
+    Consent -->|是| Sensitive{禁止或高敏信息}
+    Sensitive -->|是| Reject[拒绝通用 Memory 写入]
+    Sensitive -->|否| Source{显式来源且置信足够}
+    Source -->|否| Review[标记推断或待确认]
+    Source -->|是| Conflict{与现有记录冲突}
+    Conflict -->|是| Review
+    Conflict -->|否| Store[幂等写入并设置 TTL]
+```
+
+写入门禁宁可少记，也不应把模型推断升级为用户事实。来源、用途、敏感级别、TTL 和删除路径必须在写入时确定。
+
+```mermaid
+%% id: memory-deletion-propagation
+%% title: Memory 删除与纠错传播
+%% alt: 用户删除或 TTL 过期从主记录传播到向量索引缓存派生摘要备份恢复策略并保留无原值审计
+flowchart LR
+    Trigger[用户删除 TTL 或纠错] --> Primary[主记录失效或新版本]
+    Primary --> Vector[向量索引不可检索]
+    Primary --> Cache[缓存失效]
+    Primary --> Derived[派生摘要重建或删除]
+    Primary --> Backup[备份恢复后再执行删除]
+    Primary --> Audit[仅保留无原值删除审计]
+```
+
+删除不是单表操作。只有所有派生副本都不可再被检索，并且恢复流程会重新执行删除，治理承诺才成立。
 
 ## 最小与完整工程
 最小实现保存明确用户偏好并按用户 ID取回。工程版写入前做类型、置信度、敏感性和重复检查；每条记忆有来源、时间、版本、TTL 和删除接口；检索同时考虑相关性、时效和权限。生成摘要不能覆盖原始审计记录。

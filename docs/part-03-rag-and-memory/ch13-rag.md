@@ -8,7 +8,13 @@ RAG 在生成前检索外部资料，适合知识频繁变化且需要引用的�
 学习目标是掌握完整链路的核心边界，并能从常见误区和失败 Trace 定位质量问题。
 
 ## 原理与架构图
+
+RAG 包含离线摄取与在线查询两条相交链路。下图先展示端到端主路径，后续图再拆解权限、索引版本与故障定位。
+
 ```mermaid
+%% id: rag-end-to-end-pipeline
+%% title: RAG 摄取、检索、生成与引用主链路
+%% alt: 原始文档经解析切分索引后支持问题检索重排上下文生成和引用校验
 flowchart LR
     Source["原始文档"] --> Parse["解析/清洗"] --> Chunk["切分/元数据"] --> Index["索引"]
     Q["问题"] --> Retrieve["检索"] --> Rerank["重排"] --> Context["带引用上下文"] --> LLM["生成"] --> Check["引用校验"]
@@ -57,6 +63,9 @@ Chunk 需要自包含但不过度宽泛。技术手册常按标题层级与段�
 检索前先做权限过滤和查询分类。稀疏检索对故障码、产品号和专有词敏感，稠密检索处理语义改写，混合检索可通过 Reciprocal Rank Fusion 等方法融合。初检取得较多候选，Reranker 对少量候选做更精细的 query-document 相关性判断。
 
 ```mermaid
+%% id: rag-hybrid-retrieval-acl-pipeline
+%% title: 带权限过滤的混合检索链路
+%% alt: 查询经规范化和租户权限过滤后并行执行稀疏稠密检索再融合重排生成引用
 flowchart TB
     Query --> Normalize["normalize/classify"]
     Normalize --> ACL["tenant + ACL filter"]
@@ -68,6 +77,43 @@ flowchart TB
 ```
 
 索引不是一次性产物。Embedding 模型、维度、距离、切分器和预处理任何一项变化，都需要新索引版本。后台构建完成并通过评估后，再原子切换 active index；不要把不同 Embedding 空间的向量混在同一索引。
+
+```mermaid
+%% id: rag-index-version-release
+%% title: RAG 索引版本构建与切换
+%% alt: 文档快照绑定解析切分和 Embedding 版本构建候选索引，评估通过后原子切换并可回滚
+flowchart LR
+    Snapshot[文档与权限快照] --> Parse[解析器版本]
+    Parse --> Chunk[切分器版本]
+    Chunk --> Embed[Embedding 模型与维度]
+    Embed --> Candidate[候选索引版本]
+    Candidate --> Eval{黄金集与安全评估}
+    Eval -->|通过| Switch[原子切换 active index]
+    Eval -->|失败| Reject[保留旧索引]
+    Switch --> Rollback[监控异常时回滚]
+```
+
+索引版本是文档、权限、解析、切分和向量空间的组合产物。任何一个组成部分变化都需要可比较的新版本，而不是混写旧集合。
+
+```mermaid
+%% id: rag-failure-localization-tree
+%% title: RAG 回答错误定位树
+%% alt: 从语料存在性开始逐层检查解析切分过滤召回重排上下文采用和引用支持关系
+flowchart TD
+    Wrong[回答错误或无依据] --> Source{权威语料存在且最新}
+    Source -->|否| Data[修复数据源]
+    Source -->|是| Parse{解析与 Chunk 完整}
+    Parse -->|否| Ingest[修复摄取]
+    Parse -->|是| Retrieve{正确证据进入候选}
+    Retrieve -->|否| Search[检查 ACL 查询与召回]
+    Retrieve -->|是| Context{证据进入上下文}
+    Context -->|否| Rank[检查重排与预算]
+    Context -->|是| Use{回答采用且引用支持}
+    Use -->|否| Generate[修复生成与引用校验]
+    Use -->|是| Done[重新检查任务定义]
+```
+
+这棵树避免把所有 RAG 问题归咎于 Prompt。只有证据已经正确进入上下文而模型仍误用时，生成层才是首要修复位置。
 
 ## Prompt Augmentation 与 Citation
 
