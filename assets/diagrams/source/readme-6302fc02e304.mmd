@@ -1,0 +1,10 @@
+%% id: project7-data-lineage-timeline
+%% title: 股票研究数据时间与来源链
+%% alt: 行情交易时刻公告发布日期新闻发布时间和抓取时间分别进入标准化事实并保留来源链接
+flowchart LR
+    Market[行情：exchange time + as_of] --> Normalize[标准化与 OHLC 校验]
+    Filing[公告：published_at + source] --> Normalize
+    News[新闻：published_at + fetched_at] --> Normalize
+    Normalize --> Fact[Typed Fact + provenance]
+    Fact --> Indicator[SMA Return RSI]
+    Fact --> Citation[来源 URL 与观察时间]

@@ -1,0 +1,19 @@
+%% id: project10-control-data-plane
+%% title: 企业 Agent 平台控制面与数据面
+%% alt: 管理员在控制面发布 Agent Tool MCP Prompt Policy 版本，用户 Run 在数据面按租户执行并生成 Trace Evaluation Audit
+flowchart TB
+    subgraph Control[控制面]
+        Admin[管理 API] --> Registry[Agent Tool MCP Registry]
+        Admin --> Policy[租户 Policy 与配额]
+        Admin --> Versions[Prompt Workflow Model 版本]
+    end
+    subgraph DataPlane[数据面]
+        User[用户 API] --> Session[Session 与 Run]
+        Session --> Queue[持久任务队列]
+        Queue --> Runtime[Agent Runtime]
+        Runtime --> Capabilities[Tool MCP RAG Model]
+    end
+    Registry --> Runtime
+    Policy --> Runtime
+    Versions --> Runtime
+    Runtime --> Evidence[Trace Evaluation Audit Usage]

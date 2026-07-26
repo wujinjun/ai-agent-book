@@ -3,7 +3,12 @@
 ## 需求、架构与数据流
 技术选型：Python 3.12、Pydantic 2、FastAPI、pytest 与 Docker；在线供应商通过适配器接入。
 
+项目以多租户 Run 为核心纵向切片，将控制面注册、数据面执行、持久队列、RAG、Trace 与 Evaluation 放在同一可验证架构中。
+
 ```mermaid
+%% id: project10-enterprise-platform-topology
+%% title: 企业级 Agent 平台部署拓扑
+%% alt: 用户经 OIDC 租户策略进入 API，任务队列驱动 Runtime 并连接工具 MCP RAG 模型 Trace PostgreSQL 和 Redis
 flowchart TB
     User --> Auth["OIDC / Tenant Policy"] --> API
     API --> Queue --> Runtime
@@ -16,6 +21,52 @@ flowchart TB
 ```
 
 实现多租户、Agent/Tool 注册、MCP/RAG 接口、会话、队列、Trace、Evaluation 与管理接口边界。 离线模式使用确定性 Mock，使无 API Key 也能运行和测试；在线服务通过适配器替换，领域结果保持稳定 Schema。
+
+```mermaid
+%% id: project10-control-data-plane
+%% title: 企业 Agent 平台控制面与数据面
+%% alt: 管理员在控制面发布 Agent Tool MCP Prompt Policy 版本，用户 Run 在数据面按租户执行并生成 Trace Evaluation Audit
+flowchart TB
+    subgraph Control[控制面]
+        Admin[管理 API] --> Registry[Agent Tool MCP Registry]
+        Admin --> Policy[租户 Policy 与配额]
+        Admin --> Versions[Prompt Workflow Model 版本]
+    end
+    subgraph DataPlane[数据面]
+        User[用户 API] --> Session[Session 与 Run]
+        Session --> Queue[持久任务队列]
+        Queue --> Runtime[Agent Runtime]
+        Runtime --> Capabilities[Tool MCP RAG Model]
+    end
+    Registry --> Runtime
+    Policy --> Runtime
+    Versions --> Runtime
+    Runtime --> Evidence[Trace Evaluation Audit Usage]
+```
+
+控制面配置以不可变版本发布，数据面每个 Run 记录实际版本、主体和租户，支持复现、回滚与成本归属。
+
+```mermaid
+%% id: project10-tenant-run-sequence
+%% title: 多租户 Run 创建与执行时序
+%% alt: 用户请求经 API 验证租户权限后先提交 PostgreSQL Run 再通知 Redis，Worker 读取权威状态并执行隔离的 RAG 工具与 Trace
+sequenceDiagram
+    participant U as Tenant User
+    participant A as FastAPI
+    participant D as PostgreSQL
+    participant Q as Redis Wakeup
+    participant W as Worker Runtime
+    U->>A: create run + identity
+    A->>A: tenant and object authorization
+    A->>D: commit queued run and versions
+    A->>Q: publish run_id wakeup
+    W->>D: lease authoritative run
+    W->>W: tenant-scoped RAG tools model
+    W->>D: events trace evaluation final state
+    A-->>U: status and authorized result
+```
+
+Redis 只是可恢复唤醒信号，PostgreSQL 是任务事实来源。Worker 扫描 queued 状态可在 Redis 故障后恢复，且所有检索和管理接口强制租户隔离。
 
 `租户/用户 → Agent/Tool/MCP 注册 → Session → 持久任务队列 → Runtime/RAG → Trace → Evaluation → 管理 API`。独立实现位于 `src/ai_agent_book/apps/enterprise_platform.py`，API 入口是 `api.py`，直接测试位于 `tests/test_enterprise_platform_app.py`。
 

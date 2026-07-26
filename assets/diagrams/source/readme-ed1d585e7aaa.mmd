@@ -1,0 +1,15 @@
+%% id: project6-content-bound-approval-sequence
+%% title: 内容绑定审批与发布时序
+%% alt: 工作流生成报告和内容哈希，审批者决定后 Publisher 在哈希有效时发布，正文变化会使旧令牌失效
+sequenceDiagram
+    participant W as OfficeWorkflow
+    participant A as Approval Store
+    participant H as Human
+    participant P as Publisher
+    W->>A: report_id + content_hash + target
+    A-->>H: exact draft and destination
+    H-->>A: signed decision
+    W->>A: verify report_id and current hash
+    A-->>W: approved or stale
+    W->>P: publish only approved content
+    P-->>W: external result ID

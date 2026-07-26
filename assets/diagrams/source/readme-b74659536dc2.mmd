@@ -1,0 +1,17 @@
+%% id: project10-tenant-run-sequence
+%% title: 多租户 Run 创建与执行时序
+%% alt: 用户请求经 API 验证租户权限后先提交 PostgreSQL Run 再通知 Redis，Worker 读取权威状态并执行隔离的 RAG 工具与 Trace
+sequenceDiagram
+    participant U as Tenant User
+    participant A as FastAPI
+    participant D as PostgreSQL
+    participant Q as Redis Wakeup
+    participant W as Worker Runtime
+    U->>A: create run + identity
+    A->>A: tenant and object authorization
+    A->>D: commit queued run and versions
+    A->>Q: publish run_id wakeup
+    W->>D: lease authoritative run
+    W->>W: tenant-scoped RAG tools model
+    W->>D: events trace evaluation final state
+    A-->>U: status and authorized result

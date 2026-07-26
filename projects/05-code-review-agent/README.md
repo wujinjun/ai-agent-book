@@ -3,7 +3,12 @@
 ## 需求、架构与数据流
 技术选型：Python 3.12、Pydantic 2、FastAPI、pytest 与 Docker；在线供应商通过适配器接入。
 
+项目以 Git Diff 为唯一审查范围，确定性规则和模型 Reviewer 分别产出证据，外部 PR 评论保持默认关闭。
+
 ```mermaid
+%% id: project5-code-review-pipeline
+%% title: 代码 Review Agent 分析管线
+%% alt: 仓库 Diff 并行经过确定性规则和 LLM Reviewer，发现去重按风险排序后生成带行号报告并等待评论审批
 flowchart LR
     Repo --> Diff --> Static["Deterministic Rules"] --> Findings
     Diff --> LLM["LLM Reviewer Adapter"] --> Findings
@@ -12,6 +17,42 @@ flowchart LR
 ```
 
 实现 Diff 解析、静态规则、LLM Review 接口、风险分类和报告。 离线模式使用确定性 Mock，使无 API Key 也能运行和测试；在线服务通过适配器替换，领域结果保持稳定 Schema。
+
+```mermaid
+%% id: project5-finding-evidence-model
+%% title: Code Review Finding 证据模型
+%% alt: 每条发现连接文件新行号规则或模型来源风险等级证据说明和去重指纹并汇总报告
+flowchart TB
+    Diff[受限 Git Diff] --> Location[file + new line]
+    Static[确定性规则] --> Finding[Typed Finding]
+    Semantic[结构化 LLM Reviewer] --> Finding
+    Location --> Finding
+    Finding --> Risk[severity + confidence]
+    Finding --> Evidence[message + evidence]
+    Finding --> Fingerprint[dedup fingerprint]
+    Risk --> Report[Markdown 或 SARIF 报告]
+    Evidence --> Report
+    Fingerprint --> Report
+```
+
+静态规则证据与模型建议分别保留，不能把概率性发现伪装成编译器结论；报告始终可回到具体 Diff 行。
+
+```mermaid
+%% id: project5-pr-comment-approval
+%% title: GitHub PR 评论审批门禁
+%% alt: Review 报告默认仅本地生成，只有仓库权限参数摘要和人工批准均通过时才调用 GitHub 评论接口并审计
+flowchart TD
+    Report[已验证 Review 报告] --> Local[默认本地交付]
+    Report --> Publish{请求评论 PR}
+    Publish --> Auth[GitHub App 仓库权限]
+    Auth --> Summary[展示 PR 与评论摘要]
+    Summary --> Approval{人工批准}
+    Approval -->|否| Local
+    Approval -->|是| API[调用 GitHub 评论 API]
+    API --> Audit[记录 response ID 与状态]
+```
+
+默认不产生外部写入。批准绑定仓库、PR、提交 SHA 与评论内容，Diff 变化后必须重新审查。
 
 `Git 仓库 → Diff 新增行 → 静态规则 + 语义 Reviewer → 去重/风险排序 → Markdown 报告 → 审批后可选 PR 评论`。独立实现位于 `src/ai_agent_book/apps/code_review.py`，直接测试位于 `tests/test_code_review_app.py`。
 

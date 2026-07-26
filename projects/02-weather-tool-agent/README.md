@@ -3,7 +3,12 @@
 ## 需求、架构与数据流
 技术选型：Python 3.12、Pydantic 2、FastAPI、pytest 与 Docker；在线供应商通过适配器接入。
 
+项目把 Tool Calling 拆为提议、参数校验、策略、执行与观察五个阶段，确保模型选择工具不会自动获得执行权限。
+
 ```mermaid
+%% id: project2-weather-tool-validation-loop
+%% title: 天气 Agent 参数校验与重试闭环
+%% alt: 用户请求经 Runtime 和参数 Schema 进入天气服务，瞬时错误在预算内重试并返回来源与尝试次数
 flowchart LR
     User --> Runtime --> Schema{"参数有效？"}
     Schema -->|否| Repair["有限修复"]
@@ -14,6 +19,42 @@ flowchart LR
 ```
 
 实现多工具选择、参数校验、Tool Loop、有限重试和写操作审批。 离线模式使用确定性 Mock，使无 API Key 也能运行和测试；在线服务通过适配器替换，领域结果保持稳定 Schema。
+
+```mermaid
+%% id: project2-parallel-tool-plan
+%% title: 天气 Agent 多工具并行计划
+%% alt: Planner 生成天气计算与告警调用，只读天气和计算可并行，外部告警等待结果与人工审批
+flowchart LR
+    Request[用户任务] --> Planner[ToolCall Planner]
+    Planner --> Weather[天气查询]
+    Planner --> Calc[安全计算器]
+    Weather --> Join[Observation 汇总]
+    Calc --> Join
+    Join --> Alert{是否需要外部告警}
+    Alert -->|否| Answer[最终回答]
+    Alert -->|是| Approval[绑定 call_id 的人工审批] --> Send[告警工具]
+```
+
+并行只用于独立只读工具，告警属于外部副作用，必须在参数确定后使用与 `call_id` 绑定的批准决定。
+
+```mermaid
+%% id: project2-tool-approval-sequence
+%% title: 天气 Agent 写工具审批时序
+%% alt: Runtime 校验告警工具参数后向人工展示目标内容，批准与调用 ID 匹配才执行并写审计
+sequenceDiagram
+    participant R as Runtime
+    participant P as Approval Policy
+    participant H as Human
+    participant T as Alert Tool
+    R->>P: call_id + validated arguments
+    P-->>H: target content and risk
+    H-->>P: approve or reject
+    P-->>R: decision bound to call_id
+    R->>T: execute only when approved
+    T-->>R: structured observation
+```
+
+参数错误和权限拒绝不重试；只有标记为暂时故障且仍在预算内的只读请求进入有限重试。
 
 `输入 → Planner → ToolCall 列表 → Pydantic 校验 → 审批策略 → 并行工具 → Observation`。独立实现位于 `src/ai_agent_book/apps/weather_agent.py`，测试位于 `tests/test_weather_agent_app.py`。
 

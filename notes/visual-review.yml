@@ -398,13 +398,83 @@ files:
       - {id: framework-lockin-risk-map, section: 从问题形态开始, relation: security, disposition: diagram}
       - {id: framework-spike-comparison, section: 用垂直切片 Spike 验证, relation: comparison, disposition: diagram}
 
-  projects/01-minimal-assistant/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
-  projects/02-weather-tool-agent/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
-  projects/03-mcp-local-agent/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
-  projects/04-knowledge-agent/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
-  projects/05-code-review-agent/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
-  projects/06-office-agent/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
-  projects/07-stock-research-agent/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
-  projects/08-research-workflow/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
-  projects/09-multi-agent-dev-team/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
-  projects/10-enterprise-platform/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
+  projects/01-minimal-assistant/README.md:
+    group: projects
+    minimum_diagrams: 3
+    review_status: completed
+    requirements:
+      - {id: project1-streaming-assistant-sequence, section: 需求架构与数据流, relation: sequence, disposition: diagram}
+      - {id: project1-component-architecture, section: 需求架构与数据流, relation: architecture, disposition: diagram}
+      - {id: project1-stream-error-state, section: 需求架构与数据流, relation: state, disposition: diagram}
+  projects/02-weather-tool-agent/README.md:
+    group: projects
+    minimum_diagrams: 3
+    review_status: completed
+    requirements:
+      - {id: project2-weather-tool-validation-loop, section: 需求架构与数据流, relation: flow, disposition: diagram}
+      - {id: project2-parallel-tool-plan, section: 需求架构与数据流, relation: data, disposition: diagram}
+      - {id: project2-tool-approval-sequence, section: 需求架构与数据流, relation: sequence, disposition: diagram}
+  projects/03-mcp-local-agent/README.md:
+    group: projects
+    minimum_diagrams: 3
+    review_status: completed
+    requirements:
+      - {id: project3-mcp-local-capability-map, section: 需求架构与数据流, relation: architecture, disposition: diagram}
+      - {id: project3-mcp-jsonrpc-sequence, section: 需求架构与数据流, relation: sequence, disposition: diagram}
+      - {id: project3-local-security-boundary, section: 需求架构与数据流, relation: security, disposition: diagram}
+  projects/04-knowledge-agent/README.md:
+    group: projects
+    minimum_diagrams: 3
+    review_status: completed
+    requirements:
+      - {id: project4-knowledge-rag-pipeline, section: 需求架构与数据流, relation: data, disposition: diagram}
+      - {id: project4-versioned-ingestion-architecture, section: 需求架构与数据流, relation: architecture, disposition: diagram}
+      - {id: project4-rag-evaluation-loop, section: 需求架构与数据流, relation: flow, disposition: diagram}
+  projects/05-code-review-agent/README.md:
+    group: projects
+    minimum_diagrams: 3
+    review_status: completed
+    requirements:
+      - {id: project5-code-review-pipeline, section: 需求架构与数据流, relation: flow, disposition: diagram}
+      - {id: project5-finding-evidence-model, section: 需求架构与数据流, relation: hierarchy, disposition: diagram}
+      - {id: project5-pr-comment-approval, section: 需求架构与数据流, relation: security, disposition: diagram}
+  projects/06-office-agent/README.md:
+    group: projects
+    minimum_diagrams: 3
+    review_status: completed
+    requirements:
+      - {id: project6-office-approval-flow, section: 需求架构与数据流, relation: flow, disposition: diagram}
+      - {id: project6-provider-workflow-architecture, section: 需求架构与数据流, relation: architecture, disposition: diagram}
+      - {id: project6-content-bound-approval-sequence, section: 需求架构与数据流, relation: sequence, disposition: diagram}
+  projects/07-stock-research-agent/README.md:
+    group: projects
+    minimum_diagrams: 3
+    review_status: completed
+    requirements:
+      - {id: project7-stock-research-evidence-flow, section: 需求架构与数据流, relation: data, disposition: diagram}
+      - {id: project7-data-lineage-timeline, section: 需求架构与数据流, relation: flow, disposition: diagram}
+      - {id: project7-fact-inference-report-gate, section: 需求架构与数据流, relation: decision, disposition: diagram}
+  projects/08-research-workflow/README.md:
+    group: projects
+    minimum_diagrams: 3
+    review_status: completed
+    requirements:
+      - {id: project8-langgraph-research-state, section: 需求架构与数据流, relation: state, disposition: diagram}
+      - {id: project8-checkpoint-interrupt-sequence, section: 需求架构与数据流, relation: sequence, disposition: diagram}
+      - {id: project8-research-failure-recovery, section: 需求架构与数据流, relation: decision, disposition: diagram}
+  projects/09-multi-agent-dev-team/README.md:
+    group: projects
+    minimum_diagrams: 3
+    review_status: completed
+    requirements:
+      - {id: project9-shared-state-team-architecture, section: 需求架构与数据流, relation: architecture, disposition: diagram}
+      - {id: project9-role-artifact-sequence, section: 需求架构与数据流, relation: sequence, disposition: diagram}
+      - {id: project9-cost-termination-gate, section: 需求架构与数据流, relation: decision, disposition: diagram}
+  projects/10-enterprise-platform/README.md:
+    group: projects
+    minimum_diagrams: 3
+    review_status: completed
+    requirements:
+      - {id: project10-enterprise-platform-topology, section: 需求架构与数据流, relation: architecture, disposition: diagram}
+      - {id: project10-control-data-plane, section: 需求架构与数据流, relation: architecture, disposition: diagram}
+      - {id: project10-tenant-run-sequence, section: 需求架构与数据流, relation: sequence, disposition: diagram}

@@ -1,0 +1,16 @@
+%% id: project7-fact-inference-report-gate
+%% title: 事实、模型推断与报告校验门禁
+%% alt: 结构化事实和确定性指标与模型推断分栏，引用时间免责声明和禁止买卖建议校验通过后发布报告
+flowchart TD
+    Facts[带来源事实] --> Report[结构化研究报告]
+    Indicators[确定性指标] --> Report
+    Inference[显式标注模型推断] --> Report
+    Report --> Gate{发布校验}
+    Gate --> Citation[事实均有来源与时间]
+    Gate --> Separation[事实与推断分离]
+    Gate --> Advice[无确定性买卖建议]
+    Gate --> Disclaimer[包含非投资建议声明]
+    Citation --> Publish[可发布研究材料]
+    Separation --> Publish
+    Advice --> Publish
+    Disclaimer --> Publish

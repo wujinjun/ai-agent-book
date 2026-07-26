@@ -1,0 +1,12 @@
+%% id: project1-stream-error-state
+%% title: 流式响应错误状态机
+%% alt: 请求从接收进入 Streaming 后可正常完成、客户端取消、上游超时或协议错误并以终止事件收口
+stateDiagram-v2
+    [*] --> Accepted
+    Accepted --> Streaming
+    Streaming --> Completed: final + usage
+    Streaming --> Cancelled: client disconnected
+    Streaming --> Failed: timeout or invalid event
+    Completed --> [*]
+    Cancelled --> [*]
+    Failed --> [*]

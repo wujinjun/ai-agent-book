@@ -3,7 +3,12 @@
 ## 需求、架构与数据流
 技术选型：Python 3.12、Pydantic 2、FastAPI、pytest 与 Docker；在线供应商通过适配器接入。
 
+项目以真实 JSON-RPC stdio 边界连接 Client 与 Server，并把文件、系统和数据库能力限制在可审计的只读策略内。
+
 ```mermaid
+%% id: project3-mcp-local-capability-map
+%% title: MCP 本地 Agent 能力与策略图
+%% alt: MCP Client 发现能力后经过只读根目录策略访问文件系统信息和参数化数据库查询并生成审计结果
 flowchart LR
     Client["MCP Client"] --> Discover["能力发现"] --> Policy["根目录 / 只读策略"]
     Policy --> File["read_file"]
@@ -14,6 +19,43 @@ flowchart LR
 ```
 
 实现 MCP Server/Client 边界、只读文件、系统信息和预定义数据库查询。 离线模式使用确定性 Mock，使无 API Key 也能运行和测试；在线服务通过适配器替换，领域结果保持稳定 Schema。
+
+```mermaid
+%% id: project3-mcp-jsonrpc-sequence
+%% title: MCP 本地 JSON-RPC 生命周期
+%% alt: Client 初始化协商后列出工具资源，调用只读能力并在 stdio 上接收 JSON-RPC 结果或稳定错误
+sequenceDiagram
+    participant C as MCP Client
+    participant S as Local Server
+    C->>S: initialize 2025-11-25
+    S-->>C: capabilities and serverInfo
+    C->>S: initialized notification
+    C->>S: tools/list or resources/list
+    S-->>C: available capabilities
+    C->>S: tools/call or resources/read
+    S-->>C: result or JSON-RPC error
+```
+
+stdout 只承载协议消息，日志写 stderr。初始化协商能力，但每次文件或数据库访问仍执行独立策略校验。
+
+```mermaid
+%% id: project3-local-security-boundary
+%% title: MCP 本地工具安全边界
+%% alt: 逻辑资源 ID 经路径解析和根目录检查访问只读文件，数据库操作映射预定义参数化查询并限制结果
+flowchart TD
+    Request[工具或资源请求] --> Schema[严格参数 Schema]
+    Schema --> Kind{能力类型}
+    Kind -->|文件| Resolve[resolve 后验证授权根目录]
+    Resolve --> Size[文件类型与大小限制]
+    Kind -->|数据库| Catalog[预定义查询目录]
+    Catalog --> Params[参数绑定 行数与超时]
+    Kind -->|系统信息| Allow[字段 allowlist]
+    Size --> Result[脱敏结构化结果]
+    Params --> Result
+    Allow --> Result
+```
+
+Server 不接受任意路径、任意 SQL 或任意系统命令。错误响应也不能泄露真实物理路径和内部异常栈。
 
 `initialize → 能力发现 → tools/call 或 resources/read → 文件/系统/SQLite → JSON-RPC 响应`。协议实现位于 `src/ai_agent_book/apps/mcp_local.py`，直接测试位于 `tests/test_mcp_local_app.py`。
 

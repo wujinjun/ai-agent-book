@@ -3,7 +3,12 @@
 ## 需求、架构与数据流
 技术选型：Python 3.12、Pydantic 2、FastAPI、pytest 与 Docker；在线供应商通过适配器接入。
 
+项目从一条完整请求链开始：会话服务拥有历史和事件协议，模型适配器只负责生成，客户端通过统一流接收正文、用量与错误。
+
 ```mermaid
+%% id: project1-streaming-assistant-sequence
+%% title: 最小 Assistant 流式对话时序
+%% alt: 用户请求由会话服务保存历史并发送模型适配器，再将增量事件和用量流式返回
 sequenceDiagram
     participant U as User
     participant S as AssistantSession
@@ -16,6 +21,38 @@ sequenceDiagram
 ```
 
 实现对话历史、流式完成事件、Token 估算、配置和错误边界。 离线模式使用确定性 Mock，使无 API Key 也能运行和测试；在线服务通过适配器替换，领域结果保持稳定 Schema。
+
+```mermaid
+%% id: project1-component-architecture
+%% title: 最小 Assistant 组件架构
+%% alt: CLI 或 FastAPI 通过 AssistantService 连接配置会话存储模型适配器事件流和 Usage 统计
+flowchart LR
+    Client[CLI 或 FastAPI] --> Service[AssistantService]
+    Service --> Config[Pydantic Settings]
+    Service --> History[JSONL Session Store]
+    Service --> Adapter[Mock 或 HTTP Model Adapter]
+    Adapter --> Events[delta usage error events]
+    Events --> Client
+```
+
+领域服务只依赖模型适配器协议，离线与在线实现返回相同事件 Schema；历史写入和 Usage 统计不由供应商对象直接控制。
+
+```mermaid
+%% id: project1-stream-error-state
+%% title: 流式响应错误状态机
+%% alt: 请求从接收进入 Streaming 后可正常完成、客户端取消、上游超时或协议错误并以终止事件收口
+stateDiagram-v2
+    [*] --> Accepted
+    Accepted --> Streaming
+    Streaming --> Completed: final + usage
+    Streaming --> Cancelled: client disconnected
+    Streaming --> Failed: timeout or invalid event
+    Completed --> [*]
+    Cancelled --> [*]
+    Failed --> [*]
+```
+
+每条流都以明确终止事件结束；在线供应商缺少 Usage 时标记未知，不用本地估算伪装为账单值。
 
 `输入 → 配置加载 → JSONL 历史 → Mock/兼容 HTTP 模型 → SSE delta → Usage → 持久化`。独立实现位于 `src/ai_agent_book/apps/minimal_assistant.py`，直接测试位于 `tests/test_minimal_assistant_app.py`。
 

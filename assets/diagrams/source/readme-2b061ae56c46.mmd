@@ -1,0 +1,12 @@
+%% id: project4-rag-evaluation-loop
+%% title: 企业 RAG 查询评估闭环
+%% alt: 黄金问题经权限过滤混合检索重排和回答生成后分别计算 Recall MRR 引用与 Faithfulness 并回流失败样本
+flowchart LR
+    Dataset[黄金问题与权威证据] --> Retrieve[ACL + 混合检索]
+    Retrieve --> Rerank[重排]
+    Rerank --> Generate[带引用回答]
+    Retrieve --> Metrics["Recall@K MRR"]
+    Generate --> AnswerEval[正确性 Citation Faithfulness]
+    Metrics --> Failures[失败分类]
+    AnswerEval --> Failures
+    Failures --> Dataset

@@ -1,0 +1,13 @@
+%% id: project8-checkpoint-interrupt-sequence
+%% title: 研究图 Checkpoint 与人工恢复时序
+%% alt: LangGraph 保存研究状态后发送审批中断，人工决定通过相同 thread_id 恢复并生成最终报告
+sequenceDiagram
+    participant G as Research Graph
+    participant C as Checkpointer
+    participant H as Human
+    G->>C: save plan evidence review state
+    G-->>H: interrupt approval payload
+    H->>G: Command resume decision + same thread_id
+    G->>C: load latest checkpoint
+    G->>G: validate decision and continue
+    G-->>H: report or cancelled result

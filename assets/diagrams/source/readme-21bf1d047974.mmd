@@ -1,0 +1,14 @@
+%% id: project8-research-failure-recovery
+%% title: 研究工作流失败恢复决策
+%% alt: 搜索读取 Reviewer 失败按错误类型进入有限重试替换来源补充证据人工介入或终止并保留已验证产物
+flowchart TD
+    Failure[节点失败] --> Kind{失败位置}
+    Kind -->|搜索暂时故障| Retry[RetryPolicy 预算内重试]
+    Kind -->|来源不可读| Alternate[替换来源并保留其他证据]
+    Kind -->|证据不足| More[Reviewer 返回具体缺口]
+    Kind -->|注入或权限| Stop[停止并记录安全错误]
+    Retry --> Search[继续 Search]
+    Alternate --> Search
+    More --> Limit{研究轮数剩余}
+    Limit -->|是| Search
+    Limit -->|否| Fail[失败或人工补充]

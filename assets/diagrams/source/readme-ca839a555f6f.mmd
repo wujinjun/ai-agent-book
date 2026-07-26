@@ -1,0 +1,12 @@
+%% id: project10-enterprise-platform-topology
+%% title: 企业级 Agent 平台部署拓扑
+%% alt: 用户经 OIDC 租户策略进入 API，任务队列驱动 Runtime 并连接工具 MCP RAG 模型 Trace PostgreSQL 和 Redis
+flowchart TB
+    User --> Auth["OIDC / Tenant Policy"] --> API
+    API --> Queue --> Runtime
+    Runtime --> Tools["Tool / MCP Registry"]
+    Runtime --> RAG
+    Runtime --> Model["Model Gateway"]
+    Runtime --> Trace
+    API --> DB[("PostgreSQL / pgvector")]
+    Queue --> Redis[(Redis)]

@@ -1,0 +1,8 @@
+%% id: project4-knowledge-rag-pipeline
+%% title: 企业知识库摄取与查询管线
+%% alt: PDF Office Markdown 经解析切分索引后，查询经过租户权限过滤检索重排生成带页码引用的回答
+flowchart LR
+    Files["PDF / Office / Markdown"] --> Parse --> Chunk --> Index
+    Query --> ACL["Tenant / ACL Filter"] --> Retrieve --> Rerank
+    Index --> Retrieve
+    Rerank --> Answer["Grounded Answer"] --> Citation["document + page + score"]
