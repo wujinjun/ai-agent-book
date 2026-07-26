@@ -1,0 +1,7 @@
+%% id: python-test-pyramid-agent
+%% title: Python Agent 测试分层
+%% alt: 大量离线单元测试支撑适配器集成测试和少量受预算在线契约测试与端到端测试
+flowchart TB
+    Unit[单元：Schema Policy State Fake Model] --> Integration[集成：httpx Mock DB Queue]
+    Integration --> Contract[供应商契约与固定版本]
+    Contract --> E2E[少量端到端与在线评估]

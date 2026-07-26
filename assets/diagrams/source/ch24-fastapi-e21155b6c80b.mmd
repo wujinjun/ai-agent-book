@@ -1,0 +1,6 @@
+%% id: fastapi-agent-service-architecture
+%% title: FastAPI Agent 服务架构
+%% alt: 客户端经鉴权进入 FastAPI，短任务直接执行长任务进入队列，并通过 SSE 接收 Agent 事件
+flowchart LR
+    Client --> Auth --> API["FastAPI"] --> Queue["短任务直跑/长任务入队"] --> Agent
+    Agent --> SSE["SSE 事件"] --> Client

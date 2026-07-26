@@ -1,0 +1,7 @@
+%% id: agent-run-observability-tree
+%% title: Agent Run 观测层级
+%% alt: 一次 Run 包含 Turn、模型 Span、工具 Span 与最终 Outcome Evaluation 的因果追踪层级
+flowchart LR
+    Run --> Turn --> ModelSpan["Model: tokens/cost/latency"]
+    Turn --> ToolSpan["Tool: args hash/status/latency"]
+    Run --> Eval["Outcome/Eval"]

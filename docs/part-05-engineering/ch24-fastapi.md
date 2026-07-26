@@ -8,11 +8,51 @@
 学习目标是实现一个核心任务 API 示例，并解释每种实时协议的边界。前置知识为第23章。
 
 ## 架构与协议选择
+
+Agent API 既要处理短请求，也要把长任务转成可观察资源。主图展示鉴权、任务分流和事件返回路径。
+
 ```mermaid
+%% id: fastapi-agent-service-architecture
+%% title: FastAPI Agent 服务架构
+%% alt: 客户端经鉴权进入 FastAPI，短任务直接执行长任务进入队列，并通过 SSE 接收 Agent 事件
 flowchart LR
     Client --> Auth --> API["FastAPI"] --> Queue["短任务直跑/长任务入队"] --> Agent
     Agent --> SSE["SSE 事件"] --> Client
 ```
+
+协议选择取决于交互方向和持久性，而不是“实时”两个字。SSE 适合单向事件，WebSocket 适合双向控制，轮询仍是可靠降级方案。
+
+```mermaid
+%% id: fastapi-stream-protocol-decision
+%% title: Agent API 实时协议选择
+%% alt: 根据任务时长、是否需要持续事件和是否需要低延迟双向控制选择同步 REST、轮询、SSE 或 WebSocket
+flowchart TD
+    Request[客户端交互] --> Short{可在网关超时内完成}
+    Short -->|是| REST[同步 REST]
+    Short -->|否| Events{需要持续服务端事件}
+    Events -->|否| Poll[202 Run 资源加轮询]
+    Events -->|是| Duplex{需要低延迟双向控制}
+    Duplex -->|否| SSE[SSE + 事件 ID 重连]
+    Duplex -->|是| WS[WebSocket + 会话状态]
+```
+
+无论使用哪种协议，最终状态都写入 Run 资源；事件流只是状态变化的传输方式，不能成为唯一事实来源。
+
+```mermaid
+%% id: fastapi-request-security-lifecycle
+%% title: FastAPI 请求安全生命周期
+%% alt: 请求经身份认证租户与对象授权限流输入校验后创建幂等 Run，输出再经 Schema 和脱敏处理
+flowchart LR
+    Input[HTTP 请求] --> AuthN[身份认证]
+    AuthN --> AuthZ[租户与对象授权]
+    AuthZ --> Rate[限流与配额]
+    Rate --> Validate[Schema 文件和大小校验]
+    Validate --> Idempotency[幂等创建 Run]
+    Idempotency --> Execute[执行或入队]
+    Execute --> Output[输出校验与脱敏]
+```
+
+鉴权后仍需对象级授权，文件名与 MIME 仍不可信。内部异常映射成稳定错误模型，调用栈只保留在受控日志。
 普通请求适合短任务；SSE 适合服务端单向事件；WebSocket 适合低延迟双向控制。流事件应有 `event_id`、类型、时间和数据，客户端可区分 token、tool、progress、done、error。
 
 ## 最小与完整工程
@@ -28,6 +68,9 @@ flowchart LR
 不要把模型的“聊天”直接当完整 API 设计。短任务可以 `POST /runs` 同步返回，长任务创建 `Run` 资源并返回 202；客户端通过 `GET /runs/{id}`、事件流和 `POST /runs/{id}/cancel` 管理生命周期。请求含 agent_id、input、幂等键和可选 session，响应含 run_id、status、output、usage、citations 与 error。
 
 ```mermaid
+%% id: fastapi-long-run-sequence
+%% title: FastAPI 长任务创建与事件订阅时序
+%% alt: 客户端用幂等键创建 Run，API 入队后 Worker 执行并通过 SSE 返回进度工具最终或错误事件
 sequenceDiagram
     participant C as Client
     participant A as FastAPI
@@ -42,6 +85,8 @@ sequenceDiagram
     C->>A: GET /runs/{id}/events
     A-->>C: SSE progress/tool/final/error
 ```
+
+202 响应确认资源已创建而不是任务已完成。客户端可断线重连并依据 `event_id` 从持久事件继续读取。
 
 ### 请求、响应与依赖注入
 

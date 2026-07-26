@@ -8,7 +8,13 @@ Agent 任务会因搜索、工具和人工审批持续较久。本章讨论 Cele
 学习目标是掌握核心投递语义并设计可恢复的长任务示例。前置知识为第9、25—26章。
 
 ## 状态机
+
+长任务必须以持久状态机表达，队列只是推动状态变化的分发机制。下图列出运行、审批、重试、取消与死信路径。
+
 ```mermaid
+%% id: agent-job-lifecycle-state-machine
+%% title: Agent 长任务生命周期状态机
+%% alt: 任务从 queued 进入 running 后可等待审批成功重试失败取消或进入死信队列
 stateDiagram-v2
     queued --> running
     running --> waiting_approval
@@ -20,6 +26,42 @@ stateDiagram-v2
     running --> cancelled
     failed --> dead_letter
 ```
+
+每个状态变化写入数据库事件并携带版本。Worker 只有持有有效租约时才能更新当前任务，避免并发重复推进。
+
+```mermaid
+%% id: job-retry-cancel-decision
+%% title: 长任务重试与取消决策
+%% alt: Worker 在步骤边界检查取消，并按错误可重试性幂等能力尝试次数决定退避重试核对状态或失败死信
+flowchart TD
+    Step[任务步骤边界] --> Cancel{已请求取消}
+    Cancel -->|是| Cleanup[清理资源并标记 cancelled]
+    Cancel -->|否| Execute[执行带 deadline 的步骤]
+    Execute --> Error{发生错误}
+    Error -->|否| Checkpoint[保存 checkpoint 与进度]
+    Error -->|是| Retryable{暂时故障且可安全重放}
+    Retryable -->|是且次数未尽| Backoff[抖动退避到 retry_wait]
+    Retryable -->|否| Failed[failed 或人工核对]
+    Backoff --> Queue[重新 queued]
+```
+
+取消是协作式协议，不能保证任意外部调用立刻停止。写动作超时后先核对外部状态，再决定是否重试。
+
+```mermaid
+%% id: queue-framework-selection
+%% title: Python 工作队列选型边界
+%% alt: 根据团队生态调度复杂度投递语义和运维约束在 Celery Dramatiq RQ 或云队列 Worker 中选择
+flowchart TD
+    Need[持久异步任务] --> Complex{需要复杂路由定时 Canvas 生态}
+    Complex -->|是| Celery[Celery 候选]
+    Complex -->|否| Simple{偏好轻量 Python Worker}
+    Simple -->|Dramatiq 中间件模型| Dramatiq[Dramatiq]
+    Simple -->|Redis 简单队列| RQ[RQ]
+    Need --> Cloud{已有托管消息平台}
+    Cloud -->|是| Managed[云队列 + 自有 Job State]
+```
+
+无论采用哪种框架，用户可见状态、租约、幂等和审计都应由应用数据库定义，不能交给 broker 内部状态替代。
 
 ## 最小与完整工程
 任务消息只携带稳定 ID，Worker 从数据库读取状态。每步保存 checkpoint 和进度事件；重试使用抖动退避且仅针对暂时故障；消费采用幂等键。取消是协作式的，Worker 在工具边界检查标志并清理资源。
@@ -40,6 +82,9 @@ Celery 功能完整，支持多 broker、定时、routing 与复杂 Worker，但
 队列框架不替代 Job 数据库。数据库记录用户可见状态与审计，broker 只负责分发。消息携带 job_id 和版本，不放完整 Prompt、文件或 Secret。
 
 ```mermaid
+%% id: durable-job-delivery-sequence
+%% title: 持久任务投递与确认时序
+%% alt: API 先在数据库创建 queued Job 再发布 ID，Worker 取得租约执行 checkpoint 并在提交最终状态后确认消息
 sequenceDiagram
     participant API
     participant DB
@@ -53,6 +98,8 @@ sequenceDiagram
     W->>DB: progress/final
     W->>Q: ack
 ```
+
+只有最终状态或可恢复 checkpoint 已提交后才确认消息。Worker 崩溃导致重新投递时，租约和幂等键保证安全接管。
 
 ### Job State 与租约
 

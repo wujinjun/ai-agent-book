@@ -1,0 +1,13 @@
+%% id: job-retry-cancel-decision
+%% title: 长任务重试与取消决策
+%% alt: Worker 在步骤边界检查取消，并按错误可重试性幂等能力尝试次数决定退避重试核对状态或失败死信
+flowchart TD
+    Step[任务步骤边界] --> Cancel{已请求取消}
+    Cancel -->|是| Cleanup[清理资源并标记 cancelled]
+    Cancel -->|否| Execute[执行带 deadline 的步骤]
+    Execute --> Error{发生错误}
+    Error -->|否| Checkpoint[保存 checkpoint 与进度]
+    Error -->|是| Retryable{暂时故障且可安全重放}
+    Retryable -->|是且次数未尽| Backoff[抖动退避到 retry_wait]
+    Retryable -->|否| Failed[failed 或人工核对]
+    Backoff --> Queue[重新 queued]

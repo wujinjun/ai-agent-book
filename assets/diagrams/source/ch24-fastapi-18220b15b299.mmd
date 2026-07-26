@@ -1,0 +1,16 @@
+%% id: fastapi-long-run-sequence
+%% title: FastAPI 长任务创建与事件订阅时序
+%% alt: 客户端用幂等键创建 Run，API 入队后 Worker 执行并通过 SSE 返回进度工具最终或错误事件
+sequenceDiagram
+    participant C as Client
+    participant A as FastAPI
+    participant Q as Queue
+    participant W as Worker
+    C->>A: POST /runs + Idempotency-Key
+    A->>Q: enqueue(run_id)
+    A-->>C: 202 queued
+    W->>Q: claim
+    W->>W: Agent + checkpoint
+    W-->>A: progress events
+    C->>A: GET /runs/{id}/events
+    A-->>C: SSE progress/tool/final/error

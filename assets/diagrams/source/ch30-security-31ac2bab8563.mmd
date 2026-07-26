@@ -1,0 +1,14 @@
+%% id: high-risk-tool-approval-sequence
+%% title: 高风险工具人工审批时序
+%% alt: Agent 提出具体动作后 Policy 生成不可变审批摘要，人工决定与主体绑定并在执行前再次校验状态
+sequenceDiagram
+    participant A as Agent Runtime
+    participant P as Policy
+    participant H as Human Approver
+    participant T as Tool Service
+    A->>P: proposed action + subject + resource
+    P-->>H: immutable summary + risk + expiry
+    H-->>P: approve or reject bound to action_id
+    P->>P: revalidate subject resource and freshness
+    P->>T: execute approved action_id
+    T-->>P: result + audit evidence

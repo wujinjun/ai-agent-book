@@ -10,12 +10,54 @@
 ## 核心原理与架构
 PostgreSQL 保存强一致业务记录、会话元数据和审计；Redis 适合有 TTL 的缓存、锁和队列协调；pgvector 将向量与关系过滤结合。事实状态与生成文本分表，事件采用追加写，派生摘要可重建。
 
+下面的职责图把权威事实、暂态协调和语义检索拆到不同存储，避免以单一数据库承担相互冲突的一致性需求。
+
 ```mermaid
+%% id: agent-storage-responsibility-map
+%% title: Agent 数据存储职责分工
+%% alt: API 将事实状态审计写入 PostgreSQL，缓存限流队列协调写入 Redis，检索向量与元数据进入 pgvector
 flowchart LR
     API --> Postgres["PostgreSQL: users/tasks/state/audit"]
     API --> Redis["Redis: cache/rate/job coordination"]
     Retriever --> Vector["pgvector: chunks/metadata"]
 ```
+
+存储选型由一致性、生命周期和查询方式决定。Redis 与向量索引都不应成为权威业务事实的唯一副本。
+
+```mermaid
+%% id: agent-state-outbox-transaction
+%% title: Agent 状态与 Outbox 原子提交
+%% alt: 数据库事务同时更新 Run 状态和写入 Outbox，独立发布器把事件投递队列并幂等标记完成
+sequenceDiagram
+    participant W as Worker
+    participant DB as PostgreSQL
+    participant P as Outbox Publisher
+    participant Q as Broker
+    W->>DB: transaction(state update + outbox event)
+    DB-->>W: commit
+    P->>DB: claim unpublished event
+    P->>Q: publish(event_id)
+    Q-->>P: ack
+    P->>DB: mark published idempotently
+```
+
+Outbox 解决“状态已提交但消息未发送”这类双写裂缝。消费者仍按 event ID 幂等处理，因为至少一次投递可能重复。
+
+```mermaid
+%% id: multi-tenant-storage-boundaries
+%% title: 多租户存储隔离边界
+%% alt: 请求主体经租户上下文进入数据库 RLS、向量 tenant 过滤和带权限版本的缓存键并统一审计
+flowchart LR
+    Principal[已认证主体] --> Tenant[不可变 tenant context]
+    Tenant --> PG[PostgreSQL RLS 与对象授权]
+    Tenant --> Vector[向量检索强制 tenant 与 ACL]
+    Tenant --> Cache[缓存键 tenant + permission version]
+    PG --> Audit[访问审计]
+    Vector --> Audit
+    Cache --> Audit
+```
+
+多租户过滤应在数据访问层强制执行，不能依赖每个调用者记得添加条件。缓存和备份也属于隔离范围。
 
 ## 最小与完整工程
 工程 Schema 包含 `tenant_id`、稳定 ID、版本、创建/更新时间和乐观锁。迁移使用 Alembic 类工具并先向后兼容；Checkpoint 与外部副作用使用 outbox/idempotency。缓存键带租户和模型版本。
@@ -30,6 +72,9 @@ Redis 不是默认事实库；Checkpoint 不等于事务；向量库不自动隔
 存储前先区分业务事实、运行状态、事件、派生文本、缓存和向量。用户、权限、任务、工具副作用与审计是事实；对话摘要和模型标签可重建；Token 流通常不需永久保存。每类数据有不同一致性、查询、保留和隐私要求。
 
 ```mermaid
+%% id: agent-production-storage-topology
+%% title: Agent 生产存储拓扑
+%% alt: API 和 Worker 共享 PostgreSQL 事实库，Redis 提供协调，Retriever 访问向量存储，Outbox 驱动 Worker 并备份恢复
 flowchart TB
     API --> PG["PostgreSQL: facts/state/audit"]
     Worker --> PG
@@ -38,6 +83,8 @@ flowchart TB
     Events["Outbox"] --> Worker
     PG --> Backup["encrypted backup + restore test"]
 ```
+
+拓扑中的每个派生存储都必须能从事实库或原始数据重建；备份只有经过恢复演练才是有效证据。
 
 ### PostgreSQL Schema 与事务
 

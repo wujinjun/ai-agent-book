@@ -1,0 +1,15 @@
+%% id: durable-job-delivery-sequence
+%% title: 持久任务投递与确认时序
+%% alt: API 先在数据库创建 queued Job 再发布 ID，Worker 取得租约执行 checkpoint 并在提交最终状态后确认消息
+sequenceDiagram
+    participant API
+    participant DB
+    participant Q as Broker
+    participant W as Worker
+    API->>DB: create job queued
+    API->>Q: publish job_id
+    W->>Q: claim
+    W->>DB: lease + running
+    W->>W: execute/checkpoint
+    W->>DB: progress/final
+    W->>Q: ack

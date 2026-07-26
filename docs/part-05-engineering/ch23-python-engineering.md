@@ -29,6 +29,9 @@ pyproject.toml    依赖、构建和工具配置
 教材固定 Python 3.12，并用 `python3.12 -m venv .venv` 创建项目内环境。`python --version`、`pip --version` 和锁定依赖要进入 CI 证据。不要依赖系统 Python 或全局 site-packages；生产镜像和本地环境使用同一大版本。
 
 ```mermaid
+%% id: python-agent-project-quality-pipeline
+%% title: Python Agent 工程结构与质量流水线
+%% alt: pyproject 和 src 包在 Python 3.12 虚拟环境中经过 Ruff mypy pytest 后构建 wheel 或容器
 flowchart TB
     PyProject["pyproject.toml"] --> Venv["Python 3.12 .venv"]
     Src["src package"] --> Tests
@@ -39,6 +42,53 @@ flowchart TB
 ```
 
 `src/` 布局避免测试意外导入工作目录中的未安装包。领域代码按能力分组，例如 `runtime/`、`tools/`、`retrieval/`，而不是把所有 model、service、utils 堆在技术层目录。每个模块有清晰公开接口，文件过长时按职责拆分。
+
+```mermaid
+%% id: python-async-agent-request-flow
+%% title: Python 异步 Agent 请求流
+%% alt: 异步服务通过 httpx 超时连接模型和工具，并把取消异常和结构化日志贯穿整个调用链
+sequenceDiagram
+    participant API as Async API
+    participant Runtime as Agent Runtime
+    participant HTTP as httpx Client
+    participant Upstream as Model or Tool
+    API->>Runtime: await run + deadline
+    Runtime->>HTTP: request with connect/read timeout
+    HTTP->>Upstream: async I/O
+    Upstream-->>HTTP: result or error
+    HTTP-->>Runtime: typed adapter result
+    Runtime-->>API: output usage or domain error
+```
+
+异步边界必须传递 deadline 与取消，阻塞 SDK 则放入受控线程池或独立 Worker。只把函数写成 `async def` 并不会自动获得非阻塞行为。
+
+```mermaid
+%% id: python-dependency-configuration-boundaries
+%% title: 配置、依赖注入与 Secret 边界
+%% alt: 环境配置经 Pydantic Settings 校验后构造最小权限客户端并注入服务，Secret 不进入领域模型和日志
+flowchart LR
+    Env[环境变量与 Secret Store] --> Settings[Pydantic Settings 校验]
+    Settings --> Factory[依赖工厂]
+    Factory --> ModelClient[模型客户端]
+    Factory --> ToolClient[工具客户端]
+    ModelClient --> Service[领域服务]
+    ToolClient --> Service
+    Service --> Log[结构化日志字段白名单]
+```
+
+配置在进程启动时校验，依赖按请求主体构造最小权限能力。Secret 只停留在基础设施适配层，不进入 Prompt、State 或异常文本。
+
+```mermaid
+%% id: python-test-pyramid-agent
+%% title: Python Agent 测试分层
+%% alt: 大量离线单元测试支撑适配器集成测试和少量受预算在线契约测试与端到端测试
+flowchart TB
+    Unit[单元：Schema Policy State Fake Model] --> Integration[集成：httpx Mock DB Queue]
+    Integration --> Contract[供应商契约与固定版本]
+    Contract --> E2E[少量端到端与在线评估]
+```
+
+测试默认禁止真实模型请求，在线契约测试在独立发布门禁运行。这样 CI 既可重复，又能发现供应商接口漂移。
 
 ### pyproject.toml 与依赖管理
 

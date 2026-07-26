@@ -1,0 +1,14 @@
+%% id: agent-threat-control-mapping
+%% title: Agent 威胁与控制映射
+%% alt: Prompt Injection 数据外泄工具滥用过度自主和跨租户攻击分别映射上下文隔离权限沙箱审批与审计控制
+flowchart TB
+    Injection[Prompt 与间接 Injection] --> Context[来源标记与上下文隔离]
+    Exfil[数据外泄] --> AuthZ[对象授权与结果最小化]
+    Abuse[Tool Abuse] --> Allow[工具参数网络文件 allowlist]
+    Agency[Excessive Agency] --> Approval[预算终止与人工审批]
+    Tenant[跨租户攻击] --> Isolation[强制 tenant 过滤与 RLS]
+    Context --> Audit[安全测试与审计]
+    AuthZ --> Audit
+    Allow --> Audit
+    Approval --> Audit
+    Isolation --> Audit

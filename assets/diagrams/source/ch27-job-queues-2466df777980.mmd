@@ -1,0 +1,11 @@
+%% id: queue-framework-selection
+%% title: Python 工作队列选型边界
+%% alt: 根据团队生态调度复杂度投递语义和运维约束在 Celery Dramatiq RQ 或云队列 Worker 中选择
+flowchart TD
+    Need[持久异步任务] --> Complex{需要复杂路由定时 Canvas 生态}
+    Complex -->|是| Celery[Celery 候选]
+    Complex -->|否| Simple{偏好轻量 Python Worker}
+    Simple -->|Dramatiq 中间件模型| Dramatiq[Dramatiq]
+    Simple -->|Redis 简单队列| RQ[RQ]
+    Need --> Cloud{已有托管消息平台}
+    Cloud -->|是| Managed[云队列 + 自有 Job State]

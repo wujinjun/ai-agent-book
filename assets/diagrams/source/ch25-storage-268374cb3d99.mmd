@@ -1,0 +1,14 @@
+%% id: agent-state-outbox-transaction
+%% title: Agent 状态与 Outbox 原子提交
+%% alt: 数据库事务同时更新 Run 状态和写入 Outbox，独立发布器把事件投递队列并幂等标记完成
+sequenceDiagram
+    participant W as Worker
+    participant DB as PostgreSQL
+    participant P as Outbox Publisher
+    participant Q as Broker
+    W->>DB: transaction(state update + outbox event)
+    DB-->>W: commit
+    P->>DB: claim unpublished event
+    P->>Q: publish(event_id)
+    Q-->>P: ack
+    P->>DB: mark published idempotently

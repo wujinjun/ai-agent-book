@@ -1,0 +1,11 @@
+%% id: fastapi-request-security-lifecycle
+%% title: FastAPI 请求安全生命周期
+%% alt: 请求经身份认证租户与对象授权限流输入校验后创建幂等 Run，输出再经 Schema 和脱敏处理
+flowchart LR
+    Input[HTTP 请求] --> AuthN[身份认证]
+    AuthN --> AuthZ[租户与对象授权]
+    AuthZ --> Rate[限流与配额]
+    Rate --> Validate[Schema 文件和大小校验]
+    Validate --> Idempotency[幂等创建 Run]
+    Idempotency --> Execute[执行或入队]
+    Execute --> Output[输出校验与脱敏]

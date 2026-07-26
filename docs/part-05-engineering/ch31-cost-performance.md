@@ -8,10 +8,51 @@
 学习目标是掌握核心成本模型并完成一个带预算和降级的压测示例。前置知识为第2、4、28—29章。
 
 ## 延迟与成本分解
+
+一次任务的延迟来自排队、模型预填充与生成、工具、评审和重试。主图用于建立 Span 分解，而不是假设模型调用永远是唯一瓶颈。
+
 ```mermaid
+%% id: agent-latency-critical-path
+%% title: Agent 延迟关键路径
+%% alt: 总延迟由队列等待模型 Prefill Decode 工具调用和 Reviewer 串联构成并受重试放大
 flowchart LR
     Queue --> Prefill --> Decode --> Tools --> Review
 ```
+
+关键路径由实际 Span 决定：独立工具可以并行缩短墙钟时间，串行 Reviewer 与重复调用则会直接放大延迟。
+
+```mermaid
+%% id: model-routing-budget-decision
+%% title: 模型路由与任务预算决策
+%% alt: 根据任务类型风险复杂度上下文长度和能力要求选择允许模型并在预算不足时拒绝或降级
+flowchart TD
+    Task[任务] --> Classify[确定性类型与风险分类]
+    Classify --> Capability[所需 Tool Vision Reasoning Context]
+    Capability --> Allow[模型 allowlist 与数据驻留]
+    Allow --> Estimate[估算 Token 延迟与费用]
+    Estimate --> Budget{任务预算可承受}
+    Budget -->|是| Route[选择满足 SLA 的最低成本模型]
+    Budget -->|否| Degrade[缩小范围 异步执行或请求确认]
+```
+
+路由首先满足能力、安全和数据策略，再优化价格。更便宜但频繁失败重试的模型可能提高每个成功任务的总成本。
+
+```mermaid
+%% id: cost-performance-optimization-loop
+%% title: 成本与性能优化闭环
+%% alt: 基于 Trace 建立基线后定位瓶颈，单变量实施缓存压缩并行批处理或模型路由并用评估防止质量回归
+flowchart LR
+    Baseline[任务成功率 成本 P95 基线] --> Trace[按 Span 定位瓶颈]
+    Trace --> Change[选择单项优化]
+    Change --> Load[压测与故障场景]
+    Load --> Eval[黄金集与安全回归]
+    Eval --> Gate{质量与 SLA 达标}
+    Gate -->|是| Release[灰度发布并监控]
+    Gate -->|否| Revert[撤销或调整]
+    Release --> Baseline
+```
+
+缓存、上下文压缩和并行化都可能改变答案或权限行为，所以必须同时经过质量与安全评估，而不只是压测。
 总延迟包括队列、模型首 Token、输出生成、工具和重试。优化前先按 span 测量。模型路由根据任务风险与复杂度选择，不以关键词随意切换；缓存键包含模型、Prompt、输入和权限版本。
 
 ## 最小与完整工程
@@ -27,6 +68,9 @@ flowchart LR
 总成本包含输入/输出 Token、缓存、推理计算、Embedding、Reranker、工具 API、搜索、存储和基础设施。价格会变化，Cost Calculator 使用带生效时间的配置，不在业务代码写死。主指标是每个成功任务成本和单位业务价值。
 
 ```mermaid
+%% id: agent-task-cost-budget-flow
+%% title: Agent 任务成本与预算扣减
+%% alt: 请求的上下文生成工具和评审分别累计成本，并在接近任务预算时进入可解释降级路径
 flowchart LR
     Request --> Context["input tokens"] --> Model["generation/reasoning"] --> Tools --> Review
     Context --> Cost
@@ -36,6 +80,8 @@ flowchart LR
     Cost --> Budget{"task budget"}
     Budget -->|near limit| Degrade
 ```
+
+预算由运行时逐步扣减且不可由模型提高。降级顺序在任务开始前定义，并把影响明确告知用户或调用方。
 
 预算在运行前设最大回合、输入、输出、工具、墙钟和费用；每步扣减，剩余不足时选择拒绝、请求用户继续或降级。模型不能自行提高预算。
 

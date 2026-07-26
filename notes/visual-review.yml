@@ -252,15 +252,87 @@ files:
       - {id: multi-agent-cost-termination-control, section: 核心原理与架构, relation: flow, disposition: diagram}
       - {id: crewai-flow-crew-boundary, section: CrewAI Crews 与 Flows, relation: architecture, disposition: diagram}
 
-  docs/part-05-engineering/ch23-python-engineering.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-05-engineering/ch24-fastapi.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-05-engineering/ch25-storage.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-05-engineering/ch26-docker-deployment.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-05-engineering/ch27-job-queues.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-05-engineering/ch28-observability.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-05-engineering/ch29-evaluation.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-05-engineering/ch30-security.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-05-engineering/ch31-cost-performance.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-05-engineering/ch23-python-engineering.md:
+    group: part-05
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: python-agent-project-quality-pipeline, section: 项目结构与环境, relation: flow, disposition: diagram}
+      - {id: python-async-agent-request-flow, section: 项目结构与环境, relation: sequence, disposition: diagram}
+      - {id: python-dependency-configuration-boundaries, section: 项目结构与环境, relation: architecture, disposition: diagram}
+      - {id: python-test-pyramid-agent, section: 项目结构与环境, relation: hierarchy, disposition: diagram}
+  docs/part-05-engineering/ch24-fastapi.md:
+    group: part-05
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: fastapi-agent-service-architecture, section: 架构与协议选择, relation: architecture, disposition: diagram}
+      - {id: fastapi-stream-protocol-decision, section: 架构与协议选择, relation: decision, disposition: diagram}
+      - {id: fastapi-request-security-lifecycle, section: 架构与协议选择, relation: security, disposition: diagram}
+      - {id: fastapi-long-run-sequence, section: REST 资源与 Agent API, relation: sequence, disposition: diagram}
+  docs/part-05-engineering/ch25-storage.md:
+    group: part-05
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: agent-storage-responsibility-map, section: 核心原理与架构, relation: architecture, disposition: diagram}
+      - {id: agent-state-outbox-transaction, section: 核心原理与架构, relation: sequence, disposition: diagram}
+      - {id: multi-tenant-storage-boundaries, section: 核心原理与架构, relation: security, disposition: diagram}
+      - {id: agent-production-storage-topology, section: 数据分类与事实来源, relation: architecture, disposition: diagram}
+  docs/part-05-engineering/ch26-docker-deployment.md:
+    group: part-05
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: agent-service-deployment-topology, section: 架构图, relation: architecture, disposition: diagram}
+      - {id: docker-multistage-security-build, section: 架构图, relation: flow, disposition: diagram}
+      - {id: container-healthcheck-boundaries, section: 架构图, relation: decision, disposition: diagram}
+      - {id: agent-cicd-release-gates, section: 架构图, relation: flow, disposition: diagram}
+  docs/part-05-engineering/ch27-job-queues.md:
+    group: part-05
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: agent-job-lifecycle-state-machine, section: 状态机, relation: state, disposition: diagram}
+      - {id: job-retry-cancel-decision, section: 状态机, relation: decision, disposition: diagram}
+      - {id: queue-framework-selection, section: 状态机, relation: decision, disposition: diagram}
+      - {id: durable-job-delivery-sequence, section: 任务投递语义, relation: sequence, disposition: diagram}
+  docs/part-05-engineering/ch28-observability.md:
+    group: part-05
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: agent-run-observability-tree, section: 观测模型, relation: hierarchy, disposition: diagram}
+      - {id: observability-error-localization, section: 观测模型, relation: decision, disposition: diagram}
+      - {id: logs-metrics-traces-audit-boundaries, section: Logs Metrics Trace 与 Audit, relation: comparison, disposition: diagram}
+      - {id: opentelemetry-agent-trace-propagation, section: Metrics Trace 与 OpenTelemetry, relation: flow, disposition: diagram}
+  docs/part-05-engineering/ch29-evaluation.md:
+    group: part-05
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: agent-evaluation-pyramid-overview, section: 评估金字塔, relation: hierarchy, disposition: diagram}
+      - {id: agent-evaluation-metric-map, section: 评估金字塔, relation: hierarchy, disposition: diagram}
+      - {id: agent-test-pyramid-detailed, section: 测试层级, relation: hierarchy, disposition: diagram}
+      - {id: agent-evaluation-release-loop, section: Regression A B 与发布门禁, relation: flow, disposition: diagram}
+  docs/part-05-engineering/ch30-security.md:
+    group: part-05
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: agent-security-policy-boundary, section: 威胁模型, relation: security, disposition: diagram}
+      - {id: agent-threat-control-mapping, section: 威胁模型, relation: security, disposition: diagram}
+      - {id: high-risk-tool-approval-sequence, section: 威胁模型, relation: sequence, disposition: diagram}
+      - {id: agent-security-trust-boundaries, section: 资产主体与信任边界, relation: security, disposition: diagram}
+  docs/part-05-engineering/ch31-cost-performance.md:
+    group: part-05
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: agent-latency-critical-path, section: 延迟与成本分解, relation: flow, disposition: diagram}
+      - {id: model-routing-budget-decision, section: 延迟与成本分解, relation: decision, disposition: diagram}
+      - {id: cost-performance-optimization-loop, section: 延迟与成本分解, relation: flow, disposition: diagram}
+      - {id: agent-task-cost-budget-flow, section: 成本模型与任务预算, relation: flow, disposition: diagram}
 
   docs/part-07-advanced/ch32-multi-agent-principles.md: {group: part-07, minimum_diagrams: 4, review_status: pending, requirements: []}
   docs/part-07-advanced/ch33-agentic-coding.md: {group: part-07, minimum_diagrams: 4, review_status: pending, requirements: []}

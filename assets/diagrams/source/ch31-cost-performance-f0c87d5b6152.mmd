@@ -1,0 +1,5 @@
+%% id: agent-latency-critical-path
+%% title: Agent 延迟关键路径
+%% alt: 总延迟由队列等待模型 Prefill Decode 工具调用和 Reviewer 串联构成并受重试放大
+flowchart LR
+    Queue --> Prefill --> Decode --> Tools --> Review

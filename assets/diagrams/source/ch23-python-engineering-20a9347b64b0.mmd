@@ -1,0 +1,14 @@
+%% id: python-async-agent-request-flow
+%% title: Python 异步 Agent 请求流
+%% alt: 异步服务通过 httpx 超时连接模型和工具，并把取消异常和结构化日志贯穿整个调用链
+sequenceDiagram
+    participant API as Async API
+    participant Runtime as Agent Runtime
+    participant HTTP as httpx Client
+    participant Upstream as Model or Tool
+    API->>Runtime: await run + deadline
+    Runtime->>HTTP: request with connect/read timeout
+    HTTP->>Upstream: async I/O
+    Upstream-->>HTTP: result or error
+    HTTP-->>Runtime: typed adapter result
+    Runtime-->>API: output usage or domain error

@@ -8,7 +8,13 @@
 学习目标是掌握核心部署边界，并完成一个非 root、可健康检查的容器示例。前置知识为第23—25章。
 
 ## 架构图
+
+生产部署把公网入口、API、Worker、数据服务、模型出口与观测面分区。下图展示最小拓扑及主要依赖方向。
+
 ```mermaid
+%% id: agent-service-deployment-topology
+%% title: Agent 服务部署拓扑
+%% alt: 公网经 TLS 入口访问 API，API 与 Worker 使用 PostgreSQL Redis 模型网关并统一发送日志指标 Trace
 flowchart TB
     Internet --> Proxy["Nginx/Ingress TLS"] --> API
     API --> Worker
@@ -18,6 +24,56 @@ flowchart TB
     API --> Observe["Logs/Metrics/Traces"]
     Worker --> Observe
 ```
+
+数据库和 Redis 仅在私网开放，Worker 不接受公网流量；模型与工具的出站网络也应经过 allowlist 或代理策略。
+
+```mermaid
+%% id: docker-multistage-security-build
+%% title: Docker 多阶段安全构建
+%% alt: 固定基础镜像在 Builder 安装锁定依赖并生成 wheel，Runtime 仅复制产物以非 root 和只读文件系统运行
+flowchart LR
+    Base[固定 digest 的 Python 3.12] --> Builder[Builder 安装锁定依赖]
+    Source[源码与 pyproject] --> Builder
+    Builder --> Wheel[wheel 与依赖产物]
+    Wheel --> Runtime[最小 Runtime 镜像]
+    Runtime --> NonRoot[非 root 用户]
+    NonRoot --> ReadOnly[只读根文件系统与临时卷]
+```
+
+Secret 不参与镜像构建，也不保存在层历史。运行时只包含服务必需文件和 CA/时区等明确依赖。
+
+```mermaid
+%% id: container-healthcheck-boundaries
+%% title: Liveness、Readiness 与启动检查边界
+%% alt: 启动探针等待迁移和初始化，Liveness 只判断进程存活，Readiness 检查必要依赖并控制流量
+flowchart TD
+    Start[容器启动] --> Startup{初始化完成}
+    Startup -->|否| Wait[继续等待或失败退出]
+    Startup -->|是| Live[Liveness：事件循环可响应]
+    Live --> Ready{Readiness：必要 DB Queue 可用}
+    Ready -->|是| Traffic[接收流量]
+    Ready -->|否| Drain[从负载均衡摘除]
+```
+
+Readiness 不调用昂贵或不稳定的模型 API，否则上游故障会触发容器重启风暴。依赖降级由应用状态明确表达。
+
+```mermaid
+%% id: agent-cicd-release-gates
+%% title: Agent 容器 CI/CD 发布门禁
+%% alt: 代码依次经过测试安全扫描镜像构建 SBOM 签名部署烟测和观测门禁并在失败时回滚
+flowchart LR
+    Commit[代码提交] --> Test[单元集成评估]
+    Test --> Scan[依赖与镜像扫描]
+    Scan --> Build[可复现镜像构建]
+    Build --> SBOM[SBOM 与签名]
+    SBOM --> Deploy[灰度部署]
+    Deploy --> Smoke[健康与任务烟测]
+    Smoke --> Observe{错误延迟安全指标}
+    Observe -->|达标| Promote[扩大发布]
+    Observe -->|失败| Rollback[回滚已签名版本]
+```
+
+发布物以 digest 标识，回滚不重新构建。数据库迁移采用向后兼容顺序，确保旧代码在回滚窗口仍可运行。
 
 ## 最小与完整工程
 多阶段镜像固定基础 digest/版本，非 root 用户运行，只复制运行产物。liveness 只判断进程可用，readiness 检查必要依赖但不调用昂贵模型。Compose 为本地提供 API、worker、Postgres、Redis；生产 Secret 由平台注入，HTTPS 在入口终止。

@@ -1,0 +1,10 @@
+%% id: agent-production-storage-topology
+%% title: Agent 生产存储拓扑
+%% alt: API 和 Worker 共享 PostgreSQL 事实库，Redis 提供协调，Retriever 访问向量存储，Outbox 驱动 Worker 并备份恢复
+flowchart TB
+    API --> PG["PostgreSQL: facts/state/audit"]
+    Worker --> PG
+    API --> Redis["Redis: cache/rate/queue coordination"]
+    Retriever --> Vector["pgvector/vector service"]
+    Events["Outbox"] --> Worker
+    PG --> Backup["encrypted backup + restore test"]

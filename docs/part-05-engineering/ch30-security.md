@@ -8,7 +8,13 @@
 学习目标是理解核心安全边界并为一个工具示例建立威胁模型。前置知识为第8—9、11和23章。
 
 ## 威胁模型
+
+Agent 安全的核心是把模型视为不可信决策组件，把不可绕过的 Policy 放在工具和数据前。主图展示最小纵深防御链。
+
 ```mermaid
+%% id: agent-security-policy-boundary
+%% title: Agent Policy 与工具安全边界
+%% alt: 用户网页邮件文档进入不可信模型后，动作必须经过不可绕过 Policy 和人工审批才能访问敏感数据
 flowchart LR
     Untrusted["用户/网页/邮件/文档"] --> Model
     Model --> Policy["不可绕过的 Policy Enforcement"] --> Tools
@@ -16,6 +22,46 @@ flowchart LR
     Policy --> Approval["Human Approval"]
     Tools --> Audit["Audit Log"]
 ```
+
+模型可以提出动作，但不能绕过主体、资源、参数与风险检查。高风险调用还需要在执行前获得与具体动作绑定的人工批准。
+
+```mermaid
+%% id: agent-threat-control-mapping
+%% title: Agent 威胁与控制映射
+%% alt: Prompt Injection 数据外泄工具滥用过度自主和跨租户攻击分别映射上下文隔离权限沙箱审批与审计控制
+flowchart TB
+    Injection[Prompt 与间接 Injection] --> Context[来源标记与上下文隔离]
+    Exfil[数据外泄] --> AuthZ[对象授权与结果最小化]
+    Abuse[Tool Abuse] --> Allow[工具参数网络文件 allowlist]
+    Agency[Excessive Agency] --> Approval[预算终止与人工审批]
+    Tenant[跨租户攻击] --> Isolation[强制 tenant 过滤与 RLS]
+    Context --> Audit[安全测试与审计]
+    AuthZ --> Audit
+    Allow --> Audit
+    Approval --> Audit
+    Isolation --> Audit
+```
+
+威胁与控制必须形成可测试映射。System Prompt 可以降低风险，但不能承担数据库授权、网络隔离或副作用审批职责。
+
+```mermaid
+%% id: high-risk-tool-approval-sequence
+%% title: 高风险工具人工审批时序
+%% alt: Agent 提出具体动作后 Policy 生成不可变审批摘要，人工决定与主体绑定并在执行前再次校验状态
+sequenceDiagram
+    participant A as Agent Runtime
+    participant P as Policy
+    participant H as Human Approver
+    participant T as Tool Service
+    A->>P: proposed action + subject + resource
+    P-->>H: immutable summary + risk + expiry
+    H-->>P: approve or reject bound to action_id
+    P->>P: revalidate subject resource and freshness
+    P->>T: execute approved action_id
+    T-->>P: result + audit evidence
+```
+
+审批必须绑定动作 ID、具体参数、主体、资源和有效期。参数发生变化或状态过期时，旧批准不能复用。
 
 ## 最小与完整工程
 先列资产、主体、信任边界、攻击路径和控制。工具默认只读、最小作用域，参数 allowlist，网络与文件 Sandbox，高风险动作展示具体影响后审批。输出进入 SQL、HTML、Shell 等下游前按目标语境编码/验证。
@@ -30,6 +76,9 @@ System Prompt 不是安全边界；内容过滤不等于权限；Sandbox 不是�
 威胁建模先列资产：Secret、用户数据、企业文档、工具权限、模型预算、代码执行环境与审计。主体包括用户、管理员、服务、MCP Server、第三方来源和攻击者。模型与外部内容都位于不可信边界，Policy Enforcement、数据库和 Sandbox 才是控制点。
 
 ```mermaid
+%% id: agent-security-trust-boundaries
+%% title: Agent 系统信任边界全景
+%% alt: 用户和外部内容进入 Runtime 与模型后，Policy 控制工具访问敏感数据外部副作用审批和审计
 flowchart TB
     User["User / attacker"] --> API["AuthN/AuthZ"] --> Runtime
     Web["Untrusted web/docs/email"] --> Context
@@ -40,6 +89,8 @@ flowchart TB
     Policy --> Approval
     Policy --> Audit
 ```
+
+模型与外部内容都位于不可信边界。真正的控制点是认证授权、Policy、Sandbox、数据服务和审批系统。
 
 ### Prompt Injection 与 Indirect Injection
 

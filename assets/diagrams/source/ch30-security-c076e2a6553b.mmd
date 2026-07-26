@@ -1,0 +1,12 @@
+%% id: agent-security-trust-boundaries
+%% title: Agent 系统信任边界全景
+%% alt: 用户和外部内容进入 Runtime 与模型后，Policy 控制工具访问敏感数据外部副作用审批和审计
+flowchart TB
+    User["User / attacker"] --> API["AuthN/AuthZ"] --> Runtime
+    Web["Untrusted web/docs/email"] --> Context
+    Runtime --> Context --> Model["Untrusted decision component"]
+    Model --> Policy["Policy enforcement"] --> Tools
+    Tools --> Data["Sensitive data"]
+    Tools --> External["External side effects"]
+    Policy --> Approval
+    Policy --> Audit
