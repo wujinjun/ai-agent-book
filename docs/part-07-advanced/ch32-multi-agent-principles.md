@@ -8,7 +8,13 @@ Multi-Agent 的价值来自职责、上下文或权限隔离，而不是角色�
 学习目标是理解核心协调机制，并实现一个有终止条件的 Blackboard 示例。前置知识为第9—10、22章。
 
 ## 模式与架构
+
+多 Agent 的价值来自职责、权限或上下文边界，而不是角色数量。主图展示 Supervisor、Worker、Blackboard 与 Reviewer 的最小协调结构。
+
 ```mermaid
+%% id: multi-agent-blackboard-architecture
+%% title: Supervisor 与 Blackboard 协作架构
+%% alt: Supervisor 分派任务给多个 Worker，Worker 通过类型化 Blackboard 提交产物并由 Reviewer 验收反馈
 flowchart TB
     Supervisor --> WorkerA
     Supervisor --> WorkerB
@@ -16,7 +22,26 @@ flowchart TB
     WorkerB --> Board
     Board --> Reviewer --> Supervisor
 ```
+
 Handoff 转移当前控制；Supervisor 统一路由；Blackboard 让角色读写共享结构化状态；Debate 只在观点多样性可验证时使用；Reviewer 根据独立 rubric 验收产物。
+
+```mermaid
+%% id: multi-agent-pattern-selection
+%% title: Multi-Agent 协作模式选择
+%% alt: 根据控制权转移、共享异步产物、独立假设和集中路由需求选择 Handoff Blackboard Debate Reviewer 或 Supervisor
+flowchart TD
+    Need[协作需求] --> Ownership{需要转移会话控制权}
+    Ownership -->|是| Handoff[Handoff]
+    Ownership -->|否| Shared{多个 Worker 异步共享产物}
+    Shared -->|是| Blackboard[Blackboard]
+    Shared -->|否| Hypothesis{多个可证伪假设}
+    Hypothesis -->|是| Debate[独立生成再 Debate]
+    Hypothesis -->|否| Review{需要独立验收}
+    Review -->|是| Reviewer[Reviewer]
+    Review -->|否| Supervisor[Supervisor 路由]
+```
+
+模式可以组合，但每增加一种通信路径都增加状态一致性和终止成本，必须由任务证据支撑。
 
 ## 最小与完整工程
 先建立单 Agent 基线，再将检索和评审拆分。共享状态带版本与所有者，消息有 sender、recipient、task、artifact 引用和 TTL。终止器限制回合、费用、重复消息和无进展次数。
@@ -51,6 +76,9 @@ class Artifact(BaseModel):
 Worker 写新版本，Reviewer 追加 review，不直接覆盖作者内容。Supervisor 依据验收将状态从 proposed 变 approved/rejected。数据库乐观锁防止并发覆盖。
 
 ```mermaid
+%% id: multi-agent-artifact-review-sequence
+%% title: Blackboard 产物与评审时序
+%% alt: Supervisor 下发任务契约，Worker 写入不可变产物与证据，Reviewer 追加结构化评审后返回验收状态
 sequenceDiagram
     participant S as Supervisor
     participant W as Worker
@@ -62,6 +90,8 @@ sequenceDiagram
     R->>B: structured review
     B->>S: approved/rejected
 ```
+
+Worker 与 Reviewer 不直接覆盖彼此内容。Blackboard 使用版本与乐观锁保留作者、证据和评审的完整演进。
 
 ### Debate 与 Reviewer
 
@@ -82,6 +112,9 @@ Agent 只订阅任务所需消息，避免广播全部 PII。消息至少一次�
 终止包括验收通过、不可恢复失败、预算/时间/回合上限、用户取消和无进展。无进展可比较 Blackboard 版本、Evidence 数和重复动作。模型说“完成”只是一条候选消息。
 
 ```mermaid
+%% id: multi-agent-termination-state-machine
+%% title: Multi-Agent 终止与死锁状态机
+%% alt: 协作任务在 Ready Running Waiting Reviewed Done Failed 之间转换并由依赖超时预算和验收控制终止
 stateDiagram-v2
     [*] --> Ready
     Ready --> Running
@@ -93,6 +126,8 @@ stateDiagram-v2
     Waiting --> Failed: deadlock/timeout
     Running --> Failed: budget/error
 ```
+
+无进展可通过 Artifact 版本、证据数量和动作去重确定性判断。模型声称“完成”只能触发评审，不能直接终止系统。
 
 ### 成本、调试与评估
 

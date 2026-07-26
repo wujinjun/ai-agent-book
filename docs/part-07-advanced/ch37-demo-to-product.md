@@ -14,7 +14,12 @@ Demo 证明某条路径“能够运行”，产品则承诺在真实用户、脏
 
 需求不应写成“接入最强模型”，而应写成用户可验证的结果。例如：“上传公司制度后，员工在 30 秒内获得带页码引用的答案；证据不足时明确拒答。”这句话同时给出了输入、结果、时间和失败行为。
 
+产品化从结果契约出发，经交互、运行时、证据、评估与发布形成持续闭环。
+
 ```mermaid
+%% id: agent-product-feedback-release-loop
+%% title: Agent 产品反馈与发布闭环
+%% alt: 用户问题转化为结果边界契约，经交互 Runtime 产生答案引用状态，并将反馈进入评估灰度发布和回滚
 flowchart LR
     Need["用户问题"] --> Contract["结果与边界契约"]
     Contract --> UX["交互与控制"]
@@ -27,6 +32,44 @@ flowchart LR
 ```
 
 “不做什么”同样属于契约。股票研究 Agent 可以汇总事实与推断，但不承诺收益，不自动交易；代码 Review Agent 可以提出风险，但不绕过仓库保护规则直接合并。
+
+```mermaid
+%% id: agent-product-readiness-gates
+%% title: Agent 从 Demo 到产品的就绪门禁
+%% alt: Demo 依次证明用户价值可靠性权限安全可观测评估成本 SLA 运维和回滚后才具备产品发布条件
+flowchart LR
+    Demo[可运行 Demo] --> Value[真实用户任务与边界]
+    Value --> Reliability[失败恢复与幂等]
+    Reliability --> Security[权限审批与隐私]
+    Security --> Observe[Trace Metrics Audit]
+    Observe --> Eval[黄金集与线上结果]
+    Eval --> Economics[成本预算与容量]
+    Economics --> Operations[SLA 值班升级回滚]
+    Operations --> Product[可持续产品]
+```
+
+任何缺失门禁都应明确记录为产品风险，而不是用模型演示效果代替。尤其是回滚和数据删除需要真实演练。
+
+```mermaid
+%% id: agent-ux-run-state-model
+%% title: Agent 产品用户界面状态模型
+%% alt: 用户任务在 queued running waiting approval partial completed failed cancelled 状态间变化并提供进度引用重试和控制
+stateDiagram-v2
+    [*] --> Queued
+    Queued --> Running
+    Running --> Partial: 进度与可验证中间产物
+    Partial --> Running
+    Running --> WaitingApproval: 高风险动作
+    WaitingApproval --> Running: 批准
+    WaitingApproval --> Cancelled: 拒绝或过期
+    Running --> Completed
+    Running --> Failed
+    Failed --> Queued: 用户确认安全重试
+    Completed --> [*]
+    Cancelled --> [*]
+```
+
+流式 Token 只是界面事件之一。用户更需要明确状态、证据、取消、重试边界和审批影响。
 
 ## 可靠性、可解释性与用户体验
 
@@ -48,6 +91,9 @@ Streaming 改善首字延迟感受，但不降低总执行时间。面向长任�
 取消需要贯穿 API、Queue、Runtime 和工具层。系统收到取消后停止产生新副作用，并记录已经完成的动作。重试只适用于瞬时错误，采用次数上限、退避和总时间预算；非幂等动作使用业务幂等键或先查询结果。审批必须包含动作、目标、参数摘要、风险、有效期和审批人，不能只弹出含糊的“是否继续”。
 
 ```mermaid
+%% id: agent-product-approval-sequence
+%% title: Agent 产品任务与审批时序
+%% alt: 用户创建任务后 Worker 返回状态并向审批服务提交具体外部写操作，用户决定后任务完成取消或失败
 sequenceDiagram
     participant U as User
     participant A as Agent API
@@ -62,6 +108,8 @@ sequenceDiagram
     P-->>W: signed decision
     W-->>U: completed / cancelled / failed
 ```
+
+审批服务独立记录决定与动作摘要，Worker 恢复时再次验证有效期和资源状态，避免陈旧批准执行新动作。
 
 ## 权限、成本与 SLA
 

@@ -1,0 +1,9 @@
+%% id: multi-agent-blackboard-architecture
+%% title: Supervisor 与 Blackboard 协作架构
+%% alt: Supervisor 分派任务给多个 Worker，Worker 通过类型化 Blackboard 提交产物并由 Reviewer 验收反馈
+flowchart TB
+    Supervisor --> WorkerA
+    Supervisor --> WorkerB
+    WorkerA --> Board["Typed Blackboard"]
+    WorkerB --> Board
+    Board --> Reviewer --> Supervisor

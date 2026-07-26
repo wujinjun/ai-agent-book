@@ -1,0 +1,12 @@
+%% id: browser-action-risk-decision
+%% title: 浏览器动作风险与审批决策
+%% alt: 根据动作是否只读、是否提交外部写入、目标参数是否明确以及页面是否变化决定执行确认或停止
+flowchart TD
+    Action[候选浏览器动作] --> ReadOnly{只读导航或读取}
+    ReadOnly -->|是| Execute[执行并重新观察]
+    ReadOnly -->|否| SideEffect{发送购买删除或授权}
+    SideEffect -->|是| Stable{目标参数和页面状态明确}
+    Stable -->|否| Stop[停止并重新定位]
+    Stable -->|是| Approve[展示具体影响并人工确认]
+    Approve --> Execute
+    SideEffect -->|否| Policy[按站点与资源 Policy] --> Execute

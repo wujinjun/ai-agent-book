@@ -8,12 +8,55 @@ Coding Agent 需要 Repo Map、搜索、计划、Patch、测试、Review、Sandb
 学习目标是完成从失败测试到受审 Patch 的闭环。前置知识为 Git、测试和第23、30章。
 
 ## 工作流
+
+Coding Agent 的完成条件是产生受审 Patch 和验证证据。主图把仓库检查、计划、修改、测试与评审连接成闭环。
+
 ```mermaid
+%% id: coding-agent-patch-verification-loop
+%% title: Coding Agent Patch 验证闭环
+%% alt: 目标经仓库地图搜索计划最小 Patch 测试和评审，失败返回检查，通过后交付可读 Diff
 flowchart LR
     Goal --> Inspect["Repo map/search"] --> Plan --> Patch --> Test --> Review
     Review -->|失败| Inspect
     Review -->|通过| Diff["Human-readable diff"]
 ```
+
+每一轮修改都从仓库事实开始，以验证结果结束；若失败，回到相关代码和测试重新定位，而不是重复生成更大的 Patch。
+
+```mermaid
+%% id: coding-agent-tool-security-boundary
+%% title: Coding Agent 工具与沙箱边界
+%% alt: 模型提出文件终端和 Git 动作，Runtime 经过路径命令权限审批和 Secret 隔离后在 Sandbox 执行
+flowchart LR
+    Model[模型动作建议] --> Runtime[Coding Runtime]
+    Runtime --> Path[工作区路径限制]
+    Runtime --> Command[命令 allowlist 与风险分类]
+    Runtime --> Approval[破坏性或外部写入审批]
+    Path --> Sandbox[隔离 Sandbox]
+    Command --> Sandbox
+    Approval --> Sandbox
+    Secret[Secret Store] -.不向模型暴露.-> Sandbox
+```
+
+终端输出是 Observation，命令执行权属于 Runtime。敏感凭证、工作区外路径和破坏性 Git 操作都在模型不可绕过的边界处理。
+
+```mermaid
+%% id: coding-agent-long-task-checkpoint
+%% title: Coding Agent 长任务 Checkpoint
+%% alt: 长任务在需求理解仓库证据计划 Patch 验证结果和剩余风险处保存结构化 Checkpoint 并可安全恢复
+flowchart LR
+    Goal[需求与验收] --> Evidence[仓库规则与目标证据]
+    Evidence --> Plan[可验证计划]
+    Plan --> Patch[当前 Patch 与 diff]
+    Patch --> Verify[命令输出与退出码]
+    Verify --> Risk[剩余风险和下一动作]
+    CP[(Checkpoint)] -.保存.-> Evidence
+    CP -.保存.-> Plan
+    CP -.保存.-> Patch
+    CP -.保存.-> Verify
+```
+
+Checkpoint 保存事实引用和产物哈希，不保存“应该已经完成”之类主观总结。恢复后重新检查工作树和外部状态。
 
 ## 最小与完整工程
 最小 Agent 只修改一个受测函数。工程版先读取仓库约定，限制写入根目录，Patch 采用最小 diff，运行项目验证，记录命令与输出，保留用户未相关改动。长任务使用 checkpoint，不用自然语言声称测试通过。
@@ -28,12 +71,17 @@ flowchart LR
 Coding Agent 接收需求，检查仓库规则与工作树，建立 Repo Map，搜索目标符号，形成计划，生成最小 Patch，执行测试/静态检查，审查 diff，再交付证据。模型负责提出变化，文件系统、Sandbox、Git 和验证器提供事实。
 
 ```mermaid
+%% id: coding-agent-repository-workflow
+%% title: Coding Agent 仓库级工作流
+%% alt: Coding Agent 读取规则和 Repo Map 后搜索计划修改并运行测试静态检查构建与需求审计
 flowchart TD
     Goal --> Rules["AGENTS/docs/status"] --> Map["repo map"] --> Search
     Search --> Plan --> Patch --> Verify["test/lint/type/build"] --> Review["diff + requirement audit"]
     Review -->|issue| Search
     Review -->|pass| Handoff["evidence + remaining risks"]
 ```
+
+交付内容包含 diff、验证命令与真实输出、未覆盖风险和文件链接；测试通过不能替代逐项需求审计。
 
 ### Repo Map 与 Code Search
 

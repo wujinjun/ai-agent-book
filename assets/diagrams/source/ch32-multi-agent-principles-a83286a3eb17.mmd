@@ -1,0 +1,13 @@
+%% id: multi-agent-termination-state-machine
+%% title: Multi-Agent 终止与死锁状态机
+%% alt: 协作任务在 Ready Running Waiting Reviewed Done Failed 之间转换并由依赖超时预算和验收控制终止
+stateDiagram-v2
+    [*] --> Ready
+    Ready --> Running
+    Running --> Waiting
+    Waiting --> Ready: dependency/approval arrives
+    Running --> Reviewed
+    Reviewed --> Ready: revisions required
+    Reviewed --> Done: accepted
+    Waiting --> Failed: deadlock/timeout
+    Running --> Failed: budget/error

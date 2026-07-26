@@ -1,0 +1,13 @@
+%% id: multimodal-quality-review-decision
+%% title: 多模态证据质量与人工复核
+%% alt: 根据 OCR ASR 置信度小字表格时序完整性和任务风险决定自动采用重新解析或人工复核
+flowchart TD
+    Evidence[派生证据] --> Confidence{解析置信度达标}
+    Confidence -->|否| Reparse[换模型 分辨率或参数重解析]
+    Confidence -->|是| Complete{定位与上下文完整}
+    Complete -->|否| More[补帧 补页 表头或音轨]
+    Complete -->|是| Risk{高风险决策}
+    Risk -->|是| Human[人工复核原媒体]
+    Risk -->|否| Use[进入检索与生成]
+    Reparse --> Human
+    More --> Evidence

@@ -1,0 +1,8 @@
+%% id: coding-agent-repository-workflow
+%% title: Coding Agent 仓库级工作流
+%% alt: Coding Agent 读取规则和 Repo Map 后搜索计划修改并运行测试静态检查构建与需求审计
+flowchart TD
+    Goal --> Rules["AGENTS/docs/status"] --> Map["repo map"] --> Search
+    Search --> Plan --> Patch --> Verify["test/lint/type/build"] --> Review["diff + requirement audit"]
+    Review -->|issue| Search
+    Review -->|pass| Handoff["evidence + remaining risks"]

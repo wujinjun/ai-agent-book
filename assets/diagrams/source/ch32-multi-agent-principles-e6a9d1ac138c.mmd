@@ -1,0 +1,13 @@
+%% id: multi-agent-pattern-selection
+%% title: Multi-Agent 协作模式选择
+%% alt: 根据控制权转移、共享异步产物、独立假设和集中路由需求选择 Handoff Blackboard Debate Reviewer 或 Supervisor
+flowchart TD
+    Need[协作需求] --> Ownership{需要转移会话控制权}
+    Ownership -->|是| Handoff[Handoff]
+    Ownership -->|否| Shared{多个 Worker 异步共享产物}
+    Shared -->|是| Blackboard[Blackboard]
+    Shared -->|否| Hypothesis{多个可证伪假设}
+    Hypothesis -->|是| Debate[独立生成再 Debate]
+    Hypothesis -->|否| Review{需要独立验收}
+    Review -->|是| Reviewer[Reviewer]
+    Review -->|否| Supervisor[Supervisor 路由]

@@ -1,0 +1,7 @@
+%% id: coding-agent-patch-verification-loop
+%% title: Coding Agent Patch 验证闭环
+%% alt: 目标经仓库地图搜索计划最小 Patch 测试和评审，失败返回检查，通过后交付可读 Diff
+flowchart LR
+    Goal --> Inspect["Repo map/search"] --> Plan --> Patch --> Test --> Review
+    Review -->|失败| Inspect
+    Review -->|通过| Diff["Human-readable diff"]

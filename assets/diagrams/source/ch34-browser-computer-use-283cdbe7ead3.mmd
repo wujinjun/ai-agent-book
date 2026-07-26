@@ -1,0 +1,6 @@
+%% id: browser-agent-observe-act-loop
+%% title: Browser Agent 观察动作循环
+%% alt: DOM Screenshot OCR 形成观察，模型决策经 Policy 后点击输入导航并重新观察，高风险动作需要审批
+flowchart LR
+    Observe["DOM/Screenshot/OCR"] --> Decide --> Policy --> Action["click/type/navigate"] --> Observe
+    Policy --> Approval["purchase/send/delete approval"]

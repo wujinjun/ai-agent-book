@@ -1,0 +1,11 @@
+%% id: framework-spike-comparison
+%% title: Agent 框架垂直切片对照实验
+%% alt: 两个候选在同一任务黄金集和故障注入下比较质量延迟成本恢复可维护性并形成 ADR
+flowchart LR
+    Slice["固定垂直切片"] --> A["候选 A"]
+    Slice --> B["候选 B"]
+    Dataset["同一黄金集与故障注入"] --> A
+    Dataset --> B
+    A --> Score["质量 / 延迟 / 成本 / 恢复 / 可维护性"]
+    B --> Score
+    Score --> ADR["记录决策与复审条件"]

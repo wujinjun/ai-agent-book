@@ -1,0 +1,12 @@
+%% id: agent-framework-layer-ownership
+%% title: 组合框架的分层所有权
+%% alt: 领域契约由业务层拥有，类型化 Agent 工作流检索与模型适配器分别位于独立边界并可被替换
+flowchart TB
+    Domain[业务拥有 Run Tool Citation Error 契约] --> Typed[类型化 Agent Adapter]
+    Domain --> Workflow[Workflow Adapter]
+    Domain --> Retrieval[Retrieval Adapter]
+    Typed --> SDK[PydanticAI 或 Agents SDK]
+    Workflow --> Graph[LangGraph 或工作流引擎]
+    Retrieval --> Index[LlamaIndex LangChain 或自建]
+    SDK --> Gateway[自有 Model Gateway]
+    Graph --> Gateway

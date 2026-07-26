@@ -1,0 +1,10 @@
+%% id: browser-multisource-observation
+%% title: DOM、Screenshot 与 OCR 观察融合
+%% alt: 页面同时产生 DOM 可访问树和 Screenshot，OCR 仅作为像素文本补充，融合观察经 Policy 后动作并复核
+flowchart LR
+    Page --> DOM["DOM/accessibility tree"]
+    Page --> Shot["Screenshot"] --> OCR
+    DOM --> Observation
+    Shot --> Observation
+    OCR --> Observation
+    Observation --> Policy --> Action --> Verify["re-observe"]

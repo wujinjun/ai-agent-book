@@ -14,7 +14,12 @@ Agent 架构的难点不是把模型、工具和向量库画在一张图里，�
 
 模块是职责边界，进程是部署边界，服务是组织与故障边界，三者并不等价。一个模块化单体可以拥有清楚的端口、适配器和依赖方向；一个拆成十个容器的系统也可能因为共享数据库和循环调用而成为“分布式单体”。
 
+下面的参考架构按控制、能力、状态、执行与治理职责划分组件，而不是按框架名称拆服务。
+
 ```mermaid
+%% id: enterprise-agent-reference-architecture
+%% title: 企业 Agent 平台参考架构
+%% alt: 客户端经 API 身份边界进入 Agent Runtime，并连接工作流工具策略模型网关记忆队列数据观测和评估服务
 flowchart TB
     Client["Web / CLI / API Client"] --> API["API 与身份边界"]
     API --> Runtime["Agent Runtime"]
@@ -30,6 +35,47 @@ flowchart TB
 ```
 
 图中 Runtime 负责一次运行的控制循环，Workflow 负责可恢复的步骤与状态迁移，Queue 负责把工作可靠交给执行者。三者可以先部署在一个进程中，但接口应独立，避免模型供应商对象渗透到业务层。
+
+```mermaid
+%% id: agent-deployment-evolution-decision
+%% title: 模块化单体到微服务演进决策
+%% alt: 根据独立扩缩容故障隔离安全边界团队所有权和部署节奏决定保持模块化单体或拆分服务
+flowchart TD
+    Module[清晰模块边界] --> Need{出现独立部署理由}
+    Need -->|仅代码组织| Monolith[保持模块化单体]
+    Need -->|独立扩缩容| Service[候选微服务]
+    Need -->|强安全或数据边界| Service
+    Need -->|不同团队发布节奏| Service
+    Service --> Cost{能承担网络一致性与运维成本}
+    Cost -->|否| Monolith
+    Cost -->|是| Split[通过稳定契约拆分]
+```
+
+拆分必须解决已观察到的容量、故障、安全或组织问题；如果只是为了“先进”，通常会得到更难调试的分布式单体。
+
+```mermaid
+%% id: agent-platform-control-data-planes
+%% title: Agent 平台控制面与数据面
+%% alt: 控制面管理 Agent Tool Model Policy Prompt 和评估版本，数据面按版本执行 Run Tool Retrieval 并产生 Trace Audit
+flowchart TB
+    subgraph Control[控制面]
+        Registry[Agent Tool Model Registry]
+        Policy[Policy 与权限配置]
+        Versions[Prompt Workflow Eval 版本]
+    end
+    subgraph DataPlane[数据面]
+        API[Run API]
+        Runtime[Runtime 与 Worker]
+        Services[Tool Retrieval Model Services]
+    end
+    Registry --> Runtime
+    Policy --> Runtime
+    Versions --> Runtime
+    API --> Runtime --> Services
+    Runtime --> Evidence[Trace Audit Usage Outcome]
+```
+
+控制面发布不可变版本，数据面每次 Run 记录实际版本与主体。这样线上行为可复现，也能独立扩缩执行资源。
 
 ## Modular Monolith 与 Microservices
 
@@ -50,6 +96,9 @@ flowchart TB
 事件表达“已经发生的事实”，命令表达“希望执行的动作”。长任务可在状态提交后发布 `RunStarted`、`ToolCompleted` 等事件，由索引、计费和评估消费者异步处理。事件消费必须假设至少一次投递：使用事件 ID 去重，副作用工具使用幂等键，Schema 只能兼容演进。
 
 ```mermaid
+%% id: durable-agent-run-state-machine
+%% title: 可恢复 Agent Run 状态机
+%% alt: Run 从排队运行到审批等待重试成功失败或取消并由 Worker 租约幂等和预算控制状态迁移
 stateDiagram-v2
     [*] --> Queued
     Queued --> Running: worker acquired
@@ -64,6 +113,8 @@ stateDiagram-v2
     Failed --> [*]
     Cancelled --> [*]
 ```
+
+状态机是 API、队列、Worker 与 UI 的共同契约。所有迁移采用乐观锁或事件版本，并保留终止原因。
 
 状态机限定合法迁移；工作流引擎进一步提供持久化、定时器、重试、补偿、人工中断和历史回放。普通队列只保证任务交付，不能自动表达业务状态。不要用模型自由文本充当状态；状态应是版本化、可校验的数据。
 

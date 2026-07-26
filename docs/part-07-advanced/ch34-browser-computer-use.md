@@ -8,12 +8,55 @@
 学习目标是掌握核心观察—动作循环，并实现一个需要审批的表单示例。前置知识为 Web、权限和第30章。
 
 ## 架构
+
+Browser Agent 每次动作后都必须重新观察页面。主图把 DOM、截图与 OCR 观察连接到 Policy 和审批门禁。
+
 ```mermaid
+%% id: browser-agent-observe-act-loop
+%% title: Browser Agent 观察动作循环
+%% alt: DOM Screenshot OCR 形成观察，模型决策经 Policy 后点击输入导航并重新观察，高风险动作需要审批
 flowchart LR
     Observe["DOM/Screenshot/OCR"] --> Decide --> Policy --> Action["click/type/navigate"] --> Observe
     Policy --> Approval["purchase/send/delete approval"]
 ```
+
 DOM 定位语义元素，截图覆盖画布和视觉状态，OCR 是不可靠补充。动作之后必须重新观察，不能假设点击成功。
+
+```mermaid
+%% id: browser-action-risk-decision
+%% title: 浏览器动作风险与审批决策
+%% alt: 根据动作是否只读、是否提交外部写入、目标参数是否明确以及页面是否变化决定执行确认或停止
+flowchart TD
+    Action[候选浏览器动作] --> ReadOnly{只读导航或读取}
+    ReadOnly -->|是| Execute[执行并重新观察]
+    ReadOnly -->|否| SideEffect{发送购买删除或授权}
+    SideEffect -->|是| Stable{目标参数和页面状态明确}
+    Stable -->|否| Stop[停止并重新定位]
+    Stable -->|是| Approve[展示具体影响并人工确认]
+    Approve --> Execute
+    SideEffect -->|否| Policy[按站点与资源 Policy] --> Execute
+```
+
+批准绑定页面主体、目标、参数和时效；页面刷新或元素内容变化后必须重新确认，不能复用旧决定。
+
+```mermaid
+%% id: browser-agent-error-recovery
+%% title: Browser Agent 错误恢复状态机
+%% alt: 浏览器动作后通过重新观察判断成功导航遮挡元素变化超时或登录失效并有限恢复或人工介入
+stateDiagram-v2
+    [*] --> Observe
+    Observe --> Act: 元素证据唯一
+    Act --> Verify
+    Verify --> Observe: 动作成功继续
+    Verify --> Recover: 弹窗 遮挡 导航或元素变化
+    Recover --> Observe: 有限恢复成功
+    Recover --> Human: 登录失效 验证码或歧义
+    Verify --> Failed: 超时或预算耗尽
+    Human --> Observe: 用户处理后恢复
+    Failed --> [*]
+```
+
+恢复策略限制尝试次数并保存截图证据。验证码、登录和权限问题进入人工流程，不自动绕过。
 
 ## 最小与完整工程
 最小任务读取公开页面标题。工程版为每步保存页面 URL、元素证据和动作结果，使用稳定语义选择器，处理弹窗、导航和超时。测试站点注入布局变化、延迟与失败。
@@ -28,6 +71,9 @@ DOM 定位语义元素，截图覆盖画布和视觉状态，OCR 是不可靠补
 DOM 提供角色、名称、层级和可交互属性，适合稳定选择；Screenshot 覆盖 canvas、图表、视觉遮挡与布局；OCR 从像素恢复文本但有识别误差。Agent 根据任务组合，不能把 OCR 当页面权威数据，也不能只靠 DOM 判断元素是否可见。
 
 ```mermaid
+%% id: browser-multisource-observation
+%% title: DOM、Screenshot 与 OCR 观察融合
+%% alt: 页面同时产生 DOM 可访问树和 Screenshot，OCR 仅作为像素文本补充，融合观察经 Policy 后动作并复核
 flowchart LR
     Page --> DOM["DOM/accessibility tree"]
     Page --> Shot["Screenshot"] --> OCR
@@ -36,6 +82,8 @@ flowchart LR
     OCR --> Observation
     Observation --> Policy --> Action --> Verify["re-observe"]
 ```
+
+融合时保留每条事实来源与置信度；DOM 文本与 OCR 冲突时不静默选择，而应重新观察或请求确认。
 
 Observation 保存 URL、标题、选中元素语义、截图引用、时间和登录主体。页面内容可能包含 Prompt Injection，始终视为数据。
 

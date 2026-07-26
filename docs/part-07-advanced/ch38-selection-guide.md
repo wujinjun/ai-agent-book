@@ -14,7 +14,12 @@
 
 第一步不是问“哪个框架最好”，而是确认流程是否固定、是否需要持久恢复、是否以 RAG 为核心、是否存在真实的多角色边界，以及团队主要语言。一个两步工具调用服务可能只需要原生 API；跨数小时且等待人工批准的流程需要状态图或工作流引擎；知识检索产品可能更重视数据连接器和索引抽象。
 
+决策树从问题形态出发，把框架作为实现候选，而不是先选框架再寻找适用场景。
+
 ```mermaid
+%% id: agent-framework-selection-tree
+%% title: Agent 框架选型决策树
+%% alt: 根据流程状态固定性持久恢复类型安全和复杂 RAG 需求选择原生 API LangGraph PydanticAI Agents SDK 或 LlamaIndex
 flowchart TD
     Start{"流程和状态是否固定？"} -->|大体固定| Recover{"需持久恢复、回放或 HITL？"}
     Start -->|开放式工具循环| Typed{"是否强调 Python 类型与 DI？"}
@@ -27,6 +32,42 @@ flowchart TD
 ```
 
 决策树不是排他的。生产系统可以用 PydanticAI 定义类型化 Agent，用 LangGraph 编排长状态，再由自建 Model Gateway 调用模型。关键是明确每一层由谁拥有，避免框架对象贯穿全部业务代码。
+
+```mermaid
+%% id: agent-framework-layer-ownership
+%% title: 组合框架的分层所有权
+%% alt: 领域契约由业务层拥有，类型化 Agent 工作流检索与模型适配器分别位于独立边界并可被替换
+flowchart TB
+    Domain[业务拥有 Run Tool Citation Error 契约] --> Typed[类型化 Agent Adapter]
+    Domain --> Workflow[Workflow Adapter]
+    Domain --> Retrieval[Retrieval Adapter]
+    Typed --> SDK[PydanticAI 或 Agents SDK]
+    Workflow --> Graph[LangGraph 或工作流引擎]
+    Retrieval --> Index[LlamaIndex LangChain 或自建]
+    SDK --> Gateway[自有 Model Gateway]
+    Graph --> Gateway
+```
+
+组合不是把多个框架对象互相嵌套到业务代码，而是让每个 Adapter 对领域接口负责。替换成本由契约测试和状态导出能力控制。
+
+```mermaid
+%% id: framework-lockin-risk-map
+%% title: Agent 框架锁定风险图
+%% alt: 消息类型装饰器状态格式 Prompt Hub 观测数据和供应商工具形成锁定，并通过领域契约 Adapter 黄金集与导出降低风险
+flowchart LR
+    LockIn[锁定来源] --> Messages[消息与事件类型]
+    LockIn --> Decorators[装饰器与 Tool Schema]
+    LockIn --> State[Checkpoint 与 State 格式]
+    LockIn --> Prompt[Prompt Hub 与配置]
+    LockIn --> Trace[观测与评估数据]
+    Messages --> Controls[领域契约与 Adapter]
+    Decorators --> Controls
+    State --> Export[状态导出与迁移测试]
+    Prompt --> Versions[自有不可变版本]
+    Trace --> OTel[开放遥测与黄金集]
+```
+
+完全消除锁定并不现实，目标是识别高成本边界并保留证据化退出路径，而不是构造抹平所有差异的万能接口。
 
 ## 统一比较矩阵
 
@@ -78,6 +119,9 @@ ADR 记录的是上下文和证据，不是永久结论。复审日期应与升�
 选择一个包含结构化输出、一个只读工具、一个失败重试和一条 Trace 的真实任务，分别用最多两个候选实现。固定模型、Prompt、数据与黄金集，比较开发时间、代码量只是辅助指标，更重要的是状态可见性、离线测试、恢复、错误定位、权限插入点和迁移难度。
 
 ```mermaid
+%% id: framework-spike-comparison
+%% title: Agent 框架垂直切片对照实验
+%% alt: 两个候选在同一任务黄金集和故障注入下比较质量延迟成本恢复可维护性并形成 ADR
 flowchart LR
     Slice["固定垂直切片"] --> A["候选 A"]
     Slice --> B["候选 B"]
@@ -87,6 +131,8 @@ flowchart LR
     B --> Score
     Score --> ADR["记录决策与复审条件"]
 ```
+
+Spike 必须覆盖失败、恢复、权限与 Trace，而不只是 happy-path。ADR 记录当规模、团队或版本变化时重新评估的触发条件。
 
 生产适用性不能只从文档推断。Spike 应注入模型超时、无效工具参数、Checkpoint 恢复和权限拒绝，观察是否能从 Trace 中定位根因，并检查框架能否导出原始消息与状态。
 

@@ -1,0 +1,12 @@
+%% id: agent-product-readiness-gates
+%% title: Agent 从 Demo 到产品的就绪门禁
+%% alt: Demo 依次证明用户价值可靠性权限安全可观测评估成本 SLA 运维和回滚后才具备产品发布条件
+flowchart LR
+    Demo[可运行 Demo] --> Value[真实用户任务与边界]
+    Value --> Reliability[失败恢复与幂等]
+    Reliability --> Security[权限审批与隐私]
+    Security --> Observe[Trace Metrics Audit]
+    Observe --> Eval[黄金集与线上结果]
+    Eval --> Economics[成本预算与容量]
+    Economics --> Operations[SLA 值班升级回滚]
+    Operations --> Product[可持续产品]

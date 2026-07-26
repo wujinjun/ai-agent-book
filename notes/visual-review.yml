@@ -334,13 +334,69 @@ files:
       - {id: cost-performance-optimization-loop, section: 延迟与成本分解, relation: flow, disposition: diagram}
       - {id: agent-task-cost-budget-flow, section: 成本模型与任务预算, relation: flow, disposition: diagram}
 
-  docs/part-07-advanced/ch32-multi-agent-principles.md: {group: part-07, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-07-advanced/ch33-agentic-coding.md: {group: part-07, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-07-advanced/ch34-browser-computer-use.md: {group: part-07, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-07-advanced/ch35-multimodal.md: {group: part-07, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-07-advanced/ch36-architecture.md: {group: part-07, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-07-advanced/ch37-demo-to-product.md: {group: part-07, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-07-advanced/ch38-selection-guide.md: {group: part-07, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-07-advanced/ch32-multi-agent-principles.md:
+    group: part-07
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: multi-agent-blackboard-architecture, section: 模式与架构, relation: architecture, disposition: diagram}
+      - {id: multi-agent-pattern-selection, section: 模式与架构, relation: decision, disposition: diagram}
+      - {id: multi-agent-artifact-review-sequence, section: Blackboard 与共享状态, relation: sequence, disposition: diagram}
+      - {id: multi-agent-termination-state-machine, section: 通信死锁与终止, relation: state, disposition: diagram}
+  docs/part-07-advanced/ch33-agentic-coding.md:
+    group: part-07
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: coding-agent-patch-verification-loop, section: 工作流, relation: flow, disposition: diagram}
+      - {id: coding-agent-tool-security-boundary, section: 工作流, relation: security, disposition: diagram}
+      - {id: coding-agent-long-task-checkpoint, section: 工作流, relation: flow, disposition: diagram}
+      - {id: coding-agent-repository-workflow, section: Coding Agent 的核心结构, relation: flow, disposition: diagram}
+  docs/part-07-advanced/ch34-browser-computer-use.md:
+    group: part-07
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: browser-agent-observe-act-loop, section: 架构, relation: flow, disposition: diagram}
+      - {id: browser-action-risk-decision, section: 架构, relation: decision, disposition: diagram}
+      - {id: browser-agent-error-recovery, section: 架构, relation: state, disposition: diagram}
+      - {id: browser-multisource-observation, section: Observation DOM Screenshot 与 OCR, relation: data, disposition: diagram}
+  docs/part-07-advanced/ch35-multimodal.md:
+    group: part-07
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: multimodal-rag-main-pipeline, section: 流程, relation: data, disposition: diagram}
+      - {id: multimodal-evidence-data-model, section: 流程, relation: hierarchy, disposition: diagram}
+      - {id: multimodal-quality-review-decision, section: 流程, relation: decision, disposition: diagram}
+      - {id: multimodal-parallel-ingestion, section: 模态与统一任务表示, relation: data, disposition: diagram}
+  docs/part-07-advanced/ch36-architecture.md:
+    group: part-07
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: enterprise-agent-reference-architecture, section: 模块化单体微服务与边界, relation: architecture, disposition: diagram}
+      - {id: agent-deployment-evolution-decision, section: 模块化单体微服务与边界, relation: decision, disposition: diagram}
+      - {id: agent-platform-control-data-planes, section: 模块化单体微服务与边界, relation: architecture, disposition: diagram}
+      - {id: durable-agent-run-state-machine, section: Event-Driven Workflow 与 State Machine, relation: state, disposition: diagram}
+  docs/part-07-advanced/ch37-demo-to-product.md:
+    group: part-07
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: agent-product-feedback-release-loop, section: 用户需求产品边界与成功指标, relation: flow, disposition: diagram}
+      - {id: agent-product-readiness-gates, section: 用户需求产品边界与成功指标, relation: flow, disposition: diagram}
+      - {id: agent-ux-run-state-model, section: 用户需求产品边界与成功指标, relation: state, disposition: diagram}
+      - {id: agent-product-approval-sequence, section: 中断重试审批与权限, relation: sequence, disposition: diagram}
+  docs/part-07-advanced/ch38-selection-guide.md:
+    group: part-07
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: agent-framework-selection-tree, section: 从问题形态开始, relation: decision, disposition: diagram}
+      - {id: agent-framework-layer-ownership, section: 从问题形态开始, relation: architecture, disposition: diagram}
+      - {id: framework-lockin-risk-map, section: 从问题形态开始, relation: security, disposition: diagram}
+      - {id: framework-spike-comparison, section: 用垂直切片 Spike 验证, relation: comparison, disposition: diagram}
 
   projects/01-minimal-assistant/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
   projects/02-weather-tool-agent/README.md: {group: projects, minimum_diagrams: 3, review_status: pending, requirements: []}
