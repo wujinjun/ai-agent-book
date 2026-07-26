@@ -8,7 +8,13 @@
 学习目标是为真实任务选择或拒绝 Multi-Agent 框架。前置知识为第9、10、20章。
 
 ## 核心原理与架构
+
+Multi-Agent 框架的关键不是角色数量，而是监督者、专业 Worker 与类型化共享状态之间的控制关系。
+
 ```mermaid
+%% id: multi-agent-supervisor-shared-state
+%% title: Supervisor、Worker 与共享状态架构
+%% alt: Supervisor 向研究编码评审 Worker 分派任务，各 Worker 仅通过类型化共享状态提交产物
 flowchart TB
     Supervisor --> Researcher
     Supervisor --> Coder
@@ -17,7 +23,42 @@ flowchart TB
     Coder --> Shared
     Reviewer --> Shared
 ```
+
 角色只有在能力、权限、上下文或验收职责确实不同才有价值。CrewAI 常用角色/任务组织，AutoGen 强调可对话 Agent，Semantic Kernel 提供企业应用编排与插件抽象；实际能力随版本变化。
+
+```mermaid
+%% id: multi-agent-framework-pattern-selection
+%% title: Multi-Agent 框架模式选择
+%% alt: 根据流程确定性消息复杂度和企业技术栈选择 CrewAI Flow Crew AutoGen AgentChat Core 或 Semantic Kernel
+flowchart TD
+    Need[多 Agent 协作需求] --> Flow{流程与状态可明确枚举}
+    Flow -->|是| CrewFlow[CrewAI Flow 或图工作流]
+    Flow -->|否| Message{需要复杂消息与事件运行时}
+    Message -->|快速对话原型| AgentChat[AutoGen AgentChat]
+    Message -->|分布式事件系统| Core[AutoGen Core]
+    Message -->|否| Role[CrewAI Crew]
+    Need --> DotNet{Microsoft 或 .NET 企业栈}
+    DotNet -->|是| SK[Semantic Kernel 候选]
+```
+
+框架定位随版本变化，最终选择还需用同一任务比较成功率、成本、终止和调试能力。
+
+```mermaid
+%% id: multi-agent-cost-termination-control
+%% title: Multi-Agent 成本与终止控制
+%% alt: 每个角色调用都经过任务去重证据增量和预算检查，无新增价值或达到上限时由 Runtime 强制终止
+flowchart LR
+    Message[候选 Agent 消息或调用] --> Duplicate{任务或证据重复}
+    Duplicate -->|是| Stop[停止无效对话]
+    Duplicate -->|否| Increment{产生可验证增量}
+    Increment -->|否| Stop
+    Increment -->|是| Budget{Token 时间轮数预算}
+    Budget -->|不足| Stop
+    Budget -->|足够| Execute[执行并写共享状态]
+    Execute --> Message
+```
+
+终止由 Runtime 根据完成、预算、重复与无新增证据判定，不能依赖角色在自然语言中自觉结束。
 
 ## 最小与完整工程
 先以单 Agent + 两工具建立基线，再实现 Supervisor/Worker，比较成功率、Token、延迟和重复消息。共享状态使用 Schema，消息只携带任务所需内容，终止由运行时而非角色自觉决定。
@@ -38,12 +79,17 @@ flowchart TB
 Agent 配置角色、目标和 tools，Task 定义目标与 expected output，Process 决定顺序/层级，Crew 组合它们。角色描述只是 Prompt，不是权限；Tool allowlist 仍由运行时。Flow State 应类型化，不依赖角色对话作为事实源。
 
 ```mermaid
+%% id: crewai-flow-crew-boundary
+%% title: CrewAI Flow 与 Crew 的组合边界
+%% alt: 确定性 Flow 在受控节点调用探索型 Research Crew，并校验其 Artifact 后推进下一状态
 flowchart LR
     Event --> Flow["CrewAI Flow: deterministic state"]
     Flow --> ResearchCrew["Crew: exploratory subtask"]
     ResearchCrew --> Artifact
     Artifact --> Validate --> Next
 ```
+
+生产形态通常由 Flow 持有状态和终止权，只把开放探索子任务交给 Crew，返回的 Artifact 仍需确定性校验。
 
 ### AutoGen：Core 与 AgentChat
 

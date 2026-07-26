@@ -8,7 +8,13 @@ SDK 用少量原语管理 Agent、工具、handoff、guardrail、session 与 tra
 学习目标是能够实现、测试和审查一个受限的 SDK Agent，而不是只运行 Quickstart。
 
 ## 核心原理与架构
+
+OpenAI Agents SDK 将 Agent 配置与 Runner 控制循环分开。下图标出工具、转交、护栏、会话与追踪围绕 Runner 的关系。
+
 ```mermaid
+%% id: openai-agents-sdk-runtime-components
+%% title: OpenAI Agents SDK Runtime 组件关系
+%% alt: Agent 配置由 Runner 驱动并连接工具 Handoff Guardrails Session 与 Trace 组件
 flowchart LR
     Agent["Agent: instructions/tools/output"] --> Runner
     Runner --> Tools
@@ -17,7 +23,41 @@ flowchart LR
     Runner --> Session
     Runner --> Trace
 ```
+
 官方文档说明 SDK 默认在 OpenAI 模型上使用 Responses API；`Agent` 配置指令、工具、handoff、guardrail 和结构化输出，`Runner` 管理回合与工具循环。Session 保存跨 run 的历史；Tracing 记录模型、工具、handoff 和 guardrail 事件。MCP Server 可作为 Agent 工具来源。
+
+```mermaid
+%% id: openai-sdk-handoff-agent-tool-decision
+%% title: Handoff 与 Agent-as-Tool 选择
+%% alt: 根据是否转移对话所有权决定使用 Handoff 或由 Manager 调用专业 Agent 并保留控制
+flowchart TD
+    Subtask[需要另一个 Agent] --> Ownership{是否转移后续对话所有权}
+    Ownership -->|是| Handoff[Handoff：接收 Agent 继续]
+    Ownership -->|否| Tool[Agent-as-Tool：Manager 保留控制]
+    Handoff --> Filter[过滤上下文与 metadata]
+    Tool --> Result[返回结构化子任务结果]
+    Filter --> Policy[接收方独立权限与预算]
+    Result --> Policy
+```
+
+拆分的依据是控制权、权限和上下文边界，而不是角色名称。无论选择哪种模式，外部 Policy 都不能随转交消失。
+
+```mermaid
+%% id: openai-sdk-production-guardrails
+%% title: SDK Agent 生产控制层
+%% alt: 输入经过 Guardrail 后由 Runner 在回合预算内调用工具或 MCP 并对结构化输出做业务校验和审计
+flowchart LR
+    Input[请求] --> InputGuard[输入 Guardrail]
+    InputGuard --> Runner[Runner + max turns]
+    Runner --> Tools[函数工具或 MCP]
+    Tools --> ToolPolicy[工具权限与审批]
+    Runner --> Output[Structured Output]
+    Output --> OutputGuard[输出 Guardrail]
+    OutputGuard --> Business[业务校验与授权]
+    Trace[脱敏 Trace] -.记录.-> Runner
+```
+
+Guardrail 负责模型交互前后的检查，工具和数据库边界仍执行确定性授权。Trace 与审计日志分别服务调试和合规记录。
 
 ## 最小与完整工程
 最小流程是定义 Agent 并用 Runner 执行。由于接口变化快，本书的可运行项目在安装 `openai-agents` 后读取该版本示例，不在未安装时伪造签名。工程版应固定版本、设置 `max_turns`、配置敏感 Trace、处理 guardrail tripwire、工具失败和 session 并发，并用 Fake/测试模型隔离在线调用。
@@ -54,10 +94,15 @@ Handoff 把当前对话控制转给另一个 Agent，适合客服分流等“新
 handoff 输入要过滤并使用类型化 metadata。接收 Agent 不应获得无关历史或上一个 Agent 的秘密依赖。官方文档提示 guardrail 的执行位置与 handoff 链有关，因此应用不能假设每次转交都会自动重复所有输入检查；关键 Policy 放在外部工具和服务边界。
 
 ```mermaid
+%% id: openai-sdk-handoff-vs-agent-tool
+%% title: SDK Handoff 与 Agent-as-Tool 控制流
+%% alt: Triage 通过 Handoff 转移会话而 Manager 通过 Agent-as-Tool 调用 Researcher 后收回结果
 flowchart LR
     Triage -->|handoff| Billing["Billing owns conversation"]
     Manager -->|agent as tool| Researcher --> Manager
 ```
+
+两条路径最关键的差别是最终控制权归属；它决定历史、Guardrail、终止条件和最终输出由谁管理。
 
 ### Guardrail、Structured Output 与 Session
 

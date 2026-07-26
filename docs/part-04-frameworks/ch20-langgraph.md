@@ -8,7 +8,13 @@ LangGraph 用 State、Node、Edge 和 Checkpoint 表达可恢复工作流。本�
 学习目标是能设计、实现和测试一个带持久化与人工中断的图。前置知识为第9—10、17章。
 
 ## 原理与状态图
+
+LangGraph 把工作流表达为显式 State、Node 和 Edge。主图展示研究任务中循环、审批和结束路径。
+
 ```mermaid
+%% id: langgraph-research-state-machine
+%% title: LangGraph 研究工作流状态机
+%% alt: 研究任务从规划到研究评审并在证据不足时循环，高风险时中断审批后写作结束
 stateDiagram-v2
     [*] --> Plan
     Plan --> Research
@@ -19,7 +25,44 @@ stateDiagram-v2
     Review --> Write: 通过
     Write --> [*]
 ```
+
 State 是显式 Schema；Node 接收状态并返回更新；Reducer 决定并行更新如何合并；Checkpoint 支持恢复。Interrupt 把控制交还人类，恢复时必须使用稳定 thread/run 标识。
+
+```mermaid
+%% id: langgraph-state-update-reducer-flow
+%% title: LangGraph 并行状态更新与 Reducer
+%% alt: 两个并行 Node 返回局部更新后由字段 Reducer 追加去重或拒绝冲突并写入下一状态快照
+flowchart LR
+    State[输入 StateSnapshot] --> A[Node A]
+    State --> B[Node B]
+    A --> UA[局部更新 A]
+    B --> UB[局部更新 B]
+    UA --> Reducer{字段 Reducer}
+    UB --> Reducer
+    Reducer -->|追加去重或求和| Next[下一 StateSnapshot]
+    Reducer -->|单值所有权冲突| Error[拒绝并定位节点]
+```
+
+Reducer 是数据一致性规则，不是便利函数。错误的合并语义会在并行、恢复和重放中产生重复或覆盖。
+
+```mermaid
+%% id: langgraph-checkpoint-side-effect-boundary
+%% title: Checkpoint 与外部副作用边界
+%% alt: Node 在执行外部动作前使用幂等键或 Outbox 并在动作后保存 Checkpoint，以避免崩溃恢复时重复执行
+sequenceDiagram
+    participant G as Graph Node
+    participant O as Outbox or Idempotency Store
+    participant X as External System
+    participant C as Checkpointer
+    G->>O: reserve(action_id)
+    O-->>G: new or previous result
+    G->>X: execute with action_id
+    X-->>G: result
+    G->>O: record result
+    G->>C: save state snapshot
+```
+
+Checkpoint 只保存图状态，不能自动回滚已经发送的邮件或付款。副作用节点必须有独立的幂等与状态核对机制。
 
 ## 最小与完整工程
 最小图包含分类、处理和结束。工程研究 Agent 见项目8，保存计划、证据、重试次数和评审状态；外部副作用节点使用幂等键。Streaming 是事件协议，不应把内部状态全部暴露给客户端。
@@ -90,6 +133,9 @@ Checkpoint 只覆盖图状态。Node 已发送邮件但在写 checkpoint 前崩�
 官方规则要求避免随意重排同一 Node 中的 interrupt，interrupt 前的副作用必须幂等，也不要用宽泛 try/except 吞掉控制异常。等待人工期间任务状态是 paused，不占用 Web Worker；过期审批转为拒绝或重新生成候选。
 
 ```mermaid
+%% id: langgraph-human-interrupt-resume
+%% title: LangGraph 人工中断与恢复时序
+%% alt: Graph 在中断前保存状态并向人工发送审批载荷，随后用相同 thread_id 验证决定并恢复执行
 sequenceDiagram
     participant G as Graph
     participant C as Checkpointer
@@ -100,6 +146,8 @@ sequenceDiagram
     G->>C: load checkpoint
     G->>G: validate decision and continue
 ```
+
+审批等待期间图处于 paused 状态，不占用 Web Worker；恢复数据仍需 Schema、主体和有效期校验。
 
 ### Retry、Time Travel 与 Subgraph
 

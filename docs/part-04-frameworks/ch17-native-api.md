@@ -8,12 +8,51 @@
 学习目标是掌握核心控制流，并通过最小示例解释每一层为何存在。
 
 ## 原理与架构
+
+原生 Runtime 的价值是把模型协议、状态、工具与策略边界显式化。下图给出最小控制面。
+
 ```mermaid
+%% id: native-agent-runtime-layers
+%% title: 原生 Agent Runtime 分层
+%% alt: 请求依次经过类型化状态、模型网关、决策校验和工具注册表并由策略与追踪横向约束
 flowchart LR
     Request --> State["Typed State"] --> Model["Model Gateway"] --> Decision["Validated Decision"] --> Tools["Tool Registry"] --> State
     Decision --> Final["Final Output"]
 ```
+
 Model Gateway 隔离供应商协议，Tool Registry 隔离执行，State Store 保存 checkpoint，Policy 处理预算和权限，Tracer 记录调用。抽象只在出现第二个实现时引入，避免提前复制框架复杂度。
+
+```mermaid
+%% id: native-runtime-error-boundaries
+%% title: 原生 Runtime 错误与重试边界
+%% alt: 输入策略模型工具业务和内部错误按可修复性幂等性分别进入拒绝有限重试状态核对或告警
+flowchart TD
+    Failure[运行失败] --> Kind{错误来源}
+    Kind -->|输入或 Schema| Reject[拒绝并返回稳定错误]
+    Kind -->|Policy| Audit[停止并审计]
+    Kind -->|模型暂时故障| ModelRetry[预算内退避重试]
+    Kind -->|工具暂时故障| Idempotent{可幂等重放}
+    Idempotent -->|是| ToolRetry[同一调用 ID 重试]
+    Idempotent -->|否| Reconcile[核对外部状态]
+    Kind -->|业务拒绝| Observe[作为 Observation]
+    Kind -->|内部缺陷| Alert[终止并告警]
+```
+
+错误分类是轻量框架的核心契约。重试只适用于可判定的暂时故障，且必须纳入统一时间、次数和费用预算。
+
+```mermaid
+%% id: native-runtime-evolution-path
+%% title: 从脚本到轻量 Runtime 的演进路径
+%% alt: 单工具脚本随着第二供应商持久状态审批和并发需求逐步抽象网关存储策略与事件协议
+flowchart LR
+    Script[单模型单工具脚本] --> Loop[受测 Tool Loop]
+    Loop --> Gateway[第二供应商出现后抽象 Model Gateway]
+    Gateway --> Store[需要恢复后抽象 Checkpoint Store]
+    Store --> Policy[加入预算权限和审批]
+    Policy --> Events[稳定 stream resume 事件协议]
+```
+
+抽象由已经出现的变化驱动，而不是预先模仿大型框架。这样每个接口都能对应真实测试和替代实现。
 
 ## 最小与完整工程
 `src/ai_agent_book/tool_runtime.py` 是最小实现。工程版增加统一错误类型、指数退避且有限的重试、取消、Usage、日志脱敏、幂等键和持久化。测试用 Fake Model 返回预设决策，验证循环而不调用付费 API。
@@ -56,11 +95,16 @@ State 区分输入消息、结构化事实、工具副作用、预算和最终�
 结构化日志记录 run、turn、model、tool、状态、耗时和错误 code；Prompt 与工具正文按字段策略脱敏。Trace 形成 Run → Model Span → Tool Span 层级，检索或 handoff 可继续嵌套。Usage 保存供应商返回的输入、输出、缓存或其他计量，并关联价格表版本。字符估算只用于调用前预算。
 
 ```mermaid
+%% id: native-runtime-trace-tree
+%% title: 原生 Agent 运行 Trace 树
+%% alt: 一次 Run 下包含多个模型 Turn、工具 Span 与统一 Token 时间费用预算的层级追踪关系
 flowchart TB
     Run --> Turn1["Turn 1: model"] --> Tool1["Tool span"]
     Run --> Turn2["Turn 2: model"] --> Final
     Run --> Budget["tokens / time / cost"]
 ```
+
+Trace 用于复现决策链，预算器用于强制终止，两者都应引用同一 run、turn 和 tool call 标识。
 
 ### 测试与轻量框架抽象
 

@@ -1,0 +1,12 @@
+%% id: multi-agent-cost-termination-control
+%% title: Multi-Agent 成本与终止控制
+%% alt: 每个角色调用都经过任务去重证据增量和预算检查，无新增价值或达到上限时由 Runtime 强制终止
+flowchart LR
+    Message[候选 Agent 消息或调用] --> Duplicate{任务或证据重复}
+    Duplicate -->|是| Stop[停止无效对话]
+    Duplicate -->|否| Increment{产生可验证增量}
+    Increment -->|否| Stop
+    Increment -->|是| Budget{Token 时间轮数预算}
+    Budget -->|不足| Stop
+    Budget -->|足够| Execute[执行并写共享状态]
+    Execute --> Message

@@ -1,0 +1,11 @@
+%% id: rag-framework-selection-experiment
+%% title: 原生、LangChain 与 LlamaIndex 对照实验
+%% alt: 三种实现共享同一语料 Embedding top-k 和评估集并比较召回引用延迟追踪测试与升级成本
+flowchart TB
+    Baseline[统一语料 Embedding 查询集] --> Native[原生检索管线]
+    Baseline --> LangChain[LangChain Retriever Agent]
+    Baseline --> LlamaIndex[LlamaIndex Ingestion Retriever]
+    Native --> Metrics[Recall 引用 延迟 Trace 测试 升级]
+    LangChain --> Metrics
+    LlamaIndex --> Metrics
+    Metrics --> Decision[按证据选型或保留多 Adapter]

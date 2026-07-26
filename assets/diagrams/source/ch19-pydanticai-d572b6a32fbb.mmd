@@ -1,0 +1,13 @@
+%% id: pydanticai-validation-retry-boundaries
+%% title: PydanticAI 校验与重试边界
+%% alt: 工具参数和输出验证失败可在预算内反馈模型，而权限业务拒绝与上游故障分别终止或由客户端处理
+flowchart TD
+    Failure[失败] --> Kind{失败类型}
+    Kind -->|可修复工具参数| ToolRetry[简洁反馈模型]
+    Kind -->|可修复输出结构| OutputRetry[有限输出重试]
+    Kind -->|权限或业务拒绝| Stop[立即终止]
+    Kind -->|HTTP 暂时故障| ClientRetry[依赖客户端退避]
+    ToolRetry --> Budget{总预算剩余}
+    OutputRetry --> Budget
+    Budget -->|是| Agent[继续 Agent]
+    Budget -->|否| Exhausted[budget_exceeded]

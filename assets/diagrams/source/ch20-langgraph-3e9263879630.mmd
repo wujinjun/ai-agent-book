@@ -1,0 +1,12 @@
+%% id: langgraph-human-interrupt-resume
+%% title: LangGraph 人工中断与恢复时序
+%% alt: Graph 在中断前保存状态并向人工发送审批载荷，随后用相同 thread_id 验证决定并恢复执行
+sequenceDiagram
+    participant G as Graph
+    participant C as Checkpointer
+    participant H as Human
+    G->>C: save state before interrupt
+    G-->>H: approval payload
+    H->>G: Command(resume=decision), same thread_id
+    G->>C: load checkpoint
+    G->>G: validate decision and continue

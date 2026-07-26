@@ -1,0 +1,10 @@
+%% id: multi-agent-supervisor-shared-state
+%% title: Supervisor、Worker 与共享状态架构
+%% alt: Supervisor 向研究编码评审 Worker 分派任务，各 Worker 仅通过类型化共享状态提交产物
+flowchart TB
+    Supervisor --> Researcher
+    Supervisor --> Coder
+    Supervisor --> Reviewer
+    Researcher --> Shared["Typed Shared State"]
+    Coder --> Shared
+    Reviewer --> Shared

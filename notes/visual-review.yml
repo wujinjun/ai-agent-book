@@ -197,12 +197,60 @@ files:
       - {id: vector-database-selection-decision, section: HNSW与IVF, relation: decision, disposition: diagram}
       - {id: embedding-model-index-migration, section: HNSW与IVF, relation: flow, disposition: diagram}
 
-  docs/part-04-frameworks/ch17-native-api.md: {group: part-04, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-04-frameworks/ch18-openai-agents-sdk.md: {group: part-04, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-04-frameworks/ch19-pydanticai.md: {group: part-04, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-04-frameworks/ch20-langgraph.md: {group: part-04, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-04-frameworks/ch21-langchain-llamaindex.md: {group: part-04, minimum_diagrams: 4, review_status: pending, requirements: []}
-  docs/part-04-frameworks/ch22-multi-agent-frameworks.md: {group: part-04, minimum_diagrams: 4, review_status: pending, requirements: []}
+  docs/part-04-frameworks/ch17-native-api.md:
+    group: part-04
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: native-agent-runtime-layers, section: 原理与架构, relation: architecture, disposition: diagram}
+      - {id: native-runtime-error-boundaries, section: 原理与架构, relation: decision, disposition: diagram}
+      - {id: native-runtime-evolution-path, section: 原理与架构, relation: flow, disposition: diagram}
+      - {id: native-runtime-trace-tree, section: Logging Tracing 与 Usage, relation: hierarchy, disposition: diagram}
+  docs/part-04-frameworks/ch18-openai-agents-sdk.md:
+    group: part-04
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: openai-agents-sdk-runtime-components, section: 核心原理与架构, relation: architecture, disposition: diagram}
+      - {id: openai-sdk-handoff-agent-tool-decision, section: 核心原理与架构, relation: decision, disposition: diagram}
+      - {id: openai-sdk-production-guardrails, section: 核心原理与架构, relation: security, disposition: diagram}
+      - {id: openai-sdk-handoff-vs-agent-tool, section: Handoff 与 Agent-as-Tool, relation: comparison, disposition: diagram}
+  docs/part-04-frameworks/ch19-pydanticai.md:
+    group: part-04
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: pydanticai-typed-agent-boundaries, section: 核心原理与架构, relation: architecture, disposition: diagram}
+      - {id: pydanticai-validation-retry-boundaries, section: 核心原理与架构, relation: decision, disposition: diagram}
+      - {id: pydanticai-fastapi-request-lifecycle, section: 核心原理与架构, relation: sequence, disposition: diagram}
+      - {id: pydanticai-provider-capability-boundary, section: Model Abstraction 与供应商差异, relation: architecture, disposition: diagram}
+  docs/part-04-frameworks/ch20-langgraph.md:
+    group: part-04
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: langgraph-research-state-machine, section: 原理与状态图, relation: state, disposition: diagram}
+      - {id: langgraph-state-update-reducer-flow, section: 原理与状态图, relation: data, disposition: diagram}
+      - {id: langgraph-checkpoint-side-effect-boundary, section: 原理与状态图, relation: sequence, disposition: diagram}
+      - {id: langgraph-human-interrupt-resume, section: Interrupt 与 Human-in-the-Loop, relation: sequence, disposition: diagram}
+  docs/part-04-frameworks/ch21-langchain-llamaindex.md:
+    group: part-04
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: langchain-llamaindex-langgraph-layers, section: 核心原理与架构, relation: architecture, disposition: diagram}
+      - {id: rag-framework-adapter-boundary, section: 核心原理与架构, relation: architecture, disposition: diagram}
+      - {id: rag-framework-selection-experiment, section: 核心原理与架构, relation: comparison, disposition: diagram}
+      - {id: langchain-current-runtime-relationship, section: LangChain 的历史定位与当前边界, relation: architecture, disposition: diagram}
+  docs/part-04-frameworks/ch22-multi-agent-frameworks.md:
+    group: part-04
+    minimum_diagrams: 4
+    review_status: completed
+    requirements:
+      - {id: multi-agent-supervisor-shared-state, section: 核心原理与架构, relation: architecture, disposition: diagram}
+      - {id: multi-agent-framework-pattern-selection, section: 核心原理与架构, relation: decision, disposition: diagram}
+      - {id: multi-agent-cost-termination-control, section: 核心原理与架构, relation: flow, disposition: diagram}
+      - {id: crewai-flow-crew-boundary, section: CrewAI Crews 与 Flows, relation: architecture, disposition: diagram}
 
   docs/part-05-engineering/ch23-python-engineering.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}
   docs/part-05-engineering/ch24-fastapi.md: {group: part-05, minimum_diagrams: 4, review_status: pending, requirements: []}

@@ -1,0 +1,7 @@
+%% id: native-runtime-trace-tree
+%% title: 原生 Agent 运行 Trace 树
+%% alt: 一次 Run 下包含多个模型 Turn、工具 Span 与统一 Token 时间费用预算的层级追踪关系
+flowchart TB
+    Run --> Turn1["Turn 1: model"] --> Tool1["Tool span"]
+    Run --> Turn2["Turn 2: model"] --> Final
+    Run --> Budget["tokens / time / cost"]

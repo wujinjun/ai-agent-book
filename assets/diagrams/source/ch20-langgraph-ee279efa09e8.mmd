@@ -1,0 +1,12 @@
+%% id: langgraph-state-update-reducer-flow
+%% title: LangGraph 并行状态更新与 Reducer
+%% alt: 两个并行 Node 返回局部更新后由字段 Reducer 追加去重或拒绝冲突并写入下一状态快照
+flowchart LR
+    State[输入 StateSnapshot] --> A[Node A]
+    State --> B[Node B]
+    A --> UA[局部更新 A]
+    B --> UB[局部更新 B]
+    UA --> Reducer{字段 Reducer}
+    UB --> Reducer
+    Reducer -->|追加去重或求和| Next[下一 StateSnapshot]
+    Reducer -->|单值所有权冲突| Error[拒绝并定位节点]

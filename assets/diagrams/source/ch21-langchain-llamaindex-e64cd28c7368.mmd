@@ -1,0 +1,9 @@
+%% id: langchain-current-runtime-relationship
+%% title: LangChain 组合抽象与 LangGraph Runtime
+%% alt: Prompt Model Parser 和 Retriever 组成确定性链，而当前 create_agent 在 LangGraph Runtime 上连接工具与状态
+flowchart LR
+    Prompt --> Model --> Parser
+    Query --> Retriever --> Documents --> Model
+    Agent["LangChain create_agent"] --> Runtime["LangGraph runtime"]
+    Runtime --> Tools
+    Runtime --> State

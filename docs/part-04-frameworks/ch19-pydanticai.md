@@ -10,13 +10,59 @@ PydanticAI 强调类型安全、依赖注入、验证和模型抽象。本章目
 ## 核心原理与架构
 Agent 的依赖对象承载数据库、身份和服务客户端；Tool 通过类型注解生成 Schema；输出模型形成验证边界；失败可在有限范围内反馈模型重试。模型抽象便于测试和供应商替换，但不同模型能力仍不完全等价。
 
+下面的组件图把类型化依赖、工具参数和输出契约放在同一请求链路中，突出框架类型边界与业务授权边界并不相同。
+
 ```mermaid
+%% id: pydanticai-typed-agent-boundaries
+%% title: PydanticAI 类型化 Agent 边界
+%% alt: 请求经 Agent 与模型交互并通过类型化依赖调用校验工具，最终输出类型化对象进入业务服务
 flowchart LR
     Request --> Agent --> Model
     Agent --> Dependencies["Typed Dependencies"]
     Agent --> Tools["Validated Tools"]
     Model --> Output["Typed Output"] --> Service["FastAPI/Business"]
 ```
+
+类型将模型输出与 Python 业务代码连接起来，但依赖权限和外部事实仍由领域服务负责。
+
+```mermaid
+%% id: pydanticai-validation-retry-boundaries
+%% title: PydanticAI 校验与重试边界
+%% alt: 工具参数和输出验证失败可在预算内反馈模型，而权限业务拒绝与上游故障分别终止或由客户端处理
+flowchart TD
+    Failure[失败] --> Kind{失败类型}
+    Kind -->|可修复工具参数| ToolRetry[简洁反馈模型]
+    Kind -->|可修复输出结构| OutputRetry[有限输出重试]
+    Kind -->|权限或业务拒绝| Stop[立即终止]
+    Kind -->|HTTP 暂时故障| ClientRetry[依赖客户端退避]
+    ToolRetry --> Budget{总预算剩余}
+    OutputRetry --> Budget
+    Budget -->|是| Agent[继续 Agent]
+    Budget -->|否| Exhausted[budget_exceeded]
+```
+
+每一层独立重试会造成乘法放大，因此模型、工具和网络重试必须共享一次运行的总预算。
+
+```mermaid
+%% id: pydanticai-fastapi-request-lifecycle
+%% title: PydanticAI 与 FastAPI 请求生命周期
+%% alt: FastAPI 鉴权构造最小权限依赖后调用异步 Agent，经业务校验返回响应并记录用量与 Trace
+sequenceDiagram
+    participant C as Client
+    participant F as FastAPI
+    participant A as Typed Agent
+    participant D as Dependencies
+    participant B as Business Validation
+    C->>F: 请求与身份
+    F->>D: 构造最小权限依赖
+    F->>A: agent.run(task, deps)
+    A->>D: 受控工具调用
+    A-->>F: typed output + usage
+    F->>B: 外部事实与权限校验
+    B-->>C: 稳定 API 响应
+```
+
+框架对象应停留在应用适配层，领域模型和 API 契约不直接依赖 PydanticAI 内部类型。
 
 ## 最小与完整工程
 最小案例抽取工单为 Pydantic 模型。工程版把用户身份、数据库会话和只读服务注入依赖，测试使用框架提供的测试模型或 Fake，验证工具选择、输出与重试。具体构造器和结果属性不凭记忆书写。
@@ -73,11 +119,16 @@ async def account_status(ctx: RunContext[SupportDeps]) -> str:
 框架统一模型接口，有利于测试和切换，但 Tool Calling、Structured Output、Thinking、原生工具、Usage 和流式事件并不完全等价。应用定义能力需求并运行 provider contract tests，而不是假设换一个 model string 行为不变。Fallback 也要考虑数据驻留和成本策略。
 
 ```mermaid
+%% id: pydanticai-provider-capability-boundary
+%% title: PydanticAI 模型抽象与能力差异
+%% alt: 领域代码通过类型化 Agent 连接模型能力配置依赖与校验输出并以契约测试暴露供应商差异
 flowchart LR
     Domain --> TypedAgent --> ModelProfile["model/provider capabilities"]
     TypedAgent --> Deps["typed dependencies"]
     TypedAgent --> Output["validated output"] --> BusinessValidation
 ```
+
+统一接口只减少接线代码，不能抹平 Tool Calling、Structured Output、Usage 和流式事件的供应商差异。
 
 ### Retry 与错误边界
 

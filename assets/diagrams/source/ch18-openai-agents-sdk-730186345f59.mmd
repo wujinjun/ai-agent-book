@@ -1,0 +1,11 @@
+%% id: openai-sdk-handoff-agent-tool-decision
+%% title: Handoff 与 Agent-as-Tool 选择
+%% alt: 根据是否转移对话所有权决定使用 Handoff 或由 Manager 调用专业 Agent 并保留控制
+flowchart TD
+    Subtask[需要另一个 Agent] --> Ownership{是否转移后续对话所有权}
+    Ownership -->|是| Handoff[Handoff：接收 Agent 继续]
+    Ownership -->|否| Tool[Agent-as-Tool：Manager 保留控制]
+    Handoff --> Filter[过滤上下文与 metadata]
+    Tool --> Result[返回结构化子任务结果]
+    Filter --> Policy[接收方独立权限与预算]
+    Result --> Policy

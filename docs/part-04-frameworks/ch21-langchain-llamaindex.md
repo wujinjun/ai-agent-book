@@ -8,13 +8,51 @@ LangChain 提供模型、Prompt、Tool、Retriever 和 Parser 等组合抽象；
 学习目标是以同一 RAG 示例比较原生、LangChain 与 LlamaIndex。前置知识为第13、17、20章。
 
 ## 核心原理与架构
+
+LangChain、LlamaIndex 与 LangGraph 覆盖不同抽象层。下图给出一种常见组合，但各层都可以被原生实现替代。
+
 ```mermaid
+%% id: langchain-llamaindex-langgraph-layers
+%% title: LangChain、LlamaIndex 与 LangGraph 分层关系
+%% alt: LlamaIndex 负责摄取索引检索，LangChain 组合模型工具解析器，LangGraph 管理状态工作流
 flowchart LR
     Data --> Llama["LlamaIndex: ingest/index/retrieve"] --> Context
     Prompt --> Chain["LangChain: model/tool/parser composition"]
     Context --> Chain --> Graph["LangGraph: state/workflow"]
 ```
+
 这只是常见组合，不是强制分层。简单 RAG 可以只用一个库或原生代码。
+
+```mermaid
+%% id: rag-framework-adapter-boundary
+%% title: RAG 领域模型与框架 Adapter 边界
+%% alt: 企业领域 Document Chunk Citation 经 Adapter 转换为 LangChain Document 或 LlamaIndex Node 避免框架类型扩散
+flowchart LR
+    Domain[领域 Document Chunk Citation] --> LCAdapter[LangChain Adapter]
+    Domain --> LIAdapter[LlamaIndex Adapter]
+    LCAdapter --> LCDoc[LangChain Document Retriever]
+    LIAdapter --> LINode[LlamaIndex Node Index Retriever]
+    LCDoc --> Result[统一领域检索结果]
+    LINode --> Result
+```
+
+业务 ID、版本、ACL 和来源位置属于领域契约。框架对象只存在于 Adapter 内部，才能比较实现或安全回退。
+
+```mermaid
+%% id: rag-framework-selection-experiment
+%% title: 原生、LangChain 与 LlamaIndex 对照实验
+%% alt: 三种实现共享同一语料 Embedding top-k 和评估集并比较召回引用延迟追踪测试与升级成本
+flowchart TB
+    Baseline[统一语料 Embedding 查询集] --> Native[原生检索管线]
+    Baseline --> LangChain[LangChain Retriever Agent]
+    Baseline --> LlamaIndex[LlamaIndex Ingestion Retriever]
+    Native --> Metrics[Recall 引用 延迟 Trace 测试 升级]
+    LangChain --> Metrics
+    LlamaIndex --> Metrics
+    Metrics --> Decision[按证据选型或保留多 Adapter]
+```
+
+框架选型应来自同条件实验，不来自教程代码长度。尤其要记录安全过滤、可观测和版本升级成本。
 
 ## 最小与完整工程
 同一 Markdown 检索任务分别用原生接口和框架实现，比较代码量、Trace、测试替身、持久化和升级成本。工程版把领域 Document 和框架 Node 隔离在适配器后，避免业务层依赖内部对象。
@@ -31,6 +69,9 @@ LangChain 早期以 Chain、Prompt、Model、Tool、Agent、Retriever 和 Output
 Chain 适合确定的数据变换，例如 Prompt → Model → Parser；Agent 允许模型动态选择工具。Retriever 只负责根据查询返回 Document，不负责生成；Output Parser 把文本转换为结构，但 provider-native structured output 或 Tool Strategy 可能更可靠。选型先看任务，不为统一风格把所有函数包装为 Chain。
 
 ```mermaid
+%% id: langchain-current-runtime-relationship
+%% title: LangChain 组合抽象与 LangGraph Runtime
+%% alt: Prompt Model Parser 和 Retriever 组成确定性链，而当前 create_agent 在 LangGraph Runtime 上连接工具与状态
 flowchart LR
     Prompt --> Model --> Parser
     Query --> Retriever --> Documents --> Model
@@ -38,6 +79,8 @@ flowchart LR
     Runtime --> Tools
     Runtime --> State
 ```
+
+Chain 适合确定性数据变换；Agent 适合动态工具选择。LangGraph 提供底层状态运行时，但并不要求所有 RAG 都变成 Agent。
 
 ### Tool、Structured Output 与 Middleware
 
