@@ -29,6 +29,38 @@ CHROME_CANDIDATES = (
 )
 
 
+def convert_mkdocs_admonitions(markdown: str) -> str:
+    """Convert MkDocs-only admonitions into portable Markdown blockquotes."""
+
+    lines = markdown.splitlines()
+    rendered: list[str] = []
+    index = 0
+    labels = {"warning": "警告", "note": "说明", "tip": "提示"}
+    while index < len(lines):
+        match = re.match(
+            r'^!!!\s+(?P<kind>[\w-]+)(?:\s+"(?P<title>[^"]+)")?\s*$',
+            lines[index],
+        )
+        if match is None:
+            rendered.append(lines[index])
+            index += 1
+            continue
+        title = match.group("title") or labels.get(match.group("kind"), match.group("kind"))
+        rendered.append(f"> **{title}**")
+        index += 1
+        while index < len(lines) and (
+            not lines[index].strip() or lines[index].startswith(("    ", "\t"))
+        ):
+            body = (
+                lines[index][4:]
+                if lines[index].startswith("    ")
+                else lines[index].lstrip("\t")
+            )
+            rendered.append(f"> {body}" if body else ">")
+            index += 1
+    return "\n".join(rendered) + ("\n" if markdown.endswith("\n") else "")
+
+
 def compose_book(root: Path, output: Path) -> Path:
     """Compose front matter, 38 chapters, ten projects, and back matter."""
 
@@ -37,10 +69,11 @@ def compose_book(root: Path, output: Path) -> Path:
         if entry.path in {Path("docs/index.md"), Path("docs/project-status.md")}:
             continue
         markdown = (root / entry.path).read_text(encoding="utf-8")
+        markdown = convert_mkdocs_admonitions(markdown)
         diagrams = extract_diagrams(entry.path, markdown)
         sections.append(replace_mermaid(markdown, diagrams, Path("assets/diagrams")))
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text("\n\n<div class=\"page-break\"></div>\n\n".join(sections), encoding="utf-8")
+    output.write_text("\n\n".join(sections), encoding="utf-8")
     return output
 
 
@@ -109,7 +142,13 @@ def inject_epub_svg_fallbacks(epub_path: Path, root: Path) -> Path:
             svg_names.add(svg_name)
             return f'srcset="../media/{svg_name}"'
 
-        content[name] = source_pattern.sub(replace_source, text).encode("utf-8")
+        text = source_pattern.sub(replace_source, text)
+        text = re.sub(
+            r"<(?P<tag>source|img)\b(?P<attrs>[^>]*?)(?<!/)>",
+            r"<\g<tag>\g<attrs>/>",
+            text,
+        )
+        content[name] = text.encode("utf-8")
 
     opf_name = "EPUB/content.opf"
     opf = content[opf_name].decode("utf-8")
@@ -150,7 +189,6 @@ def build_print_html(pandoc: str, source: Path) -> Path:
             "--embed-resources",
             "--toc",
             "--toc-depth=2",
-            "--number-sections",
             "--section-divs",
             f"--resource-path={ROOT}",
             f"--metadata-file={ROOT / 'templates/pandoc/metadata.yaml'}",
@@ -158,6 +196,11 @@ def build_print_html(pandoc: str, source: Path) -> Path:
             "--output",
             str(output),
         ]
+    )
+    shutil.copytree(
+        ROOT / "assets/diagrams/svg",
+        output.parent / "assets/diagrams/svg",
+        dirs_exist_ok=True,
     )
     return output
 

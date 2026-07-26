@@ -119,7 +119,15 @@ def audit_epub(epub_path: Path) -> list[AuditIssue]:
             issues.append(AuditIssue(epub_path.name, "missing-spine", "EPUB/content.opf"))
 
         for chapter_name in sorted(name for name in names if name.endswith(".xhtml")):
-            soup = BeautifulSoup(archive.read(chapter_name), "xml")
+            chapter_payload = archive.read(chapter_name)
+            try:
+                ElementTree.fromstring(chapter_payload)
+            except ElementTree.ParseError as error:
+                issues.append(
+                    AuditIssue(chapter_name, "invalid-xhtml", str(error))
+                )
+                continue
+            soup = BeautifulSoup(chapter_payload, "xml")
             if soup.select_one("pre.mermaid, code.mermaid, .language-mermaid"):
                 issues.append(AuditIssue(chapter_name, "raw-mermaid", "Mermaid source"))
             for picture in soup.find_all("picture"):

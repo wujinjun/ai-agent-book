@@ -1,6 +1,7 @@
 import json
 import zipfile
 from pathlib import Path
+from xml.etree import ElementTree
 
 from reportlab.pdfbase.cidfonts import UnicodeCIDFont
 from reportlab.pdfbase.pdfmetrics import registerFont
@@ -64,10 +65,22 @@ def test_epub_svg_fallback_injection_adds_resource_and_rewrites_source(tmp_path:
         names = set(archive.namelist())
         chapter = archive.read("EPUB/text/ch001.xhtml").decode()
         manifest = archive.read("EPUB/content.opf").decode()
+    ElementTree.fromstring(chapter)
     assert "EPUB/media/demo.svg" in names
     assert 'srcset="../media/demo.svg"' in chapter
+    assert 'srcset="../media/demo.svg"/>' in chapter
+    assert 'alt="演示图"/>' in chapter
     assert 'href="media/demo.svg" media-type="image/svg+xml"' in manifest
     assert audit_epub(epub_path) == []
+
+
+def test_epub_audit_reports_malformed_xhtml(tmp_path: Path) -> None:
+    epub_path = tmp_path / "broken.epub"
+    _write_minimal_epub(epub_path)
+
+    issues = audit_epub(epub_path)
+
+    assert "invalid-xhtml" in {issue.code for issue in issues}
 
 
 def test_pdf_audit_checks_page_count_title_and_final_chapter(tmp_path: Path) -> None:
@@ -136,8 +149,8 @@ def _write_minimal_epub(path: Path) -> None:
 <item id="png" href="media/file0.png" media-type="image/png"/>
 </manifest><spine><itemref idref="chapter"/></spine></package>"""
     chapter = """<html xmlns="http://www.w3.org/1999/xhtml"><body>
-<picture><source type="image/svg+xml" srcset="assets/diagrams/svg/demo.svg"/>
-<img src="../media/file0.png" alt="演示图"/></picture></body></html>"""
+<picture><source type="image/svg+xml" srcset="assets/diagrams/svg/demo.svg">
+<img src="../media/file0.png" alt="演示图"></picture></body></html>"""
     with zipfile.ZipFile(path, "w") as archive:
         archive.writestr("mimetype", "application/epub+zip", compress_type=zipfile.ZIP_STORED)
         archive.writestr("EPUB/content.opf", opf)
