@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import json
 import posixpath
 import zipfile
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
@@ -18,6 +20,50 @@ class AuditIssue:
     path: str
     code: str
     detail: str
+
+
+def audit_contact_sheets(manifest_path: Path, index_path: Path) -> list[AuditIssue]:
+    """Audit that every diagram appears once in a real contact-sheet slot."""
+
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    payload = json.loads(index_path.read_text(encoding="utf-8"))
+    if not isinstance(manifest, list) or not isinstance(payload, dict):
+        raise ValueError("invalid diagram manifest or contact-sheet index")
+    raw_entries = payload.get("entries")
+    if not isinstance(raw_entries, list):
+        raise ValueError("contact-sheet index requires an entries list")
+    entries = [entry for entry in raw_entries if isinstance(entry, dict)]
+    if len(entries) != len(raw_entries):
+        raise ValueError("contact-sheet entries must be objects")
+
+    issues: list[AuditIssue] = []
+    path = index_path.as_posix()
+    expected_ids = {
+        str(entry.get("semantic_id", "")) for entry in manifest if isinstance(entry, dict)
+    }
+    actual_ids = [str(entry.get("semantic_id", "")) for entry in entries]
+    for semantic_id, count in sorted(Counter(actual_ids).items()):
+        if count > 1:
+            issues.append(AuditIssue(path, "duplicate-diagram", semantic_id))
+    for semantic_id in sorted(expected_ids - set(actual_ids)):
+        issues.append(AuditIssue(path, "missing-diagram", semantic_id))
+    for semantic_id in sorted(set(actual_ids) - expected_ids):
+        issues.append(AuditIssue(path, "unexpected-diagram", semantic_id))
+
+    slots = [
+        (int(entry.get("page", 0)), int(entry.get("slot", 0)))
+        for entry in entries
+    ]
+    for slot, count in sorted(Counter(slots).items()):
+        if count > 1:
+            issues.append(AuditIssue(path, "duplicate-slot", f"{slot[0]}:{slot[1]}"))
+
+    page_count = int(payload.get("page_count", 0))
+    for page in range(1, page_count + 1):
+        page_path = index_path.parent / f"diagram-contact-sheet-{page:02d}.png"
+        if not page_path.is_file() or page_path.stat().st_size == 0:
+            issues.append(AuditIssue(path, "missing-contact-page", page_path.name))
+    return sorted(issues)
 
 
 def audit_html(site_dir: Path) -> list[AuditIssue]:

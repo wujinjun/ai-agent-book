@@ -1,3 +1,4 @@
+import json
 import zipfile
 from pathlib import Path
 
@@ -5,7 +6,12 @@ from reportlab.pdfbase.cidfonts import UnicodeCIDFont
 from reportlab.pdfbase.pdfmetrics import registerFont
 from reportlab.pdfgen.canvas import Canvas
 
-from ai_agent_book.publication_audit import audit_epub, audit_html, audit_pdf
+from ai_agent_book.publication_audit import (
+    audit_contact_sheets,
+    audit_epub,
+    audit_html,
+    audit_pdf,
+)
 from scripts.build_pandoc import inject_epub_svg_fallbacks
 
 
@@ -80,6 +86,45 @@ def test_pdf_audit_checks_page_count_title_and_final_chapter(tmp_path: Path) -> 
         min_pages=2,
         required_text=("AI Agent", "技术选型"),
     ) == []
+
+
+def test_contact_sheet_audit_detects_missing_and_duplicate_entries(tmp_path: Path) -> None:
+    manifest = tmp_path / "manifest.json"
+    index = tmp_path / "contact" / "index.json"
+    index.parent.mkdir()
+    manifest.write_text(
+        json.dumps(
+            [
+                {"semantic_id": "first"},
+                {"semantic_id": "second"},
+                {"semantic_id": "third"},
+            ]
+        ),
+        encoding="utf-8",
+    )
+    index.write_text(
+        json.dumps(
+            {
+                "diagram_count": 3,
+                "page_count": 1,
+                "entries": [
+                    {"semantic_id": "first", "page": 1, "slot": 1},
+                    {"semantic_id": "first", "page": 1, "slot": 2},
+                    {"semantic_id": "third", "page": 1, "slot": 2},
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    issues = audit_contact_sheets(manifest, index)
+
+    assert {issue.code for issue in issues} == {
+        "duplicate-diagram",
+        "duplicate-slot",
+        "missing-contact-page",
+        "missing-diagram",
+    }
 
 
 def _write_minimal_epub(path: Path) -> None:
