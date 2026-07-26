@@ -1,0 +1,9 @@
+%% id: structured-output-validation-loop
+%% title: 结构化输出解析校验闭环
+%% alt: 非结构化输入经模型生成 JSON 后依次解析校验并按错误类型有限重试或返回错误
+flowchart LR
+    Input["非结构化输入"] --> Model["模型 + Schema"]
+    Model --> Parse["JSON 解析"] --> Validate["Pydantic 校验"]
+    Validate -->|成功| Business["业务规则"]
+    Validate -->|可修复| Retry["有限修复重试"] --> Model
+    Validate -->|不可修复| Error["结构化错误"]

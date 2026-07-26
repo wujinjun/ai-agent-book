@@ -1,0 +1,11 @@
+%% id: parallel-tool-dependency-plan
+%% title: 并行工具调用依赖图
+%% alt: 独立只读工具可以并行执行而创建订单与支付订单因数据依赖必须串行
+flowchart LR
+    Task[组合任务] --> Weather[查询天气]
+    Task --> FX[查询汇率]
+    Task --> Create[创建订单]
+    Weather --> Join[汇总观察]
+    FX --> Join
+    Create --> Pay[支付订单]
+    Pay --> Join

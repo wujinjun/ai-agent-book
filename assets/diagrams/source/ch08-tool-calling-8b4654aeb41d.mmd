@@ -1,0 +1,12 @@
+%% id: tool-permission-approval-gates
+%% title: 工具权限与人工审批门禁
+%% alt: 模型提出动作后按工具白名单、主体资源授权、风险等级和人工审批逐级放行
+flowchart LR
+    Proposal[模型提出动作] --> Allow{工具在白名单}
+    Allow -->|否| Reject[拒绝并记录]
+    Allow -->|是| Auth{主体有资源权限}
+    Auth -->|否| Reject
+    Auth -->|是| Risk{风险等级}
+    Risk -->|只读| Execute[受限执行]
+    Risk -->|可逆写入| Policy[策略检查] --> Execute
+    Risk -->|不可逆写入| Human[人工审批] --> Execute

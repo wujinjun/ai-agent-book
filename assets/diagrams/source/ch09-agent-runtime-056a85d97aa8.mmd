@@ -1,0 +1,14 @@
+%% id: agent-observation-action-state-loop
+%% title: Agent 的观察动作状态循环
+%% alt: Agent Runtime 在观察、决策、动作、转交、完成和失败状态之间受控转换
+stateDiagram-v2
+    [*] --> Observe
+    Observe --> Decide
+    Decide --> Act: 工具动作
+    Act --> Observe: 结果/错误
+    Decide --> Handoff: 转交
+    Handoff --> Observe
+    Decide --> Finish: 最终回答
+    Decide --> Fail: 预算或策略拒绝
+    Finish --> [*]
+    Fail --> [*]

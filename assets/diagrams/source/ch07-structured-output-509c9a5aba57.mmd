@@ -1,0 +1,5 @@
+%% id: structured-output-four-validation-layers
+%% title: 结构化输出四层验证边界
+%% alt: 展示 JSON 语法、Schema、领域不变量和外部数据库权限四层递进验证
+flowchart LR
+    Bytes --> JSON["JSON syntax"] --> Schema["Schema/Pydantic"] --> Domain["Domain invariants"] --> External["Database/permission"] --> Accepted

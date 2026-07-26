@@ -1,0 +1,14 @@
+%% id: streaming-partial-object-state
+%% title: 流式部分对象状态机
+%% alt: 展示流式字段从草稿累积到完整解析、整体校验和正式提交以及中断废弃的状态变化
+stateDiagram-v2
+    [*] --> Draft
+    Draft --> Draft: 接收部分字段
+    Draft --> Parsed: 对象闭合
+    Draft --> Abandoned: 连接中断或超限
+    Parsed --> Validated: 整体校验通过
+    Parsed --> Rejected: 校验失败
+    Validated --> Committed: 业务授权通过
+    Abandoned --> [*]
+    Rejected --> [*]
+    Committed --> [*]

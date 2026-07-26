@@ -1,0 +1,16 @@
+%% id: agent-termination-recovery-state
+%% title: Agent 终止与失败恢复状态机
+%% alt: 运行中的 Agent 因完成、预算耗尽、可恢复错误、审批等待或不可恢复失败进入不同状态
+stateDiagram-v2
+    [*] --> Running
+    Running --> Completed: 验收通过
+    Running --> WaitingApproval: 高风险动作
+    WaitingApproval --> Running: 批准
+    WaitingApproval --> Cancelled: 拒绝或超时
+    Running --> Recovering: 可恢复故障
+    Recovering --> Running: 从安全 checkpoint 恢复
+    Recovering --> Failed: 重试用尽
+    Running --> Failed: 预算耗尽或策略拒绝
+    Completed --> [*]
+    Cancelled --> [*]
+    Failed --> [*]

@@ -1,0 +1,10 @@
+%% id: bounded-replanning-scope
+%% title: 受限重规划范围
+%% alt: 某任务失败时仅使失败节点及其下游失效并保留已经验证的并行分支和证据
+flowchart LR
+    A[已验证来源 A] --> E[证据合并]
+    B[来源 B 读取失败] --> R[替换来源或调整步骤]
+    R --> B2[新来源 B]
+    B2 --> E
+    E --> Report[报告]
+    A -.保持有效.-> Report
