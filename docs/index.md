@@ -6,6 +6,10 @@ template: home.html
 
 本书把 AI Agent 当作一种**受约束的软件系统**来研究：模型提供语言理解与生成能力，运行时管理状态和循环，工具连接外部世界，检索与记忆提供上下文，工作流提供可控的执行结构，而评估、安全与可观测性决定系统能否进入生产环境。
 
+<a href="downloads/ai-agent-book-2026.pdf">下载 PDF</a>
+·
+<a href="downloads/ai-agent-book-2026.epub">下载 EPUB</a>
+
 下图把七篇内容放在同一条能力成长路径上，说明基础原理怎样逐步组合为可部署、可治理的 Agent 产品。
 
 ```mermaid

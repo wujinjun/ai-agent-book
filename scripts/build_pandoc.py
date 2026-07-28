@@ -217,6 +217,21 @@ def build_pdf(print_html: Path) -> Path:
     return output
 
 
+def stage_offline_editions(
+    html_dir: Path,
+    pdf_path: Path,
+    epub_path: Path,
+) -> list[Path]:
+    """Copy offline editions into the generated reading site."""
+
+    downloads = html_dir / "downloads"
+    downloads.mkdir(parents=True, exist_ok=True)
+    outputs = [downloads / pdf_path.name, downloads / epub_path.name]
+    shutil.copy2(pdf_path, outputs[0])
+    shutil.copy2(epub_path, outputs[1])
+    return outputs
+
+
 def chrome_pdf_command(chrome: Path, print_html: Path, output: Path) -> list[str]:
     """Build the deterministic Chrome Headless PDF command."""
 
@@ -240,13 +255,27 @@ def main() -> int:
         pandoc = _require_pandoc()
         source = compose_book(ROOT, ROOT / "output/intermediate/book.md")
         outputs: list[Path] = []
+        epub_output: Path | None = None
+        pdf_output: Path | None = None
         if args.format in {"all", "epub"}:
-            outputs.append(build_epub(pandoc, source))
+            epub_output = build_epub(pandoc, source)
+            outputs.append(epub_output)
         if args.format in {"all", "pdf", "html"}:
             print_html = build_print_html(pandoc, source)
             outputs.append(print_html)
             if args.format in {"all", "pdf"}:
-                outputs.append(build_pdf(print_html))
+                pdf_output = build_pdf(print_html)
+                outputs.append(pdf_output)
+        if args.format == "all":
+            if epub_output is None or pdf_output is None:
+                raise RuntimeError("完整发布缺少 PDF 或 EPUB。")
+            outputs.extend(
+                stage_offline_editions(
+                    ROOT / "output/html",
+                    pdf_output,
+                    epub_output,
+                )
+            )
     except (RuntimeError, subprocess.TimeoutExpired) as error:
         print(str(error), file=sys.stderr)
         return 1

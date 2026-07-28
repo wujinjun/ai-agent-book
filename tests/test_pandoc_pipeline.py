@@ -118,3 +118,28 @@ def test_build_print_html_preserves_manual_chapter_numbering(
     pandoc_pipeline.build_print_html("pandoc", source)
 
     assert "--number-sections" not in captured
+
+
+def test_stage_offline_editions_copies_pdf_and_epub_into_site(
+    tmp_path: Path,
+) -> None:
+    assert hasattr(pandoc_pipeline, "stage_offline_editions")
+    pdf = tmp_path / "output/pdf/ai-agent-book-2026.pdf"
+    epub = tmp_path / "output/epub/ai-agent-book-2026.epub"
+    pdf.parent.mkdir(parents=True)
+    epub.parent.mkdir(parents=True)
+    pdf.write_bytes(b"pdf")
+    epub.write_bytes(b"epub")
+
+    outputs = pandoc_pipeline.stage_offline_editions(
+        tmp_path / "output/html",
+        pdf,
+        epub,
+    )
+
+    assert [path.name for path in outputs] == [
+        "ai-agent-book-2026.pdf",
+        "ai-agent-book-2026.epub",
+    ]
+    assert outputs[0].read_bytes() == b"pdf"
+    assert outputs[1].read_bytes() == b"epub"
