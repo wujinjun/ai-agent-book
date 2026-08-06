@@ -15,7 +15,7 @@
 | 术语 | 重点章节 | 出现次数 |
 |---|---|---:|
 | Guardrail | [第18章 OpenAI Agents SDK](part-04-frameworks/ch18-openai-agents-sdk.md)；[第29章 Agent Evaluation](part-05-engineering/ch29-evaluation.md)；[第30章 安全与 Guardrails](part-05-engineering/ch30-security.md)；[第38章 技术选型](part-07-advanced/ch38-selection-guide.md)；[第21章 LangChain 与 LlamaIndex](part-04-frameworks/ch21-langchain-llamaindex.md) | 36 |
-| Prompt Injection | [第6章 Prompt Engineering](part-02-agent-core/ch06-prompt-engineering.md)；[第30章 安全与 Guardrails](part-05-engineering/ch30-security.md)；[第2章 Token 与上下文窗口](part-01-foundations/ch02-token-and-context.md)；[第11章 MCP 基础](part-03-rag-and-memory/ch11-mcp.md)；[第13章 RAG 基础](part-03-rag-and-memory/ch13-rag.md) | 16 |
+| Prompt Injection | [第6章 Prompt Engineering](part-02-agent-core/ch06-prompt-engineering.md)；[第30章 安全与 Guardrails](part-05-engineering/ch30-security.md)；[第2章 Token 与上下文窗口](part-01-foundations/ch02-token-and-context.md)；[第11章 MCP 基础](part-03-rag-and-memory/ch11-mcp.md)；[第13章 RAG 基础](part-03-rag-and-memory/ch13-rag.md) | 17 |
 
 ## 工作流
 
@@ -39,11 +39,11 @@
 
 | 术语 | 重点章节 | 出现次数 |
 |---|---|---:|
-| Agent | [第18章 OpenAI Agents SDK](part-04-frameworks/ch18-openai-agents-sdk.md)；[第22章 Multi-Agent 框架](part-04-frameworks/ch22-multi-agent-frameworks.md)；[第19章 PydanticAI](part-04-frameworks/ch19-pydanticai.md)；[第32章 Multi-Agent 原理](part-07-advanced/ch32-multi-agent-principles.md)；[第38章 技术选型](part-07-advanced/ch38-selection-guide.md) | 465 |
-| Agent Runtime | [第1章 什么是大语言模型](part-01-foundations/ch01-what-is-llm.md)；[第8章 Tool Calling](part-02-agent-core/ch08-tool-calling.md)；[第17章 原生 API](part-04-frameworks/ch17-native-api.md)；[第18章 OpenAI Agents SDK](part-04-frameworks/ch18-openai-agents-sdk.md)；[第22章 Multi-Agent 框架](part-04-frameworks/ch22-multi-agent-frameworks.md) | 61 |
+| Agent | [第18章 OpenAI Agents SDK](part-04-frameworks/ch18-openai-agents-sdk.md)；[第22章 Multi-Agent 框架](part-04-frameworks/ch22-multi-agent-frameworks.md)；[第19章 PydanticAI](part-04-frameworks/ch19-pydanticai.md)；[第32章 Multi-Agent 原理](part-07-advanced/ch32-multi-agent-principles.md)；[第38章 技术选型](part-07-advanced/ch38-selection-guide.md) | 470 |
+| Agent Runtime | [第8章 Tool Calling](part-02-agent-core/ch08-tool-calling.md)；[第1章 什么是大语言模型](part-01-foundations/ch01-what-is-llm.md)；[第17章 原生 API](part-04-frameworks/ch17-native-api.md)；[第18章 OpenAI Agents SDK](part-04-frameworks/ch18-openai-agents-sdk.md)；[第22章 Multi-Agent 框架](part-04-frameworks/ch22-multi-agent-frameworks.md) | 67 |
 | Memory | [第15章 Memory](part-03-rag-and-memory/ch15-memory.md)；[第2章 Token 与上下文窗口](part-01-foundations/ch02-token-and-context.md)；[第36章 Agent 架构设计](part-07-advanced/ch36-architecture.md)；[第1章 什么是大语言模型](part-01-foundations/ch01-what-is-llm.md)；[第32章 Multi-Agent 原理](part-07-advanced/ch32-multi-agent-principles.md) | 91 |
 | Multi-Agent | [第22章 Multi-Agent 框架](part-04-frameworks/ch22-multi-agent-frameworks.md)；[第32章 Multi-Agent 原理](part-07-advanced/ch32-multi-agent-principles.md)；[第38章 技术选型](part-07-advanced/ch38-selection-guide.md)；[第18章 OpenAI Agents SDK](part-04-frameworks/ch18-openai-agents-sdk.md)；[第20章 LangGraph](part-04-frameworks/ch20-langgraph.md) | 39 |
-| Tool Calling | [第8章 Tool Calling](part-02-agent-core/ch08-tool-calling.md)；[第11章 MCP 基础](part-03-rag-and-memory/ch11-mcp.md)；[第19章 PydanticAI](part-04-frameworks/ch19-pydanticai.md)；[第1章 什么是大语言模型](part-01-foundations/ch01-what-is-llm.md)；[第17章 原生 API](part-04-frameworks/ch17-native-api.md) | 38 |
+| Tool Calling | [第8章 Tool Calling](part-02-agent-core/ch08-tool-calling.md)；[第11章 MCP 基础](part-03-rag-and-memory/ch11-mcp.md)；[第19章 PydanticAI](part-04-frameworks/ch19-pydanticai.md)；[第1章 什么是大语言模型](part-01-foundations/ch01-what-is-llm.md)；[第17章 原生 API](part-04-frameworks/ch17-native-api.md) | 40 |
 
 ## 框架
 
@@ -74,7 +74,7 @@
 | 术语 | 重点章节 | 出现次数 |
 |---|---|---:|
 | Attention | [第3章 Transformer 与 Attention](part-01-foundations/ch03-transformer-attention.md)；[第1章 什么是大语言模型](part-01-foundations/ch01-what-is-llm.md) | 36 |
-| Context | [第2章 Token 与上下文窗口](part-01-foundations/ch02-token-and-context.md)；[第1章 什么是大语言模型](part-01-foundations/ch01-what-is-llm.md)；[第13章 RAG 基础](part-03-rag-and-memory/ch13-rag.md)；[第6章 Prompt Engineering](part-02-agent-core/ch06-prompt-engineering.md)；[第11章 MCP 基础](part-03-rag-and-memory/ch11-mcp.md) | 211 |
+| Context | [第2章 Token 与上下文窗口](part-01-foundations/ch02-token-and-context.md)；[第1章 什么是大语言模型](part-01-foundations/ch01-what-is-llm.md)；[第13章 RAG 基础](part-03-rag-and-memory/ch13-rag.md)；[第6章 Prompt Engineering](part-02-agent-core/ch06-prompt-engineering.md)；[第11章 MCP 基础](part-03-rag-and-memory/ch11-mcp.md) | 213 |
 | Hallucination | [第29章 Agent Evaluation](part-05-engineering/ch29-evaluation.md)；[第13章 RAG 基础](part-03-rag-and-memory/ch13-rag.md)；[第4章 LLM 生成机制](part-01-foundations/ch04-generation.md)；[第6章 Prompt Engineering](part-02-agent-core/ch06-prompt-engineering.md) | 5 |
-| Token | [第2章 Token 与上下文窗口](part-01-foundations/ch02-token-and-context.md)；[第1章 什么是大语言模型](part-01-foundations/ch01-what-is-llm.md)；[第3章 Transformer 与 Attention](part-01-foundations/ch03-transformer-attention.md)；[第4章 LLM 生成机制](part-01-foundations/ch04-generation.md)；[第31章 成本与性能](part-05-engineering/ch31-cost-performance.md) | 201 |
+| Token | [第2章 Token 与上下文窗口](part-01-foundations/ch02-token-and-context.md)；[第1章 什么是大语言模型](part-01-foundations/ch01-what-is-llm.md)；[第3章 Transformer 与 Attention](part-01-foundations/ch03-transformer-attention.md)；[第4章 LLM 生成机制](part-01-foundations/ch04-generation.md)；[第31章 成本与性能](part-05-engineering/ch31-cost-performance.md) | 202 |
 | Transformer | [第1章 什么是大语言模型](part-01-foundations/ch01-what-is-llm.md)；[第3章 Transformer 与 Attention](part-01-foundations/ch03-transformer-attention.md) | 25 |

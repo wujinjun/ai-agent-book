@@ -24,7 +24,7 @@ chapters:
   - number: 8
     path: docs/part-02-agent-core/ch08-tool-calling.md
     target_chars: 8000
-    complete: false
+    complete: true
     required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
     required_terms: ["Tool Loop", "未知工具", "超时", "幂等", "人工审批", "状态核实"]
     code_languages: [python]

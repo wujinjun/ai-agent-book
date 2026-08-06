@@ -82,9 +82,183 @@ flowchart LR
 
 工具选择只是动作建议，不构成授权。鉴权必须绑定调用主体和具体资源，高风险写入还需展示参数摘要供人工确认。
 
-## 最小示例与完整工程示例
+## 最小实验
 
 本书的 `src/ai_agent_book/tool_runtime.py` 已实现注册表、Pydantic 参数校验、异步超时、观察回传和最大步数。工程版还应加入调用 ID、结构化日志、指标、取消、租户权限、审批状态和结果大小限制。高风险工具分为只读、可逆写入、不可逆写入三级，后两级要求显式策略。
+
+这个最小示例只保留一次加法调用，目的是把模型决策与工具执行的边界显示清楚；它不是生产级权限系统。
+
+下面的离线实验使用一个假的决策函数证明 Tool Loop 的关键性质：模型只提出动作，宿主程序执行；Observation 必须回传后，模型才能形成最终答案。
+
+```python
+import asyncio
+from typing import Any
+
+from pydantic import BaseModel, Field
+
+from ai_agent_book.tool_runtime import (
+    AgentStep,
+    ToolDefinition,
+    ToolRegistry,
+    run_tool_loop,
+)
+
+
+class AddArgs(BaseModel):
+    left: int = Field(ge=0)
+    right: int = Field(ge=0)
+
+
+async def add(args: AddArgs) -> dict[str, int]:
+    return {"value": args.left + args.right}
+
+
+async def main() -> None:
+    registry = ToolRegistry()
+    registry.register(
+        ToolDefinition(name="add", args_model=AddArgs, handler=add)
+    )
+
+    async def decide(history: list[dict[str, Any]]) -> AgentStep:
+        if not history:
+            return AgentStep.tool_call("add", {"left": 20, "right": 22})
+        value = history[-1]["result"]["value"]
+        return AgentStep.final(f"工具返回 {value}")
+
+    print(await run_tool_loop(decide, registry, max_steps=3))
+
+
+asyncio.run(main())
+```
+
+预期输出为 `工具返回 42`。把 `add` 改成未注册的名称会得到“未知工具”错误；让处理函数休眠超过 `timeout_seconds` 会得到可分类的超时；让决策函数始终调用工具则在最大步数耗尽后终止。这三个失败注入比只展示一次成功调用更能说明运行时边界。
+
+## 工程案例
+
+以“给指定客户发送退款确认邮件”为例。它看似只是一个邮件工具，实际包含读取订单、核对退款状态、生成预览、获得人工审批和发送邮件等多个步骤。发送动作不可仅因客户端超时而自动重试，否则用户可能收到重复邮件。
+
+```mermaid
+%% id: approved-idempotent-tool-state-machine
+%% title: 高风险工具的审批、幂等与状态核实状态机
+%% alt: 工具提议经过参数校验授权和审批后执行，超时时先核实外部状态，成功或确认未执行后才结束或重试
+stateDiagram-v2
+    [*] --> Proposed
+    Proposed --> Rejected: 未知工具 / 参数非法
+    Proposed --> Authorized: Schema 与权限通过
+    Authorized --> AwaitingApproval: 高风险动作
+    Authorized --> Executing: 低风险动作
+    AwaitingApproval --> Executing: 审批令牌匹配
+    AwaitingApproval --> Rejected: 拒绝 / 过期 / 参数变化
+    Executing --> Succeeded: 明确成功
+    Executing --> Failed: 明确业务失败
+    Executing --> Unknown: 超时 / 连接中断
+    Unknown --> Succeeded: 状态核实为已执行
+    Unknown --> Retryable: 状态核实为未执行
+    Unknown --> ManualReview: 无法核实
+    Retryable --> Executing: 相同幂等键且预算允许
+    Succeeded --> [*]
+    Failed --> [*]
+    Rejected --> [*]
+    ManualReview --> [*]
+```
+
+这张图中的 `Unknown` 是生产系统必须承认的状态。网络超时只说明调用方没有在期限内收到确认，不说明外部系统没有产生副作用。运行时应调用供应商的状态查询接口，或通过 outbox、幂等键和回执表核实；若无法判断，则进入人工复核，不得把状态伪装成“失败”。
+
+审批也必须绑定具体动作。以下代码用参数哈希说明绑定关系；真实系统还应使用服务端签名、审批人身份和不可篡改审计记录。
+
+```python
+import hashlib
+import json
+from dataclasses import dataclass
+from datetime import UTC, datetime
+from typing import Any
+
+
+def action_digest(tool_name: str, arguments: dict[str, Any]) -> str:
+    canonical = json.dumps(
+        {"tool": tool_name, "arguments": arguments},
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+@dataclass(frozen=True)
+class Approval:
+    subject: str
+    action_hash: str
+    expires_at: datetime
+
+
+def verify_approval(
+    approval: Approval,
+    *,
+    subject: str,
+    tool_name: str,
+    arguments: dict[str, Any],
+    now: datetime,
+) -> None:
+    if approval.subject != subject:
+        raise PermissionError("审批主体不匹配")
+    if now >= approval.expires_at:
+        raise PermissionError("审批已经过期")
+    if approval.action_hash != action_digest(tool_name, arguments):
+        raise PermissionError("工具参数变化，必须重新审批")
+```
+
+Python 3.12 中可使用 `datetime.now(UTC)` 生成带时区时间。审批 UI 应展示收件人、模板、订单号、数据来源和不可逆影响；用户批准“发送给 A”后，模型把收件人改为 B，参数哈希就会变化，旧令牌必须失效。
+
+### 幂等记录与重试归属
+
+幂等键由业务动作的发起方生成，并在所有重试中保持不变。存储记录至少包含租户、工具名、幂等键、参数哈希、状态、外部操作 ID、结果摘要和更新时间。同一个键配上不同参数必须拒绝，而不是返回旧结果。并发收到相同键时，需要唯一约束或事务锁保证只有一个执行者穿过门禁。
+
+```mermaid
+%% id: idempotency-record-flow
+%% title: 幂等写工具的执行流程
+%% alt: 请求先按租户工具和幂等键查询记录，成功则复用结果，执行中则等待，参数冲突拒绝，新请求原子占位后才调用外部系统
+flowchart TD
+    Request["写工具请求"] --> Lookup["查询租户 + 工具 + 幂等键"]
+    Lookup --> Existing{"已有记录？"}
+    Existing -->|成功且参数相同| Reuse["返回既有结果"]
+    Existing -->|执行中| Wait["返回处理中 / 查询状态"]
+    Existing -->|参数不同| Conflict["拒绝键冲突"]
+    Existing -->|否| Claim["事务内创建执行中记录"]
+    Claim --> External["调用外部系统"]
+    External -->|明确成功| Save["保存外部 ID 与结果"]
+    External -->|超时| Verify["按外部 ID / 键状态核实"]
+    Verify --> Save
+    Verify --> Manual["无法判断则人工复核"]
+```
+
+HTTP 客户端可以重试连接建立失败或明确的 429/503，但工具运行时必须拥有最终重试预算，避免 SDK、网关和任务队列各自重试三次形成放大效应。非幂等写入在状态未知时不能自动重放。读取工具也应设置最大返回大小，防止一个正常调用把整个数据库结果塞回上下文。
+
+### 多工具调用的调度规则
+
+模型一次提出多个工具，并不自动意味着可以并行。注册表应给每个工具声明只读性、资源键、并行安全和副作用类别。若两个动作写同一个 `order_id`，调度器应串行；若后一个动作参数引用前一个结果，则必须建立依赖边。无法证明独立时采用串行是合理默认值。
+
+对于并行只读查询，使用 `asyncio.TaskGroup` 时仍需决定单个失败是否取消其他任务、如何保留部分结果以及总截止时间。不要无限等待最慢工具；运行时可返回成功观察与失败观察的结构化集合，让模型在规则允许时回答部分结果。错误正文需脱敏，内部堆栈不应进入模型上下文。
+
+## 失败分析与调试
+
+Tool Calling 的 Trace 要把“提议”“批准”和“实际副作用”分开。若只记录模型输出，无法证明邮件是否真的发送；若只记录 HTTP 200，也无法证明模型最终是否使用了正确结果。
+
+| 故障 | 自动重试？ | 回传给模型 | 运行时动作 |
+|---|---|---|---|
+| 未知工具 | 否 | 稳定错误码与可用工具提示 | 计入无效步骤，重复则终止 |
+| 参数校验失败 | 最多允许模型修正一次 | 字段级安全错误 | 保留原提议与修正关联 |
+| 权限或审批拒绝 | 否 | “动作未获授权” | 审计主体、资源和策略版本 |
+| 业务规则拒绝 | 否 | 可公开的业务原因 | 不改变参数重复调用 |
+| 429/503 | 有界退避 | 通常只回传最终状态 | 消耗统一重试预算 |
+| 只读调用超时 | 视幂等性有界重试 | 超时观察 | 传播取消并记录耗时 |
+| 写调用超时 | 先状态核实 | “状态核实中/未知” | 禁止盲目重放 |
+| 结果过大 | 否 | 截断摘要与结果引用 | 原结果放受控存储 |
+
+调试顺序应是：确认模型收到的工具 Schema；查看模型原始工具提议；检查 Pydantic 校验；检查主体、资源和策略决定；核对审批令牌与参数哈希；查看实际外部请求 ID；最后确认 Observation 是否按正确调用 ID 回传。多个并行调用尤其要通过 `call_id` 对齐，不能按完成顺序猜测对应关系。
+
+最大步数只是最后一道保险。更精细的停止条件还包括相同工具与参数重复、连续无进展、总 Token 或金额预算耗尽、用户取消、截止时间到达和高风险策略拒绝。终止时返回明确状态与已完成副作用，不要生成一个看似完整但掩盖部分失败的自然语言答案。
+
+安全测试应包含路径穿越、SSRF、任意 SQL、Shell 注入、跨租户资源 ID、审批重放、日志泄密和工具结果中的间接 Prompt Injection。工具输出是外部数据，不应因为来自“工具”就提升为系统指令。
 
 ## 常见误区、调试与工程实践
 
@@ -138,3 +312,11 @@ Tool Calling 的可靠性来自模型外的执行边界。练习：为现有运�
 本章对应代码目录：`examples/tool_runtime/`。
 
 运行任何真实工具前，都应先用离线 Fake 和失败注入证明上述边界能够生效。
+
+## 练习参考答案
+
+1. 为现有运行时增加幂等写工具时，先建立唯一键 `(tenant_id, tool_name, idempotency_key)`，再保存参数哈希与状态。测试两次相同请求只执行一次、相同键不同参数被拒绝、并发竞争只有一个执行者、超时后先核实状态，以及失败记录是否允许在明确未执行时重试。
+2. 天气和汇率可并行，因为它们通常只读且互不依赖；创建订单与支付订单必须串行。两个看似只读的调用若共享严格限额或锁，也可能不适合无限并行，因此并发安全应来自工具元数据与容量策略，而不是名称。
+3. 把异常全文交给模型可能泄漏 API Key、数据库地址、内部路径、SQL 和用户数据。外部 Observation 应使用稳定错误码与经过筛选的说明，完整堆栈只进入受权限保护且脱敏的日志。
+4. 人工审批必须绑定主体、工具、规范化参数哈希、策略版本和过期时间。审批后任何参数变化都要重新确认；自然语言中的“我批准”不能替代服务端签名令牌。
+5. 对 Tool Loop 的验收至少覆盖成功、未知工具、参数非法、超时、审批拒绝、审批过期、重复幂等键、状态未知、连续无进展和最大步数。测试应使用 Fake 外部系统，并断言真实处理函数的调用次数，而不只断言最终文本。
