@@ -70,6 +70,22 @@ def test_completion_matrix_covers_book_and_projects() -> None:
         assert f"`{state}`" in matrix
 
 
+def test_project_status_reports_maturity_by_evidence_level() -> None:
+    status = (ROOT / "PROJECT_STATUS.md").read_text(encoding="utf-8")
+    for section in (
+        "## 当前定位",
+        "## 正文完成度",
+        "## 代码完成度",
+        "## 项目成熟度",
+        "## 版本核查边界",
+        "## 出版完成度",
+        "## 尚未完成",
+    ):
+        assert section in status
+    assert "docs/QUALITY_ROADMAP.md" in status
+    assert "notes/completion-matrix.md" in status
+
+
 def test_all_chapters_meet_the_publishable_content_contract() -> None:
     chapters = sorted((ROOT / "docs").glob("part-*/ch*.md"))
     assert len(chapters) == 38

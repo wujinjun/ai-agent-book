@@ -2,7 +2,7 @@
 
 这是一套面向软件工程师的中文技术教材工程。它不把 Agent 等同于某个框架，也不把能调用一次模型的脚本包装成生产系统；全书从 LLM 的生成机制出发，依次讨论结构化输出、工具调用、MCP、RAG、Memory、工作流、多 Agent，以及测试、部署、可观测性和安全治理。
 
-> 当前版本为 **0.2.0 / 多格式出版预览版**。第 1—38 章、十个项目和新版 HTML/PDF/EPUB 出版管线均已建立；自动验证与仍需人工执行的阅读器检查以 [`PROJECT_STATUS.md`](PROJECT_STATUS.md) 为准。
+> 当前版本为 **0.2.0 / 多格式出版预览版**。第 1—38 章、十个教学型项目和新版 HTML/PDF/EPUB 出版管线均已建立，但独立示例、框架实测、生产强化、培训材料和商业出版编辑仍在进行。真实进度见 [`PROJECT_STATUS.md`](PROJECT_STATUS.md)，逐项状态见 [`notes/completion-matrix.md`](notes/completion-matrix.md)，后续路线见 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
 
 ## 适合与不适合的读者
 
