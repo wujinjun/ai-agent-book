@@ -63,8 +63,163 @@ sequenceDiagram
 
 审批必须绑定动作 ID、具体参数、主体、资源和有效期。参数发生变化或状态过期时，旧批准不能复用。
 
-## 最小与完整工程
+## 最小实验
 先列资产、主体、信任边界、攻击路径和控制。工具默认只读、最小作用域，参数 allowlist，网络与文件 Sandbox，高风险动作展示具体影响后审批。输出进入 SQL、HTML、Shell 等下游前按目标语境编码/验证。
+
+最小示例验证审批绑定：批准令牌必须绑定主体、工具、规范化参数和有效期。模型或用户在批准后修改任何参数，旧批准立即失效。
+
+```python
+import hashlib
+import json
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Any
+
+
+def action_hash(
+    *, subject: str, tool: str, arguments: dict[str, Any]
+) -> str:
+    canonical = json.dumps(
+        {"subject": subject, "tool": tool, "arguments": arguments},
+        sort_keys=True,
+        ensure_ascii=False,
+        separators=(",", ":"),
+    )
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+@dataclass(frozen=True)
+class ApprovalGrant:
+    action_digest: str
+    approver_id: str
+    expires_at: datetime
+    nonce: str
+
+
+def validate_approval(
+    grant: ApprovalGrant,
+    *,
+    expected_digest: str,
+    now: datetime,
+    used_nonces: set[str],
+) -> None:
+    if grant.action_digest != expected_digest:
+        raise PermissionError("批准与当前动作不匹配")
+    if now >= grant.expires_at:
+        raise PermissionError("批准已过期")
+    if grant.nonce in used_nonces:
+        raise PermissionError("批准已被使用")
+```
+
+实际令牌还要由服务端签名并绑定策略版本、资源版本和 run ID。`nonce` 只有在执行动作的事务中原子标记已使用，才能抵抗并发重放。自然语言中的“我同意”不是授权凭证。
+
+## 工程案例
+
+为代码 Review Agent 做 Threat Modeling。资产包括私有源码、CI Secret、仓库写权限、PR 评论身份、构建 Artifact 和审计证据。攻击者可能是恶意 PR 作者、被攻陷的依赖、越权内部用户或外部网页。代码、README、Issue、编译输出和测试日志全部属于不可信输入。
+
+```mermaid
+%% id: code-review-agent-threat-boundaries
+%% title: 代码 Review Agent 的资产与信任边界
+%% alt: 不可信PR代码依赖和网页进入只读沙箱，模型提议评论或修复动作，Policy和审批控制GitHub写入并保护源码Secret和审计
+flowchart LR
+    PR["不可信 PR / Diff / 评论"] --> Fetch["只读仓库读取器"]
+    Web["不可信文档 / 依赖页面"] --> Sandbox["网络受限沙箱"]
+    Fetch --> Sandbox
+    Sandbox --> Model["不可信决策组件"]
+    Model --> Proposal["Review / Patch / Comment 提议"]
+    Proposal --> Policy["主体 / Repo / Branch / 动作 Policy"]
+    Policy -->|只读报告| Report["受控 Artifact"]
+    Policy -->|写 PR 评论| Approval["人工审批绑定"]
+    Approval --> GitHub["最小 scope GitHub Adapter"]
+    Secret["CI Secret"] -.仅注入 Adapter.-> GitHub
+    Policy --> Audit["不可篡改审计"]
+    GitHub --> Audit
+```
+
+模型永远不直接获得 GitHub token。读取器使用只读凭证，评论 Adapter 使用只允许目标仓库与 PR 的短期凭证。Patch 默认输出 Artifact 而不是推送分支；若允许写入，必须限制目标分支、文件范围和提交次数，并要求审批。
+
+### 威胁清单与控制证据
+
+Threat Modeling 不止列攻击名，还要为每项威胁记录资产、入口、前置条件、影响、控制、验证与残余风险：
+
+| 威胁 | 入口与资产 | 不可绕过控制 | 验证证据 | 残余风险 |
+|---|---|---|---|---|
+| Indirect Prompt Injection | PR 注释诱导读取 Secret | 模型无 Secret；工具 allowlist | 恶意 Fixture 下无 secret access | 模型报告内容可能受污染 |
+| Data Exfiltration | URL/评论工具外传源码 | egress allowlist、结果最小化 | 未授权域和重定向被拒绝 | 允许域仍需内容审查 |
+| SSRF | URL fetch 指向内网/metadata | DNS/IP/重定向逐跳校验 | loopback、link-local、重绑定测试 | 新网络形态需持续更新 |
+| Excessive Agency | 自动推送 Patch 或大量评论 | 只读默认、预算、人工审批 | 未批准写入调用次数为零 | 批量审批范围过宽 |
+| 跨仓库越权 | 伪造 repo/PR ID | token audience + 对象授权 | 相同 ID 跨组织测试 | 管理员误配置 |
+| Sandbox Escape | 恶意构建脚本访问宿主 | 非 root、无 socket、资源与 syscall 限制 | 逃逸与资源耗尽测试 | 内核/平台漏洞 |
+
+“模型拒绝了恶意指令”不是控制证据，因为换一种表达可能成功。更强证据是：即使 Fake Model 固定提出越权动作，Policy、网络层和工具适配器仍拒绝，并生成审计事件。
+
+### 间接注入到外泄的攻击树
+
+```mermaid
+%% id: indirect-injection-exfiltration-attack-tree
+%% title: 间接提示注入导致数据外泄的攻击树
+%% alt: 恶意内容要实现外泄必须同时影响模型决策、获得敏感读取、找到外传通道并绕过审批审计，防御在每条路径设置控制
+flowchart TD
+    Goal["目标：把私有源码或 Secret 外泄"] --> Influence["影响模型决策"]
+    Influence --> Read["取得敏感读取能力"]
+    Read --> Channel{"找到外传通道"}
+    Channel --> URL["任意 URL / SSRF"]
+    Channel --> Comment["PR 评论 / 邮件"]
+    Channel --> Log["错误或 Trace"]
+    Guard1["内容标记 + 决策最小化"] -.阻断.-> Influence
+    Guard2["对象授权 + Secret 隔离"] -.阻断.-> Read
+    Guard3["egress allowlist + 审批"] -.阻断.-> Channel
+    Guard4["字段日志 allowlist"] -.阻断.-> Log
+```
+
+纵深防御的工程目标不是相信第一层永不失败，而是攻击必须连续突破多个独立控制。若模型受到注入，仍拿不到 Secret；若能读取部分源码，也不能连接任意域；若提出允许域写动作，还需要审批绑定和审计。
+
+### SSRF 的完整校验点
+
+仅检查 URL hostname 不足以防 SSRF。解析后要拒绝非 HTTPS、用户信息、非允许端口和不在 allowlist 的域；解析 DNS 后拒绝 loopback、private、link-local、multicast 和云 metadata IP；实际连接前防止 DNS rebinding；每次重定向重新执行全部规则；限制响应大小、类型和时间。
+
+```python
+import ipaddress
+
+
+def ensure_public_address(raw_ip: str) -> None:
+    address = ipaddress.ip_address(raw_ip)
+    if not address.is_global:
+        raise PermissionError("目标地址不允许访问")
+
+
+for blocked in ("127.0.0.1", "169.254.169.254", "10.0.0.1", "::1"):
+    try:
+        ensure_public_address(blocked)
+    except PermissionError:
+        pass
+    else:
+        raise AssertionError(f"应拒绝地址: {blocked}")
+```
+
+允许公开 IP 仍不表示业务允许该域，因此 IP 校验与域名 allowlist 都要通过。HTTP 客户端要禁用或受控处理代理环境，避免本地代理把目标重新路由到内网。
+
+### Sandbox 假设与验证
+
+Sandbox 文档应写出假设：隔离单位是容器、微虚拟机还是远程执行服务；是否共享内核；挂载哪些目录；是否允许网络；资源与进程上限；Secret 何时注入；Artifact 如何导出。容器本身不是绝对边界，特别是挂载 Docker socket 或宿主工作目录时。
+
+代码 Review 可以先做静态解析，再在无网络、只读源码、临时写目录、非 root 的环境运行测试。构建依赖应来自可信缓存或经过审批的锁文件。超时后强制销毁执行环境，输出经过大小与内容限制后才交给模型。
+
+## 失败分析与调试
+
+| 现象 | 根因 | 应检查 | 处理 |
+|---|---|---|---|
+| 注入测试偶尔成功 | 把 Prompt 当唯一控制 | 实际工具权限和网络策略 | 假设模型被攻陷，强化外部 Policy |
+| 无权文档标题出现在日志 | 授权晚于检索或全量 Trace | 候选产生与日志字段 | 查询层 ACL、日志 allowlist |
+| 批准 A 后执行 B | 审批未绑定规范化参数 | action digest、策略和 nonce | 参数变化即重新批准 |
+| URL allowlist 仍访问内网 | DNS/重定向未复查 | 每一跳解析 IP | 连接时 IP 校验和代理控制 |
+| Sandbox 可读宿主密钥 | 挂载或环境变量过宽 | 容器配置、进程环境 | 最小挂载、短期凭证、无 socket |
+| Agent 持续调用造成费用攻击 | 无硬预算和终止 | Tool/model attempt 与预算 | 模型不可修改的配额 |
+| 安全事件无法追溯 | 只有调试文本日志 | subject/action/policy/approval | 独立追加式 Audit Log |
+
+调试安全失败时保存最小必要证据：run、主体、策略版本、动作摘要、参数哈希、批准和结果，不复制 Secret 或完整敏感正文。先用 Fake Model 固定提出恶意动作，验证确定性控制；再用红队语料评估模型层防御。前者失败是发布阻断项。
+
+事件响应必须可禁用单个工具或租户、吊销凭证、停止任务队列、隔离 Artifact、保全审计和通知受影响用户。演练包括检测、遏制、根因、恢复和把攻击样本加入回归集。仅修 Prompt 而不检查已经发生的工具动作是不完整响应。
 
 ## 误区、调试与实践
 System Prompt 不是安全边界；内容过滤不等于权限；Sandbox 不是一个布尔开关。进行注入语料、越权、跨租户、路径穿越、SSRF、秘密泄露和审批绕过测试。审计日志追加写且与普通调试日志分离。
@@ -152,3 +307,11 @@ Audit Log 记录主体、动作、资源、Policy、批准、时间、结果和 
 
 事件响应能立即禁用工具、轮换 key、停止 Agent、保全 Audit、通知用户和回滚版本。安全告警关联 run 与主体。常见误区是把 System Prompt、模型拒答或单个过滤器称为 Guardrail 全部。
 总结：Agent 安全依赖不可绕过的最小权限、隔离、审批和审计。练习：为代码 Review Agent 做 STRIDE 威胁模型并实现两条越权测试。面试：为什么 Guardrail 不能替代授权？如何防止间接注入导致数据外泄？Sandbox 还需要哪些运行限制？延伸阅读：OWASP LLM Top 10、MCP Security、OAuth 和容器隔离资料。代码目录：所有项目，重点项目3、6、10。
+
+## 练习参考答案
+
+1. STRIDE 可分别检查身份伪造、数据篡改、抵赖、信息泄漏、拒绝服务和权限提升。代码 Review Agent 的两条硬测试可以是：Fake Model 请求读取另一仓库文件时 Policy 拒绝；批准只读报告后，模型改为发布 PR 评论时原批准失效。
+2. Guardrail 可能是概率模型或可绕过的应用逻辑，授权必须由资源服务按主体、对象和动作强制执行。即使模型输出完全恶意，授权层也应阻止访问。
+3. 防间接注入导致外泄要把内容标为不可信、最小化模型可见数据、隔离 Secret、限制工具与 egress、对写动作审批绑定、对返回和日志脱敏，并用恶意 Fixture 验证每层。
+4. Sandbox 至少限制用户、文件挂载、网络、CPU、内存、时间、进程数和 syscall，禁止宿主 socket 与长期 Secret；输出 Artifact 经过扫描和大小限制。还要记录共享内核等残余风险。
+5. SSRF 测试覆盖 loopback、private、link-local、IPv6、整数/混合编码 IP、DNS rebinding、重定向后越界、代理环境和云 metadata。域名 allowlist 与解析后 IP 校验缺一不可。

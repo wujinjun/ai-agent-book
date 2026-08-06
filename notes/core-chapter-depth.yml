@@ -112,7 +112,7 @@ chapters:
   - number: 30
     path: docs/part-05-engineering/ch30-security.md
     target_chars: 8000
-    complete: false
+    complete: true
     required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
     required_terms: ["Threat Modeling", "Indirect Prompt Injection", "Data Exfiltration", "SSRF", "Excessive Agency", "审批绑定"]
     code_languages: [python]
