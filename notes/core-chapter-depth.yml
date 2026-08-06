@@ -48,11 +48,11 @@ chapters:
   - number: 11
     path: docs/part-03-rag-and-memory/ch11-mcp.md
     target_chars: 8000
-    complete: false
+    complete: true
     required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
-    required_terms: ["初始化", "能力发现", "生命周期", "stdio", "Streamable HTTP", "授权"]
+    required_terms: ["2026-07-28", "server/discover", "无状态", "能力发现", "stdio", "Streamable HTTP", "授权"]
     code_languages: [json]
-    acceptance_experiment: 演示初始化、能力发现、调用与关闭的完整协议时序。
+    acceptance_experiment: 演示当前无状态发现、调用与传输关闭，并对照旧版初始化迁移时序。
   - number: 12
     path: docs/part-03-rag-and-memory/ch12-mcp-server.md
     target_chars: 8000

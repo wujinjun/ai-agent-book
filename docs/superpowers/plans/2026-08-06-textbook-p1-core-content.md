@@ -56,7 +56,7 @@ Record these exact acceptance experiments:
 8  Tool Loop 覆盖未知工具、超时、幂等与审批
 9  Runtime 在成功、无进展、预算耗尽和恢复之间转换
 10 有规划与无规划方案对比成功、成本和延迟
-11 MCP 初始化、能力发现、调用与关闭时序
+11 MCP 当前无状态发现、调用与关闭，并对照旧版初始化迁移时序
 12 文件路径越界、stdio 日志和结构化错误测试
 13 RAG 从解析到引用的可追踪基线
 14 基线、Hybrid、Rerank 的逐项消融
