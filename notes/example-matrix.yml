@@ -60,7 +60,7 @@ examples:
     offline_command: python -m minimal_agent.main --fixture recoverable
     test_command: python -m pytest -q
     dependency_group: root
-    complete: false
+    complete: true
   - name: long_term_memory
     chapter: 15
     package: long_term_memory

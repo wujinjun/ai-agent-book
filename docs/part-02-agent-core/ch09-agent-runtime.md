@@ -304,7 +304,7 @@ Checkpoint 应写在安全边界，例如只读检索完成后或外部写操作
 
 Agent Runtime 把不确定决策限制在可观察状态机内。练习：为 Tool Loop 加时间预算、取消和 checkpoint；面试问题：Workflow 与 Agent 如何选择？什么状态必须持久化？延伸阅读：Yao et al., *ReAct*。
 
-本章对应代码目录：当前运行时实现位于 `src/ai_agent_book/tool_runtime.py`；带 Checkpoint、取消和恢复的独立最小 Agent 工程列入质量路线图 P2。
+本章对应代码目录：基础 Tool Loop 位于 `src/ai_agent_book/tool_runtime.py`；[`examples/minimal_agent/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/minimal_agent) 提供独立的 ModelGateway、ToolRegistry、StateStore、Policy、Tracer 与 TerminationPolicy，并覆盖取消、预算、无进展、权限拒绝和崩溃恢复。
 
 ## 练习参考答案
 

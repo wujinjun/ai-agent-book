@@ -96,10 +96,10 @@ Each README must include purpose, architecture diagram, installation, offline ru
 
 **Chapter:** 9/17. **Dependencies:** root-compatible and reuse `ai_agent_book.tool_runtime` only through public types.
 
-- [ ] Test direct answer, tool observation, unknown tool, timeout, no progress, cancellation, budget and Checkpoint recovery.
-- [ ] Implement `ModelGateway`, `ToolRegistry`, `StateStore`, `Policy`, `Tracer` and `TerminationPolicy` ports with Fake adapters.
-- [ ] Add a crash/restart fixture and prove confirmed side effects are not replayed.
-- [ ] Link chapters 9 and 17, run tests and commit `feat: add minimal recoverable agent example`.
+- [x] Test direct answer, tool observation, unknown tool, timeout, no progress, cancellation, budget and Checkpoint recovery.
+- [x] Implement `ModelGateway`, `ToolRegistry`, `StateStore`, `Policy`, `Tracer` and `TerminationPolicy` ports with Fake adapters.
+- [x] Add a crash/restart fixture and prove confirmed side effects are not replayed.
+- [x] Link chapters 9 and 17, run tests and commit `feat: add minimal recoverable agent example`.
 
 ## Task 9: Build `examples/long_term_memory/`
 

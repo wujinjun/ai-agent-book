@@ -48,7 +48,7 @@
 - [x] 创建 `examples/local_semantic_search/`。
 - [x] 创建 `examples/prompt_registry/`。
 - [x] 创建 `examples/structured_extractor/`。
-- [ ] 创建 `examples/minimal_agent/`。
+- [x] 创建 `examples/minimal_agent/`。
 - [ ] 创建 `examples/long_term_memory/`。
 - [ ] 创建 `examples/openai_agents_sdk/`。
 - [ ] 创建 `examples/pydanticai_service/`。
