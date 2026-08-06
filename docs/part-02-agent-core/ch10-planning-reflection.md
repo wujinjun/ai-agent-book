@@ -79,9 +79,195 @@ sequenceDiagram
 
 职责分离的价值是可审计和减少共同盲点。Reviewer 不持有执行密钥，也不应直接重写全部产物。
 
-## 最小示例与完整工程示例
+## 最小实验
 
 最小研究计划可以包含问题定义、来源搜索、内容读取、证据表和报告五步，每步有最大尝试次数。工程版保存有向无环依赖、步骤状态、输入哈希、输出引用和评审意见；只有失败步骤及其下游失效，已验证结果不重复执行。
+
+这个最小示例先解决一个确定性问题：Planner 输出的任务依赖是否构成有效 DAG。若计划含有不存在的依赖或循环，运行时应在调用工具前拒绝，而不是执行到一半才发现没有就绪节点。
+
+```python
+from collections import deque
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class Task:
+    task_id: str
+    dependencies: tuple[str, ...] = ()
+
+
+def topological_order(tasks: list[Task]) -> list[str]:
+    by_id = {task.task_id: task for task in tasks}
+    if len(by_id) != len(tasks):
+        raise ValueError("task_id 必须唯一")
+
+    unknown = {
+        dependency
+        for task in tasks
+        for dependency in task.dependencies
+        if dependency not in by_id
+    }
+    if unknown:
+        raise ValueError(f"存在未知依赖: {sorted(unknown)}")
+
+    indegree = {task.task_id: len(task.dependencies) for task in tasks}
+    children: dict[str, list[str]] = {task.task_id: [] for task in tasks}
+    for task in tasks:
+        for dependency in task.dependencies:
+            children[dependency].append(task.task_id)
+
+    ready = deque(sorted(key for key, degree in indegree.items() if degree == 0))
+    ordered: list[str] = []
+    while ready:
+        current = ready.popleft()
+        ordered.append(current)
+        for child in sorted(children[current]):
+            indegree[child] -= 1
+            if indegree[child] == 0:
+                ready.append(child)
+
+    if len(ordered) != len(tasks):
+        raise ValueError("任务依赖包含循环")
+    return ordered
+
+
+plan = [
+    Task("define"),
+    Task("search", ("define",)),
+    Task("extract", ("search",)),
+    Task("write", ("extract",)),
+]
+assert topological_order(plan) == ["define", "search", "extract", "write"]
+```
+
+这个函数只验证结构，不判断计划内容是否优质。生产系统还应限制节点数量、总预算和可用工具，并检查每个节点是否有可机器验证的产物。Planner 产生的自然语言不能绕过这些约束。
+
+## 工程案例
+
+以“比较两种 Agent 框架并形成带引用的技术选型报告”为例。任务依赖包括定义评价维度、收集两边官方资料、提取证据、构建对比表、撰写结论和 Reviewer 验收。两条资料收集支路可以并行，但报告必须等待证据与冲突核对完成。
+
+计划状态不只包含 `pending/running/done`。为了支持失败重规划，至少要区分 `blocked`、`failed_retryable`、`failed_terminal` 和 `invalidated`。当“读取框架 B 文档”失败时，替换来源会使依赖该来源的证据合并与报告节点失效，却不应重新搜索已经验证的框架 A 资料。
+
+```mermaid
+%% id: plan-node-state-and-replanning
+%% title: 计划节点状态与局部重规划
+%% alt: 节点从等待依赖进入就绪执行和验证，失败可重试或触发局部重规划，仅失败节点和下游失效
+stateDiagram-v2
+    [*] --> Pending
+    Pending --> Ready: 所有任务依赖通过
+    Pending --> Blocked: 依赖失败
+    Ready --> Running
+    Running --> Validating: 产物已生成
+    Validating --> Passed: 验收通过
+    Validating --> Retryable: 局部可修复
+    Running --> Retryable: 暂时故障
+    Retryable --> Ready: 预算允许重试
+    Retryable --> Replanning: 同路径不再有效
+    Replanning --> Invalidated: 原节点及下游
+    Replanning --> Pending: 插入受限替代节点
+    Validating --> Terminal: 不可恢复
+    Passed --> [*]
+    Terminal --> [*]
+```
+
+局部重规划器的输入应是原始目标、失败节点、错误分类、仍有效产物和剩余预算，而不是全部聊天记录。输出为计划差异：删除或失效哪些节点、新增哪些节点、依赖如何变化、为何仍满足原目标。Runtime 再次执行 DAG、权限和预算校验。重规划不能修改系统级停止条件。
+
+### Reviewer 的数据契约
+
+Reviewer 应逐条评价验收标准，并给出证据引用。它与 Executor 使用不同职责提示，但“换一个角色名”并不能保证独立；更重要的是隐藏无关思考过程、提供原始证据、使用明确 rubric，并通过确定性代码复核可自动检查的条目。
+
+```python
+from enum import StrEnum
+
+from pydantic import BaseModel, Field
+
+
+class ReviewDecision(StrEnum):
+    PASS = "pass"
+    REVISE = "revise"
+    REJECT = "reject"
+
+
+class CriterionResult(BaseModel):
+    criterion_id: str
+    passed: bool
+    evidence_ids: list[str] = Field(default_factory=list)
+    problem: str | None = None
+
+
+class ReviewResult(BaseModel):
+    decision: ReviewDecision
+    criteria: list[CriterionResult]
+    requested_task_ids: list[str] = Field(default_factory=list)
+
+
+def validate_review(result: ReviewResult, required_ids: set[str]) -> None:
+    reviewed = {item.criterion_id for item in result.criteria}
+    if reviewed != required_ids:
+        raise ValueError("Reviewer 未逐项覆盖验收标准")
+    if result.decision is ReviewDecision.PASS:
+        if any(not item.passed for item in result.criteria):
+            raise ValueError("存在失败条目时不能通过")
+        if any(not item.evidence_ids for item in result.criteria):
+            raise ValueError("通过条目必须给出证据")
+```
+
+`REVISE` 只能要求重做与失败标准有关的节点，`REJECT` 表示在当前目标、权限或预算下不可接受。Reviewer 不应直接调用写工具，也不应任意新增研究目标。对引用 URL 是否存在、表格列是否齐全、数字是否能在证据中找到等检查，优先使用确定性程序，而不是浪费一次模型判断。
+
+### 停止条件与规划过度
+
+Planning 和 Reflection 都可能形成新循环，因此除 Agent Runtime 的总体预算外，还要有规划专属门禁：最大计划节点数、最大重规划次数、单节点最大尝试数、Reviewer 最大返修轮数，以及“连续返修没有减少失败标准数量”的无进展条件。
+
+```mermaid
+%% id: reviewer-stopping-policy
+%% title: Reviewer 返修停止条件
+%% alt: Reviewer返回通过则完成，失败条目减少则局部返修，不减少或预算耗尽时停止并转人工或交付部分结果
+flowchart TD
+    Review["Reviewer 结构化结果"] --> Pass{"全部标准通过？"}
+    Pass -->|是| Done["完成"]
+    Pass -->|否| Budget{"返修轮次与预算可用？"}
+    Budget -->|否| Stop["停止：部分结果 / 人工处理"]
+    Budget -->|是| Progress{"失败条目数量或严重度下降？"}
+    Progress -->|是| Repair["仅返修关联任务"]
+    Progress -->|否| Stop
+    Repair --> Review
+```
+
+简单的信息抽取、分类和一次工具查询通常不需要 Planner。路径稳定且审计要求高的任务更适合普通 Workflow。只有任务存在可并行子问题、执行成本高、失败需要局部恢复，或结果必须经多项验收时，显式任务图才可能抵消额外开销。
+
+### 对照实验
+
+不能通过一个精心挑选的成功案例证明 Planning 有效。应使用同一任务集、相同工具和总预算，比较三种策略：直接 ReAct、Plan-and-Execute、Plan-and-Execute + Reviewer。每个方案至少重复多次，以减弱采样随机性。
+
+| 指标 | 无规划 ReAct | Plan-and-Execute | 加 Reviewer |
+|---|---:|---:|---:|
+| 任务成功率 | 实测 | 实测 | 实测 |
+| 引用覆盖率 | 实测 | 实测 | 实测 |
+| 平均工具调用数 | 实测 | 实测 | 实测 |
+| 无效/重复调用率 | 实测 | 实测 | 实测 |
+| 平均 Token 与成本 | 实测 | 实测 | 实测 |
+| P50 / P95 延迟 | 实测 | 实测 | 实测 |
+| 人工接管率 | 实测 | 实测 | 实测 |
+
+实验报告要保留任务集版本、模型配置、Prompt 版本、工具 Fake 或数据快照和随机种子（若供应商支持）。成功标准必须在运行前定义。若 Reviewer 只把成功率从 88% 提升到 89%，却使成本和延迟翻倍，工程结论很可能是仅对高风险或低置信任务启用 Reviewer，而不是全量使用。
+
+## 失败分析与调试
+
+规划系统要区分计划错误、执行错误、环境错误和验收错误。没有这种分类，Planner 会对任何失败都改写计划，造成目标漂移。
+
+| 现象 | 根因候选 | 证据 | 处理 |
+|---|---|---|---|
+| 没有就绪任务但仍未完成 | DAG 有环或依赖状态错误 | 节点和边、拓扑检查结果 | 执行前拒绝非法图 |
+| 失败后所有步骤重跑 | 失效传播范围过大 | 输入哈希、节点依赖和产物版本 | 仅失效失败节点及下游 |
+| Planner 不断新增搜索 | 缺少证据充分性与节点上限 | 计划差异、采用率、剩余预算 | 设置停止条件并要求新增价值 |
+| Reviewer 反复改写措辞 | rubric 不可判定或职责越界 | 失败 criterion 是否变化 | 固定 rubric，只返修失败条目 |
+| 报告引用存在但不支持结论 | Reviewer 只检查 URL 格式 | 主张—证据映射 | 检查支持关系与引用范围 |
+| 网页改变任务目标 | 外部内容进入控制指令 | 来源标签和计划 diff | 外部文本只作不可信证据 |
+| 计划成本高于直接执行 | 任务过小或路径确定 | 对照实验成本与延迟 | 移除 Planner 或改用 Workflow |
+
+调试先重放确定性任务图，验证就绪队列、失效传播、最大尝试和停止条件；再使用 Fake 搜索注入 429、空结果、冲突证据和恶意文本；最后才接真实模型评价任务分解质量。每次重规划必须保存 diff，方便判断是合理替代还是目标漂移。
+
+安全方面，Planner 产生的是候选任务，不是授权。新增工具、扩大资源范围、提高预算和改变用户目标都应被运行时拒绝。Reviewer 同样可能受到证据中的间接注入，因此只能输出有限的结构化判定，不能持有 Executor 的凭证。
 
 ## 常见误区、调试与工程实践
 
@@ -135,3 +321,11 @@ Self-Critique 与 Executor 共享模型和上下文，容易重复相同盲点�
 规划的价值是暴露依赖和验收，不是增加思考文本。练习：为技术调研设计带引用验收的计划并注入一次搜索失败；面试问题：何时规划过度？Reviewer 如何避免只复述 Executor？延伸阅读：Plan-and-Execute、Reflexion 与任务图相关论文。
 
 本章对应代码目录：`projects/08-research-workflow/`。
+
+## 练习参考答案
+
+1. 技术调研计划可以包含：定义范围与验收、并行搜索官方来源、读取并提取证据、构建主张—证据表、核对冲突、撰写和评审。给搜索节点注入暂时失败时，只重试或替换该节点；已经验证的另一来源不应重跑。
+2. 规划过度的信号包括：计划 Token 超过执行 Token、节点大多只是措辞转换、频繁重规划但没有新增证据、任务本可一次确定性调用完成，以及 Reviewer 只修改表达而不改善验收指标。应通过对照实验决定是否移除相关阶段。
+3. Reviewer 避免复述 Executor 的方法是使用独立 rubric、原始证据和最小上下文，逐条输出结构化判断；能用代码验证的条目交给代码。使用不同模型可以降低部分相关错误，但不能替代清晰契约和人工抽检。
+4. DAG 校验至少覆盖重复 ID、未知依赖、自环、多节点循环、多个并行根节点和稳定拓扑顺序。运行时还要验证工具 allowlist、节点预算总和、最大节点数与产物 Schema。
+5. 对照实验必须固定任务集、工具、数据快照与总预算，同时报告成功、成本、延迟和重试。不能让带 Reviewer 的方案获得额外无限预算，否则比较无法回答“新增控制阶段是否值得”。
