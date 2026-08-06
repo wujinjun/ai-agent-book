@@ -8,6 +8,12 @@ from scripts.build_html import prepare_html_sources, write_build_config
 ROOT = Path(__file__).parents[1]
 
 
+def test_quality_roadmap_is_in_site_navigation() -> None:
+    config = (ROOT / "mkdocs.yml").read_text(encoding="utf-8")
+
+    assert "质量路线图: QUALITY_ROADMAP.md" in config
+
+
 def test_mkdocs_loads_reader_assets_and_custom_directory() -> None:
     config = yaml.load(
         (ROOT / "mkdocs.yml").read_text(encoding="utf-8"),

@@ -237,14 +237,15 @@ env PYTHONPATH=src .venv/bin/python -m pytest -o addopts='' tests projects/*/tes
 
 Expected: Ruff and mypy succeed; all tests pass.
 
-- [ ] **Step 3: Build and audit HTML**
+- [ ] **Step 3: Build and audit every publication format**
 
 ```bash
 .venv/bin/python scripts/build_html.py
-env PYTHONPATH=src .venv/bin/python scripts/audit_publication.py html output
+.venv/bin/python scripts/build_pandoc.py all
+env PYTHONPATH=src .venv/bin/python scripts/audit_publication.py all output
 ```
 
-Expected: strict MkDocs build and HTML audit succeed.
+Expected: strict MkDocs build plus HTML、PDF、EPUB audit succeed. Running the Pandoc build also stages the PDF and EPUB files referenced by the HTML homepage into `output/html/downloads/`.
 
 - [ ] **Step 4: Mark only verified P0 items complete**
 
