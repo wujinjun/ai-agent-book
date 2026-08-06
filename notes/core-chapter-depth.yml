@@ -16,7 +16,7 @@ chapters:
   - number: 5
     path: docs/part-01-foundations/ch05-embedding.md
     target_chars: 8000
-    complete: false
+    complete: true
     required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
     required_terms: ["稀疏检索", "稠密检索", "Hybrid Search", "RRF", "Recall", "MRR"]
     code_languages: [python]
