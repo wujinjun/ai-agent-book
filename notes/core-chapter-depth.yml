@@ -32,7 +32,7 @@ chapters:
   - number: 9
     path: docs/part-02-agent-core/ch09-agent-runtime.md
     target_chars: 8000
-    complete: false
+    complete: true
     required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
     required_terms: ["TerminationPolicy", "无进展", "Checkpoint", "恢复", "状态转换"]
     code_languages: [python]

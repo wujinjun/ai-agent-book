@@ -88,9 +88,172 @@ stateDiagram-v2
 
 终止器覆盖步数、时间、Token、费用和无新增证据等条件。恢复只能从已确认的 checkpoint 继续，已产生副作用的动作不能盲目重放。
 
-## 最小示例与完整工程示例
+## 最小实验
 
 最小 Agent 是带 `max_steps` 的 Tool Loop。工程 Runtime 还应支持任务 ID、可序列化状态、checkpoint、取消、重试策略、人工中断、模型路由和 Trace。终止条件至少包括完成、不可恢复错误、步数、时间、Token 和费用上限。
+
+最小示例可以完全不用真实模型：Fake Model 依次返回“调用工具”和“完成”，测试 Runtime 是否正确执行状态转换。这样可以把控制逻辑与自然语言波动分开。
+
+```python
+from dataclasses import dataclass
+from enum import StrEnum
+
+
+class RunStatus(StrEnum):
+    RUNNING = "running"
+    COMPLETED = "completed"
+    NO_PROGRESS = "no_progress"
+    BUDGET_EXHAUSTED = "budget_exhausted"
+    FAILED = "failed"
+
+
+@dataclass(frozen=True)
+class RuntimeState:
+    step: int
+    token_used: int
+    state_fingerprint: str
+    repeated_fingerprints: int = 0
+    accepted: bool = False
+
+
+@dataclass(frozen=True)
+class TerminationPolicy:
+    max_steps: int
+    max_tokens: int
+    max_repeated_fingerprints: int = 2
+
+    def evaluate(self, state: RuntimeState) -> RunStatus:
+        if state.accepted:
+            return RunStatus.COMPLETED
+        if state.token_used >= self.max_tokens or state.step >= self.max_steps:
+            return RunStatus.BUDGET_EXHAUSTED
+        if state.repeated_fingerprints >= self.max_repeated_fingerprints:
+            return RunStatus.NO_PROGRESS
+        return RunStatus.RUNNING
+```
+
+`accepted` 必须来自确定性的验收器、可信工具结果或人工确认，不能简单映射为“模型说完成了”。`state_fingerprint` 也不应包含时间戳、Trace ID 等每步必变字段，否则循环即使没有获得新事实，哈希仍会变化，导致无进展检测失效。
+
+```python
+policy = TerminationPolicy(max_steps=8, max_tokens=4_000)
+
+assert policy.evaluate(
+    RuntimeState(1, 200, "result:42", accepted=True)
+) is RunStatus.COMPLETED
+assert policy.evaluate(
+    RuntimeState(8, 1_200, "still-searching")
+) is RunStatus.BUDGET_EXHAUSTED
+assert policy.evaluate(
+    RuntimeState(3, 900, "same-tool:same-args", repeated_fingerprints=2)
+) is RunStatus.NO_PROGRESS
+```
+
+这个实验明确覆盖成功、预算耗尽和无进展三条路径。实际 Runtime 还应把用户取消、截止时间、费用上限、策略拒绝和不可恢复错误纳入终止原因，并让 API 返回机器可读状态。
+
+## 工程案例
+
+假设一个研究 Agent 要读取资料、提取证据并生成带引用报告。运行可能持续几分钟，Worker 会重启，搜索服务也可能暂时失败。系统不能只把所有中间过程留在内存中，而应将每一次确定性状态转换和安全 Checkpoint 持久化。
+
+```mermaid
+%% id: research-runtime-layers-and-checkpoints
+%% title: 研究 Agent Runtime 的分层与 Checkpoint
+%% alt: 命令进入运行时，经上下文构建、模型决策、策略校验、工具执行和验收，每个安全边界保存事件与Checkpoint
+flowchart LR
+    API["任务 API"] --> Load["加载状态 + 版本"]
+    Load --> Context["Context Builder"]
+    Context --> Model["Model Gateway"]
+    Model --> Validate["Decision Validator"]
+    Validate --> Policy["Policy Engine"]
+    Policy --> Execute["Tool Executor"]
+    Execute --> Observe["规范化 Observation"]
+    Observe --> Save["事件 + Checkpoint"]
+    Save --> Accept{"验收 / TerminationPolicy"}
+    Accept -->|继续| Context
+    Accept -->|完成| Result["版本化产物"]
+    Accept -->|暂停| Queue["等待审批 / 稍后恢复"]
+```
+
+每一层只承担一种责任。Model Gateway 不直接写数据库；Tool Executor 不自行决定整个任务成功；State Store 不解析自然语言决定权限。这样即使把模型供应商或 Agent 框架换掉，领域状态、工具授权和恢复协议仍可保留。
+
+状态转换最好用“当前状态 + 事件 -> 新状态”的 reducer 表达。事件应包含唯一 ID，重复消费时返回同一结果；保存时用乐观锁检查 `state_version`，防止两个 Worker 同时推进同一任务。下面是一个简化 Checkpoint：
+
+```python
+from dataclasses import asdict, dataclass
+from typing import Any, Protocol
+
+
+@dataclass(frozen=True)
+class Checkpoint:
+    run_id: str
+    state_version: int
+    status: RunStatus
+    next_node: str
+    completed_action_ids: tuple[str, ...]
+    payload: dict[str, Any]
+
+
+class CheckpointStore(Protocol):
+    async def load(self, run_id: str) -> Checkpoint | None: ...
+
+    async def save(
+        self, checkpoint: Checkpoint, *, expected_version: int
+    ) -> None: ...
+
+
+def checkpoint_record(checkpoint: Checkpoint) -> dict[str, Any]:
+    """只序列化数据，不保存客户端、连接或协程对象。"""
+    return asdict(checkpoint)
+```
+
+`expected_version` 让存储实现执行 compare-and-swap：数据库中的版本与预期不同就拒绝保存，由 Worker 重新加载。Checkpoint 只保存可序列化业务数据和外部引用，不能保存数据库连接、HTTP 客户端、协程或模型对象。敏感字段需加密或改存受控资源 ID。
+
+### 恢复协议
+
+恢复不是从 Python 异常处继续运行，而是读取最后一个已提交 Checkpoint，核对外部副作用，再从明确节点重新进入。一个可靠的恢复流程如下：
+
+```mermaid
+%% id: checkpoint-recovery-protocol
+%% title: Checkpoint 恢复协议
+%% alt: Worker重启后读取检查点并核对版本，逐个确认未决副作用，状态明确后从next_node继续，否则转人工复核
+flowchart TD
+    Restart["Worker 启动 / 任务重投"] --> Load["读取最新 Checkpoint"]
+    Load --> Version{"Schema 与代码版本兼容？"}
+    Version -->|否| Migrate["迁移或人工处理"]
+    Version -->|是| Pending{"存在未决副作用？"}
+    Pending -->|否| Resume["从 next_node 恢复"]
+    Pending -->|是| Reconcile["按 action_id 查询外部状态"]
+    Reconcile -->|已成功| Record["记录完成且不重放"]
+    Reconcile -->|明确未执行| Retry["相同幂等键重试"]
+    Reconcile -->|未知| Manual["人工复核"]
+    Record --> Resume
+    Retry --> Resume
+```
+
+对只读搜索，重复调用通常可接受，但仍可能因索引版本改变产生不同结果，所以 Observation 要记录数据时间和索引版本。对发送邮件、创建工单或付款等写操作，必须先用 `action_id` 或幂等键做状态核实。无法核实时停在 `manual_review`，不能为了让流程继续而假设失败。
+
+### 状态模型与消息历史的关系
+
+消息历史是给模型看的投影，不是唯一事实源。结构化 State 保存任务状态；事件日志解释状态如何形成；原始工具结果存入受控对象存储；Context Builder 再根据当前节点、权限和预算生成消息。这样可以缩短上下文、支持审计，并避免恢复时把模型建议误认为已经执行的动作。
+
+Handoff 也应产生显式事件，例如 `ResearchPackageTransferred`，包含接收能力、目标、已验证事实 ID、产物引用和剩余预算。若接收方输入校验失败，应返回拒绝事件而不是默默开始新对话。Supervisor 根据事件决定重路由、人工处理或终止。
+
+## 失败分析与调试
+
+Agent 失败经常被笼统归为“模型不稳定”，但多数问题可以沿状态转换定位。Trace 至少要回答：哪个状态、收到什么事件、调用了哪个策略版本、产生什么动作、外部副作用是否确认、为何继续或终止。
+
+| 现象 | 常见根因 | 诊断证据 | 修复方向 |
+|---|---|---|---|
+| 重复调用同一工具 | Observation 未写回、结果未被 Context Builder 选中 | 连续动作签名和状态指纹 | 无进展检测并修复上下文投影 |
+| 模型说完成但产物缺字段 | 把自然语言 `done` 当验收 | 验收器结果与最终 State | 使用 Schema 和确定性检查 |
+| Worker 重启后重复发邮件 | Checkpoint 早于副作用确认且无幂等键 | action_id、outbox 与外部回执 | 恢复前状态核实 |
+| 两个 Worker 覆盖状态 | 缺少版本锁或任务租约 | state_version 与消费者日志 | compare-and-swap、租约或单写者 |
+| 长任务永不结束 | 只有最大步数，没有无进展与截止时间 | 每步新增事实、耗时和预算 | 组合 TerminationPolicy |
+| 恢复后无法反序列化 | State Schema 无版本 | Checkpoint 版本与部署版本 | 显式迁移和兼容窗口 |
+| Handoff 后权限扩大 | 接收方继承了不必要的全部上下文与凭证 | Handoff 包与策略决定 | 最小状态与重新授权 |
+
+调试时先用 Fake Model 固定决策序列，再通过失败注入触发工具超时、存储冲突、审批暂停和进程重启。若确定性测试仍失败，问题在 Runtime；只有控制边界稳定后，才用真实模型评估路由和决策质量。重放工具调用时默认使用 Mock，避免调试产生真实副作用。
+
+安全上，终止策略、预算、租户、审批状态和工具 allowlist 都属于模型不可修改的控制数据。外部网页或工具返回中的“忽略预算继续执行”只是 Observation 内容，不得转换成 Runtime 配置。Checkpoint 和 Trace 含有任务历史与资源 ID，必须执行访问控制、保留期限和删除策略。
 
 ## 常见误区、调试、工程实践与安全
 
@@ -142,3 +305,11 @@ Checkpoint 应写在安全边界，例如只读检索完成后或外部写操作
 Agent Runtime 把不确定决策限制在可观察状态机内。练习：为 Tool Loop 加时间预算、取消和 checkpoint；面试问题：Workflow 与 Agent 如何选择？什么状态必须持久化？延伸阅读：Yao et al., *ReAct*。
 
 本章对应代码目录：当前运行时实现位于 `src/ai_agent_book/tool_runtime.py`；带 Checkpoint、取消和恢复的独立最小 Agent 工程列入质量路线图 P2。
+
+## 练习参考答案
+
+1. 为 Tool Loop 增加时间预算时，记录单调时钟的截止时间，并在模型调用和工具调用前计算剩余时间；取消信号由 Runtime 传播。Checkpoint 保存业务截止时间而不是进程内计时器。恢复后重新计算剩余预算，不能重置为完整时长。
+2. Workflow 适合路径可枚举、风险高、审计要求强的业务；Agent 适合路径难枚举但结果可验证、失败可恢复的局部决策。常见方案是确定性 Workflow 控制审批和副作用，模型只在检索、分类或候选生成节点内决策。
+3. 必须持久化目标、状态版本、当前节点、结构化事实、已完成动作 ID、未决副作用、剩余预算、审批引用、错误分类和产物引用。模型客户端、数据库连接和临时协程不属于可恢复状态。
+4. 无进展不能只比较回答文本是否相同。可以规范化“工具名 + 参数 + 相关状态摘要”，并检查连续步骤是否新增证据、完成子目标或改变验收结果。达到阈值后停止、重规划或交给人工。
+5. 恢复测试先运行到安全 Checkpoint，再模拟进程终止并创建新的 Runtime 实例。断言其加载相同版本，已确认动作不会重放，未确认写操作先做状态核实，并最终产生与不中断路径一致的可验证结果。
