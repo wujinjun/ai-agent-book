@@ -1,0 +1,95 @@
+schema_version: 1
+updated_at: "2026-08-06"
+description: >
+  P2 独立示例工程的事实源。complete 只能在目录契约、离线运行、直接测试和
+  章节双向链接全部通过后改为 true；未完成项不会用空目录冒充交付。
+
+examples:
+  - name: token_counter
+    chapter: 2
+    package: token_counter
+    python: ">=3.12,<3.13"
+    offline_command: python -m token_counter.main --fixture multilingual
+    test_command: python -m pytest -q
+    dependency_group: root
+    complete: false
+  - name: attention_demo
+    chapter: 3
+    package: attention_demo
+    python: ">=3.12,<3.13"
+    offline_command: python -m attention_demo.main
+    test_command: python -m pytest -q
+    dependency_group: isolated
+    complete: false
+  - name: sampling_lab
+    chapter: 4
+    package: sampling_lab
+    python: ">=3.12,<3.13"
+    offline_command: python -m sampling_lab.main --seed 2026
+    test_command: python -m pytest -q
+    dependency_group: root
+    complete: false
+  - name: local_semantic_search
+    chapter: 5
+    package: local_semantic_search
+    python: ">=3.12,<3.13"
+    offline_command: python -m local_semantic_search.main --fixture bilingual
+    test_command: python -m pytest -q
+    dependency_group: isolated
+    complete: false
+  - name: prompt_registry
+    chapter: 6
+    package: prompt_registry
+    python: ">=3.12,<3.13"
+    offline_command: python -m prompt_registry.main --fixture support
+    test_command: python -m pytest -q
+    dependency_group: root
+    complete: false
+  - name: structured_extractor
+    chapter: 7
+    package: structured_extractor
+    python: ">=3.12,<3.13"
+    offline_command: python -m structured_extractor.main --fixture incident
+    test_command: python -m pytest -q
+    dependency_group: root
+    complete: false
+  - name: minimal_agent
+    chapter: [9, 17]
+    package: minimal_agent
+    python: ">=3.12,<3.13"
+    offline_command: python -m minimal_agent.main --fixture recoverable
+    test_command: python -m pytest -q
+    dependency_group: root
+    complete: false
+  - name: long_term_memory
+    chapter: 15
+    package: long_term_memory
+    python: ">=3.12,<3.13"
+    offline_command: python -m long_term_memory.main --fixture preferences
+    test_command: python -m pytest -q
+    dependency_group: root
+    complete: false
+  - name: openai_agents_sdk
+    chapter: 18
+    package: openai_agents_sdk_example
+    python: ">=3.12,<3.13"
+    offline_command: python -m openai_agents_sdk_example.main --offline
+    test_command: python -m pytest -q
+    dependency_group: framework
+    complete: false
+  - name: pydanticai_service
+    chapter: 19
+    package: pydanticai_service
+    python: ">=3.12,<3.13"
+    offline_command: python -m pydanticai_service.main --offline
+    test_command: python -m pytest -q
+    dependency_group: framework
+    complete: false
+  - name: framework_comparison
+    chapter: 38
+    package: framework_comparison
+    python: ">=3.12,<3.13"
+    offline_command: python -m framework_comparison.main --fixture research
+    test_command: python -m pytest -q
+    dependency_group: isolated
+    complete: false

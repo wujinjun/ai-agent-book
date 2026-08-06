@@ -31,11 +31,11 @@ Each README must include purpose, architecture diagram, installation, offline ru
 
 **Files:** `tests/test_example_catalog.py`, `notes/example-matrix.yml`, `mkdocs.yml`
 
-- [ ] Write a failing test requiring exactly 11 catalog entries and the common files above.
-- [ ] Require every entry to declare chapter, package, Python version, offline command, test command, dependency group and completion state.
-- [ ] Add `notes/example-matrix.yml` with all entries `complete: false`.
-- [ ] Add an Examples index page to MkDocs navigation without linking nonexistent project pages.
-- [ ] Run the focused test and commit `test: define independent example contract`.
+- [x] Write a failing test requiring exactly 11 catalog entries and the common files above.
+- [x] Require every entry to declare chapter, package, Python version, offline command, test command, dependency group and completion state.
+- [x] Add `notes/example-matrix.yml` with all entries `complete: false`.
+- [x] Add an Examples index page to MkDocs navigation without linking nonexistent project pages.
+- [x] Run the focused test and commit `test: define independent example contract`.
 
 ## Task 2: Build `examples/token_counter/`
 
