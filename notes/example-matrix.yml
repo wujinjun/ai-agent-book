@@ -68,7 +68,7 @@ examples:
     offline_command: python -m long_term_memory.main --fixture preferences
     test_command: python -m pytest -q
     dependency_group: root
-    complete: false
+    complete: true
   - name: openai_agents_sdk
     chapter: 18
     package: openai_agents_sdk_example

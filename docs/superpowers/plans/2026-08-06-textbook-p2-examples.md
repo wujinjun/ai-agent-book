@@ -105,10 +105,10 @@ Each README must include purpose, architecture diagram, installation, offline ru
 
 **Chapter:** 15. **Dependencies:** root-compatible SQLite; optional vector extra isolated.
 
-- [ ] Test write gate, provenance, explicit/inferred conflict, TTL, correction, deletion propagation and cross-tenant denial.
-- [ ] Implement versioned Memory records, Fake clock, SQLite store, retrieval filters and tombstone worker.
-- [ ] Add user inspect/export/delete CLI flows and ensure audit events omit deleted values.
-- [ ] Link chapter 15, run tests and commit `feat: add governed memory example`.
+- [x] Test write gate, provenance, explicit/inferred conflict, TTL, correction, deletion propagation and cross-tenant denial.
+- [x] Implement versioned Memory records, Fake clock, SQLite store, retrieval filters and tombstone worker.
+- [x] Add user inspect/export/delete CLI flows and ensure audit events omit deleted values.
+- [x] Link chapter 15, run tests and commit `feat: add governed memory example`.
 
 ## Task 10: Build `examples/openai_agents_sdk/`
 

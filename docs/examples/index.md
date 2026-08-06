@@ -25,7 +25,7 @@ flowchart LR
 | [Prompt Registry](https://github.com/wujinjun/ai-agent-book/tree/main/examples/prompt_registry) | 6 | 不可变版本、哈希、灰度与回滚 | 已完成：文件式 Fixture |
 | [Structured Extractor](https://github.com/wujinjun/ai-agent-book/tree/main/examples/structured_extractor) | 7 | Pydantic 校验、有限修复与脱敏错误 | 已完成：Pydantic 2.11.7 |
 | [Minimal Agent](https://github.com/wujinjun/ai-agent-book/tree/main/examples/minimal_agent) | 9、17 | 可恢复 Runtime、权限与终止策略 | 已完成：崩溃恢复验证 |
-| Long-term Memory | 15 | 写入治理、TTL、更正与删除 | 待实施 |
+| [Long-term Memory](https://github.com/wujinjun/ai-agent-book/tree/main/examples/long_term_memory) | 15 | 写入治理、来源、TTL、更正与删除 | 已完成：SQLite + Fake Clock |
 | OpenAI Agents SDK | 18 | 固定版本的工具、交接与追踪 | 待核对版本 |
 | PydanticAI Service | 19 | 类型安全 Agent 与 FastAPI | 待核对版本 |
 | Framework Comparison | 38 | 同一垂直切片、证据与可逆 ADR | 待实施 |
