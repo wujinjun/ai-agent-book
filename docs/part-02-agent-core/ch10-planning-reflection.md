@@ -134,4 +134,4 @@ Self-Critique 与 Executor 共享模型和上下文，容易重复相同盲点�
 
 规划的价值是暴露依赖和验收，不是增加思考文本。练习：为技术调研设计带引用验收的计划并注入一次搜索失败；面试问题：何时规划过度？Reviewer 如何避免只复述 Executor？延伸阅读：Plan-and-Execute、Reflexion 与任务图相关论文。
 
-本章对应代码目录：`projects/08-langgraph-research-agent/`。
+本章对应代码目录：`projects/08-research-workflow/`。

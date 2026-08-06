@@ -183,4 +183,4 @@ Agent 架构的可维护性来自明确职责、可恢复状态、受控副作�
 3. 面试问题：何时拆分 Model Gateway？Workflow Engine、Queue 与 Runtime 有何不同？如何避免分布式单体？
 4. 延伸阅读：领域驱动设计、Transactional Outbox、状态机、工作流引擎、OpenTelemetry 与零信任服务架构。
 
-本章对应代码目录：`projects/10-enterprise-agent-platform/`。
+本章对应代码目录：`projects/10-enterprise-platform/`。

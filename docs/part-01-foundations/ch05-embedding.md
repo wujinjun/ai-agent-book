@@ -160,4 +160,4 @@ flowchart LR
 
 总结：Embedding 提供相关性表示，不提供真值、权限或引用。练习：为故障码手册设计 Chunk 与 Metadata；为测试接口增加维度校验；构造三个“关键词精确但语义不同”的查询，比较稀疏和稠密检索。面试问题：为什么 Reranker 常放在初检之后？为什么更换 Embedding 模型通常要重建索引？权限过滤应在哪一层执行？
 
-延伸阅读：Reimers & Gurevych, *Sentence-BERT*；Karpukhin et al., *Dense Passage Retrieval*；目标向量数据库和 Embedding 模型官方文档。对应代码目录计划为 `examples/local_semantic_search/`。
+延伸阅读：Reimers & Gurevych, *Sentence-BERT*；Karpukhin et al., *Dense Passage Retrieval*；目标向量数据库和 Embedding 模型官方文档。本章代码目录状态：正文内相似度与检索代码可以直接运行，独立语义搜索工程列入质量路线图 P2。

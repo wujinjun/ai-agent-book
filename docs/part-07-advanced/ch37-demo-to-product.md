@@ -169,4 +169,4 @@ class RunView(BaseModel):
 3. 面试问题：如何向用户表达不确定性？模型升级如何灰度？上游模型故障如何计入 SLA？
 4. 延伸阅读：SRE、Error Budget、渐进式交付、Human-in-the-Loop 设计、AI 风险管理和服务设计。
 
-本章对应代码目录：`projects/04-enterprise-knowledge-agent/`、`projects/10-enterprise-agent-platform/`。
+本章对应代码目录：`projects/04-knowledge-agent/`、`projects/10-enterprise-platform/`。

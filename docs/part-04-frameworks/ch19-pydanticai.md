@@ -163,4 +163,4 @@ FastAPI dependency 构造当前主体与 Repository，路由调用异步 `agent.
 ### 常见误区、调试与安全
 
 常见误区是把类型安全等同于事实安全、把依赖注入当权限系统、让所有验证错误无限反馈模型。调试查看模型消息、工具调用、validation error 与 Usage，并区分框架、供应商和领域错误。安全上依赖最小权限、工具验证主体、输出再鉴权、测试禁止真实模型请求。
-总结：PydanticAI 擅长把类型、依赖、工具和输出放进 Python 工程边界，但复杂持久工作流仍需图或 durable engine。练习：为 FastAPI 工单服务设计依赖类型并用 TestModel 测试。面试：输出校验和业务校验如何分层？何时 PydanticAI 比图工作流更合适？TestModel 与 FunctionModel 如何选择？延伸阅读：[Pydantic AI Overview](https://pydantic.dev/docs/ai/overview/)、Agents 与 Testing 官方文档。代码目录：`examples/pydanticai_service/`。
+总结：PydanticAI 擅长把类型、依赖、工具和输出放进 Python 工程边界，但复杂持久工作流仍需图或 durable engine。练习：为 FastAPI 工单服务设计依赖类型并用 TestModel 测试。面试：输出校验和业务校验如何分层？何时 PydanticAI 比图工作流更合适？TestModel 与 FunctionModel 如何选择？延伸阅读：[Pydantic AI Overview](https://pydantic.dev/docs/ai/overview/)、Agents 与 Testing 官方文档。代码目录状态：当前示例未安装运行，固定版本的 FastAPI 工程列入质量路线图 P2—P3。

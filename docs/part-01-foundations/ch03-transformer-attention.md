@@ -161,4 +161,4 @@ def attend(
 
 总结：Transformer 用 Attention 建立位置间的内容相关连接，以并行性和可扩展性推动了 LLM。练习：手算三个 Token 的归一化权重；为完整实验加入因果掩码；比较“扩大上下文”和“使用检索”的成本与时效。面试问题：KV Cache 优化了什么、不能优化什么？Encoder-only 与 Decoder-only 分别适合哪些任务？为什么注意力图不等于因果解释？
 
-延伸阅读：Vaswani et al., *Attention Is All You Need*；Dao et al., *FlashAttention*。对应代码目录计划为 `examples/attention_demo/`。
+延伸阅读：Vaswani et al., *Attention Is All You Need*；Dao et al., *FlashAttention*。本章代码目录状态：正文内 Attention 代码可以直接运行，独立演示工程列入质量路线图 P2。

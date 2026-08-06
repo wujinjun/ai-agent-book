@@ -161,4 +161,4 @@ Spike 必须覆盖失败、恢复、权限与 Trace，而不只是 happy-path。
 3. 面试问题：如何降低框架锁定？何时拒绝 Multi-Agent？社区活跃度如何核实？
 4. 延伸阅读：各框架官方文档与变更日志、Architecture Decision Records、契约测试、可逆架构决策。
 
-本章对应代码目录：`examples/framework_comparison/`、`projects/08-langgraph-research-workflow/`。
+本章对应代码目录：当前可运行工作流位于 `projects/08-research-workflow/`；跨框架对照工程列入质量路线图 P2—P3。

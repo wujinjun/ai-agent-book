@@ -169,4 +169,4 @@ Token 是模型计算单位，上下文是单次调用的工作区，不是持�
 
 面试问题：上下文窗口翻倍为什么不一定使长文问答质量翻倍？滑动窗口和检索式记忆分别会丢失什么？
 
-延伸阅读：目标模型官方 Tokenizer 文档；Sennrich et al., *Neural Machine Translation of Rare Words with Subword Units*；Liu et al., *Lost in the Middle*。对应代码目录计划为 `examples/token_counter/`，当前未实现。
+延伸阅读：目标模型官方 Tokenizer 文档；Sennrich et al., *Neural Machine Translation of Rare Words with Subword Units*；Liu et al., *Lost in the Middle*。本章代码目录状态：正文内预算器代码可以直接运行，独立 Token Counter 工程列入质量路线图 P2，在交付前不标记为独立示例已完成。

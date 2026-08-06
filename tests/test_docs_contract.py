@@ -39,6 +39,17 @@ def test_local_markdown_links_point_to_existing_files() -> None:
     assert missing == []
 
 
+def test_chapter_code_paths_exist() -> None:
+    missing: list[str] = []
+    pattern = re.compile(r"`((?:examples|projects|src)/[^` ]+)`")
+    for chapter in sorted((ROOT / "docs").glob("part-*/ch*.md")):
+        for target in pattern.findall(chapter.read_text(encoding="utf-8")):
+            normalized = target.removesuffix("/")
+            if not (ROOT / normalized).exists():
+                missing.append(f"{chapter.relative_to(ROOT)} -> {target}")
+    assert missing == []
+
+
 def test_all_chapters_meet_the_publishable_content_contract() -> None:
     chapters = sorted((ROOT / "docs").glob("part-*/ch*.md"))
     assert len(chapters) == 38

@@ -121,4 +121,4 @@ LlamaIndex 连接器很多，版本和依赖拆分也频繁。项目固定只需
 常见误区：框架连接器多就等于 RAG 质量高；LangChain Agent 与 LangGraph 是竞争关系；LlamaIndex 只是一种向量数据库。调试展开实际 Prompt、工具、Retriever 候选与 callback/Trace，逐层确认。
 
 权限过滤不能只放在 response synthesizer；Tool 与 Reader 使用最小凭证；Prompt Injection 文档标记为数据。小流程、稳定接口或强性能控制可用原生实现；多集成快速验证可用 LangChain；数据摄取和 RAG 组合复杂时 LlamaIndex 更方便；持久工作流使用 LangGraph。
-总结：框架提供组合与集成，不替代数据质量、权限和评估。练习：实现同一检索基线的原生与框架版本并写 ADR。面试：LangChain 与 LangGraph 的职责差别？LlamaIndex 的 Node 为何不应成为领域模型？Query Engine 与 Retriever 有何区别？延伸阅读：[LangChain Agents](https://docs.langchain.com/oss/python/langchain/agents)、Structured Output 与 [LlamaIndex Framework](https://developers.llamaindex.ai/python/framework/) 官方文档。代码目录：`examples/framework_comparison/`。
+总结：框架提供组合与集成，不替代数据质量、权限和评估。练习：实现同一检索基线的原生与框架版本并写 ADR。面试：LangChain 与 LangGraph 的职责差别？LlamaIndex 的 Node 为何不应成为领域模型？Query Engine 与 Retriever 有何区别？延伸阅读：[LangChain Agents](https://docs.langchain.com/oss/python/langchain/agents)、Structured Output 与 [LlamaIndex Framework](https://developers.llamaindex.ai/python/framework/) 官方文档。代码目录状态：三种实现的同题对照工程列入质量路线图 P2—P3，当前不标记为安装实测。
