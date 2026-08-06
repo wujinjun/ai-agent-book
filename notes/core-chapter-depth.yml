@@ -96,7 +96,7 @@ chapters:
   - number: 20
     path: docs/part-04-frameworks/ch20-langgraph.md
     target_chars: 8000
-    complete: false
+    complete: true
     required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
     required_terms: ["Reducer", "Checkpoint", "interrupt", "Command", "Time Travel", "幂等"]
     code_languages: [python]

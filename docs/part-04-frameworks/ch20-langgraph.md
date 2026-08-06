@@ -64,8 +64,137 @@ sequenceDiagram
 
 Checkpoint 只保存图状态，不能自动回滚已经发送的邮件或付款。副作用节点必须有独立的幂等与状态核对机制。
 
-## 最小与完整工程
+## 最小实验
 最小图包含分类、处理和结束。工程研究 Agent 见项目8，保存计划、证据、重试次数和评审状态；外部副作用节点使用幂等键。Streaming 是事件协议，不应把内部状态全部暴露给客户端。
+
+最小示例直接使用本仓库固定并安装的 `langgraph==1.2.9`。运行项目测试可以验证 `RetryPolicy` 在暂时搜索错误后重试、`InMemorySaver` 保存 Checkpoint、`interrupt()` 暂停，以及同一 `thread_id` 通过 `Command(resume=...)` 恢复：
+
+```bash
+PYTHONPATH=src .venv/bin/python -m pytest \
+  tests/test_langgraph_research_app.py -q
+```
+
+`InMemorySaver` 只适合测试与本地演示；进程结束后状态消失，也不能提供生产多实例所需的持久性。生产选用数据库 Checkpointer 后，要单独测试连接失败、Schema 迁移、并发 thread、保留期和租户授权。
+
+## 工程案例
+
+项目 8 的研究图由 Plan、Search、Read、Review、Approval、Write 和 Fail 节点构成。Search 节点只对 `RuntimeError` 使用有限 Retry；Reviewer 证据不足时最多循环规定次数；Approval 使用 `interrupt`，恢复 payload 必须再次验证；最终报告只引用已保存证据。
+
+```mermaid
+%% id: langgraph-project8-checkpoint-lifecycle
+%% title: 项目 8 的 Checkpoint、中断与恢复生命周期
+%% alt: 同一thread id运行研究图，每个super step保存快照，审批节点interrupt后API持久化审批任务，Command恢复时节点从头重跑并完成报告
+sequenceDiagram
+    participant API as Task API
+    participant G as Compiled Graph
+    participant C as Checkpointer
+    participant H as Human
+    API->>G: invoke(input, thread_id)
+    loop 每个 super-step
+        G->>C: 保存 StateSnapshot
+    end
+    G-->>API: interrupt payload
+    API-->>H: 展示证据和审批动作
+    H->>API: 签名审批决定
+    API->>G: Command(resume=decision), same thread_id
+    G->>C: 加载最新 Checkpoint
+    G->>G: 从 Approval 节点开头重跑
+    G->>C: 保存 completed 状态
+    G-->>API: report + status
+```
+
+官方中断语义要求节点恢复时从节点开头重新执行，而不是从 `interrupt()` 下一行继续。因此 `interrupt` 前的数据库写入、通知或外部 API 都会再次发生；应把副作用移到批准后的独立节点，或使其幂等。不要用宽泛 `try/except` 捕获 `interrupt` 的控制异常，也不要在同一节点内根据不稳定条件改变多个 interrupt 的顺序。
+
+### Reducer 是状态一致性规则
+
+并行节点向同一列表写入时，`operator.add` 会简单追加，重放或重复输入可能产生重复证据。若业务要求按稳定 ID 去重，应写满足结合律的 Reducer，并测试输入顺序：
+
+```python
+from typing import Annotated, TypedDict
+
+
+def merge_evidence(
+    left: list[dict[str, str]], right: list[dict[str, str]]
+) -> list[dict[str, str]]:
+    by_url = {item["url"]: item for item in left}
+    for item in right:
+        by_url[item["url"]] = item
+    return [by_url[url] for url in sorted(by_url)]
+
+
+class ParallelResearchState(TypedDict):
+    evidence: Annotated[list[dict[str, str]], merge_evidence]
+```
+
+Reducer 必须体现领域语义。对金额求和可能在重放时重复计费，对单值“最后写入获胜”会依赖并行完成顺序。若字段只能由一个节点拥有，就不要用 Reducer 掩盖多写者错误；让运行时拒绝冲突更安全。
+
+### Retry 与副作用幂等
+
+`RetryPolicy` 应只匹配明确暂时异常。项目 8 把搜索 Fake 的 `RuntimeError` 作为教学故障；生产适配器应区分 429/503、权限拒绝、参数错误和业务无结果。`max_attempts` 包含首次尝试，所有尝试必须进入统一任务预算。
+
+外部写节点使用由 `thread_id + node + business_key` 派生的稳定 action ID，并在本地 outbox 或目标服务中做唯一约束。Checkpoint 不是数据库事务：外部动作成功、状态快照保存前进程崩溃时，恢复仍可能重跑节点。
+
+```python
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class ActionResult:
+    action_id: str
+    external_id: str
+    status: str
+
+
+class IdempotentWriter:
+    def __init__(self) -> None:
+        self._results: dict[str, ActionResult] = {}
+
+    def execute(self, action_id: str) -> ActionResult:
+        previous = self._results.get(action_id)
+        if previous is not None:
+            return previous
+        result = ActionResult(action_id, f"external:{action_id}", "completed")
+        self._results[action_id] = result
+        return result
+```
+
+内存字典只能说明语义，不能抵抗进程崩溃。真实实现需要持久唯一约束，并在状态未知时向外部系统核实。Time Travel、Retry 和恢复都可能重执行节点，因此共享同一套幂等机制。
+
+### Time Travel 的边界
+
+Time Travel 基于 Checkpoint replay 或 fork。调用旧 Checkpoint 后，之前节点的状态结果保留，之后节点会重新执行，包括 LLM、API 和 interrupt；它不是数据库回滚，也不会撤销邮件、工单或付款。`update_state` 会创建新 Checkpoint，并按字段 Reducer 处理更新，不会修改旧历史。
+
+```mermaid
+%% id: langgraph-time-travel-reexecution
+%% title: LangGraph Time Travel 的重执行边界
+%% alt: 选择历史Checkpoint后，其前序快照保留，后续模型工具interrupt重新执行并形成新分支，外部副作用不会自动撤销
+flowchart LR
+    A["Checkpoint A"] --> B["Node B 已执行"] --> C["Checkpoint C"] --> D["外部动作 D"]
+    A --> Fork["从 A replay / fork"]
+    Fork --> B2["Node B 重新执行"] --> C2["新 Checkpoint"] --> D2["动作可能再次触发"]
+    D -.不会自动撤销.-> External["外部系统状态"]
+    D2 --> External
+```
+
+时间旅行适合调试、比较替代状态和人工修复，不适合宣传为通用 Undo。若需要真正补偿，必须设计业务 Saga 或人工流程。访问历史 Checkpoint 和分叉操作应记录审计，并绑定租户与主体。
+
+## 失败分析与调试
+
+| 现象 | 常见根因 | 证据 | 修复 |
+|---|---|---|---|
+| `Command` 后没有恢复旧任务 | 使用了新 `thread_id` | invoke config 与 checkpoint history | 保存并复用同一持久 ID |
+| 恢复后审批前代码重复执行 | 不理解节点从开头重跑 | interrupt 所在节点 Trace | 副作用移到后续节点或幂等 |
+| 并行证据重复 | Reducer 只做列表追加 | super-step 更新与 replay 结果 | 使用稳定 ID 去重 Reducer |
+| 节点对权限错误持续重试 | `retry_on` 太宽 | 异常类型与 attempt span | 只匹配暂时故障 |
+| Time Travel 重复发邮件 | 把 replay 当回滚 | checkpoint 后执行节点列表 | action ID、状态核实和警告 |
+| 生产重启后状态消失 | 使用 `InMemorySaver` | Checkpointer 类型与进程生命周期 | 数据库持久化并测试恢复 |
+| State 无法序列化或泄密 | 保存客户端/凭证 | State Schema 与 Checkpoint 内容 | 只存数据和受控引用 |
+
+调试先读取 `get_state` 和 `get_state_history`，确认当前值、下一节点、任务与 interrupt；再检查条件边返回值、Reducer 更新和 Retry attempt。不要只看最终异常，因为错误可能来自前一个 super-step 的错误状态。
+
+升级 LangGraph 时固定版本运行项目 8 的直接测试，并增加持久 Checkpointer 集成测试。当前结论只对本仓库安装的 1.2.9 与 2026-08-06 核对的官方文档负责；新的流式事件版本、持久化实现或弃用项需重新验证，不凭记忆改 API。
+
+安全上，`thread_id` 不应直接采用用户可猜的值且必须在存储查询中绑定租户；interrupt payload 只含审批必要字段；resume 输入用 Pydantic 校验并绑定审批主体、参数哈希与有效期；State 和 Checkpoint 不保存密钥。
 
 ## 误区、调试、实践与安全
 图不保证确定性；Checkpoint 不自动解决外部副作用；Time Travel 不能安全重放付款。调试查看每个节点前后状态与路由条件。State 避免存不可序列化客户端和秘密。
@@ -167,3 +296,11 @@ Multi-Agent 在图中通常表现为 Supervisor 路由 Node、Agent-as-Node 或 
 
 LangGraph 适合状态复杂、需恢复、HITL 或多分支的长流程；简单一次调用或两步固定 Chain 不必引入。State 不保存凭证，checkpoint 加密并按租户授权，Time Travel/状态编辑进入审计。
 总结：LangGraph 把控制流和持久状态显式化，但不能自动解决副作用与业务权限。练习：构建带人工批准、checkpoint 和 retry 的三节点图。面试：Reducer 解决什么冲突？Checkpoint 与业务事务有何差异？Time Travel 为什么可能重复动作？延伸阅读：[Graph API](https://docs.langchain.com/oss/python/langgraph/graph-api)、[Persistence](https://docs.langchain.com/oss/python/langgraph/persistence)、[Interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts)与 Subgraphs 官方文档。代码目录：`projects/08-research-workflow/`。
+
+## 练习参考答案
+
+1. 三节点图可设 `prepare -> approval -> execute`。编译时配置 Checkpointer；approval 调用 `interrupt`；API 用相同 `thread_id` 和 `Command(resume=...)` 恢复；execute 用 action ID 幂等。测试批准、拒绝、过期、重启恢复和重复 resume。
+2. Reducer 解决同一 super-step 多个局部更新如何合并的问题。它必须符合业务语义并对并行顺序稳定；单值字段若不允许多写者，应拒绝冲突而不是随意选择最后结果。
+3. Checkpoint 保存图状态快照，不覆盖外部系统事务。邮件已经发送但 Checkpoint 未保存时，恢复会重跑节点；需要 outbox、幂等键、状态核实或补偿流程。
+4. Time Travel 会从选定 Checkpoint 之后重新执行模型、API 与 interrupt，因此可能再次产生动作。它创建 replay 或 fork，不会撤销已经发生的副作用。
+5. `InMemorySaver` 只用于测试；生产 Checkpointer 要验证持久性、并发隔离、Schema 迁移、加密、TTL、备份恢复和租户授权，并明确 `thread_id` 的生命周期。
