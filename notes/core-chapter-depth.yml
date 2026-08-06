@@ -80,7 +80,7 @@ chapters:
   - number: 15
     path: docs/part-03-rag-and-memory/ch15-memory.md
     target_chars: 8000
-    complete: false
+    complete: true
     required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
     required_terms: ["写入门禁", "来源", "冲突", "TTL", "删除", "跨租户"]
     code_languages: [python]
