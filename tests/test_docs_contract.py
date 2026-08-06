@@ -50,6 +50,26 @@ def test_chapter_code_paths_exist() -> None:
     assert missing == []
 
 
+def test_completion_matrix_covers_book_and_projects() -> None:
+    matrix_path = ROOT / "notes/completion-matrix.md"
+    assert matrix_path.is_file()
+    matrix = matrix_path.read_text(encoding="utf-8")
+
+    chapter_rows = re.findall(r"^\| 第(?:[1-9]|[12]\d|3[0-8])章 \|", matrix, re.MULTILINE)
+    project_rows = re.findall(r"^\| 项目(?:[1-9]|10) \|", matrix, re.MULTILINE)
+
+    assert len(chapter_rows) == 38
+    assert len(project_rows) == 10
+    for state in (
+        "publishable_draft",
+        "inline_only",
+        "installed_and_tested",
+        "vertical_slice",
+        "production_reference",
+    ):
+        assert f"`{state}`" in matrix
+
+
 def test_all_chapters_meet_the_publishable_content_contract() -> None:
     chapters = sorted((ROOT / "docs").glob("part-*/ch*.md"))
     assert len(chapters) == 38
