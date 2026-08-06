@@ -41,11 +41,11 @@ Each README must include purpose, architecture diagram, installation, offline ru
 
 **Chapter:** 2. **Dependencies:** root-compatible; optional provider tokenizer extra.
 
-- [ ] Test budget partitioning, multilingual fixtures, fixed-context rejection and output reservation.
-- [ ] Implement injectable `Tokenizer`, deterministic whitespace/byte Fake and context budget report.
-- [ ] Add optional target-model tokenizer adapter only after installing and verifying its exact version.
-- [ ] Link chapter 2 and mark only this catalog entry complete.
-- [ ] Run isolated tests and commit `feat: add token counter example`.
+- [x] Test budget partitioning, multilingual fixtures, fixed-context rejection and output reservation.
+- [x] Implement injectable `Tokenizer`, deterministic whitespace/byte Fake and context budget report.
+- [x] Add optional target-model tokenizer adapter only after installing and verifying its exact version.（当前未安装版本敏感依赖，保留明确的 Adapter 端口。）
+- [x] Link chapter 2 and mark only this catalog entry complete.
+- [x] Run isolated tests and commit `feat: add token counter example`.
 
 ## Task 3: Build `examples/attention_demo/`
 

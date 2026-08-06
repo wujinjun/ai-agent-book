@@ -2,7 +2,6 @@ from pathlib import Path
 
 import yaml
 
-
 ROOT = Path(__file__).parents[1]
 CATALOG = ROOT / "notes/example-matrix.yml"
 
@@ -45,7 +44,7 @@ def test_catalog_declares_exactly_the_planned_examples() -> None:
 
     for entry in examples:
         assert REQUIRED_FIELDS <= entry.keys()
-        assert isinstance(entry["chapter"], (int, list))
+        assert isinstance(entry["chapter"], int | list)
         assert entry["python"] == ">=3.12,<3.13"
         assert str(entry["offline_command"]).strip()
         assert str(entry["test_command"]).strip()
@@ -75,6 +74,25 @@ def test_completed_examples_satisfy_the_repository_contract() -> None:
         missing = [str(path.relative_to(ROOT)) for path in required if not path.is_file()]
         if missing:
             failures.append(f"{entry['name']}: {', '.join(missing)}")
+            continue
+
+        readme = (root / "README.md").read_text(encoding="utf-8")
+        chapters = entry["chapter"] if isinstance(entry["chapter"], list) else [entry["chapter"]]
+        chapter_sources = [
+            path
+            for number in chapters
+            for path in (ROOT / "docs").glob(f"part-*/ch{int(number):02d}-*.md")
+        ]
+        if len(chapter_sources) != len(chapters):
+            failures.append(f"{entry['name']}: 无法唯一定位对应章节")
+            continue
+        if not all(str(path.relative_to(ROOT)) in readme for path in chapter_sources):
+            failures.append(f"{entry['name']}: README 缺少章节反向链接")
+        if not all(
+            f"examples/{entry['name']}/" in path.read_text(encoding="utf-8")
+            for path in chapter_sources
+        ):
+            failures.append(f"{entry['name']}: 章节缺少示例正向链接")
 
     assert failures == []
 

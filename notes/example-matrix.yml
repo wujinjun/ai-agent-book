@@ -12,7 +12,7 @@ examples:
     offline_command: python -m token_counter.main --fixture multilingual
     test_command: python -m pytest -q
     dependency_group: root
-    complete: false
+    complete: true
   - name: attention_demo
     chapter: 3
     package: attention_demo

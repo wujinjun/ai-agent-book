@@ -18,7 +18,7 @@ flowchart LR
 
 | 示例 | 对应章节 | 重点 | 当前状态 |
 |---|---:|---|---|
-| Token Counter | 2 | 多语言计数与上下文预算 | 实施中 |
+| [Token Counter](https://github.com/wujinjun/ai-agent-book/tree/main/examples/token_counter) | 2 | 多语言计数与上下文预算 | 已完成：离线测试通过 |
 | Attention Demo | 3 | 缩放点积注意力、Mask 与热力图 | 待实施 |
 | Sampling Lab | 4 | Temperature、top-k、top-p 与终止 | 待实施 |
 | Local Semantic Search | 5 | 稀疏、稠密、RRF 与评估 | 待实施 |
