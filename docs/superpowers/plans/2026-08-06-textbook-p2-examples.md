@@ -87,10 +87,10 @@ Each README must include purpose, architecture diagram, installation, offline ru
 
 **Chapter:** 7. **Dependencies:** root-compatible Pydantic; optional online provider extra.
 
-- [ ] Test valid extraction, missing field, wrong type, partial input, bounded repair and sensitive-data rejection.
-- [ ] Implement Pydantic result types, provider protocol, deterministic Fake and stable error taxonomy.
-- [ ] Prove retries are bounded and validation errors are not leaked verbatim to untrusted callers.
-- [ ] Link chapter 7, run tests and commit `feat: add structured extraction example`.
+- [x] Test valid extraction, missing field, wrong type, partial input, bounded repair and sensitive-data rejection.
+- [x] Implement Pydantic result types, provider protocol, deterministic Fake and stable error taxonomy.
+- [x] Prove retries are bounded and validation errors are not leaked verbatim to untrusted callers.
+- [x] Link chapter 7, run tests and commit `feat: add structured extraction example`.
 
 ## Task 8: Build `examples/minimal_agent/`
 

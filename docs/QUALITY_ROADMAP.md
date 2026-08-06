@@ -47,7 +47,7 @@
 - [x] 创建 `examples/sampling_lab/`。
 - [x] 创建 `examples/local_semantic_search/`。
 - [x] 创建 `examples/prompt_registry/`。
-- [ ] 创建 `examples/structured_extractor/`。
+- [x] 创建 `examples/structured_extractor/`。
 - [ ] 创建 `examples/minimal_agent/`。
 - [ ] 创建 `examples/long_term_memory/`。
 - [ ] 创建 `examples/openai_agents_sdk/`。

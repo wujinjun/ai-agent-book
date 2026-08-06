@@ -52,7 +52,7 @@ examples:
     offline_command: python -m structured_extractor.main --fixture incident
     test_command: python -m pytest -q
     dependency_group: root
-    complete: false
+    complete: true
   - name: minimal_agent
     chapter: [9, 17]
     package: minimal_agent
