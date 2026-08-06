@@ -8,7 +8,7 @@ chapters:
   - number: 2
     path: docs/part-01-foundations/ch02-token-and-context.md
     target_chars: 8000
-    complete: false
+    complete: true
     required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
     required_terms: ["Tokenizer", "上下文预算", "截断", "滑动窗口", "摘要", "Context Engineering"]
     code_languages: [python]
@@ -133,4 +133,3 @@ chapters:
     required_terms: ["加权评价", "Spike", "框架锁定", "回滚", "ADR", "不确定性"]
     code_languages: [markdown]
     acceptance_experiment: 使用同一垂直切片形成带证据、权重、不确定性和回滚方案的 ADR。
-
