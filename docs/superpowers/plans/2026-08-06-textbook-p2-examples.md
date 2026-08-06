@@ -78,10 +78,10 @@ Each README must include purpose, architecture diagram, installation, offline ru
 
 **Chapter:** 6. **Dependencies:** root-compatible.
 
-- [ ] Test immutable versions, variable validation, unsafe interpolation, rollout and rollback.
-- [ ] Implement file-backed Prompt specs, content hashes and an offline renderer.
-- [ ] Add a regression runner that compares structured Fake outputs across Prompt versions.
-- [ ] Link chapter 6, run tests and commit `feat: add prompt registry example`.
+- [x] Test immutable versions, variable validation, unsafe interpolation, rollout and rollback.
+- [x] Implement file-backed Prompt specs, content hashes and an offline renderer.
+- [x] Add a regression runner that compares structured Fake outputs across Prompt versions.
+- [x] Link chapter 6, run tests and commit `feat: add prompt registry example`.
 
 ## Task 7: Build `examples/structured_extractor/`
 

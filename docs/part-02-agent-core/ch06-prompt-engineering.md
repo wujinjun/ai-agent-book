@@ -148,4 +148,4 @@ Prompt 调试的产物应是一个最小失败样例和相应回归测试。团�
 
 Prompt Engineering 设计指令，Context Engineering 设计模型决策时可见的全部信息。练习：为客服摘要写三个 Few-shot 边界样例并建立十条回归集；构造一条间接注入并验证工具不会执行。面试问题：System Prompt 为什么不是安全边界？何时 Few-shot 反而降低质量？延伸阅读：目标模型官方 Prompt 指南、OWASP LLM Prompt Injection 资料。
 
-本章代码目录状态：当前交付正文内 Prompt 模板与测试方法；独立 Prompt Registry 工程列入质量路线图 P2，在交付前不标记为独立示例完成。
+本章代码目录为 [`examples/prompt_registry/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/prompt_registry)，提供不可变文件版本、内容哈希、严格变量渲染、稳定灰度分桶、回滚和离线回归 Fake。文件存储是教学实现；多副本生产服务仍需事务、审批和审计。

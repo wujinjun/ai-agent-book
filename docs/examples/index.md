@@ -22,7 +22,7 @@ flowchart LR
 | [Attention Demo](https://github.com/wujinjun/ai-agent-book/tree/main/examples/attention_demo) | 3 | 缩放点积注意力、Mask 与 SVG/PNG 热力图 | 已完成：固定 NumPy 2.5.1 |
 | [Sampling Lab](https://github.com/wujinjun/ai-agent-book/tree/main/examples/sampling_lab) | 4 | Temperature、top-k、top-p、终止与频率报告 | 已完成：离线可重复 |
 | [Local Semantic Search](https://github.com/wujinjun/ai-agent-book/tree/main/examples/local_semantic_search) | 5 | 稀疏、Hash 稠密、RRF、ACL 与评估 | 已完成：离线黄金集 |
-| Prompt Registry | 6 | 不可变版本、灰度与回滚 | 待实施 |
+| [Prompt Registry](https://github.com/wujinjun/ai-agent-book/tree/main/examples/prompt_registry) | 6 | 不可变版本、哈希、灰度与回滚 | 已完成：文件式 Fixture |
 | Structured Extractor | 7 | Schema 校验、有限修复与脱敏错误 | 待实施 |
 | Minimal Agent | 9、17 | 可恢复 Runtime 与终止策略 | 待实施 |
 | Long-term Memory | 15 | 写入治理、TTL、更正与删除 | 待实施 |

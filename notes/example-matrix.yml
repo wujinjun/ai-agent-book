@@ -44,7 +44,7 @@ examples:
     offline_command: python -m prompt_registry.main --fixture support
     test_command: python -m pytest -q
     dependency_group: root
-    complete: false
+    complete: true
   - name: structured_extractor
     chapter: 7
     package: structured_extractor
