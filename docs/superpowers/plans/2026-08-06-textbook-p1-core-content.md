@@ -27,7 +27,7 @@
 - Create: `notes/core-chapter-depth.yml`
 - Modify: `tests/test_docs_contract.py`
 
-- [ ] **Step 1: Write the failing depth-matrix test**
+- [x] **Step 1: Write the failing depth-matrix test**
 
 Add a test that loads `notes/core-chapter-depth.yml` and requires exactly these chapter numbers:
 
@@ -37,7 +37,7 @@ Add a test that loads `notes/core-chapter-depth.yml` and requires exactly these 
 
 Each entry must define `path`, `target_chars`, `required_sections`, `required_terms`, `code_languages` and `acceptance_experiment`. The test verifies the path exists and `target_chars` is between 8,000 and 12,000.
 
-- [ ] **Step 2: Run the test and confirm RED**
+- [x] **Step 2: Run the test and confirm RED**
 
 ```bash
 env PYTHONPATH=src .venv/bin/python -m pytest \
@@ -46,7 +46,7 @@ env PYTHONPATH=src .venv/bin/python -m pytest \
 
 Expected: failure because `notes/core-chapter-depth.yml` does not exist.
 
-- [ ] **Step 3: Create the depth matrix**
+- [x] **Step 3: Create the depth matrix**
 
 Record these exact acceptance experiments:
 
@@ -69,11 +69,11 @@ Record these exact acceptance experiments:
 38 同一垂直切片的框架评分和可逆 ADR
 ```
 
-- [ ] **Step 4: Add the content-enforcement test**
+- [x] **Step 4: Add the content-enforcement test**
 
 For every entry, assert the chapter contains every configured section and term, contains every configured code language, and reaches `target_chars` after its batch is marked `complete: true`. Entries begin with `complete: false`, so the matrix can land before prose changes without weakening completed-batch checks.
 
-- [ ] **Step 5: Run and commit the matrix contract**
+- [x] **Step 5: Run and commit the matrix contract**
 
 ```bash
 env PYTHONPATH=src .venv/bin/python -m pytest tests/test_docs_contract.py -q
@@ -92,27 +92,27 @@ git commit -m "test: define core chapter depth contract"
 - Modify: `notes/core-chapter-depth.yml`
 - Test: `tests/test_docs_contract.py`
 
-- [ ] **Step 1: Extend chapter 2**
+- [x] **Step 1: Extend chapter 2**
 
 Add distinct sections for tokenizer mechanics, multilingual/token-boundary experiments, context-budget equations, truncation failure analysis, sliding-window/summary/retrieval comparison, a typed Python budgeter, debugging evidence and exercise answers. The budgeter rejects a request when fixed instructions plus reserved output already exceed the model window.
 
-- [ ] **Step 2: Extend chapter 5**
+- [x] **Step 2: Extend chapter 5**
 
 Add sparse/dense/hybrid retrieval comparison, cosine edge cases, dimension and model migration, chunk-quality examples, deterministic RRF Python code, Recall/MRR evaluation and a failure case where high semantic similarity returns the wrong authority source.
 
-- [ ] **Step 3: Extend chapter 8**
+- [x] **Step 3: Extend chapter 8**
 
 Add a complete inline asynchronous Tool Loop with Pydantic arguments, registry lookup, timeout, structured observation, maximum steps and approval state. Add tables for error classification, retryability and idempotency. Include a timeout-after-write reconciliation case.
 
-- [ ] **Step 4: Extend chapter 9**
+- [x] **Step 4: Extend chapter 9**
 
 Add explicit Runtime interfaces, state transitions, termination precedence, no-progress detection, checkpoint contents, recovery semantics and a deterministic Fake Model sequence. Distinguish workflow, router and autonomous loop using the same example request.
 
-- [ ] **Step 5: Extend chapter 10**
+- [x] **Step 5: Extend chapter 10**
 
 Add task DAG construction, plan validation, dynamic replanning, Reviewer independence, stopping rules and a quantitative comparison template for no-plan, plan-and-execute and reviewer variants.
 
-- [ ] **Step 6: Mark batch A complete and run its contract**
+- [x] **Step 6: Mark batch A complete and run its contract**
 
 Set `complete: true` for chapters 2, 5, 8, 9 and 10, then run:
 
@@ -120,11 +120,11 @@ Set `complete: true` for chapters 2, 5, 8, 9 and 10, then run:
 env PYTHONPATH=src .venv/bin/python -m pytest tests/test_docs_contract.py -q
 ```
 
-- [ ] **Step 7: Execute inline acceptance experiments**
+- [x] **Step 7: Execute inline acceptance experiments**
 
 Use pytest temporary files to execute the budgeter, RRF and Tool Loop examples; assert budget rejection, stable RRF order and bounded Tool Loop termination. Do not create P2 example directories in this task.
 
-- [ ] **Step 8: Commit batch A**
+- [x] **Step 8: Commit batch A**
 
 ```bash
 git add docs/part-01-foundations/ch02-token-and-context.md \
@@ -295,4 +295,3 @@ git commit -m "docs: complete core chapter depth review"
 - [ ] **Step 7: Create the P2 implementation plan**
 
 Create `docs/superpowers/plans/2026-08-06-textbook-p2-examples.md` with one independently testable task per missing example directory and explicit dependency isolation.
-
