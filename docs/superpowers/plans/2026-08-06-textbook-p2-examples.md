@@ -69,10 +69,10 @@ Each README must include purpose, architecture diagram, installation, offline ru
 
 **Chapter:** 5. **Dependencies:** isolated retrieval environment; offline hashed-vector Fake, optional real embedding extra.
 
-- [ ] Test sparse, dense, RRF Hybrid Search, dimension mismatch, ACL and Recall/MRR.
-- [ ] Implement versioned documents, Chunk metadata, provider protocol and local index.
-- [ ] Add a fixed Chinese/English query set and reproducible evaluation report.
-- [ ] Link chapter 5, run tests and commit `feat: add local semantic search example`.
+- [x] Test sparse, dense, RRF Hybrid Search, dimension mismatch, ACL and Recall/MRR.
+- [x] Implement versioned documents, Chunk metadata, provider protocol and local index.
+- [x] Add a fixed Chinese/English query set and reproducible evaluation report.
+- [x] Link chapter 5, run tests and commit `feat: add local semantic search example`.
 
 ## Task 6: Build `examples/prompt_registry/`
 

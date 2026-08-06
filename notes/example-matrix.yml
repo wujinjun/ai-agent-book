@@ -36,7 +36,7 @@ examples:
     offline_command: python -m local_semantic_search.main --fixture bilingual
     test_command: python -m pytest -q
     dependency_group: isolated
-    complete: false
+    complete: true
   - name: prompt_registry
     chapter: 6
     package: prompt_registry

@@ -21,7 +21,7 @@ flowchart LR
 | [Token Counter](https://github.com/wujinjun/ai-agent-book/tree/main/examples/token_counter) | 2 | 多语言计数与上下文预算 | 已完成：离线测试通过 |
 | [Attention Demo](https://github.com/wujinjun/ai-agent-book/tree/main/examples/attention_demo) | 3 | 缩放点积注意力、Mask 与 SVG/PNG 热力图 | 已完成：固定 NumPy 2.5.1 |
 | [Sampling Lab](https://github.com/wujinjun/ai-agent-book/tree/main/examples/sampling_lab) | 4 | Temperature、top-k、top-p、终止与频率报告 | 已完成：离线可重复 |
-| Local Semantic Search | 5 | 稀疏、稠密、RRF 与评估 | 待实施 |
+| [Local Semantic Search](https://github.com/wujinjun/ai-agent-book/tree/main/examples/local_semantic_search) | 5 | 稀疏、Hash 稠密、RRF、ACL 与评估 | 已完成：离线黄金集 |
 | Prompt Registry | 6 | 不可变版本、灰度与回滚 | 待实施 |
 | Structured Extractor | 7 | Schema 校验、有限修复与脱敏错误 | 待实施 |
 | Minimal Agent | 9、17 | 可恢复 Runtime 与终止策略 | 待实施 |
