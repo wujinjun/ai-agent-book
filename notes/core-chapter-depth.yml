@@ -128,7 +128,7 @@ chapters:
   - number: 38
     path: docs/part-07-advanced/ch38-selection-guide.md
     target_chars: 8000
-    complete: false
+    complete: true
     required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
     required_terms: ["加权评价", "Spike", "框架锁定", "回滚", "ADR", "不确定性"]
     code_languages: [markdown]

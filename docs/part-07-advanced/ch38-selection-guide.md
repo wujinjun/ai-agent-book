@@ -97,7 +97,9 @@ LangGraph 的价值在显式状态和持久执行，而不是“让 Agent 更聪
 
 CrewAI、AutoGen 和 Semantic Kernel 都能表达多 Agent 或编排，但角色数量不是评价指标。若两个角色共享同一上下文、工具和目标，普通函数或 Reviewer Node 往往更便宜。使用前必须验证终止、共享状态、错误恢复、预算和 Trace，而不是只看对话演示。
 
-## 最小示例：用 ADR 保存选型证据
+## 最小实验
+
+最小示例用 ADR 保存选型证据。ADR 不要求在第一次评审中得到永久真理，而是把当前上下文、证据、不确定性和回滚条件写清楚。
 
 ```markdown
 # ADR-007：研究工作流编排方案
@@ -114,9 +116,11 @@ CrewAI、AutoGen 和 Semantic Kernel 都能表达多 Agent 或编排，但角色
 
 ADR 记录的是上下文和证据，不是永久结论。复审日期应与升级周期、许可证变化和维护状态关联。
 
-## 完整工程示例：同一垂直切片 Spike
+## 工程案例
 
-选择一个包含结构化输出、一个只读工具、一个失败重试和一条 Trace 的真实任务，分别用最多两个候选实现。固定模型、Prompt、数据与黄金集，比较开发时间、代码量只是辅助指标，更重要的是状态可见性、离线测试、恢复、错误定位、权限插入点和迁移难度。
+完整工程使用同一垂直切片 Spike。选择一个包含结构化输出、一个只读工具、一个失败重试和一条 Trace 的真实任务，分别用最多两个候选实现。固定模型、Prompt、数据与黄金集，比较开发时间、代码量只是辅助指标，更重要的是状态可见性、离线测试、恢复、错误定位、权限插入点和迁移难度。
+
+本章选用项目 8 的研究工作流：规划两个查询、使用 Fake 搜索、Reviewer 检查两条独立来源、人工批准、生成带引用报告，并能在进程重启后恢复。候选先限于原生 Runtime、PydanticAI、OpenAI Agents SDK 与 LangGraph；不是要求四套都完整实现，而是先用需求过滤，再对得分接近且证据不足的最多两个方案做 Spike。
 
 ```mermaid
 %% id: framework-spike-comparison
@@ -136,15 +140,124 @@ Spike 必须覆盖失败、恢复、权限与 Trace，而不只是 happy-path。
 
 生产适用性不能只从文档推断。Spike 应注入模型超时、无效工具参数、Checkpoint 恢复和权限拒绝，观察是否能从 Trace 中定位根因，并检查框架能否导出原始消息与状态。
 
+### 从需求到候选过滤
+
+先区分硬约束与加权偏好。研究工作流的硬约束可以是：Python 3.12、可离线测试、人工中断、持久恢复、状态可导出、工具调用前可插入自有 Policy。任一硬约束无法通过且没有可接受 Adapter 的候选直接淘汰，不应用其他高分补偿。
+
+```mermaid
+%% id: framework-selection-evidence-funnel
+%% title: 框架选型证据漏斗
+%% alt: 所有候选先经过硬约束过滤，再做官方文档与本地版本核查，对证据不足且接近者执行同一Spike，最后加权评价并形成可回滚ADR
+flowchart LR
+    Candidates["候选框架集合"] --> Hard["硬约束过滤"]
+    Hard --> Verify["官方文档 + 安装版本核查"]
+    Verify --> Unknown["标记证据等级与不确定性"]
+    Unknown --> Shortlist["最多两个接近候选"]
+    Shortlist --> Spike["同一垂直切片 Spike"]
+    Spike --> Score["加权评价 + 敏感性分析"]
+    Score --> ADR["决策 / 风险 / 回滚 / 复审"]
+```
+
+证据等级可以分为：本仓库安装并测试、官方文档确认但未本地执行、仅需人工核查。功能清单中“支持持久化”若没有跑过重启恢复，只能记为文档证据，不能与实测等价。
+
+### 加权评价矩阵
+
+权重来自业务风险。项目 8 把恢复、可控性和测试放在学习速度之前；一个两天 Demo 可以采用相反权重。评分采用 1—5 级，每个分数带证据引用与信心等级。
+
+| 维度 | 权重 | 原生 API | Agents SDK | PydanticAI | LangGraph | 所需证据 |
+|---|---:|---:|---:|---:|---:|---|
+| 持久恢复/HITL | 0.20 | 待评 | 待评 | 待评 | 待评 | 重启 + resume 测试 |
+| 控制流与终止 | 0.15 | 待评 | 待评 | 待评 | 待评 | 故障注入 Trace |
+| 类型与离线测试 | 0.15 | 待评 | 待评 | 待评 | 待评 | Fake/Mock 测试 |
+| Tool Policy 插入 | 0.15 | 待评 | 待评 | 待评 | 待评 | 越权动作被拒绝 |
+| 状态与数据可移植 | 0.10 | 待评 | 待评 | 待评 | 待评 | 导出/导入实验 |
+| 可观测性 | 0.10 | 待评 | 待评 | 待评 | 待评 | 事件与 OTel 映射 |
+| 学习和维护成本 | 0.10 | 待评 | 待评 | 待评 | 待评 | 实现时间与复杂度 |
+| 框架锁定风险 | 0.05 | 待评 | 待评 | 待评 | 待评 | 替换边界与迁移测试 |
+
+表中不预填虚构分数。可以用下列代码计算已确认评分，并拒绝缺少证据的条目：
+
+```python
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class CriterionScore:
+    name: str
+    weight: float
+    score: float
+    evidence: str
+    confidence: float
+
+
+def weighted_score(criteria: list[CriterionScore]) -> float:
+    if not criteria:
+        raise ValueError("评价维度不能为空")
+    if any(not item.evidence.strip() for item in criteria):
+        raise ValueError("每个评分必须有证据")
+    total_weight = sum(item.weight for item in criteria)
+    if abs(total_weight - 1.0) > 1e-9:
+        raise ValueError("权重之和必须为 1")
+    if any(not 1 <= item.score <= 5 for item in criteria):
+        raise ValueError("评分必须在 1 到 5 之间")
+    return sum(item.weight * item.score for item in criteria)
+```
+
+`confidence` 不直接混入总分，单独报告证据不确定性。若候选 A 总分 4.1、B 为 4.0，但 A 的关键恢复项仅来自文档、B 已实测，不能据 0.1 差值宣布 A 胜出；应优先对 A 做 Spike。
+
+### 敏感性分析与不确定性
+
+加权总分会受权重影响。将恢复权重上下调整、把维护成本提高，观察排序是否反转。若轻微调整就改变结论，说明选择不稳健，应保留可逆边界或继续实验。社区活跃度、许可证、MCP 支持和版本状态属于时间敏感信息，必须注明核查日期和官方来源。
+
+不确定项不能用“估计 4 分”伪装成事实。可以记录区间，例如某能力在 2—4 分之间；用最坏与最好情形计算候选范围。两个范围高度重叠时，ADR 应写“证据不足，先做限时 Spike”，而不是强行给唯一排名。
+
+### Spike 的统一验收
+
+每个候选都运行同一 Fixture 和故障：两条来源正常完成；搜索第一次 503 后成功；Reviewer 因单一来源拒绝；人工拒绝后不写报告；进程重启后恢复相同 run；重复 resume 不产生重复外部动作；跨租户 thread 读取被拒绝。
+
+记录实现时间、领域代码与 Adapter 代码量、测试数量、Trace 可解释性、状态导出格式、P50/P95 和依赖体积。代码量少不是决定性指标；把复杂度藏进不可观察的框架默认值可能让初始代码更短、线上调试更难。
+
+### 可逆 ADR 与回滚
+
+最终 ADR 应包含选中方案、未选方案、关键证据、风险、框架锁定位置、退出接口、迁移数据、复审触发条件和回滚步骤：
+
+```markdown
+# ADR-008：研究工作流 Runtime
+
+- 状态：Accepted for one vertical slice
+- 决策：LangGraph 1.2.9 仅负责图编排与 Checkpoint
+- 领域边界：Tool、RunState、Citation、Policy 由本项目拥有
+- 实测证据：黄金集版本；中断恢复；故障注入；Trace 链接
+- 不确定性：数据库 Checkpointer 迁移尚未验证
+- 框架锁定：图定义、Reducer、Checkpoint 配置与 interrupt 语义
+- 回滚：保留原生 Runtime Adapter；停止新 Run；导出未完成状态；
+  已开始 Run 在原版本排空，新任务切回原生实现
+- 复审触发：持久化迁移失败、P95 越阈值、重大弃用或许可证变化
+```
+
+回滚不是 `pip uninstall`。进行中的 Checkpoint 可能无法由旧实现读取，因此需要“旧版本排空 + 新任务切换”或显式状态迁移。框架升级也视为架构变更：先影子执行或小租户灰度，保留旧镜像和数据库兼容窗口。
+
 ## 降低框架锁定
 
 锁定不只来自供应商 API，也来自消息类型、装饰器、Checkpoint 格式、Prompt Hub 和观测数据。业务层定义自己的 `RunRequest`、`ToolSpec`、`Citation` 和错误分类；框架代码集中在适配器；黄金集测试跨实现运行；关键状态支持导出。不要为了理论上的可替换性构造一个抹平所有差异的巨型抽象层。
 
 依赖版本应固定，并由自动化更新工具创建小步升级。升级前阅读官方变更日志，运行契约与回归测试，对弃用 API 设置迁移窗口。MCP“可连接”不等于安全，仍需验证 Transport、授权、Tool Schema 和用户确认。
 
-## 常见误区与调试方法
+## 失败分析与调试
 
 常见误区包括以 GitHub Star 代替维护承诺、把功能存在等同于生产成熟、同时引入三个重叠框架，以及先选择 Multi-Agent 再寻找问题。调试框架问题时先把失败缩减为最小调用，记录依赖锁、模型和序列化状态；确认问题属于模型、供应商、框架、适配器还是业务逻辑，再决定修复位置。
+
+| 现象 | 根因 | 证据 | 处理 |
+|---|---|---|---|
+| 演示很快，恢复做不出来 | Spike 只测 happy path | 重启/Checkpoint 用例 | 将恢复设为硬门槛 |
+| 评分矩阵总有预期赢家 | 权重或分数事后调整 | ADR 历史与评审记录 | 先定权重，评分必须引用证据 |
+| 框架升级修改大量领域代码 | 框架类型渗透 | import 与类型依赖图 | 收敛到 Adapter 与领域契约 |
+| 两候选得分接近仍强行决定 | 忽略不确定性 | 评分区间与敏感性分析 | 做限时 Spike 或选更可逆方案 |
+| 回滚后未完成任务丢失 | 没有状态导出/排空策略 | Checkpoint 兼容矩阵 | 双版本窗口与迁移演练 |
+| 社区活跃但关键 Bug 无人处理 | 用 Star 代替维护证据 | release、issue、security policy | 当天核查官方仓库与支持承诺 |
+| 多框架组合无法定位 Trace | 所有对象互相嵌套 | span 与调用边界 | 一个职责一个 Adapter，统一事件协议 |
+
+框架问题先用最小复现验证安装版本，再查官方文档与变更日志。若业务测试在 Fake Adapter 下也失败，问题不在框架；若只有某一 Adapter 失败，避免改写全部领域层。把已知限制写入版本核查清单，不凭记忆试错生产 API。
 
 ## 工程实践与安全注意事项
 
@@ -162,3 +275,11 @@ Spike 必须覆盖失败、恢复、权限与 Trace，而不只是 happy-path。
 4. 延伸阅读：各框架官方文档与变更日志、Architecture Decision Records、契约测试、可逆架构决策。
 
 本章对应代码目录：当前可运行工作流位于 `projects/08-research-workflow/`；跨框架对照工程列入质量路线图 P2—P3。
+
+## 练习参考答案
+
+1. 项目 8 可比较原生 Runtime 与 LangGraph。硬约束设人工中断、重启恢复、离线测试和 Policy 插入；权重在评分前确定。用同一 Fixture 与失败注入完成 Spike，把测试、Trace 和状态导出作为 ADR 证据。
+2. 常见渗透点包括业务函数直接接收框架 Message、数据库保存框架 Checkpoint 对象、前端消费框架 Stream Event。分别用领域 `Message/RunState/Event` 与 Adapter 映射隔离，保留契约测试。
+3. 降低框架锁定不是追求零依赖，而是让 Tool、RunState、Citation、Policy 和错误分类由业务拥有，框架集中在 Adapter，状态可导出，黄金集能跨实现运行，并预先演练回滚。
+4. 当角色没有不同权限、工具、上下文或独立验收责任时，应拒绝 Multi-Agent；普通函数、Router 或 Reviewer Node 更便宜且易终止。角色数量不是选型加分项。
+5. 社区活跃度在决策当天从官方仓库核对发布频率、维护者响应、支持/弃用政策、安全公告、许可证和路线图，并记录链接与日期。Star 与下载量只能作为背景，不能替代维护承诺。
