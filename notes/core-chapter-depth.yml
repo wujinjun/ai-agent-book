@@ -56,7 +56,7 @@ chapters:
   - number: 12
     path: docs/part-03-rag-and-memory/ch12-mcp-server.md
     target_chars: 8000
-    complete: false
+    complete: true
     required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
     required_terms: ["路径越界", "stderr", "结构化错误", "Resource", "Prompt", "权限"]
     code_languages: [python]
