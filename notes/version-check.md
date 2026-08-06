@@ -15,5 +15,6 @@
 | LangChain / LlamaIndex | 官方文档已核对；未安装实测 | 包拆分、推荐抽象、弃用接口在添加示例依赖时复验 |
 | CrewAI / AutoGen / Semantic Kernel | 官方文档已核对；未安装实测 | 当前稳定版、实验特性和维护状态在选型当天复核 |
 | SQLAlchemy / Psycopg / Redis | 已安装实测基础路径 | SQLAlchemy 2.0.51、Psycopg 3.3.4、Redis client 8.0.1；Docker 服务集成待 daemon 验证 |
+| NumPy | 2026-08-06 已隔离安装实测 | 2.5.1；`examples/attention_demo/` 覆盖缩放点积、Mask、多头形状和 SVG/PNG 导出 |
 
 依赖固定于 `requirements.txt` 的日期快照并不意味着这些版本长期推荐。升级应先运行测试与文档构建，再更新章节的“最后核对日期”。

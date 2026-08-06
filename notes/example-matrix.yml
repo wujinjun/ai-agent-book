@@ -20,7 +20,7 @@ examples:
     offline_command: python -m attention_demo.main
     test_command: python -m pytest -q
     dependency_group: isolated
-    complete: false
+    complete: true
   - name: sampling_lab
     chapter: 4
     package: sampling_lab

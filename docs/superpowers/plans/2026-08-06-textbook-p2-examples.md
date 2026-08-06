@@ -51,10 +51,10 @@ Each README must include purpose, architecture diagram, installation, offline ru
 
 **Chapter:** 3. **Dependencies:** isolated numerical environment; prefer NumPy, optional plotting extra.
 
-- [ ] Test tensor shapes, softmax row sums, masking and deterministic expected attention weights.
-- [ ] Implement scaled dot-product attention and multi-head shape transformation without a deep-learning framework.
-- [ ] Generate a small SVG/PNG heatmap from fixed data and explain that it is not model interpretability proof.
-- [ ] Link chapter 3, run tests and commit `feat: add attention mechanics example`.
+- [x] Test tensor shapes, softmax row sums, masking and deterministic expected attention weights.
+- [x] Implement scaled dot-product attention and multi-head shape transformation without a deep-learning framework.
+- [x] Generate a small SVG/PNG heatmap from fixed data and explain that it is not model interpretability proof.
+- [x] Link chapter 3, run tests and commit `feat: add attention mechanics example`.
 
 ## Task 4: Build `examples/sampling_lab/`
 
