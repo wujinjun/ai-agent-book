@@ -120,6 +120,30 @@
     "png_path": "png/ch02-token-and-context-a3cc5ffc2ac3.png"
   },
   {
+    "source_path": "docs/part-01-foundations/ch02-token-and-context.md",
+    "index": 5,
+    "semantic_id": "context-budget-partitions",
+    "title": "企业知识助手的上下文预算分区",
+    "alt": "总窗口先扣除输出保留量，再分给固定规则、工具定义、当前问题、历史消息和检索证据",
+    "diagram_id": "ch02-token-and-context-062d963b7354",
+    "source": "%% id: context-budget-partitions\n%% title: 企业知识助手的上下文预算分区\n%% alt: 总窗口先扣除输出保留量，再分给固定规则、工具定义、当前问题、历史消息和检索证据\nflowchart LR\n    Total[\"模型总窗口\"] --> Output[\"输出保留量\"]\n    Total --> Input[\"可用输入预算\"]\n    Input --> Fixed[\"固定规则\"]\n    Input --> Tools[\"工具 Schema\"]\n    Input --> Query[\"当前问题\"]\n    Input --> History[\"历史消息\"]\n    Input --> Evidence[\"检索证据\"]\n    History --> Compress[\"滑动窗口 / 摘要\"]\n    Evidence --> Rank[\"去重 / 排序 / 截断\"]\n",
+    "source_asset": "source/ch02-token-and-context-062d963b7354.mmd",
+    "svg_path": "svg/ch02-token-and-context-062d963b7354.svg",
+    "png_path": "png/ch02-token-and-context-062d963b7354.png"
+  },
+  {
+    "source_path": "docs/part-01-foundations/ch02-token-and-context.md",
+    "index": 6,
+    "semantic_id": "context-debugging-decision-flow",
+    "title": "上下文问题诊断流程",
+    "alt": "从原始事实开始依次检查检索、排序、预算选择、消息序列化和模型回答",
+    "diagram_id": "ch02-token-and-context-d1339bbaebd6",
+    "source": "%% id: context-debugging-decision-flow\n%% title: 上下文问题诊断流程\n%% alt: 从原始事实开始依次检查检索、排序、预算选择、消息序列化和模型回答\nflowchart TD\n    Fact[\"原始事实存在吗？\"] -->|否| Source[\"修复数据源\"]\n    Fact -->|是| Retrieved{\"被检索到吗？\"}\n    Retrieved -->|否| Recall[\"检查切分、查询和召回\"]\n    Retrieved -->|是| Selected{\"进入预算结果吗？\"}\n    Selected -->|否| Budget[\"检查排序、去重和分区\"]\n    Selected -->|是| Serialized{\"最终请求中仍存在吗？\"}\n    Serialized -->|否| Middleware[\"检查模板、摘要和 SDK 序列化\"]\n    Serialized -->|是| Used{\"回答正确引用吗？\"}\n    Used -->|否| Prompt[\"检查冲突、位置、噪声和输出约束\"]\n    Used -->|是| Done[\"链路正常\"]\n",
+    "source_asset": "source/ch02-token-and-context-d1339bbaebd6.mmd",
+    "svg_path": "svg/ch02-token-and-context-d1339bbaebd6.svg",
+    "png_path": "png/ch02-token-and-context-d1339bbaebd6.png"
+  },
+  {
     "source_path": "docs/part-01-foundations/ch03-transformer-attention.md",
     "index": 1,
     "semantic_id": "rnn-to-transformer-evolution",
@@ -262,6 +286,30 @@
     "source_asset": "source/ch05-embedding-1c26dfaefca3.mmd",
     "svg_path": "svg/ch05-embedding-1c26dfaefca3.svg",
     "png_path": "png/ch05-embedding-1c26dfaefca3.png"
+  },
+  {
+    "source_path": "docs/part-01-foundations/ch05-embedding.md",
+    "index": 5,
+    "semantic_id": "hybrid-retrieval-evaluation-loop",
+    "title": "混合检索的离线评价与上线闭环",
+    "alt": "版本化查询集同时运行稀疏和稠密检索，经RRF与重排后计算Recall和MRR，达标后灰度上线并收集困难样本",
+    "diagram_id": "ch05-embedding-e772e423d47e",
+    "source": "%% id: hybrid-retrieval-evaluation-loop\n%% title: 混合检索的离线评价与上线闭环\n%% alt: 版本化查询集同时运行稀疏和稠密检索，经RRF与重排后计算Recall和MRR，达标后灰度上线并收集困难样本\nflowchart LR\n    Set[\"版本化查询集<br/>问题 + 相关文档\"] --> Sparse[\"BM25 / 关键词\"]\n    Set --> Dense[\"Embedding / ANN\"]\n    Sparse --> RRF[\"RRF 候选融合\"]\n    Dense --> RRF\n    RRF --> Filter[\"租户 / 车型 / 版本过滤\"]\n    Filter --> Rerank[\"Reranker\"]\n    Rerank --> Metrics[\"Recall@k / MRR / nDCG\"]\n    Metrics --> Gate{\"超过发布阈值？\"}\n    Gate -->|否| Tune[\"分析失败样本<br/>切分 / 查询 / 参数\"]\n    Tune --> Sparse\n    Tune --> Dense\n    Gate -->|是| Canary[\"灰度上线\"]\n    Canary --> Hard[\"收集困难样本\"]\n    Hard --> Set\n",
+    "source_asset": "source/ch05-embedding-e772e423d47e.mmd",
+    "svg_path": "svg/ch05-embedding-e772e423d47e.svg",
+    "png_path": "png/ch05-embedding-e772e423d47e.png"
+  },
+  {
+    "source_path": "docs/part-01-foundations/ch05-embedding.md",
+    "index": 6,
+    "semantic_id": "retrieval-failure-localization",
+    "title": "检索失败定位树",
+    "alt": "从解析后的原文开始依次检查切分、候选召回、融合排名、权限过滤、重排和生成引用",
+    "diagram_id": "ch05-embedding-0ebc8f2bc80a",
+    "source": "%% id: retrieval-failure-localization\n%% title: 检索失败定位树\n%% alt: 从解析后的原文开始依次检查切分、候选召回、融合排名、权限过滤、重排和生成引用\nflowchart TD\n    Source{\"解析后有正确文本？\"} -->|否| Parse[\"修复 OCR / 表格 / 编码\"]\n    Source -->|是| Chunk{\"相关事实在完整 Chunk 中？\"}\n    Chunk -->|否| Split[\"调整边界、Overlap 或 Parent-Child\"]\n    Chunk -->|是| Candidate{\"进入任一路候选？\"}\n    Candidate -->|否| Query[\"检查查询改写、词法和向量召回\"]\n    Candidate -->|是| Fusion{\"融合后仍在 Top-k？\"}\n    Fusion -->|否| Tune[\"检查 RRF、候选深度与重复项\"]\n    Fusion -->|是| Access{\"权限过滤正确？\"}\n    Access -->|否| ACL[\"修复租户与 Metadata\"]\n    Access -->|是| Answer{\"回答正确引用？\"}\n    Answer -->|否| Generation[\"检查重排、上下文和生成约束\"]\n    Answer -->|是| Done[\"链路正常\"]\n",
+    "source_asset": "source/ch05-embedding-0ebc8f2bc80a.mmd",
+    "svg_path": "svg/ch05-embedding-0ebc8f2bc80a.svg",
+    "png_path": "png/ch05-embedding-0ebc8f2bc80a.png"
   },
   {
     "source_path": "docs/part-02-agent-core/index.md",
@@ -420,6 +468,30 @@
     "png_path": "png/ch08-tool-calling-8b4654aeb41d.png"
   },
   {
+    "source_path": "docs/part-02-agent-core/ch08-tool-calling.md",
+    "index": 5,
+    "semantic_id": "approved-idempotent-tool-state-machine",
+    "title": "高风险工具的审批、幂等与状态核实状态机",
+    "alt": "工具提议经过参数校验授权和审批后执行，超时时先核实外部状态，成功或确认未执行后才结束或重试",
+    "diagram_id": "ch08-tool-calling-1edebed1bf06",
+    "source": "%% id: approved-idempotent-tool-state-machine\n%% title: 高风险工具的审批、幂等与状态核实状态机\n%% alt: 工具提议经过参数校验授权和审批后执行，超时时先核实外部状态，成功或确认未执行后才结束或重试\nstateDiagram-v2\n    [*] --> Proposed\n    Proposed --> Rejected: 未知工具 / 参数非法\n    Proposed --> Authorized: Schema 与权限通过\n    Authorized --> AwaitingApproval: 高风险动作\n    Authorized --> Executing: 低风险动作\n    AwaitingApproval --> Executing: 审批令牌匹配\n    AwaitingApproval --> Rejected: 拒绝 / 过期 / 参数变化\n    Executing --> Succeeded: 明确成功\n    Executing --> Failed: 明确业务失败\n    Executing --> Unknown: 超时 / 连接中断\n    Unknown --> Succeeded: 状态核实为已执行\n    Unknown --> Retryable: 状态核实为未执行\n    Unknown --> ManualReview: 无法核实\n    Retryable --> Executing: 相同幂等键且预算允许\n    Succeeded --> [*]\n    Failed --> [*]\n    Rejected --> [*]\n    ManualReview --> [*]\n",
+    "source_asset": "source/ch08-tool-calling-1edebed1bf06.mmd",
+    "svg_path": "svg/ch08-tool-calling-1edebed1bf06.svg",
+    "png_path": "png/ch08-tool-calling-1edebed1bf06.png"
+  },
+  {
+    "source_path": "docs/part-02-agent-core/ch08-tool-calling.md",
+    "index": 6,
+    "semantic_id": "idempotency-record-flow",
+    "title": "幂等写工具的执行流程",
+    "alt": "请求先按租户工具和幂等键查询记录，成功则复用结果，执行中则等待，参数冲突拒绝，新请求原子占位后才调用外部系统",
+    "diagram_id": "ch08-tool-calling-99b55a7cb8e1",
+    "source": "%% id: idempotency-record-flow\n%% title: 幂等写工具的执行流程\n%% alt: 请求先按租户工具和幂等键查询记录，成功则复用结果，执行中则等待，参数冲突拒绝，新请求原子占位后才调用外部系统\nflowchart TD\n    Request[\"写工具请求\"] --> Lookup[\"查询租户 + 工具 + 幂等键\"]\n    Lookup --> Existing{\"已有记录？\"}\n    Existing -->|成功且参数相同| Reuse[\"返回既有结果\"]\n    Existing -->|执行中| Wait[\"返回处理中 / 查询状态\"]\n    Existing -->|参数不同| Conflict[\"拒绝键冲突\"]\n    Existing -->|否| Claim[\"事务内创建执行中记录\"]\n    Claim --> External[\"调用外部系统\"]\n    External -->|明确成功| Save[\"保存外部 ID 与结果\"]\n    External -->|超时| Verify[\"按外部 ID / 键状态核实\"]\n    Verify --> Save\n    Verify --> Manual[\"无法判断则人工复核\"]\n",
+    "source_asset": "source/ch08-tool-calling-99b55a7cb8e1.mmd",
+    "svg_path": "svg/ch08-tool-calling-99b55a7cb8e1.svg",
+    "png_path": "png/ch08-tool-calling-99b55a7cb8e1.png"
+  },
+  {
     "source_path": "docs/part-02-agent-core/ch09-agent-runtime.md",
     "index": 1,
     "semantic_id": "agent-observation-action-state-loop",
@@ -466,6 +538,30 @@
     "source_asset": "source/ch09-agent-runtime-ac47a29c47a7.mmd",
     "svg_path": "svg/ch09-agent-runtime-ac47a29c47a7.svg",
     "png_path": "png/ch09-agent-runtime-ac47a29c47a7.png"
+  },
+  {
+    "source_path": "docs/part-02-agent-core/ch09-agent-runtime.md",
+    "index": 5,
+    "semantic_id": "research-runtime-layers-and-checkpoints",
+    "title": "研究 Agent Runtime 的分层与 Checkpoint",
+    "alt": "命令进入运行时，经上下文构建、模型决策、策略校验、工具执行和验收，每个安全边界保存事件与Checkpoint",
+    "diagram_id": "ch09-agent-runtime-e3c94bd180eb",
+    "source": "%% id: research-runtime-layers-and-checkpoints\n%% title: 研究 Agent Runtime 的分层与 Checkpoint\n%% alt: 命令进入运行时，经上下文构建、模型决策、策略校验、工具执行和验收，每个安全边界保存事件与Checkpoint\nflowchart LR\n    API[\"任务 API\"] --> Load[\"加载状态 + 版本\"]\n    Load --> Context[\"Context Builder\"]\n    Context --> Model[\"Model Gateway\"]\n    Model --> Validate[\"Decision Validator\"]\n    Validate --> Policy[\"Policy Engine\"]\n    Policy --> Execute[\"Tool Executor\"]\n    Execute --> Observe[\"规范化 Observation\"]\n    Observe --> Save[\"事件 + Checkpoint\"]\n    Save --> Accept{\"验收 / TerminationPolicy\"}\n    Accept -->|继续| Context\n    Accept -->|完成| Result[\"版本化产物\"]\n    Accept -->|暂停| Queue[\"等待审批 / 稍后恢复\"]\n",
+    "source_asset": "source/ch09-agent-runtime-e3c94bd180eb.mmd",
+    "svg_path": "svg/ch09-agent-runtime-e3c94bd180eb.svg",
+    "png_path": "png/ch09-agent-runtime-e3c94bd180eb.png"
+  },
+  {
+    "source_path": "docs/part-02-agent-core/ch09-agent-runtime.md",
+    "index": 6,
+    "semantic_id": "checkpoint-recovery-protocol",
+    "title": "Checkpoint 恢复协议",
+    "alt": "Worker重启后读取检查点并核对版本，逐个确认未决副作用，状态明确后从next_node继续，否则转人工复核",
+    "diagram_id": "ch09-agent-runtime-cdf26653314f",
+    "source": "%% id: checkpoint-recovery-protocol\n%% title: Checkpoint 恢复协议\n%% alt: Worker重启后读取检查点并核对版本，逐个确认未决副作用，状态明确后从next_node继续，否则转人工复核\nflowchart TD\n    Restart[\"Worker 启动 / 任务重投\"] --> Load[\"读取最新 Checkpoint\"]\n    Load --> Version{\"Schema 与代码版本兼容？\"}\n    Version -->|否| Migrate[\"迁移或人工处理\"]\n    Version -->|是| Pending{\"存在未决副作用？\"}\n    Pending -->|否| Resume[\"从 next_node 恢复\"]\n    Pending -->|是| Reconcile[\"按 action_id 查询外部状态\"]\n    Reconcile -->|已成功| Record[\"记录完成且不重放\"]\n    Reconcile -->|明确未执行| Retry[\"相同幂等键重试\"]\n    Reconcile -->|未知| Manual[\"人工复核\"]\n    Record --> Resume\n    Retry --> Resume\n",
+    "source_asset": "source/ch09-agent-runtime-cdf26653314f.mmd",
+    "svg_path": "svg/ch09-agent-runtime-cdf26653314f.svg",
+    "png_path": "png/ch09-agent-runtime-cdf26653314f.png"
   },
   {
     "source_path": "docs/part-02-agent-core/ch10-planning-reflection.md",
@@ -516,6 +612,30 @@
     "png_path": "png/ch10-planning-reflection-291b6767c971.png"
   },
   {
+    "source_path": "docs/part-02-agent-core/ch10-planning-reflection.md",
+    "index": 5,
+    "semantic_id": "plan-node-state-and-replanning",
+    "title": "计划节点状态与局部重规划",
+    "alt": "节点从等待依赖进入就绪执行和验证，失败可重试或触发局部重规划，仅失败节点和下游失效",
+    "diagram_id": "ch10-planning-reflection-4e5482325ac0",
+    "source": "%% id: plan-node-state-and-replanning\n%% title: 计划节点状态与局部重规划\n%% alt: 节点从等待依赖进入就绪执行和验证，失败可重试或触发局部重规划，仅失败节点和下游失效\nstateDiagram-v2\n    [*] --> Pending\n    Pending --> Ready: 所有任务依赖通过\n    Pending --> Blocked: 依赖失败\n    Ready --> Running\n    Running --> Validating: 产物已生成\n    Validating --> Passed: 验收通过\n    Validating --> Retryable: 局部可修复\n    Running --> Retryable: 暂时故障\n    Retryable --> Ready: 预算允许重试\n    Retryable --> Replanning: 同路径不再有效\n    Replanning --> Invalidated: 原节点及下游\n    Replanning --> Pending: 插入受限替代节点\n    Validating --> Terminal: 不可恢复\n    Passed --> [*]\n    Terminal --> [*]\n",
+    "source_asset": "source/ch10-planning-reflection-4e5482325ac0.mmd",
+    "svg_path": "svg/ch10-planning-reflection-4e5482325ac0.svg",
+    "png_path": "png/ch10-planning-reflection-4e5482325ac0.png"
+  },
+  {
+    "source_path": "docs/part-02-agent-core/ch10-planning-reflection.md",
+    "index": 6,
+    "semantic_id": "reviewer-stopping-policy",
+    "title": "Reviewer 返修停止条件",
+    "alt": "Reviewer返回通过则完成，失败条目减少则局部返修，不减少或预算耗尽时停止并转人工或交付部分结果",
+    "diagram_id": "ch10-planning-reflection-70e357a50808",
+    "source": "%% id: reviewer-stopping-policy\n%% title: Reviewer 返修停止条件\n%% alt: Reviewer返回通过则完成，失败条目减少则局部返修，不减少或预算耗尽时停止并转人工或交付部分结果\nflowchart TD\n    Review[\"Reviewer 结构化结果\"] --> Pass{\"全部标准通过？\"}\n    Pass -->|是| Done[\"完成\"]\n    Pass -->|否| Budget{\"返修轮次与预算可用？\"}\n    Budget -->|否| Stop[\"停止：部分结果 / 人工处理\"]\n    Budget -->|是| Progress{\"失败条目数量或严重度下降？\"}\n    Progress -->|是| Repair[\"仅返修关联任务\"]\n    Progress -->|否| Stop\n    Repair --> Review\n",
+    "source_asset": "source/ch10-planning-reflection-70e357a50808.mmd",
+    "svg_path": "svg/ch10-planning-reflection-70e357a50808.svg",
+    "png_path": "png/ch10-planning-reflection-70e357a50808.png"
+  },
+  {
     "source_path": "docs/part-03-rag-and-memory/index.md",
     "index": 1,
     "semantic_id": "external-context-and-state-map",
@@ -543,17 +663,29 @@
     "source_path": "docs/part-03-rag-and-memory/ch11-mcp.md",
     "index": 2,
     "semantic_id": "mcp-initialization-capability-call-sequence",
-    "title": "MCP 初始化、能力发现与调用时序",
-    "alt": "MCP Client 与 Server 从初始化协商到能力列表和工具资源调用的完整交互顺序",
-    "diagram_id": "ch11-mcp-8a278eb03c83",
-    "source": "%% id: mcp-initialization-capability-call-sequence\n%% title: MCP 初始化、能力发现与调用时序\n%% alt: MCP Client 与 Server 从初始化协商到能力列表和工具资源调用的完整交互顺序\nsequenceDiagram\n    participant C as MCP Client\n    participant S as MCP Server\n    C->>S: initialize(version, capabilities, clientInfo)\n    S-->>C: version, capabilities, serverInfo\n    C->>S: initialized notification\n    C->>S: tools/list or resources/list\n    S-->>C: paginated capabilities\n    C->>S: tools/call or resources/read\n    S-->>C: result or JSON-RPC error\n",
-    "source_asset": "source/ch11-mcp-8a278eb03c83.mmd",
-    "svg_path": "svg/ch11-mcp-8a278eb03c83.svg",
-    "png_path": "png/ch11-mcp-8a278eb03c83.png"
+    "title": "旧版 MCP 初始化、能力发现与调用时序",
+    "alt": "2025-11-25 MCP Client 与 Server 从初始化协商到能力列表和工具资源调用的旧版交互顺序",
+    "diagram_id": "ch11-mcp-a7100319979e",
+    "source": "%% id: mcp-initialization-capability-call-sequence\n%% title: 旧版 MCP 初始化、能力发现与调用时序\n%% alt: 2025-11-25 MCP Client 与 Server 从初始化协商到能力列表和工具资源调用的旧版交互顺序\nsequenceDiagram\n    participant C as MCP Client\n    participant S as MCP Server\n    C->>S: initialize(version, capabilities, clientInfo)\n    S-->>C: version, capabilities, serverInfo\n    C->>S: initialized notification\n    C->>S: tools/list or resources/list\n    S-->>C: paginated capabilities\n    C->>S: tools/call or resources/read\n    S-->>C: result or JSON-RPC error\n",
+    "source_asset": "source/ch11-mcp-a7100319979e.mmd",
+    "svg_path": "svg/ch11-mcp-a7100319979e.svg",
+    "png_path": "png/ch11-mcp-a7100319979e.png"
   },
   {
     "source_path": "docs/part-03-rag-and-memory/ch11-mcp.md",
     "index": 3,
+    "semantic_id": "mcp-2026-stateless-discover-call",
+    "title": "MCP 2026-07-28 无状态发现与调用",
+    "alt": "Client可选调用server discover获取能力，然后发送携带版本客户端身份和能力元数据的独立工具请求，最后关闭传输",
+    "diagram_id": "ch11-mcp-2c24da355b61",
+    "source": "%% id: mcp-2026-stateless-discover-call\n%% title: MCP 2026-07-28 无状态发现与调用\n%% alt: Client可选调用server discover获取能力，然后发送携带版本客户端身份和能力元数据的独立工具请求，最后关闭传输\nsequenceDiagram\n    participant C as MCP Client\n    participant G as Gateway\n    participant S as MCP Server Instance\n    opt 可选能力发现\n        C->>G: server/discover + 每请求元数据\n        G->>S: 独立请求\n        S-->>C: 能力与缓存提示\n    end\n    C->>G: tools/call + version/clientInfo/capabilities\n    G->>S: 按 Mcp-Method / Mcp-Name 路由\n    S-->>C: complete / input_required / error\n    C->>C: 校验结果、策略与后续动作\n    C-xS: 关闭 HTTP 请求或 stdio 进程\n",
+    "source_asset": "source/ch11-mcp-2c24da355b61.mmd",
+    "svg_path": "svg/ch11-mcp-2c24da355b61.svg",
+    "png_path": "png/ch11-mcp-2c24da355b61.png"
+  },
+  {
+    "source_path": "docs/part-03-rag-and-memory/ch11-mcp.md",
+    "index": 4,
     "semantic_id": "mcp-transport-trust-boundaries",
     "title": "stdio 与 Streamable HTTP 信任边界",
     "alt": "对比本地子进程 stdio 的进程权限边界和远程 HTTP 的网络认证 Origin 与令牌边界",
@@ -565,7 +697,7 @@
   },
   {
     "source_path": "docs/part-03-rag-and-memory/ch11-mcp.md",
-    "index": 4,
+    "index": 5,
     "semantic_id": "mcp-rest-function-calling-relationship",
     "title": "MCP、REST 与 Function Calling 的分工",
     "alt": "模型通过 Function Calling 提出动作，Host 使用 MCP 发现调用能力，MCP Adapter 复用 REST 业务服务",
@@ -576,16 +708,40 @@
     "png_path": "png/ch11-mcp-81ae204f8286.png"
   },
   {
+    "source_path": "docs/part-03-rag-and-memory/ch11-mcp.md",
+    "index": 6,
+    "semantic_id": "enterprise-mcp-request-trust-flow",
+    "title": "企业 MCP 请求的身份、路由与授权链路",
+    "alt": "Client携带当前协议和身份向Gateway发请求，Gateway校验路由头和令牌，MCP Adapter再次授权并调用既有REST服务",
+    "diagram_id": "ch11-mcp-854ce7fbd1a9",
+    "source": "%% id: enterprise-mcp-request-trust-flow\n%% title: 企业 MCP 请求的身份、路由与授权链路\n%% alt: Client携带当前协议和身份向Gateway发请求，Gateway校验路由头和令牌，MCP Adapter再次授权并调用既有REST服务\nflowchart LR\n    Client[\"MCP Client\"] -->|\"版本 + 客户端元数据 + token\"| Gateway[\"API Gateway\"]\n    Gateway --> Header[\"头/正文一致性<br/>Origin / 限流\"]\n    Header --> Adapter[\"MCP Adapter\"]\n    Adapter --> Policy[\"主体 + Tool + 资源授权\"]\n    Policy -->|允许| REST[\"既有知识库 REST\"]\n    Policy -->|拒绝| Audit[\"结构化拒绝 + 审计\"]\n    REST --> ACL[\"租户与文档 ACL\"]\n    ACL --> Result[\"带来源结果\"]\n    Result --> Adapter --> Client\n",
+    "source_asset": "source/ch11-mcp-854ce7fbd1a9.mmd",
+    "svg_path": "svg/ch11-mcp-854ce7fbd1a9.svg",
+    "png_path": "png/ch11-mcp-854ce7fbd1a9.png"
+  },
+  {
+    "source_path": "docs/part-03-rag-and-memory/ch11-mcp.md",
+    "index": 7,
+    "semantic_id": "mcp-failure-localization",
+    "title": "MCP 调用失败定位流程",
+    "alt": "依次检查传输完整性、协议版本、路由头正文一致性、能力存在、授权和工具业务结果",
+    "diagram_id": "ch11-mcp-87dc3095c569",
+    "source": "%% id: mcp-failure-localization\n%% title: MCP 调用失败定位流程\n%% alt: 依次检查传输完整性、协议版本、路由头正文一致性、能力存在、授权和工具业务结果\nflowchart TD\n    Failure[\"调用失败\"] --> Transport{\"消息完整且可解析？\"}\n    Transport -->|否| Wire[\"stdio stdout / HTTP 状态与正文\"]\n    Transport -->|是| Version{\"协议版本支持？\"}\n    Version -->|否| Negotiate[\"选择兼容版本或断开\"]\n    Version -->|是| Header{\"头与正文一致？\"}\n    Header -->|否| Reject[\"拒绝并审计\"]\n    Header -->|是| Capability{\"能力存在且对主体可见？\"}\n    Capability -->|否| Refresh[\"刷新发现缓存 / 拒绝\"]\n    Capability -->|是| Auth{\"资源授权通过？\"}\n    Auth -->|否| Deny[\"拒绝，不自动重试\"]\n    Auth -->|是| Execute[\"检查参数、超时与业务结果\"]\n",
+    "source_asset": "source/ch11-mcp-87dc3095c569.mmd",
+    "svg_path": "svg/ch11-mcp-87dc3095c569.svg",
+    "png_path": "png/ch11-mcp-87dc3095c569.png"
+  },
+  {
     "source_path": "docs/part-03-rag-and-memory/ch12-mcp-server.md",
     "index": 1,
     "semantic_id": "mcp-server-policy-execution-sequence",
     "title": "MCP Server 策略校验与执行时序",
     "alt": "Client 调用经 Server、Policy 校验后访问 Backend 并返回结构化结果的完整时序",
-    "diagram_id": "ch12-mcp-server-ed6688970e51",
-    "source": "%% id: mcp-server-policy-execution-sequence\n%% title: MCP Server 策略校验与执行时序\n%% alt: Client 调用经 Server、Policy 校验后访问 Backend 并返回结构化结果的完整时序\nsequenceDiagram\n    participant C as Client\n    participant S as Server\n    participant P as Policy\n    participant B as Backend\n    C->>S: 初始化/发现\n    C->>S: 调用 + 参数\n    S->>P: 身份、范围、审批\n    P-->>S: 允许/拒绝\n    S->>B: 有限时执行\n    B-->>S: 结果\n    S-->>C: 结构化响应\n",
-    "source_asset": "source/ch12-mcp-server-ed6688970e51.mmd",
-    "svg_path": "svg/ch12-mcp-server-ed6688970e51.svg",
-    "png_path": "png/ch12-mcp-server-ed6688970e51.png"
+    "diagram_id": "ch12-mcp-server-7f71657441a2",
+    "source": "%% id: mcp-server-policy-execution-sequence\n%% title: MCP Server 策略校验与执行时序\n%% alt: Client 调用经 Server、Policy 校验后访问 Backend 并返回结构化结果的完整时序\nsequenceDiagram\n    participant C as Client\n    participant S as Server\n    participant P as Policy\n    participant B as Backend\n    C->>S: 可选 server/discover\n    C->>S: 自描述调用 + 参数\n    S->>P: 身份、范围、审批\n    P-->>S: 允许/拒绝\n    S->>B: 有限时执行\n    B-->>S: 结果\n    S-->>C: 结构化响应\n",
+    "source_asset": "source/ch12-mcp-server-7f71657441a2.mmd",
+    "svg_path": "svg/ch12-mcp-server-7f71657441a2.svg",
+    "png_path": "png/ch12-mcp-server-7f71657441a2.png"
   },
   {
     "source_path": "docs/part-03-rag-and-memory/ch12-mcp-server.md",
@@ -622,6 +778,18 @@
     "source_asset": "source/ch12-mcp-server-288aa897c883.mmd",
     "svg_path": "svg/ch12-mcp-server-288aa897c883.svg",
     "png_path": "png/ch12-mcp-server-288aa897c883.png"
+  },
+  {
+    "source_path": "docs/part-03-rag-and-memory/ch12-mcp-server.md",
+    "index": 5,
+    "semantic_id": "mcp-capability-policy-map",
+    "title": "本地 MCP Server 的能力与策略映射",
+    "alt": "Resource Prompt 和 Tool 分别经过URI参数或动作校验，再进入文件数据库和模板适配器，所有路径共享授权审计和结果限制",
+    "diagram_id": "ch12-mcp-server-20bf9afb3cce",
+    "source": "%% id: mcp-capability-policy-map\n%% title: 本地 MCP Server 的能力与策略映射\n%% alt: Resource Prompt 和 Tool 分别经过URI参数或动作校验，再进入文件数据库和模板适配器，所有路径共享授权审计和结果限制\nflowchart TB\n    Request[\"MCP 请求\"] --> Kind{\"能力类型\"}\n    Kind --> Resource[\"Resource<br/>URI + 读取范围\"]\n    Kind --> Prompt[\"Prompt<br/>模板名 + 参数\"]\n    Kind --> Tool[\"Tool<br/>动作 + JSON Schema\"]\n    Resource --> Policy[\"主体 / 租户 / allowlist\"]\n    Prompt --> Policy\n    Tool --> Policy\n    Policy --> Files[\"固定根目录\"]\n    Policy --> DB[\"预定义只读查询\"]\n    Policy --> Templates[\"版本化模板\"]\n    Files --> Limit[\"大小 / 类型 / 脱敏\"]\n    DB --> Limit\n    Templates --> Limit\n    Limit --> Result[\"结构化结果或错误\"]\n    Audit[\"stderr 日志 / Metrics / Trace\"] -.-> Policy\n",
+    "source_asset": "source/ch12-mcp-server-20bf9afb3cce.mmd",
+    "svg_path": "svg/ch12-mcp-server-20bf9afb3cce.svg",
+    "png_path": "png/ch12-mcp-server-20bf9afb3cce.png"
   },
   {
     "source_path": "docs/part-03-rag-and-memory/ch13-rag.md",
@@ -672,6 +840,18 @@
     "png_path": "png/ch13-rag-0918bab577a2.png"
   },
   {
+    "source_path": "docs/part-03-rag-and-memory/ch13-rag.md",
+    "index": 5,
+    "semantic_id": "rag-ingestion-quality-gates",
+    "title": "RAG 摄取质量门禁与证据可追踪性",
+    "alt": "文档经过病毒检查解析结构校验切分引用定位和权限校验后才构建候选索引，失败项进入隔离队列",
+    "diagram_id": "ch13-rag-a22d21f1320b",
+    "source": "%% id: rag-ingestion-quality-gates\n%% title: RAG 摄取质量门禁与证据可追踪性\n%% alt: 文档经过病毒检查解析结构校验切分引用定位和权限校验后才构建候选索引，失败项进入隔离队列\nflowchart LR\n    Upload[\"原始文件 + 来源 + 权限\"] --> Scan[\"类型 / 病毒 / 大小检查\"]\n    Scan --> Parse[\"解析 + OCR\"]\n    Parse --> Quality{\"页数 / 标题 / 表格 / 置信度\"}\n    Quality -->|失败| Quarantine[\"隔离队列 + 人工复核\"]\n    Quality -->|通过| Chunk[\"结构感知 Chunking\"]\n    Chunk --> Locate{\"每块可回到原文位置？\"}\n    Locate -->|否| Quarantine\n    Locate -->|是| ACL[\"权限与租户快照\"]\n    ACL --> Index[\"候选索引版本\"]\n    Index --> Eval{\"召回 / 引用 / ACL 门禁\"}\n    Eval -->|通过| Active[\"原子切换活动索引\"]\n    Eval -->|失败| Quarantine\n",
+    "source_asset": "source/ch13-rag-a22d21f1320b.mmd",
+    "svg_path": "svg/ch13-rag-a22d21f1320b.svg",
+    "png_path": "png/ch13-rag-a22d21f1320b.png"
+  },
+  {
     "source_path": "docs/part-03-rag-and-memory/ch14-advanced-rag.md",
     "index": 1,
     "semantic_id": "advanced-rag-adaptive-pipeline",
@@ -720,6 +900,18 @@
     "png_path": "png/ch14-advanced-rag-c88871143138.png"
   },
   {
+    "source_path": "docs/part-03-rag-and-memory/ch14-advanced-rag.md",
+    "index": 5,
+    "semantic_id": "advanced-rag-ablation-ladder",
+    "title": "高级 RAG 逐项消融阶梯",
+    "alt": "所有方案共享语料查询和评估器，从稠密基线依次增加Parent Child、Multi Query、Hybrid、Reranking和压缩，每步比较质量延迟成本",
+    "diagram_id": "ch14-advanced-rag-93643db5a22d",
+    "source": "%% id: advanced-rag-ablation-ladder\n%% title: 高级 RAG 逐项消融阶梯\n%% alt: 所有方案共享语料查询和评估器，从稠密基线依次增加Parent Child、Multi Query、Hybrid、Reranking和压缩，每步比较质量延迟成本\nflowchart LR\n    Data[\"固定语料 + 查询集 + ACL\"] --> B0[\"B0 结构切分 + Dense\"]\n    B0 --> B1[\"B1 + Parent-Child\"]\n    B1 --> B2[\"B2 + Multi-Query\"]\n    B2 --> B3[\"B3 + Hybrid\"]\n    B3 --> B4[\"B4 + Reranking\"]\n    B4 --> B5[\"B5 + Compression\"]\n    B0 --> Eval[\"同一评估器\"]\n    B1 --> Eval\n    B2 --> Eval\n    B3 --> Eval\n    B4 --> Eval\n    B5 --> Eval\n    Eval --> Metrics[\"Recall / MRR / Faithfulness<br/>P50 / P95 / 成本\"]\n",
+    "source_asset": "source/ch14-advanced-rag-93643db5a22d.mmd",
+    "svg_path": "svg/ch14-advanced-rag-93643db5a22d.svg",
+    "png_path": "png/ch14-advanced-rag-93643db5a22d.png"
+  },
+  {
     "source_path": "docs/part-03-rag-and-memory/ch15-memory.md",
     "index": 1,
     "semantic_id": "memory-write-retrieve-governance-loop",
@@ -766,6 +958,30 @@
     "source_asset": "source/ch15-memory-bfa9cbaf900e.mmd",
     "svg_path": "svg/ch15-memory-bfa9cbaf900e.svg",
     "png_path": "png/ch15-memory-bfa9cbaf900e.png"
+  },
+  {
+    "source_path": "docs/part-03-rag-and-memory/ch15-memory.md",
+    "index": 5,
+    "semantic_id": "memory-candidate-to-governed-record",
+    "title": "候选记忆到受治理记录的完整写入流程",
+    "alt": "事件提取候选后验证来源同意敏感性稳定性和冲突，写入版本记录并更新索引，失败或不确定进入跳过或待确认",
+    "diagram_id": "ch15-memory-96cc961bef92",
+    "source": "%% id: memory-candidate-to-governed-record\n%% title: 候选记忆到受治理记录的完整写入流程\n%% alt: 事件提取候选后验证来源同意敏感性稳定性和冲突，写入版本记录并更新索引，失败或不确定进入跳过或待确认\nflowchart LR\n    Event[\"来源事件\"] --> Extract[\"提取候选 + 类型\"]\n    Extract --> Source{\"来源可追踪？\"}\n    Source -->|否| Skip[\"不写入\"]\n    Source -->|是| Consent{\"用途与同意允许？\"}\n    Consent -->|否| Skip\n    Consent -->|是| Sensitive{\"敏感或禁止？\"}\n    Sensitive -->|是| Reject[\"拒绝 + 安全审计\"]\n    Sensitive -->|否| Stable{\"未来有用且相对稳定？\"}\n    Stable -->|否| Session[\"仅会话 / 任务状态\"]\n    Stable -->|是| Conflict{\"与活动记录冲突？\"}\n    Conflict -->|是| Review[\"待用户确认\"]\n    Conflict -->|否| Write[\"幂等写入版本 + TTL\"]\n    Write --> Index[\"更新结构索引 / 向量索引\"]\n",
+    "source_asset": "source/ch15-memory-96cc961bef92.mmd",
+    "svg_path": "svg/ch15-memory-96cc961bef92.svg",
+    "png_path": "png/ch15-memory-96cc961bef92.png"
+  },
+  {
+    "source_path": "docs/part-03-rag-and-memory/ch15-memory.md",
+    "index": 6,
+    "semantic_id": "memory-delete-verification-saga",
+    "title": "Memory 删除传播与验证 Saga",
+    "alt": "删除请求先鉴权并生成tombstone，主记录立即失效，随后删除向量缓存摘要并验证各副本，失败进入重试和告警",
+    "diagram_id": "ch15-memory-30e0cb342aea",
+    "source": "%% id: memory-delete-verification-saga\n%% title: Memory 删除传播与验证 Saga\n%% alt: 删除请求先鉴权并生成tombstone，主记录立即失效，随后删除向量缓存摘要并验证各副本，失败进入重试和告警\nflowchart LR\n    Delete[\"删除请求\"] --> Auth[\"主体与记录授权\"]\n    Auth --> Tombstone[\"写 tombstone + 事件 ID\"]\n    Tombstone --> Primary[\"主记录不可检索\"]\n    Primary --> Vector[\"删除向量\"]\n    Primary --> Cache[\"失效缓存\"]\n    Primary --> Summary[\"重建/删除派生摘要\"]\n    Vector --> Verify[\"按 memory_id 验证\"]\n    Cache --> Verify\n    Summary --> Verify\n    Verify -->|全部完成| Done[\"记录完成时间，无原值\"]\n    Verify -->|失败| Retry[\"幂等重试 + 告警\"]\n",
+    "source_asset": "source/ch15-memory-30e0cb342aea.mmd",
+    "svg_path": "svg/ch15-memory-30e0cb342aea.svg",
+    "png_path": "png/ch15-memory-30e0cb342aea.png"
   },
   {
     "source_path": "docs/part-03-rag-and-memory/ch16-vector-databases.md",
@@ -866,6 +1082,30 @@
   {
     "source_path": "docs/part-04-frameworks/ch17-native-api.md",
     "index": 4,
+    "semantic_id": "native-runtime-ports-and-adapters",
+    "title": "原生 Runtime 的端口与适配器",
+    "alt": "Runtime核心依赖模型网关工具注册表状态存储策略追踪和终止端口，各端口可由Fake或生产适配器替换",
+    "diagram_id": "ch17-native-api-f3d9f5392c07",
+    "source": "%% id: native-runtime-ports-and-adapters\n%% title: 原生 Runtime 的端口与适配器\n%% alt: Runtime核心依赖模型网关工具注册表状态存储策略追踪和终止端口，各端口可由Fake或生产适配器替换\nflowchart TB\n    Core[\"Agent Runtime Core\"] --> MG[\"ModelGateway\"]\n    Core --> TR[\"ToolRegistry\"]\n    Core --> SS[\"StateStore\"]\n    Core --> PO[\"Policy\"]\n    Core --> TE[\"TerminationPolicy\"]\n    Core --> Trace[\"Tracer\"]\n    MG --> FakeM[\"Fake Model\"]\n    MG --> Vendor[\"Vendor SDK Adapter\"]\n    TR --> FakeT[\"Fake Tools\"]\n    TR --> Domain[\"Domain Adapters\"]\n    SS --> Memory[\"In-memory\"]\n    SS --> SQL[\"PostgreSQL\"]\n    Trace --> Noop[\"No-op\"]\n    Trace --> OTel[\"OpenTelemetry\"]\n",
+    "source_asset": "source/ch17-native-api-f3d9f5392c07.mmd",
+    "svg_path": "svg/ch17-native-api-f3d9f5392c07.svg",
+    "png_path": "png/ch17-native-api-f3d9f5392c07.png"
+  },
+  {
+    "source_path": "docs/part-04-frameworks/ch17-native-api.md",
+    "index": 5,
+    "semantic_id": "native-runtime-turn-transaction",
+    "title": "原生 Runtime 单轮状态转换",
+    "alt": "每轮加载版本状态并检查终止，模型决策经校验策略和工具执行后持久化观察，版本冲突则重新加载而非覆盖",
+    "diagram_id": "ch17-native-api-a6f6ff5ea564",
+    "source": "%% id: native-runtime-turn-transaction\n%% title: 原生 Runtime 单轮状态转换\n%% alt: 每轮加载版本状态并检查终止，模型决策经校验策略和工具执行后持久化观察，版本冲突则重新加载而非覆盖\nsequenceDiagram\n    participant R as Runtime\n    participant S as StateStore\n    participant M as ModelGateway\n    participant P as Policy\n    participant T as ToolRegistry\n    R->>S: load(run_id)\n    R->>R: TerminationPolicy + Context\n    R->>M: decide(internal messages, schemas)\n    M-->>R: Decision\n    R->>P: validate(subject, action, budget)\n    P-->>R: allow / reject\n    R->>T: execute(call_id, args)\n    T-->>R: structured Observation\n    R->>S: save(new_state, expected_version)\n    S-->>R: committed / version conflict\n",
+    "source_asset": "source/ch17-native-api-a6f6ff5ea564.mmd",
+    "svg_path": "svg/ch17-native-api-a6f6ff5ea564.svg",
+    "png_path": "png/ch17-native-api-a6f6ff5ea564.png"
+  },
+  {
+    "source_path": "docs/part-04-frameworks/ch17-native-api.md",
+    "index": 6,
     "semantic_id": "native-runtime-trace-tree",
     "title": "原生 Agent 运行 Trace 树",
     "alt": "一次 Run 下包含多个模型 Turn、工具 Span 与统一 Token 时间费用预算的层级追踪关系",
@@ -1010,6 +1250,30 @@
   {
     "source_path": "docs/part-04-frameworks/ch20-langgraph.md",
     "index": 4,
+    "semantic_id": "langgraph-project8-checkpoint-lifecycle",
+    "title": "项目 8 的 Checkpoint、中断与恢复生命周期",
+    "alt": "同一thread id运行研究图，每个super step保存快照，审批节点interrupt后API持久化审批任务，Command恢复时节点从头重跑并完成报告",
+    "diagram_id": "ch20-langgraph-f36c5c88e005",
+    "source": "%% id: langgraph-project8-checkpoint-lifecycle\n%% title: 项目 8 的 Checkpoint、中断与恢复生命周期\n%% alt: 同一thread id运行研究图，每个super step保存快照，审批节点interrupt后API持久化审批任务，Command恢复时节点从头重跑并完成报告\nsequenceDiagram\n    participant API as Task API\n    participant G as Compiled Graph\n    participant C as Checkpointer\n    participant H as Human\n    API->>G: invoke(input, thread_id)\n    loop 每个 super-step\n        G->>C: 保存 StateSnapshot\n    end\n    G-->>API: interrupt payload\n    API-->>H: 展示证据和审批动作\n    H->>API: 签名审批决定\n    API->>G: Command(resume=decision), same thread_id\n    G->>C: 加载最新 Checkpoint\n    G->>G: 从 Approval 节点开头重跑\n    G->>C: 保存 completed 状态\n    G-->>API: report + status\n",
+    "source_asset": "source/ch20-langgraph-f36c5c88e005.mmd",
+    "svg_path": "svg/ch20-langgraph-f36c5c88e005.svg",
+    "png_path": "png/ch20-langgraph-f36c5c88e005.png"
+  },
+  {
+    "source_path": "docs/part-04-frameworks/ch20-langgraph.md",
+    "index": 5,
+    "semantic_id": "langgraph-time-travel-reexecution",
+    "title": "LangGraph Time Travel 的重执行边界",
+    "alt": "选择历史Checkpoint后，其前序快照保留，后续模型工具interrupt重新执行并形成新分支，外部副作用不会自动撤销",
+    "diagram_id": "ch20-langgraph-64be2624de88",
+    "source": "%% id: langgraph-time-travel-reexecution\n%% title: LangGraph Time Travel 的重执行边界\n%% alt: 选择历史Checkpoint后，其前序快照保留，后续模型工具interrupt重新执行并形成新分支，外部副作用不会自动撤销\nflowchart LR\n    A[\"Checkpoint A\"] --> B[\"Node B 已执行\"] --> C[\"Checkpoint C\"] --> D[\"外部动作 D\"]\n    A --> Fork[\"从 A replay / fork\"]\n    Fork --> B2[\"Node B 重新执行\"] --> C2[\"新 Checkpoint\"] --> D2[\"动作可能再次触发\"]\n    D -.不会自动撤销.-> External[\"外部系统状态\"]\n    D2 --> External\n",
+    "source_asset": "source/ch20-langgraph-64be2624de88.mmd",
+    "svg_path": "svg/ch20-langgraph-64be2624de88.svg",
+    "png_path": "png/ch20-langgraph-64be2624de88.png"
+  },
+  {
+    "source_path": "docs/part-04-frameworks/ch20-langgraph.md",
+    "index": 6,
     "semantic_id": "langgraph-human-interrupt-resume",
     "title": "LangGraph 人工中断与恢复时序",
     "alt": "Graph 在中断前保存状态并向人工发送审批载荷，随后用相同 thread_id 验证决定并恢复执行",
@@ -1442,6 +1706,18 @@
   {
     "source_path": "docs/part-05-engineering/ch29-evaluation.md",
     "index": 3,
+    "semantic_id": "eval-case-to-release-evidence",
+    "title": "版本化黄金集到发布证据的评估流水线",
+    "alt": "黄金用例和冻结环境运行候选系统，分别计算任务工具检索Judge安全成本延迟指标，经置信区间和发布阈值判定",
+    "diagram_id": "ch29-evaluation-9f476c3f7ed1",
+    "source": "%% id: eval-case-to-release-evidence\n%% title: 版本化黄金集到发布证据的评估流水线\n%% alt: 黄金用例和冻结环境运行候选系统，分别计算任务工具检索Judge安全成本延迟指标，经置信区间和发布阈值判定\nflowchart LR\n    Cases[\"Golden Dataset vN\"] --> Env[\"冻结工具 / 语料 / 时间\"]\n    Env --> Candidate[\"候选 Agent + 配置版本\"]\n    Candidate --> Trace[\"结果 + Tool Trace + Citation\"]\n    Trace --> Deterministic[\"确定性断言<br/>权限 / Schema / Tool\"]\n    Trace --> Retrieval[\"Recall / MRR / 引用\"]\n    Trace --> Judge[\"LLM-as-Judge + rubric\"]\n    Trace --> Ops[\"成本 / P50 / P95\"]\n    Deterministic --> Gate[\"置信区间 + 发布阈值\"]\n    Retrieval --> Gate\n    Judge --> Gate\n    Ops --> Gate\n    Gate -->|通过| Canary[\"Shadow / Canary\"]\n    Gate -->|失败| Report[\"按标签和阶段归因\"]\n",
+    "source_asset": "source/ch29-evaluation-9f476c3f7ed1.mmd",
+    "svg_path": "svg/ch29-evaluation-9f476c3f7ed1.svg",
+    "png_path": "png/ch29-evaluation-9f476c3f7ed1.png"
+  },
+  {
+    "source_path": "docs/part-05-engineering/ch29-evaluation.md",
+    "index": 4,
     "semantic_id": "agent-test-pyramid-detailed",
     "title": "Agent 单元、集成与 E2E 测试边界",
     "alt": "Schema Policy State Budget 位于单元层，模型工具检索存储位于集成层，部署工作流位于 E2E 层",
@@ -1453,7 +1729,7 @@
   },
   {
     "source_path": "docs/part-05-engineering/ch29-evaluation.md",
-    "index": 4,
+    "index": 5,
     "semantic_id": "agent-evaluation-release-loop",
     "title": "Agent 评估发布与失败回流闭环",
     "alt": "变更经离线单元黄金集安全评估灰度和 A B 后发布，线上失败样本回流版本化数据集",
@@ -1502,6 +1778,30 @@
   {
     "source_path": "docs/part-05-engineering/ch30-security.md",
     "index": 4,
+    "semantic_id": "code-review-agent-threat-boundaries",
+    "title": "代码 Review Agent 的资产与信任边界",
+    "alt": "不可信PR代码依赖和网页进入只读沙箱，模型提议评论或修复动作，Policy和审批控制GitHub写入并保护源码Secret和审计",
+    "diagram_id": "ch30-security-328854eb0a80",
+    "source": "%% id: code-review-agent-threat-boundaries\n%% title: 代码 Review Agent 的资产与信任边界\n%% alt: 不可信PR代码依赖和网页进入只读沙箱，模型提议评论或修复动作，Policy和审批控制GitHub写入并保护源码Secret和审计\nflowchart LR\n    PR[\"不可信 PR / Diff / 评论\"] --> Fetch[\"只读仓库读取器\"]\n    Web[\"不可信文档 / 依赖页面\"] --> Sandbox[\"网络受限沙箱\"]\n    Fetch --> Sandbox\n    Sandbox --> Model[\"不可信决策组件\"]\n    Model --> Proposal[\"Review / Patch / Comment 提议\"]\n    Proposal --> Policy[\"主体 / Repo / Branch / 动作 Policy\"]\n    Policy -->|只读报告| Report[\"受控 Artifact\"]\n    Policy -->|写 PR 评论| Approval[\"人工审批绑定\"]\n    Approval --> GitHub[\"最小 scope GitHub Adapter\"]\n    Secret[\"CI Secret\"] -.仅注入 Adapter.-> GitHub\n    Policy --> Audit[\"不可篡改审计\"]\n    GitHub --> Audit\n",
+    "source_asset": "source/ch30-security-328854eb0a80.mmd",
+    "svg_path": "svg/ch30-security-328854eb0a80.svg",
+    "png_path": "png/ch30-security-328854eb0a80.png"
+  },
+  {
+    "source_path": "docs/part-05-engineering/ch30-security.md",
+    "index": 5,
+    "semantic_id": "indirect-injection-exfiltration-attack-tree",
+    "title": "间接提示注入导致数据外泄的攻击树",
+    "alt": "恶意内容要实现外泄必须同时影响模型决策、获得敏感读取、找到外传通道并绕过审批审计，防御在每条路径设置控制",
+    "diagram_id": "ch30-security-aac3eae6909c",
+    "source": "%% id: indirect-injection-exfiltration-attack-tree\n%% title: 间接提示注入导致数据外泄的攻击树\n%% alt: 恶意内容要实现外泄必须同时影响模型决策、获得敏感读取、找到外传通道并绕过审批审计，防御在每条路径设置控制\nflowchart TD\n    Goal[\"目标：把私有源码或 Secret 外泄\"] --> Influence[\"影响模型决策\"]\n    Influence --> Read[\"取得敏感读取能力\"]\n    Read --> Channel{\"找到外传通道\"}\n    Channel --> URL[\"任意 URL / SSRF\"]\n    Channel --> Comment[\"PR 评论 / 邮件\"]\n    Channel --> Log[\"错误或 Trace\"]\n    Guard1[\"内容标记 + 决策最小化\"] -.阻断.-> Influence\n    Guard2[\"对象授权 + Secret 隔离\"] -.阻断.-> Read\n    Guard3[\"egress allowlist + 审批\"] -.阻断.-> Channel\n    Guard4[\"字段日志 allowlist\"] -.阻断.-> Log\n",
+    "source_asset": "source/ch30-security-aac3eae6909c.mmd",
+    "svg_path": "svg/ch30-security-aac3eae6909c.svg",
+    "png_path": "png/ch30-security-aac3eae6909c.png"
+  },
+  {
+    "source_path": "docs/part-05-engineering/ch30-security.md",
+    "index": 6,
     "semantic_id": "agent-security-trust-boundaries",
     "title": "Agent 系统信任边界全景",
     "alt": "用户和外部内容进入 Runtime 与模型后，Policy 控制工具访问敏感数据外部副作用审批和审计",
@@ -2184,6 +2484,30 @@
     "png_path": "png/ch36-architecture-c63facd8a920.png"
   },
   {
+    "source_path": "docs/part-07-advanced/ch36-architecture.md",
+    "index": 5,
+    "semantic_id": "modular-monolith-agent-data-flow",
+    "title": "模块化单体 Agent 平台的数据与控制流",
+    "alt": "API在单体事务中创建Run和Outbox，Worker取得任务后经Runtime调用Model Gateway Tool Registry Knowledge Memory并产生Trace与评估事件",
+    "diagram_id": "ch36-architecture-b39378230f4f",
+    "source": "%% id: modular-monolith-agent-data-flow\n%% title: 模块化单体 Agent 平台的数据与控制流\n%% alt: API在单体事务中创建Run和Outbox，Worker取得任务后经Runtime调用Model Gateway Tool Registry Knowledge Memory并产生Trace与评估事件\nsequenceDiagram\n    participant U as User\n    participant API as API / Identity\n    participant DB as PostgreSQL\n    participant O as Outbox Relay\n    participant W as Worker / Runtime\n    participant M as Model Gateway\n    participant T as Tool Registry\n    participant E as Eval / Observability\n    U->>API: 创建任务\n    API->>DB: transaction: Run + Outbox event\n    DB-->>API: committed run_id\n    O->>DB: claim unpublished event\n    O->>W: RunQueued(event_id)\n    W->>M: 模型决策\n    W->>T: 授权并执行工具\n    W->>DB: versioned state + new outbox\n    O->>E: RunCompleted / ToolCompleted\n",
+    "source_asset": "source/ch36-architecture-b39378230f4f.mmd",
+    "svg_path": "svg/ch36-architecture-b39378230f4f.svg",
+    "png_path": "png/ch36-architecture-b39378230f4f.png"
+  },
+  {
+    "source_path": "docs/part-07-advanced/ch36-architecture.md",
+    "index": 6,
+    "semantic_id": "service-extraction-evidence-gate",
+    "title": "服务拆分的证据门禁",
+    "alt": "模块先在单体内明确所有权和端口，只有容量故障安全或团队指标持续越阈值且团队能承担分布式成本时才拆分",
+    "diagram_id": "ch36-architecture-cd2d1ae828f0",
+    "source": "%% id: service-extraction-evidence-gate\n%% title: 服务拆分的证据门禁\n%% alt: 模块先在单体内明确所有权和端口，只有容量故障安全或团队指标持续越阈值且团队能承担分布式成本时才拆分\nflowchart TD\n    Module[\"单体内清晰模块\"] --> Contract{\"数据所有权和端口稳定？\"}\n    Contract -->|否| Refactor[\"先在单体内重构\"]\n    Contract -->|是| Evidence{\"量化触发条件持续成立？\"}\n    Evidence -->|否| Keep[\"保持模块化单体\"]\n    Evidence -->|是| Cost{\"能承担网络、一致性、观测和 on-call？\"}\n    Cost -->|否| Optimize[\"单体内扩容 / Worker 隔离\"]\n    Cost -->|是| Extract[\"影子流量 + 契约测试 + 可回滚拆分\"]\n",
+    "source_asset": "source/ch36-architecture-cd2d1ae828f0.mmd",
+    "svg_path": "svg/ch36-architecture-cd2d1ae828f0.svg",
+    "png_path": "png/ch36-architecture-cd2d1ae828f0.png"
+  },
+  {
     "source_path": "docs/part-07-advanced/ch37-demo-to-product.md",
     "index": 1,
     "semantic_id": "agent-product-feedback-release-loop",
@@ -2278,5 +2602,17 @@
     "source_asset": "source/ch38-selection-guide-6c7441ae73ad.mmd",
     "svg_path": "svg/ch38-selection-guide-6c7441ae73ad.svg",
     "png_path": "png/ch38-selection-guide-6c7441ae73ad.png"
+  },
+  {
+    "source_path": "docs/part-07-advanced/ch38-selection-guide.md",
+    "index": 5,
+    "semantic_id": "framework-selection-evidence-funnel",
+    "title": "框架选型证据漏斗",
+    "alt": "所有候选先经过硬约束过滤，再做官方文档与本地版本核查，对证据不足且接近者执行同一Spike，最后加权评价并形成可回滚ADR",
+    "diagram_id": "ch38-selection-guide-51fa767d558a",
+    "source": "%% id: framework-selection-evidence-funnel\n%% title: 框架选型证据漏斗\n%% alt: 所有候选先经过硬约束过滤，再做官方文档与本地版本核查，对证据不足且接近者执行同一Spike，最后加权评价并形成可回滚ADR\nflowchart LR\n    Candidates[\"候选框架集合\"] --> Hard[\"硬约束过滤\"]\n    Hard --> Verify[\"官方文档 + 安装版本核查\"]\n    Verify --> Unknown[\"标记证据等级与不确定性\"]\n    Unknown --> Shortlist[\"最多两个接近候选\"]\n    Shortlist --> Spike[\"同一垂直切片 Spike\"]\n    Spike --> Score[\"加权评价 + 敏感性分析\"]\n    Score --> ADR[\"决策 / 风险 / 回滚 / 复审\"]\n",
+    "source_asset": "source/ch38-selection-guide-51fa767d558a.mmd",
+    "svg_path": "svg/ch38-selection-guide-51fa767d558a.svg",
+    "png_path": "png/ch38-selection-guide-51fa767d558a.png"
   }
 ]

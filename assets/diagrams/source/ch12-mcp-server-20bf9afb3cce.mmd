@@ -1,0 +1,19 @@
+%% id: mcp-capability-policy-map
+%% title: 本地 MCP Server 的能力与策略映射
+%% alt: Resource Prompt 和 Tool 分别经过URI参数或动作校验，再进入文件数据库和模板适配器，所有路径共享授权审计和结果限制
+flowchart TB
+    Request["MCP 请求"] --> Kind{"能力类型"}
+    Kind --> Resource["Resource<br/>URI + 读取范围"]
+    Kind --> Prompt["Prompt<br/>模板名 + 参数"]
+    Kind --> Tool["Tool<br/>动作 + JSON Schema"]
+    Resource --> Policy["主体 / 租户 / allowlist"]
+    Prompt --> Policy
+    Tool --> Policy
+    Policy --> Files["固定根目录"]
+    Policy --> DB["预定义只读查询"]
+    Policy --> Templates["版本化模板"]
+    Files --> Limit["大小 / 类型 / 脱敏"]
+    DB --> Limit
+    Templates --> Limit
+    Limit --> Result["结构化结果或错误"]
+    Audit["stderr 日志 / Metrics / Trace"] -.-> Policy

@@ -1,0 +1,17 @@
+%% id: eval-case-to-release-evidence
+%% title: 版本化黄金集到发布证据的评估流水线
+%% alt: 黄金用例和冻结环境运行候选系统，分别计算任务工具检索Judge安全成本延迟指标，经置信区间和发布阈值判定
+flowchart LR
+    Cases["Golden Dataset vN"] --> Env["冻结工具 / 语料 / 时间"]
+    Env --> Candidate["候选 Agent + 配置版本"]
+    Candidate --> Trace["结果 + Tool Trace + Citation"]
+    Trace --> Deterministic["确定性断言<br/>权限 / Schema / Tool"]
+    Trace --> Retrieval["Recall / MRR / 引用"]
+    Trace --> Judge["LLM-as-Judge + rubric"]
+    Trace --> Ops["成本 / P50 / P95"]
+    Deterministic --> Gate["置信区间 + 发布阈值"]
+    Retrieval --> Gate
+    Judge --> Gate
+    Ops --> Gate
+    Gate -->|通过| Canary["Shadow / Canary"]
+    Gate -->|失败| Report["按标签和阶段归因"]

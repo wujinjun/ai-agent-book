@@ -224,19 +224,19 @@ git commit -m "docs: deepen runtime evaluation and security chapters"
 - Modify: `docs/part-07-advanced/ch38-selection-guide.md`
 - Modify: `notes/core-chapter-depth.yml`
 
-- [ ] **Step 1: Extend chapter 36**
+- [x] **Step 1: Extend chapter 36**
 
 Add a complete enterprise case beginning as a modular monolith. Define module boundaries, ownership, synchronous and event flows, outbox, workflow engine, model gateway, tool registry, memory, evaluation and observability services. State measurable triggers for service extraction and reject premature microservices.
 
-- [ ] **Step 2: Extend chapter 38**
+- [x] **Step 2: Extend chapter 38**
 
 Use one research-workflow vertical slice for native API, OpenAI Agents SDK, PydanticAI and LangGraph decision analysis. Record required capabilities, weighted criteria, uncertainty, spike evidence, lock-in controls and rollback choice. Framework API code remains P3 work unless installed.
 
-- [ ] **Step 3: Mark batch D complete and run the depth contract**
+- [x] **Step 3: Mark batch D complete and run the depth contract**
 
 Expected: all 16 configured core chapters satisfy their completed checks.
 
-- [ ] **Step 4: Commit batch D**
+- [x] **Step 4: Commit batch D**
 
 ```bash
 git add docs/part-07-advanced/ch36-architecture.md \
@@ -253,26 +253,26 @@ git commit -m "docs: deepen architecture and selection chapters"
 - Modify: `docs/QUALITY_ROADMAP.md`
 - Modify: `docs/book-index.md`
 
-- [ ] **Step 1: Review all 16 chapters for duplicated template prose**
+- [x] **Step 1: Review all 16 chapters for duplicated template prose**
 
 Search repeated sentences and identical transitions. Keep the common learning contract but replace quota-driven prose with topic-specific explanations.
 
-- [ ] **Step 2: Verify diagrams by semantic purpose**
+- [x] **Step 2: Verify diagrams by semantic purpose**
 
 For each changed diagram, require stable id, title, alt text, a lead-in sentence and a following interpretation paragraph. Do not add diagrams merely to increase count.
 
-- [ ] **Step 3: Update completion evidence**
+- [x] **Step 3: Update completion evidence**
 
 Record actual character count, acceptance experiment and remaining gap for every P1 chapter. Check P1 roadmap items only after all 16 core entries use `complete: true`.
 
-- [ ] **Step 4: Regenerate derived pages and diagrams**
+- [x] **Step 4: Regenerate derived pages and diagrams**
 
 ```bash
 .venv/bin/python scripts/build_index.py
 .venv/bin/python scripts/build_diagrams.py --mmdc node_modules/.bin/mmdc
 ```
 
-- [ ] **Step 5: Run the complete gate**
+- [x] **Step 5: Run the complete gate**
 
 ```bash
 .venv/bin/ruff check .
@@ -285,13 +285,13 @@ env PYTHONPATH=src .venv/bin/python scripts/audit_publication.py all output
 
 Expected: all commands succeed with no missing navigation pages, stale metadata or publication issues.
 
-- [ ] **Step 6: Commit P1 acceptance**
+- [x] **Step 6: Commit P1 acceptance**
 
 ```bash
 git add docs notes PROJECT_STATUS.md tests assets
 git commit -m "docs: complete core chapter depth review"
 ```
 
-- [ ] **Step 7: Create the P2 implementation plan**
+- [x] **Step 7: Create the P2 implementation plan**
 
 Create `docs/superpowers/plans/2026-08-06-textbook-p2-examples.md` with one independently testable task per missing example directory and explicit dependency isolation.

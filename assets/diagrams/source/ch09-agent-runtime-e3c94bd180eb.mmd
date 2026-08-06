@@ -1,0 +1,16 @@
+%% id: research-runtime-layers-and-checkpoints
+%% title: 研究 Agent Runtime 的分层与 Checkpoint
+%% alt: 命令进入运行时，经上下文构建、模型决策、策略校验、工具执行和验收，每个安全边界保存事件与Checkpoint
+flowchart LR
+    API["任务 API"] --> Load["加载状态 + 版本"]
+    Load --> Context["Context Builder"]
+    Context --> Model["Model Gateway"]
+    Model --> Validate["Decision Validator"]
+    Validate --> Policy["Policy Engine"]
+    Policy --> Execute["Tool Executor"]
+    Execute --> Observe["规范化 Observation"]
+    Observe --> Save["事件 + Checkpoint"]
+    Save --> Accept{"验收 / TerminationPolicy"}
+    Accept -->|继续| Context
+    Accept -->|完成| Result["版本化产物"]
+    Accept -->|暂停| Queue["等待审批 / 稍后恢复"]

@@ -1,0 +1,22 @@
+%% id: approved-idempotent-tool-state-machine
+%% title: 高风险工具的审批、幂等与状态核实状态机
+%% alt: 工具提议经过参数校验授权和审批后执行，超时时先核实外部状态，成功或确认未执行后才结束或重试
+stateDiagram-v2
+    [*] --> Proposed
+    Proposed --> Rejected: 未知工具 / 参数非法
+    Proposed --> Authorized: Schema 与权限通过
+    Authorized --> AwaitingApproval: 高风险动作
+    Authorized --> Executing: 低风险动作
+    AwaitingApproval --> Executing: 审批令牌匹配
+    AwaitingApproval --> Rejected: 拒绝 / 过期 / 参数变化
+    Executing --> Succeeded: 明确成功
+    Executing --> Failed: 明确业务失败
+    Executing --> Unknown: 超时 / 连接中断
+    Unknown --> Succeeded: 状态核实为已执行
+    Unknown --> Retryable: 状态核实为未执行
+    Unknown --> ManualReview: 无法核实
+    Retryable --> Executing: 相同幂等键且预算允许
+    Succeeded --> [*]
+    Failed --> [*]
+    Rejected --> [*]
+    ManualReview --> [*]

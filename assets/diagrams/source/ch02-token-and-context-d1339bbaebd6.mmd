@@ -1,0 +1,14 @@
+%% id: context-debugging-decision-flow
+%% title: 上下文问题诊断流程
+%% alt: 从原始事实开始依次检查检索、排序、预算选择、消息序列化和模型回答
+flowchart TD
+    Fact["原始事实存在吗？"] -->|否| Source["修复数据源"]
+    Fact -->|是| Retrieved{"被检索到吗？"}
+    Retrieved -->|否| Recall["检查切分、查询和召回"]
+    Retrieved -->|是| Selected{"进入预算结果吗？"}
+    Selected -->|否| Budget["检查排序、去重和分区"]
+    Selected -->|是| Serialized{"最终请求中仍存在吗？"}
+    Serialized -->|否| Middleware["检查模板、摘要和 SDK 序列化"]
+    Serialized -->|是| Used{"回答正确引用吗？"}
+    Used -->|否| Prompt["检查冲突、位置、噪声和输出约束"]
+    Used -->|是| Done["链路正常"]

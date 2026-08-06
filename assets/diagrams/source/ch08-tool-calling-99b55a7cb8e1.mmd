@@ -1,0 +1,15 @@
+%% id: idempotency-record-flow
+%% title: 幂等写工具的执行流程
+%% alt: 请求先按租户工具和幂等键查询记录，成功则复用结果，执行中则等待，参数冲突拒绝，新请求原子占位后才调用外部系统
+flowchart TD
+    Request["写工具请求"] --> Lookup["查询租户 + 工具 + 幂等键"]
+    Lookup --> Existing{"已有记录？"}
+    Existing -->|成功且参数相同| Reuse["返回既有结果"]
+    Existing -->|执行中| Wait["返回处理中 / 查询状态"]
+    Existing -->|参数不同| Conflict["拒绝键冲突"]
+    Existing -->|否| Claim["事务内创建执行中记录"]
+    Claim --> External["调用外部系统"]
+    External -->|明确成功| Save["保存外部 ID 与结果"]
+    External -->|超时| Verify["按外部 ID / 键状态核实"]
+    Verify --> Save
+    Verify --> Manual["无法判断则人工复核"]

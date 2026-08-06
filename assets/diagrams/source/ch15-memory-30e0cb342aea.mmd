@@ -1,0 +1,15 @@
+%% id: memory-delete-verification-saga
+%% title: Memory 删除传播与验证 Saga
+%% alt: 删除请求先鉴权并生成tombstone，主记录立即失效，随后删除向量缓存摘要并验证各副本，失败进入重试和告警
+flowchart LR
+    Delete["删除请求"] --> Auth["主体与记录授权"]
+    Auth --> Tombstone["写 tombstone + 事件 ID"]
+    Tombstone --> Primary["主记录不可检索"]
+    Primary --> Vector["删除向量"]
+    Primary --> Cache["失效缓存"]
+    Primary --> Summary["重建/删除派生摘要"]
+    Vector --> Verify["按 memory_id 验证"]
+    Cache --> Verify
+    Summary --> Verify
+    Verify -->|全部完成| Done["记录完成时间，无原值"]
+    Verify -->|失败| Retry["幂等重试 + 告警"]

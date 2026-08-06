@@ -1,0 +1,15 @@
+%% id: checkpoint-recovery-protocol
+%% title: Checkpoint 恢复协议
+%% alt: Worker重启后读取检查点并核对版本，逐个确认未决副作用，状态明确后从next_node继续，否则转人工复核
+flowchart TD
+    Restart["Worker 启动 / 任务重投"] --> Load["读取最新 Checkpoint"]
+    Load --> Version{"Schema 与代码版本兼容？"}
+    Version -->|否| Migrate["迁移或人工处理"]
+    Version -->|是| Pending{"存在未决副作用？"}
+    Pending -->|否| Resume["从 next_node 恢复"]
+    Pending -->|是| Reconcile["按 action_id 查询外部状态"]
+    Reconcile -->|已成功| Record["记录完成且不重放"]
+    Reconcile -->|明确未执行| Retry["相同幂等键重试"]
+    Reconcile -->|未知| Manual["人工复核"]
+    Record --> Resume
+    Retry --> Resume

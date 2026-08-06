@@ -1,0 +1,13 @@
+%% id: enterprise-mcp-request-trust-flow
+%% title: 企业 MCP 请求的身份、路由与授权链路
+%% alt: Client携带当前协议和身份向Gateway发请求，Gateway校验路由头和令牌，MCP Adapter再次授权并调用既有REST服务
+flowchart LR
+    Client["MCP Client"] -->|"版本 + 客户端元数据 + token"| Gateway["API Gateway"]
+    Gateway --> Header["头/正文一致性<br/>Origin / 限流"]
+    Header --> Adapter["MCP Adapter"]
+    Adapter --> Policy["主体 + Tool + 资源授权"]
+    Policy -->|允许| REST["既有知识库 REST"]
+    Policy -->|拒绝| Audit["结构化拒绝 + 审计"]
+    REST --> ACL["租户与文档 ACL"]
+    ACL --> Result["带来源结果"]
+    Result --> Adapter --> Client

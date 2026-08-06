@@ -1,0 +1,9 @@
+%% id: langgraph-time-travel-reexecution
+%% title: LangGraph Time Travel 的重执行边界
+%% alt: 选择历史Checkpoint后，其前序快照保留，后续模型工具interrupt重新执行并形成新分支，外部副作用不会自动撤销
+flowchart LR
+    A["Checkpoint A"] --> B["Node B 已执行"] --> C["Checkpoint C"] --> D["外部动作 D"]
+    A --> Fork["从 A replay / fork"]
+    Fork --> B2["Node B 重新执行"] --> C2["新 Checkpoint"] --> D2["动作可能再次触发"]
+    D -.不会自动撤销.-> External["外部系统状态"]
+    D2 --> External

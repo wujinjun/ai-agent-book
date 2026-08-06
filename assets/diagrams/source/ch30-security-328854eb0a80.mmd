@@ -1,0 +1,16 @@
+%% id: code-review-agent-threat-boundaries
+%% title: 代码 Review Agent 的资产与信任边界
+%% alt: 不可信PR代码依赖和网页进入只读沙箱，模型提议评论或修复动作，Policy和审批控制GitHub写入并保护源码Secret和审计
+flowchart LR
+    PR["不可信 PR / Diff / 评论"] --> Fetch["只读仓库读取器"]
+    Web["不可信文档 / 依赖页面"] --> Sandbox["网络受限沙箱"]
+    Fetch --> Sandbox
+    Sandbox --> Model["不可信决策组件"]
+    Model --> Proposal["Review / Patch / Comment 提议"]
+    Proposal --> Policy["主体 / Repo / Branch / 动作 Policy"]
+    Policy -->|只读报告| Report["受控 Artifact"]
+    Policy -->|写 PR 评论| Approval["人工审批绑定"]
+    Approval --> GitHub["最小 scope GitHub Adapter"]
+    Secret["CI Secret"] -.仅注入 Adapter.-> GitHub
+    Policy --> Audit["不可篡改审计"]
+    GitHub --> Audit

@@ -1,0 +1,16 @@
+%% id: retrieval-failure-localization
+%% title: 检索失败定位树
+%% alt: 从解析后的原文开始依次检查切分、候选召回、融合排名、权限过滤、重排和生成引用
+flowchart TD
+    Source{"解析后有正确文本？"} -->|否| Parse["修复 OCR / 表格 / 编码"]
+    Source -->|是| Chunk{"相关事实在完整 Chunk 中？"}
+    Chunk -->|否| Split["调整边界、Overlap 或 Parent-Child"]
+    Chunk -->|是| Candidate{"进入任一路候选？"}
+    Candidate -->|否| Query["检查查询改写、词法和向量召回"]
+    Candidate -->|是| Fusion{"融合后仍在 Top-k？"}
+    Fusion -->|否| Tune["检查 RRF、候选深度与重复项"]
+    Fusion -->|是| Access{"权限过滤正确？"}
+    Access -->|否| ACL["修复租户与 Metadata"]
+    Access -->|是| Answer{"回答正确引用？"}
+    Answer -->|否| Generation["检查重排、上下文和生成约束"]
+    Answer -->|是| Done["链路正常"]

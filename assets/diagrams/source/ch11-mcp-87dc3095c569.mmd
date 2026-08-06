@@ -1,0 +1,15 @@
+%% id: mcp-failure-localization
+%% title: MCP 调用失败定位流程
+%% alt: 依次检查传输完整性、协议版本、路由头正文一致性、能力存在、授权和工具业务结果
+flowchart TD
+    Failure["调用失败"] --> Transport{"消息完整且可解析？"}
+    Transport -->|否| Wire["stdio stdout / HTTP 状态与正文"]
+    Transport -->|是| Version{"协议版本支持？"}
+    Version -->|否| Negotiate["选择兼容版本或断开"]
+    Version -->|是| Header{"头与正文一致？"}
+    Header -->|否| Reject["拒绝并审计"]
+    Header -->|是| Capability{"能力存在且对主体可见？"}
+    Capability -->|否| Refresh["刷新发现缓存 / 拒绝"]
+    Capability -->|是| Auth{"资源授权通过？"}
+    Auth -->|否| Deny["拒绝，不自动重试"]
+    Auth -->|是| Execute["检查参数、超时与业务结果"]

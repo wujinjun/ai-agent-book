@@ -1,0 +1,14 @@
+%% id: indirect-injection-exfiltration-attack-tree
+%% title: 间接提示注入导致数据外泄的攻击树
+%% alt: 恶意内容要实现外泄必须同时影响模型决策、获得敏感读取、找到外传通道并绕过审批审计，防御在每条路径设置控制
+flowchart TD
+    Goal["目标：把私有源码或 Secret 外泄"] --> Influence["影响模型决策"]
+    Influence --> Read["取得敏感读取能力"]
+    Read --> Channel{"找到外传通道"}
+    Channel --> URL["任意 URL / SSRF"]
+    Channel --> Comment["PR 评论 / 邮件"]
+    Channel --> Log["错误或 Trace"]
+    Guard1["内容标记 + 决策最小化"] -.阻断.-> Influence
+    Guard2["对象授权 + Secret 隔离"] -.阻断.-> Read
+    Guard3["egress allowlist + 审批"] -.阻断.-> Channel
+    Guard4["字段日志 allowlist"] -.阻断.-> Log

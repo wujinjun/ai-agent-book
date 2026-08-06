@@ -1,0 +1,12 @@
+%% id: reviewer-stopping-policy
+%% title: Reviewer 返修停止条件
+%% alt: Reviewer返回通过则完成，失败条目减少则局部返修，不减少或预算耗尽时停止并转人工或交付部分结果
+flowchart TD
+    Review["Reviewer 结构化结果"] --> Pass{"全部标准通过？"}
+    Pass -->|是| Done["完成"]
+    Pass -->|否| Budget{"返修轮次与预算可用？"}
+    Budget -->|否| Stop["停止：部分结果 / 人工处理"]
+    Budget -->|是| Progress{"失败条目数量或严重度下降？"}
+    Progress -->|是| Repair["仅返修关联任务"]
+    Progress -->|否| Stop
+    Repair --> Review
