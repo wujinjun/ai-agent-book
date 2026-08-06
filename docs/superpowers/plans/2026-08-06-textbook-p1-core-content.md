@@ -146,23 +146,23 @@ git commit -m "docs: deepen context retrieval and runtime chapters"
 - Modify: `docs/part-03-rag-and-memory/ch15-memory.md`
 - Modify: `notes/core-chapter-depth.yml`
 
-- [ ] **Step 1: Extend chapters 11 and 12**
+- [x] **Step 1: Extend chapters 11 and 12**
 
 Add lifecycle request/response examples, capability negotiation, Tool/Resource/Prompt selection, stdio framing, Streamable HTTP trust boundaries, filesystem sandboxing, structured protocol errors and shutdown cleanup. Keep the project labeled as a protocol teaching subset until P3 adds the official SDK.
 
-- [ ] **Step 2: Extend chapter 13**
+- [x] **Step 2: Extend chapter 13**
 
 Add ingestion quality gates, structure-aware chunking, authority metadata, retrieval trace, citation construction, refusal on insufficient evidence and separate retrieval/generation metrics.
 
-- [ ] **Step 3: Extend chapter 14**
+- [x] **Step 3: Extend chapter 14**
 
 Add one baseline dataset and show how Parent-Child, Multi-Query, Hybrid, Reranking and compression change its metrics. Include latency/cost columns and reject strategies without measurable net benefit.
 
-- [ ] **Step 4: Extend chapter 15**
+- [x] **Step 4: Extend chapter 15**
 
 Add memory schemas, write gates, provenance, conflict resolution, TTL, user correction, deletion propagation, retrieval scoring and cross-tenant security tests. Explicitly compare conversation history, RAG corpus, long-term memory and audit log.
 
-- [ ] **Step 5: Mark batch B complete, regenerate the index and verify**
+- [x] **Step 5: Mark batch B complete, regenerate the index and verify**
 
 ```bash
 .venv/bin/python scripts/build_index.py
@@ -170,7 +170,7 @@ env PYTHONPATH=src .venv/bin/python -m pytest \
   tests/test_docs_contract.py tests/test_publication_metadata.py -q
 ```
 
-- [ ] **Step 6: Commit batch B**
+- [x] **Step 6: Commit batch B**
 
 ```bash
 git add docs/part-03-rag-and-memory notes/core-chapter-depth.yml docs/book-index.md
