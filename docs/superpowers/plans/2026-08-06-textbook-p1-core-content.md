@@ -186,27 +186,27 @@ git commit -m "docs: deepen MCP RAG and memory chapters"
 - Modify: `docs/part-05-engineering/ch30-security.md`
 - Modify: `notes/core-chapter-depth.yml`
 
-- [ ] **Step 1: Extend chapter 17**
+- [x] **Step 1: Extend chapter 17**
 
 Derive a lightweight Runtime from typed ports: `ModelGateway`, `ToolRegistry`, `StateStore`, `Policy`, `Tracer` and `TerminationPolicy`. Include retry ownership and a comparison with framework-managed loops.
 
-- [ ] **Step 2: Extend chapter 20**
+- [x] **Step 2: Extend chapter 20**
 
 Add reducers, persistence identity, checkpoint lifecycle, interrupt/resume payload validation, time-travel limitations, retry policies and external side-effect idempotency using the installed LangGraph version.
 
-- [ ] **Step 3: Extend chapter 29**
+- [x] **Step 3: Extend chapter 29**
 
 Add a versioned golden dataset schema, unit/integration/E2E separation, Task Success and Tool Accuracy examples, retrieval metrics, Judge rubric, inter-rater calibration, confidence intervals and release thresholds.
 
-- [ ] **Step 4: Extend chapter 30**
+- [x] **Step 4: Extend chapter 30**
 
 Add a concrete threat model with assets, actors, trust boundaries and abuse cases. Include direct/indirect injection, exfiltration, SSRF-style tool abuse, excessive agency, sandbox escape assumptions, approval binding and audit evidence.
 
-- [ ] **Step 5: Mark batch C complete and verify installed-version claims**
+- [x] **Step 5: Mark batch C complete and verify installed-version claims**
 
 Only chapter 20 may use `installed_and_tested` for framework-specific behavior in this batch. Run the LangGraph project tests and all content contracts.
 
-- [ ] **Step 6: Commit batch C**
+- [x] **Step 6: Commit batch C**
 
 ```bash
 git add docs/part-04-frameworks/ch17-native-api.md \
