@@ -88,7 +88,7 @@ chapters:
   - number: 17
     path: docs/part-04-frameworks/ch17-native-api.md
     target_chars: 8000
-    complete: false
+    complete: true
     required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
     required_terms: ["ModelGateway", "ToolRegistry", "StateStore", "TerminationPolicy", "重试归属"]
     code_languages: [python]
