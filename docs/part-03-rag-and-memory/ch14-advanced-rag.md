@@ -78,8 +78,143 @@ flowchart LR
 
 发布判断同时看质量、成本、延迟和安全。最终回答分数提高但跨租户过滤或尾延迟退化，仍不能发布。
 
-## 最小与完整工程、调试与评估
+## 最小实验
 完整工程先建立基线，再逐项开启策略。检索评估用 Recall@k、MRR/nDCG，回答评估看正确性、Faithfulness 和引用。每项优化必须在真实查询集证明收益，并记录延迟和费用。Agentic RAG 允许动态选择检索器，但需限制轮数和来源域。
+
+最小示例使用同一份查询结果表做消融，而不是为每个高级技术选择最有利案例。先定义基线，再一次只增加一个变量：`dense`、`dense + Hybrid`、`dense + Hybrid + Reranking`。如果同时改变 Chunking、Embedding、top-k 和 Prompt，就无法知道收益来自哪里。
+
+```python
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class RetrievalRun:
+    strategy: str
+    ranked_ids: tuple[str, ...]
+    latency_ms: float
+    cost_units: float
+
+
+def recall_at_k(
+    run: RetrievalRun, relevant_ids: set[str], *, k: int
+) -> float:
+    if not relevant_ids or k <= 0:
+        raise ValueError("相关集合与 k 必须有效")
+    return len(set(run.ranked_ids[:k]) & relevant_ids) / len(relevant_ids)
+
+
+def reciprocal_rank(run: RetrievalRun, relevant_ids: set[str]) -> float:
+    return next(
+        (
+            1.0 / rank
+            for rank, document_id in enumerate(run.ranked_ids, start=1)
+            if document_id in relevant_ids
+        ),
+        0.0,
+    )
+```
+
+实验数据应按查询而不是按成功截图保存。每条样本包含问题、相关 Chunk 或父文档、租户、查询类型和难度标签；每次运行记录策略配置、索引版本、延迟和成本。小规模教学集可以手工标注，但不能把人工构造的关键词同文档标题完全复制，否则会高估稀疏检索。
+
+## 工程案例
+
+继续使用企业制度问答基线。评估集包含四类查询：精确制度编号、自然语言改写、需要完整上下文的条款、跨文档冲突。第一轮仅使用结构切分和稠密召回；随后逐项加入 Parent-Child、Multi-Query、Hybrid、Reranking 与压缩。
+
+```mermaid
+%% id: advanced-rag-ablation-ladder
+%% title: 高级 RAG 逐项消融阶梯
+%% alt: 所有方案共享语料查询和评估器，从稠密基线依次增加Parent Child、Multi Query、Hybrid、Reranking和压缩，每步比较质量延迟成本
+flowchart LR
+    Data["固定语料 + 查询集 + ACL"] --> B0["B0 结构切分 + Dense"]
+    B0 --> B1["B1 + Parent-Child"]
+    B1 --> B2["B2 + Multi-Query"]
+    B2 --> B3["B3 + Hybrid"]
+    B3 --> B4["B4 + Reranking"]
+    B4 --> B5["B5 + Compression"]
+    B0 --> Eval["同一评估器"]
+    B1 --> Eval
+    B2 --> Eval
+    B3 --> Eval
+    B4 --> Eval
+    B5 --> Eval
+    Eval --> Metrics["Recall / MRR / Faithfulness<br/>P50 / P95 / 成本"]
+```
+
+阶梯图不表示所有技术都应该保留。若 B2 的 Multi-Query 仅改善极少数查询，却显著提高 P95 延迟和费用，可以回退到 B1，并只对“原查询零结果”条件触发多查询。若 B5 压缩降低引用完整性，即使 Token 下降也不能直接发布。
+
+### 消融结果表
+
+下面是实验报告模板，`实测` 必须由同一套脚本填充，不能在教材中编造漂亮数字：
+
+| 版本 | 唯一变化 | Recall@5 | MRR | Faithfulness | P50/P95 ms | 成本/查询 | 结论 |
+|---|---|---:|---:|---:|---:|---:|---|
+| B0 | Dense 基线 | 实测 | 实测 | 实测 | 实测 | 实测 | 比较基准 |
+| B1 | + Parent-Child | 实测 | 实测 | 实测 | 实测 | 实测 | 上下文是否更完整 |
+| B2 | + Multi-Query | 实测 | 实测 | 实测 | 实测 | 实测 | 召回增益是否抵消扩写成本 |
+| B3 | + Hybrid | 实测 | 实测 | 实测 | 实测 | 实测 | 编号类查询是否改善 |
+| B4 | + Reranking | 实测 | 实测 | 实测 | 实测 | 实测 | 前列排序增益 |
+| B5 | + Compression | 实测 | 实测 | 实测 | 实测 | 实测 | Token 降低是否损害证据 |
+
+平均延迟会掩盖 Multi-Query 和 Reranker 的尾部影响，因此至少报告 P50 与 P95。成本包括查询改写模型、Embedding、检索、重排、压缩和生成的全部调用。若系统有缓存，应分别报告冷缓存与热缓存，不能把热缓存结果冒充所有请求性能。
+
+### 按失败模式启用策略
+
+完整工程通常不是固定串联所有节点，而是由确定性信号选择最小策略。故障码或制度编号查询优先稀疏加稠密；自然语言改写在基线低置信时才启用 Multi-Query；Child 命中但信息不完整时回取 Parent；候选很多且分数接近时再使用 Reranker；上下文超预算时才压缩。
+
+```python
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class RetrievalPolicy:
+    use_parent: bool
+    use_multi_query: bool
+    use_hybrid: bool
+    use_reranker: bool
+    use_compression: bool
+
+
+def choose_policy(
+    *,
+    has_exact_identifier: bool,
+    baseline_has_results: bool,
+    candidate_count: int,
+    context_over_budget: bool,
+) -> RetrievalPolicy:
+    return RetrievalPolicy(
+        use_parent=True,
+        use_multi_query=not baseline_has_results,
+        use_hybrid=has_exact_identifier,
+        use_reranker=candidate_count > 10,
+        use_compression=context_over_budget,
+    )
+```
+
+这个规则只是可解释起点，阈值仍需评估。它的价值是每个高级节点都有触发原因、指标和关闭开关。若改成模型 Router，也必须让输出落在同一个受控策略 Schema 内，且不能改变 ACL 或数据源 allowlist。
+
+### Parent-Child 与权限一致性
+
+Parent-Child 最危险的实现错误是只过滤 Child 权限，然后返回权限更宽或不同版本的 Parent。索引应记录 `parent_id`、两者版本和相同授权域；回取 Parent 时再次按当前主体过滤。删除 Child 所属文档时，Parent、所有 Child、向量与缓存一起失效。
+
+Multi-Query 也不能用一条扩写查询越过原问题的租户、时间或否定约束。系统可以把关键实体与约束抽成不可变字段，改写器只修改搜索表达。融合 Trace 保存每个候选由哪条查询命中，便于发现某个扩写造成主题漂移。
+
+## 失败分析与调试
+
+高级链路故障更难定位，因为多个节点可能相互抵消。调试必须支持逐节点旁路和重放：
+
+| 现象 | 可能原因 | 对照方式 | 处理 |
+|---|---|---|---|
+| Recall 提高但答案变差 | Parent 太大或候选噪声增加 | B0 与 B1 上下文差异 | 缩小 Parent 或提高选择门禁 |
+| Multi-Query 召回越界主题 | 实体、时间或否定约束漂移 | 原查询与每条改写 diff | 冻结约束并拒绝危险改写 |
+| Hybrid 不如 Dense | 精确词支路引入模板噪声 | 分查询类型看排名 | 调整融合或只条件启用 |
+| Reranker 降低权威来源 | 只学相关性，忽略权威元数据 | 重排前后 authority 分布 | 排序中加入确定性权威门禁 |
+| 压缩后数字或否定词丢失 | 生成式压缩有损 | 压缩前后事实 diff | 保留原句和引用，规则保护关键字段 |
+| P95 急剧上升 | 多查询扇出或慢 Reranker | 节点级 Trace 与并发数 | 截止时间、并发上限和条件启用 |
+| Corrective RAG 无限循环 | 没有新增证据停止条件 | 查询/候选集合哈希 | 限轮次，无新增证据即拒答 |
+
+Agentic RAG 的失败恢复不能无限换数据源。Router 只能选择当前主体获准的数据源，且每轮必须带来新的可验证证据；连续候选集合相同、查询只做同义改写或预算耗尽时，停止并拒答。Graph RAG 若实体消歧错误，应回到构图与原文证据层，而不是让 Writer 自行修复关系。
+
+安全回归包括：所有 Multi-Query 使用相同 ACL；Parent 回取不越权；Reranker 与压缩器看不到不必要的 PII；外部网页指令不改变 Router；图遍历始终带租户条件；缓存键包含策略、索引和权限版本。
 
 ## 误区、安全、总结与练习
 
@@ -130,3 +265,11 @@ Graph RAG 将实体、关系、社区或事件图与文本证据结合，适合�
 
 外部网页、图谱描述和压缩摘要都是不可信数据。查询改写不能扩大用户权限，Multi-Query 每个查询都使用同一 ACL，Graph 遍历不能跨租户边，Agentic Router 不能选择未授权数据源。
 常见误区：高级链路必然优于基线；LLM-as-Judge 可替代人工；图数据库自动等于 Graph RAG。总结：高级 RAG 必须由具体失败和评估证据驱动。练习：对比基线、混合和重排三组实验，并为一次查询漂移写回归测试。面试：查询改写如何导致漂移？何时不使用 Graph RAG？Reranker 与生成 Judge 的职责有何差异？延伸阅读：RRF、Corrective RAG、Self-RAG、Graph RAG 论文及所用检索器官方文档。代码目录：`projects/04-knowledge-agent/`。
+
+## 练习参考答案
+
+1. 基线、Hybrid 和 Rerank 实验必须固定语料、查询、ACL、Chunk、Embedding、top-k 与生成配置；每次只改变指定策略，报告 Recall/MRR、Faithfulness、P95 和总成本。若 Hybrid 提升编号查询但损害其他查询，可以按查询类型条件启用。
+2. 查询漂移回归样本可用“查找 2025 年制度，但不要包含已废止版本”。断言每条改写都保留时间与否定约束，检索候选版本合法；仅比较改写文本相似度不足以证明没有漂移。
+3. Graph RAG 不适合关系简单、主要按段落检索、缺乏可靠实体消歧或更新频繁但无图治理能力的语料。向量或混合检索若已满足指标，引入图只会增加构建、版本和调试成本。
+4. Reranker 判断 query-document 相关性并改善候选顺序；生成 Judge 评价最终主张是否正确或忠于证据。二者输入、失败位置和评价目标不同，不能用 Judge 掩盖初检漏召回。
+5. 发布高级策略需要预先定义净收益阈值，例如 Recall 或任务成功提升，同时 P95、成本、安全和拒答准确率不越界。统计不稳定或只改善单个演示查询时，保留基线并继续收集样本。

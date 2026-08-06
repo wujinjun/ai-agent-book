@@ -72,7 +72,7 @@ chapters:
   - number: 14
     path: docs/part-03-rag-and-memory/ch14-advanced-rag.md
     target_chars: 8000
-    complete: false
+    complete: true
     required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
     required_terms: ["Parent-Child", "Multi-Query", "Hybrid", "Reranking", "消融", "P95"]
     code_languages: [python]
