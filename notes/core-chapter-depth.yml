@@ -1,0 +1,136 @@
+schema_version: 1
+updated_at: "2026-08-06"
+description: >
+  核心章节深度门禁。complete 为 false 表示章节仍在扩充；改为 true 后，
+  tests/test_docs_contract.py 将强制检查篇幅、章节、术语和代码语言。
+
+chapters:
+  - number: 2
+    path: docs/part-01-foundations/ch02-token-and-context.md
+    target_chars: 8000
+    complete: false
+    required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
+    required_terms: ["Tokenizer", "上下文预算", "截断", "滑动窗口", "摘要", "Context Engineering"]
+    code_languages: [python]
+    acceptance_experiment: 固定指令、历史、检索和输出保留量超过窗口时，上下文预算器必须拒绝请求。
+  - number: 5
+    path: docs/part-01-foundations/ch05-embedding.md
+    target_chars: 8000
+    complete: false
+    required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
+    required_terms: ["稀疏检索", "稠密检索", "Hybrid Search", "RRF", "Recall", "MRR"]
+    code_languages: [python]
+    acceptance_experiment: 同一查询比较关键词、向量和 RRF 混合排序，并报告 Recall 与 MRR。
+  - number: 8
+    path: docs/part-02-agent-core/ch08-tool-calling.md
+    target_chars: 8000
+    complete: false
+    required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
+    required_terms: ["Tool Loop", "未知工具", "超时", "幂等", "人工审批", "状态核实"]
+    code_languages: [python]
+    acceptance_experiment: Tool Loop 必须覆盖未知工具、超时、幂等、审批和最大步数终止。
+  - number: 9
+    path: docs/part-02-agent-core/ch09-agent-runtime.md
+    target_chars: 8000
+    complete: false
+    required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
+    required_terms: ["TerminationPolicy", "无进展", "Checkpoint", "恢复", "状态转换"]
+    code_languages: [python]
+    acceptance_experiment: Runtime 必须在成功、无进展、预算耗尽和恢复路径间产生可验证状态转换。
+  - number: 10
+    path: docs/part-02-agent-core/ch10-planning-reflection.md
+    target_chars: 8000
+    complete: false
+    required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
+    required_terms: ["任务依赖", "DAG", "重规划", "Reviewer", "停止条件", "对照实验"]
+    code_languages: [python]
+    acceptance_experiment: 使用同一任务比较无规划、Plan-and-Execute 和 Reviewer 方案的成功、成本与延迟。
+  - number: 11
+    path: docs/part-03-rag-and-memory/ch11-mcp.md
+    target_chars: 8000
+    complete: false
+    required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
+    required_terms: ["初始化", "能力发现", "生命周期", "stdio", "Streamable HTTP", "授权"]
+    code_languages: [json]
+    acceptance_experiment: 演示初始化、能力发现、调用与关闭的完整协议时序。
+  - number: 12
+    path: docs/part-03-rag-and-memory/ch12-mcp-server.md
+    target_chars: 8000
+    complete: false
+    required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
+    required_terms: ["路径越界", "stderr", "结构化错误", "Resource", "Prompt", "权限"]
+    code_languages: [python]
+    acceptance_experiment: 文件工具必须拒绝路径越界，stdio 日志不得污染协议输出。
+  - number: 13
+    path: docs/part-03-rag-and-memory/ch13-rag.md
+    target_chars: 8000
+    complete: false
+    required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
+    required_terms: ["解析质量", "Chunking", "Retriever", "Citation", "拒答", "Faithfulness"]
+    code_languages: [python]
+    acceptance_experiment: 从文档解析、召回、重排到引用保留一条可追踪证据链。
+  - number: 14
+    path: docs/part-03-rag-and-memory/ch14-advanced-rag.md
+    target_chars: 8000
+    complete: false
+    required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
+    required_terms: ["Parent-Child", "Multi-Query", "Hybrid", "Reranking", "消融", "P95"]
+    code_languages: [python]
+    acceptance_experiment: 对基线、Hybrid 和 Rerank 做逐项消融并同时报告质量、成本和延迟。
+  - number: 15
+    path: docs/part-03-rag-and-memory/ch15-memory.md
+    target_chars: 8000
+    complete: false
+    required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
+    required_terms: ["写入门禁", "来源", "冲突", "TTL", "删除", "跨租户"]
+    code_languages: [python]
+    acceptance_experiment: 覆盖记忆写入、冲突、过期、删除和跨租户拒绝。
+  - number: 17
+    path: docs/part-04-frameworks/ch17-native-api.md
+    target_chars: 8000
+    complete: false
+    required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
+    required_terms: ["ModelGateway", "ToolRegistry", "StateStore", "TerminationPolicy", "重试归属"]
+    code_languages: [python]
+    acceptance_experiment: 原生 Runtime 必须分离模型网关、状态、策略、工具和终止判断。
+  - number: 20
+    path: docs/part-04-frameworks/ch20-langgraph.md
+    target_chars: 8000
+    complete: false
+    required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
+    required_terms: ["Reducer", "Checkpoint", "interrupt", "Command", "Time Travel", "幂等"]
+    code_languages: [python]
+    acceptance_experiment: 固定版本下验证 Checkpoint、中断恢复和外部副作用幂等。
+  - number: 29
+    path: docs/part-05-engineering/ch29-evaluation.md
+    target_chars: 8000
+    complete: false
+    required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
+    required_terms: ["Golden Dataset", "Tool Accuracy", "LLM-as-Judge", "校准", "置信区间", "发布阈值"]
+    code_languages: [python]
+    acceptance_experiment: 版本化黄金集同时评估任务、工具、检索与 Judge 校准。
+  - number: 30
+    path: docs/part-05-engineering/ch30-security.md
+    target_chars: 8000
+    complete: false
+    required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
+    required_terms: ["Threat Modeling", "Indirect Prompt Injection", "Data Exfiltration", "SSRF", "Excessive Agency", "审批绑定"]
+    code_languages: [python]
+    acceptance_experiment: 威胁测试必须覆盖间接注入、数据外泄、工具滥用和过度代理。
+  - number: 36
+    path: docs/part-07-advanced/ch36-architecture.md
+    target_chars: 8000
+    complete: false
+    required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
+    required_terms: ["Modular Monolith", "Outbox", "Workflow Engine", "Model Gateway", "Tool Registry", "拆分触发条件"]
+    code_languages: [python]
+    acceptance_experiment: 从模块化单体出发，以量化触发条件决定是否拆分服务。
+  - number: 38
+    path: docs/part-07-advanced/ch38-selection-guide.md
+    target_chars: 8000
+    complete: false
+    required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
+    required_terms: ["加权评价", "Spike", "框架锁定", "回滚", "ADR", "不确定性"]
+    code_languages: [markdown]
+    acceptance_experiment: 使用同一垂直切片形成带证据、权重、不确定性和回滚方案的 ADR。
+
