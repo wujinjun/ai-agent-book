@@ -120,7 +120,7 @@ chapters:
   - number: 36
     path: docs/part-07-advanced/ch36-architecture.md
     target_chars: 8000
-    complete: false
+    complete: true
     required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
     required_terms: ["Modular Monolith", "Outbox", "Workflow Engine", "Model Gateway", "Tool Registry", "拆分触发条件"]
     code_languages: [python]
