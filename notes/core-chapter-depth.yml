@@ -104,7 +104,7 @@ chapters:
   - number: 29
     path: docs/part-05-engineering/ch29-evaluation.md
     target_chars: 8000
-    complete: false
+    complete: true
     required_sections: ["## 最小实验", "## 工程案例", "## 失败分析与调试", "## 练习参考答案"]
     required_terms: ["Golden Dataset", "Tool Accuracy", "LLM-as-Judge", "校准", "置信区间", "发布阈值"]
     code_languages: [python]
