@@ -1,0 +1,13 @@
+configuration,token,count,frequency
+baseline,A,353,0.706
+baseline,B,116,0.232
+baseline,<STOP>,29,0.058
+baseline,?,2,0.004
+cool_top_k,A,437,0.874
+cool_top_k,B,63,0.126
+cool_top_k,<STOP>,0,0.0
+cool_top_k,?,0,0.0
+nucleus,A,370,0.74
+nucleus,B,130,0.26
+nucleus,<STOP>,0,0.0
+nucleus,?,0,0.0

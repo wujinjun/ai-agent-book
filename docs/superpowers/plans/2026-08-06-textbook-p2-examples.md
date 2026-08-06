@@ -60,10 +60,10 @@ Each README must include purpose, architecture diagram, installation, offline ru
 
 **Chapter:** 4. **Dependencies:** root-compatible.
 
-- [ ] Test temperature validation, top-k/top-p filtering, seeded sampling and stop/max-token termination.
-- [ ] Implement a deterministic toy vocabulary distribution; do not pretend it is an LLM.
-- [ ] Produce a CSV/Markdown comparison of repeated runs and empirical frequencies.
-- [ ] Link chapter 4, run tests and commit `feat: add sampling laboratory`.
+- [x] Test temperature validation, top-k/top-p filtering, seeded sampling and stop/max-token termination.
+- [x] Implement a deterministic toy vocabulary distribution; do not pretend it is an LLM.
+- [x] Produce a CSV/Markdown comparison of repeated runs and empirical frequencies.
+- [x] Link chapter 4, run tests and commit `feat: add sampling laboratory`.
 
 ## Task 5: Build `examples/local_semantic_search/`
 

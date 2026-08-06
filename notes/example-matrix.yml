@@ -28,7 +28,7 @@ examples:
     offline_command: python -m sampling_lab.main --seed 2026
     test_command: python -m pytest -q
     dependency_group: root
-    complete: false
+    complete: true
   - name: local_semantic_search
     chapter: 5
     package: local_semantic_search

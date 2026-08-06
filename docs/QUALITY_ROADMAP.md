@@ -42,9 +42,9 @@
 
 ## P2：独立示例工程
 
-- [ ] 创建 `examples/token_counter/`。
-- [ ] 创建 `examples/attention_demo/`。
-- [ ] 创建 `examples/sampling_lab/`。
+- [x] 创建 `examples/token_counter/`。
+- [x] 创建 `examples/attention_demo/`。
+- [x] 创建 `examples/sampling_lab/`。
 - [ ] 创建 `examples/local_semantic_search/`。
 - [ ] 创建 `examples/prompt_registry/`。
 - [ ] 创建 `examples/structured_extractor/`。
