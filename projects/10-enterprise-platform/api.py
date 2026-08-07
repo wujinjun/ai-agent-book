@@ -5,6 +5,7 @@ from pathlib import Path
 
 from ai_agent_book.apps.enterprise_platform import (
     EnterprisePlatform,
+    HMACIdentityVerifier,
     RedisRunQueue,
     create_enterprise_app,
 )
@@ -18,4 +19,6 @@ platform = EnterprisePlatform(
 platform.ensure_tenant("demo", "Demo Tenant")
 platform.ensure_user("demo", "admin", role="admin")
 
-app = create_enterprise_app(platform)
+signing_secret = os.getenv("AUTH_HMAC_SECRET")
+verifier = HMACIdentityVerifier(signing_secret) if signing_secret else None
+app = create_enterprise_app(platform, identity_verifier=verifier)

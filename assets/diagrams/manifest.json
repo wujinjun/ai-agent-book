@@ -2292,6 +2292,18 @@
     "png_path": "png/readme-b74659536dc2.png"
   },
   {
+    "source_path": "projects/10-enterprise-platform/README.md",
+    "index": 4,
+    "semantic_id": "project10-auth-dlq-backup-flow",
+    "title": "企业平台认证、重试、DLQ 与备份恢复",
+    "alt": "身份令牌经验证和数据库 RBAC 进入任务，Worker 失败有限重试后进入租户 DLQ，管理员可重放，数据库通过一致性快照备份",
+    "diagram_id": "readme-e52af520f967",
+    "source": "%% id: project10-auth-dlq-backup-flow\n%% title: 企业平台认证、重试、DLQ 与备份恢复\n%% alt: 身份令牌经验证和数据库 RBAC 进入任务，Worker 失败有限重试后进入租户 DLQ，管理员可重放，数据库通过一致性快照备份\nflowchart LR\n    Token[\"OIDC Adapter<br/>or local signed token\"] --> Identity[\"Verified tenant + user\"]\n    Identity --> RBAC[(\"Database RBAC\")]\n    RBAC --> Run[\"Durable queued Run\"] --> Worker\n    Worker -->|success| Trace[\"Trace + Evaluation + Metrics\"]\n    Worker -->|transient failure| Retry{\"attempt budget\"}\n    Retry -->|remaining| Run\n    Retry -->|exhausted| DLQ[\"Tenant-scoped DLQ\"]\n    Admin[\"Admin approval\"] --> DLQ --> Run\n    RBAC --> Backup[\"SQLite backup API<br/>or PostgreSQL managed snapshot\"]\n",
+    "source_asset": "source/readme-e52af520f967.mmd",
+    "svg_path": "svg/readme-e52af520f967.svg",
+    "png_path": "png/readme-e52af520f967.png"
+  },
+  {
     "source_path": "docs/part-07-advanced/index.md",
     "index": 1,
     "semantic_id": "advanced-agent-productization-map",

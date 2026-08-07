@@ -101,3 +101,25 @@ docker-compose.yml  # API + PostgreSQL + Redis
 ```
 
 本地 CLI 默认 SQLite；Compose 使用 `postgresql+psycopg` 和 Redis。Secret 不应采用示例密码进入生产。常见问题是 Redis 入队成功却数据库事务失败，本实现先提交数据库并把 Redis 作为可恢复唤醒信号。扩展方向包括 OIDC、PostgreSQL RLS、独立 Worker、MCP 执行器、pgvector、配额、OpenTelemetry 和迁移工具。
+
+## 身份、失败恢复与备份边界
+
+API 支持两种明确分离的身份模式：未配置 Verifier 时只用于本地教学的租户/用户 Header；配置 `AUTH_HMAC_SECRET` 后只接受短期签名 Bearer Token。`IdentityVerifier` 是生产 OIDC/JWT 适配边界，HMAC 实现仅用于无需外部 IdP 的离线验收，不应冒充 OIDC。
+
+```mermaid
+%% id: project10-auth-dlq-backup-flow
+%% title: 企业平台认证、重试、DLQ 与备份恢复
+%% alt: 身份令牌经验证和数据库 RBAC 进入任务，Worker 失败有限重试后进入租户 DLQ，管理员可重放，数据库通过一致性快照备份
+flowchart LR
+    Token["OIDC Adapter<br/>or local signed token"] --> Identity["Verified tenant + user"]
+    Identity --> RBAC[("Database RBAC")]
+    RBAC --> Run["Durable queued Run"] --> Worker
+    Worker -->|success| Trace["Trace + Evaluation + Metrics"]
+    Worker -->|transient failure| Retry{"attempt budget"}
+    Retry -->|remaining| Run
+    Retry -->|exhausted| DLQ["Tenant-scoped DLQ"]
+    Admin["Admin approval"] --> DLQ --> Run
+    RBAC --> Backup["SQLite backup API<br/>or PostgreSQL managed snapshot"]
+```
+
+DLQ 只保存错误类型、次数和 Run 引用，不复制 Prompt 或 Secret；管理员重放会清空失败计数。成员只能取消自己的排队任务。`backup.py` 使用 SQLite Online Backup API 生成一致性快照；PostgreSQL 路径明确要求 `pg_dump` 或托管快照，代码不会把文件复制伪装成数据库备份。

@@ -2,14 +2,21 @@
 
 from __future__ import annotations
 
+import base64
+import binascii
+import hmac
 import json
+import sqlite3
+import time
 from collections import deque
+from collections.abc import Callable
 from datetime import UTC, datetime
+from hashlib import sha256
 from pathlib import Path
 from typing import Annotated, Literal, Protocol, cast
 from uuid import uuid4
 
-from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException, Request, Response
 from pydantic import BaseModel, Field
 from redis import Redis
 from sqlalchemy import (
@@ -63,7 +70,7 @@ class RunRecord(BaseModel):
     tenant_id: str
     session_id: str
     prompt: str
-    status: Literal["queued", "running", "succeeded", "failed"]
+    status: Literal["queued", "running", "succeeded", "failed", "cancelled"]
     output: str = ""
     trace_id: str
 
@@ -81,6 +88,14 @@ class EvaluationRecord(BaseModel):
     run_id: str
     passed: bool
     score: float = Field(ge=0, le=1)
+
+
+class DeadLetterRecord(BaseModel):
+    run_id: str
+    tenant_id: str
+    error_type: str
+    attempts: int = Field(ge=1)
+    created_at: datetime
 
 
 class RunQueue(Protocol):
@@ -196,6 +211,32 @@ evaluations = Table(
     Column("score", Float, nullable=False),
     Column("created_at", DateTime(timezone=True), nullable=False),
 )
+schema_versions = Table(
+    "schema_versions",
+    metadata,
+    Column("version", Integer, primary_key=True),
+    Column("applied_at", DateTime(timezone=True), nullable=False),
+)
+run_failures = Table(
+    "run_failures",
+    metadata,
+    Column("run_id", String(36), primary_key=True),
+    Column("attempts", Integer, nullable=False),
+    Column("error_type", String(100), nullable=False),
+    Column("updated_at", DateTime(timezone=True), nullable=False),
+)
+dead_letters = Table(
+    "dead_letters",
+    metadata,
+    Column("run_id", String(36), primary_key=True),
+    Column("tenant_id", String(100), nullable=False, index=True),
+    Column("error_type", String(100), nullable=False),
+    Column("attempts", Integer, nullable=False),
+    Column("created_at", DateTime(timezone=True), nullable=False),
+)
+
+
+RunExecutor = Callable[[RunRecord, list[dict[str, str]]], str]
 
 
 class EnterprisePlatform:
@@ -204,6 +245,8 @@ class EnterprisePlatform:
         database: Path | str,
         *,
         queue: RunQueue | None = None,
+        run_executor: RunExecutor | None = None,
+        max_attempts: int = 3,
     ) -> None:
         if isinstance(database, Path):
             database.parent.mkdir(parents=True, exist_ok=True)
@@ -212,7 +255,17 @@ class EnterprisePlatform:
             database_url = database
         self.engine: Engine = create_engine(database_url, pool_pre_ping=True)
         self.queue = queue or InMemoryRunQueue()
+        self.run_executor = run_executor or self._default_execute
+        self.max_attempts = max_attempts
         metadata.create_all(self.engine)
+        with self.engine.begin() as connection:
+            exists = connection.execute(
+                select(schema_versions.c.version).where(schema_versions.c.version == 1)
+            ).scalar_one_or_none()
+            if exists is None:
+                connection.execute(
+                    insert(schema_versions).values(version=1, applied_at=datetime.now(UTC))
+                )
 
     def create_tenant(self, tenant_id: str, name: str) -> None:
         with self.engine.begin() as connection:
@@ -384,31 +437,173 @@ class EnterprisePlatform:
                 update(runs).where(runs.c.run_id == running.run_id).values(status="running")
             )
             self._trace(connection, running, "run.started", {})
-            docs = connection.execute(
+            document_rows = connection.execute(
                 select(documents.c.document_id, documents.c.content).where(
                     documents.c.tenant_id == running.tenant_id
                 )
             ).mappings().all()
-            terms = {char for char in running.prompt if "\u4e00" <= char <= "\u9fff"}
-            ranked = sorted(
-                docs,
-                key=lambda item: len(terms & set(str(item["content"]))),
-                reverse=True,
-            )
-            evidence = str(ranked[0]["content"]) if ranked and terms else ""
-            output = (
-                f"根据租户知识库：{evidence} [来源：{ranked[0]['document_id']}]"
-                if evidence
-                else f"Assistant 已处理：{running.prompt}"
-            )
+            docs = [
+                {"document_id": str(item["document_id"]), "content": str(item["content"])}
+                for item in document_rows
+            ]
+            try:
+                output = self.run_executor(running, docs)
+            except Exception as exc:
+                return self._record_failure(connection, running, exc)
             connection.execute(
                 update(runs)
                 .where(runs.c.run_id == running.run_id)
                 .values(status="succeeded", output=output)
             )
             completed = running.model_copy(update={"status": "succeeded", "output": output})
-            self._trace(connection, completed, "run.succeeded", {"rag": str(bool(evidence))})
+            self._trace(connection, completed, "run.succeeded", {"rag": str(bool(docs))})
             return completed
+
+    @staticmethod
+    def _default_execute(run: RunRecord, docs: list[dict[str, str]]) -> str:
+        terms = {char for char in run.prompt if "\u4e00" <= char <= "\u9fff"}
+        ranked = sorted(
+            docs,
+            key=lambda item: len(terms & set(item["content"])),
+            reverse=True,
+        )
+        evidence = ranked[0]["content"] if ranked and terms else ""
+        return (
+            f"根据租户知识库：{evidence} [来源：{ranked[0]['document_id']}]"
+            if evidence
+            else f"Assistant 已处理：{run.prompt}"
+        )
+
+    def _record_failure(
+        self,
+        connection: object,
+        run: RunRecord,
+        exc: Exception,
+    ) -> RunRecord:
+        error_type = type(exc).__name__
+        existing = connection.execute(  # type: ignore[attr-defined]
+            select(run_failures.c.attempts).where(run_failures.c.run_id == run.run_id)
+        ).scalar_one_or_none()
+        attempts = int(existing or 0) + 1
+        connection.execute(  # type: ignore[attr-defined]
+            delete(run_failures).where(run_failures.c.run_id == run.run_id)
+        )
+        connection.execute(  # type: ignore[attr-defined]
+            insert(run_failures).values(
+                run_id=run.run_id,
+                attempts=attempts,
+                error_type=error_type,
+                updated_at=datetime.now(UTC),
+            )
+        )
+        if attempts < self.max_attempts:
+            status_value: Literal["queued", "failed"] = "queued"
+            event = "run.retry_scheduled"
+        else:
+            status_value = "failed"
+            event = "run.dead_lettered"
+            connection.execute(  # type: ignore[attr-defined]
+                delete(dead_letters).where(dead_letters.c.run_id == run.run_id)
+            )
+            connection.execute(  # type: ignore[attr-defined]
+                insert(dead_letters).values(
+                    run_id=run.run_id,
+                    tenant_id=run.tenant_id,
+                    error_type=error_type,
+                    attempts=attempts,
+                    created_at=datetime.now(UTC),
+                )
+            )
+        connection.execute(  # type: ignore[attr-defined]
+            update(runs).where(runs.c.run_id == run.run_id).values(status=status_value)
+        )
+        failed = run.model_copy(update={"status": status_value})
+        self._trace(
+            connection,
+            failed,
+            event,
+            {"error_type": error_type, "attempts": str(attempts)},
+        )
+        if status_value == "queued":
+            try:
+                self.queue.push(run.run_id)
+            except Exception:
+                pass
+        return failed
+
+    def cancel_run(self, tenant_id: str, user_id: str, run_id: str) -> RunRecord:
+        role = self._role(tenant_id, user_id)
+        current = self.get_run(tenant_id, run_id)
+        if role != "admin":
+            with self.engine.connect() as connection:
+                owner = connection.execute(
+                    select(sessions.c.user_id)
+                    .select_from(runs.join(sessions, runs.c.session_id == sessions.c.session_id))
+                    .where(runs.c.run_id == run_id)
+                ).scalar_one_or_none()
+            if owner != user_id:
+                raise PermissionError("run cancellation denied")
+        if current.status != "queued":
+            raise ValueError("only queued runs can be cancelled")
+        with self.engine.begin() as connection:
+            connection.execute(
+                update(runs)
+                .where(runs.c.run_id == run_id)
+                .values(status="cancelled", output="cancelled")
+            )
+            cancelled = current.model_copy(update={"status": "cancelled", "output": "cancelled"})
+            self._trace(connection, cancelled, "run.cancelled", {"user_id": user_id})
+        return cancelled
+
+    def list_dead_letters(self, tenant_id: str, user_id: str) -> list[DeadLetterRecord]:
+        self._require_admin(tenant_id, user_id)
+        with self.engine.connect() as connection:
+            rows = connection.execute(
+                select(dead_letters)
+                .where(dead_letters.c.tenant_id == tenant_id)
+                .order_by(dead_letters.c.created_at)
+            ).mappings().all()
+        return [
+            DeadLetterRecord(
+                run_id=str(row["run_id"]),
+                tenant_id=str(row["tenant_id"]),
+                error_type=str(row["error_type"]),
+                attempts=int(row["attempts"]),
+                created_at=cast(datetime, row["created_at"]),
+            )
+            for row in rows
+        ]
+
+    def retry_dead_letter(self, tenant_id: str, user_id: str, run_id: str) -> RunRecord:
+        self._require_admin(tenant_id, user_id)
+        with self.engine.begin() as connection:
+            letter = connection.execute(
+                select(dead_letters).where(
+                    dead_letters.c.tenant_id == tenant_id,
+                    dead_letters.c.run_id == run_id,
+                )
+            ).first()
+            if letter is None:
+                raise KeyError(run_id)
+            connection.execute(delete(dead_letters).where(dead_letters.c.run_id == run_id))
+            connection.execute(delete(run_failures).where(run_failures.c.run_id == run_id))
+            connection.execute(
+                update(runs).where(runs.c.run_id == run_id).values(status="queued")
+            )
+        try:
+            self.queue.push(run_id)
+        except Exception:
+            pass
+        return self.get_run(tenant_id, run_id)
+
+    def backup_sqlite(self, destination: Path) -> Path:
+        if self.engine.url.get_backend_name() != "sqlite":
+            raise RuntimeError("PostgreSQL backups require pg_dump or managed snapshots")
+        source_path = Path(str(self.engine.url.database))
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        with sqlite3.connect(source_path) as source, sqlite3.connect(destination) as target:
+            source.backup(target)
+        return destination
 
     def get_run(self, tenant_id: str, run_id: str) -> RunRecord:
         with self.engine.connect() as connection:
@@ -499,6 +694,82 @@ class Principal(BaseModel):
     user_id: str
 
 
+class IdentityVerifier(Protocol):
+    def verify(self, token: str) -> Principal: ...
+
+
+class HMACIdentityVerifier:
+    """Local signed-token adapter; production OIDC adapters implement the same protocol."""
+
+    def __init__(self, secret: str) -> None:
+        if len(secret) < 32:
+            raise ValueError("identity signing secret must contain at least 32 characters")
+        self.secret = secret.encode()
+
+    @staticmethod
+    def _encode(data: bytes) -> str:
+        return base64.urlsafe_b64encode(data).rstrip(b"=").decode()
+
+    @staticmethod
+    def _decode(value: str) -> bytes:
+        return base64.urlsafe_b64decode(value + "=" * (-len(value) % 4))
+
+    def issue(self, principal: Principal, *, ttl_seconds: int = 300) -> str:
+        payload = json.dumps(
+            {
+                "tenant_id": principal.tenant_id,
+                "user_id": principal.user_id,
+                "exp": int(time.time()) + ttl_seconds,
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+        encoded = self._encode(payload)
+        signature = hmac.new(self.secret, encoded.encode(), sha256).digest()
+        return f"{encoded}.{self._encode(signature)}"
+
+    def verify(self, token: str) -> Principal:
+        try:
+            encoded, supplied = token.split(".", 1)
+            expected = hmac.new(self.secret, encoded.encode(), sha256).digest()
+            if not hmac.compare_digest(expected, self._decode(supplied)):
+                raise PermissionError("invalid identity signature")
+            payload = json.loads(self._decode(encoded))
+            if int(payload["exp"]) < int(time.time()):
+                raise PermissionError("identity token expired")
+            return Principal(tenant_id=payload["tenant_id"], user_id=payload["user_id"])
+        except (
+            binascii.Error,
+            KeyError,
+            UnicodeDecodeError,
+            ValueError,
+            json.JSONDecodeError,
+        ) as exc:
+            raise PermissionError("invalid identity token") from exc
+
+
+def enterprise_principal(
+    request: Request,
+    authorization: Annotated[str | None, Header(alias="Authorization")] = None,
+    x_tenant_id: Annotated[str | None, Header(alias="X-Tenant-ID")] = None,
+    x_user_id: Annotated[str | None, Header(alias="X-User-ID")] = None,
+) -> Principal:
+    verifier = cast(IdentityVerifier | None, request.app.state.identity_verifier)
+    if verifier is not None:
+        if not authorization or not authorization.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="bearer token required")
+        try:
+            return verifier.verify(authorization.removeprefix("Bearer "))
+        except PermissionError as exc:
+            raise HTTPException(status_code=401, detail=str(exc)) from exc
+    if not x_tenant_id or not x_user_id:
+        raise HTTPException(status_code=422, detail="tenant and user headers required")
+    return Principal(tenant_id=x_tenant_id, user_id=x_user_id)
+
+
+EnterprisePrincipalDep = Annotated[Principal, Depends(enterprise_principal)]
+
+
 def principal(
     x_tenant_id: Annotated[str, Header(alias="X-Tenant-ID")],
     x_user_id: Annotated[str, Header(alias="X-User-ID")],
@@ -526,8 +797,13 @@ class RunCreate(BaseModel):
     prompt: str = Field(min_length=1, max_length=20_000)
 
 
-def create_enterprise_app(platform: EnterprisePlatform) -> FastAPI:
+def create_enterprise_app(
+    platform: EnterprisePlatform,
+    *,
+    identity_verifier: IdentityVerifier | None = None,
+) -> FastAPI:
     app = FastAPI(title="Enterprise Agent Platform", version="1.0.0")
+    app.state.identity_verifier = identity_verifier
 
     def forbidden(exc: PermissionError) -> HTTPException:
         return HTTPException(status_code=403, detail=str(exc))
@@ -536,8 +812,16 @@ def create_enterprise_app(platform: EnterprisePlatform) -> FastAPI:
     async def health() -> dict[str, str]:
         return {"status": "ok"}
 
+    @app.get("/health/ready")
+    async def ready() -> dict[str, str]:
+        with platform.engine.connect() as connection:
+            connection.execute(select(1)).scalar_one()
+        return {"status": "ready"}
+
     @app.get("/admin/runs", response_model=list[RunRecord])
-    async def admin_runs(identity: Annotated[Principal, Depends(principal)]) -> list[RunRecord]:
+    async def admin_runs(
+        identity: EnterprisePrincipalDep,
+    ) -> list[RunRecord]:
         try:
             return platform.list_runs(identity.tenant_id, identity.user_id)
         except PermissionError as exc:
@@ -545,7 +829,7 @@ def create_enterprise_app(platform: EnterprisePlatform) -> FastAPI:
 
     @app.post("/admin/agents", response_model=AgentRecord)
     async def create_agent(
-        body: AgentCreate, identity: Annotated[Principal, Depends(principal)]
+        body: AgentCreate, identity: EnterprisePrincipalDep
     ) -> AgentRecord:
         try:
             return platform.register_agent(
@@ -556,7 +840,7 @@ def create_enterprise_app(platform: EnterprisePlatform) -> FastAPI:
 
     @app.post("/admin/tools", response_model=ToolRecord)
     async def create_tool(
-        body: ToolCreate, identity: Annotated[Principal, Depends(principal)]
+        body: ToolCreate, identity: EnterprisePrincipalDep
     ) -> ToolRecord:
         try:
             return platform.register_tool(
@@ -571,7 +855,7 @@ def create_enterprise_app(platform: EnterprisePlatform) -> FastAPI:
 
     @app.post("/sessions", response_model=SessionRecord)
     async def create_session(
-        body: SessionCreate, identity: Annotated[Principal, Depends(principal)]
+        body: SessionCreate, identity: EnterprisePrincipalDep
     ) -> SessionRecord:
         try:
             return platform.create_session(identity.tenant_id, identity.user_id, body.agent_id)
@@ -580,7 +864,7 @@ def create_enterprise_app(platform: EnterprisePlatform) -> FastAPI:
 
     @app.post("/runs", response_model=RunRecord)
     async def create_run(
-        body: RunCreate, identity: Annotated[Principal, Depends(principal)]
+        body: RunCreate, identity: EnterprisePrincipalDep
     ) -> RunRecord:
         try:
             return platform.submit_run(
@@ -590,11 +874,85 @@ def create_enterprise_app(platform: EnterprisePlatform) -> FastAPI:
             raise forbidden(exc) from exc
 
     @app.post("/worker/process-one", response_model=RunRecord | None)
-    async def process_one(identity: Annotated[Principal, Depends(principal)]) -> RunRecord | None:
+    async def process_one(
+        identity: EnterprisePrincipalDep,
+    ) -> RunRecord | None:
         try:
             platform._require_admin(identity.tenant_id, identity.user_id)
             return platform.process_next()
         except PermissionError as exc:
             raise forbidden(exc) from exc
+
+    @app.get("/runs/{run_id}", response_model=RunRecord)
+    async def get_run(
+        run_id: str, identity: EnterprisePrincipalDep
+    ) -> RunRecord:
+        try:
+            return platform.get_run(identity.tenant_id, run_id)
+        except PermissionError as exc:
+            raise HTTPException(status_code=404, detail="run not found") from exc
+
+    @app.get("/runs/{run_id}/traces", response_model=list[TraceRecord])
+    async def get_traces(
+        run_id: str, identity: EnterprisePrincipalDep
+    ) -> list[TraceRecord]:
+        try:
+            return platform.list_traces(identity.tenant_id, run_id)
+        except PermissionError as exc:
+            raise HTTPException(status_code=404, detail="run not found") from exc
+
+    @app.post("/runs/{run_id}/cancel", response_model=RunRecord)
+    async def cancel_run(
+        run_id: str, identity: EnterprisePrincipalDep
+    ) -> RunRecord:
+        try:
+            return platform.cancel_run(identity.tenant_id, identity.user_id, run_id)
+        except PermissionError as exc:
+            raise forbidden(exc) from exc
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+    @app.get("/admin/dead-letters", response_model=list[DeadLetterRecord])
+    async def get_dead_letters(
+        identity: EnterprisePrincipalDep,
+    ) -> list[DeadLetterRecord]:
+        try:
+            return platform.list_dead_letters(identity.tenant_id, identity.user_id)
+        except PermissionError as exc:
+            raise forbidden(exc) from exc
+
+    @app.post("/admin/dead-letters/{run_id}/retry", response_model=RunRecord)
+    async def retry_dead_letter(
+        run_id: str, identity: EnterprisePrincipalDep
+    ) -> RunRecord:
+        try:
+            return platform.retry_dead_letter(identity.tenant_id, identity.user_id, run_id)
+        except PermissionError as exc:
+            raise forbidden(exc) from exc
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail="dead letter not found") from exc
+
+    @app.post("/admin/runs/{run_id}/evaluations", response_model=EvaluationRecord)
+    async def evaluate_run(
+        run_id: str, identity: EnterprisePrincipalDep
+    ) -> EvaluationRecord:
+        try:
+            return platform.evaluate_run(identity.tenant_id, identity.user_id, run_id)
+        except PermissionError as exc:
+            raise forbidden(exc) from exc
+
+    @app.get("/metrics")
+    async def metrics(identity: EnterprisePrincipalDep) -> Response:
+        try:
+            platform._require_admin(identity.tenant_id, identity.user_id)
+        except PermissionError as exc:
+            raise forbidden(exc) from exc
+        runs_count = len(platform.list_runs(identity.tenant_id, identity.user_id))
+        dead_count = len(platform.list_dead_letters(identity.tenant_id, identity.user_id))
+        body = (
+            f'agent_platform_runs{{tenant="{identity.tenant_id}"}} {runs_count}\n'
+            f'agent_platform_dead_letters{{tenant="{identity.tenant_id}"}} {dead_count}\n'
+        )
+        return Response(content=body, media_type="text/plain; version=0.0.4")
 
     return app
