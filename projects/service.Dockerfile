@@ -5,8 +5,7 @@ WORKDIR /app
 COPY pyproject.toml README.md ./
 COPY src ./src
 COPY projects/${PROJECT_SLUG}/api.py ./api.py
-RUN pip install --no-cache-dir \
-    pydantic==2.11.7 fastapi==0.116.1 uvicorn==0.35.0
+RUN pip install --no-cache-dir .
 RUN mkdir -p /app/data && chown -R 65532:65532 /app/data
 
 ENV PYTHONPATH=/app/src \
