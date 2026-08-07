@@ -1,6 +1,6 @@
 # 第32章：Multi-Agent 原理
 
-最后核对日期：2026-07-11。
+最后核对日期：2026-08-07。
 
 ## 导读、目标与前置知识
 Multi-Agent 的价值来自职责、上下文或权限隔离，而不是角色数量。本章覆盖 Handoff、Supervisor、Blackboard、Debate、Reviewer、Shared Memory、Message Passing、协调、死锁与终止。
@@ -134,6 +134,22 @@ stateDiagram-v2
 记录每个 Agent 的 Token、工具、延迟、消息和 Artifact 贡献，计算每个成功任务成本。与单 Agent 基线比较成功率、重复调用、人工介入和尾延迟。增加角色后质量没有显著提升，就移除。
 
 调试可视化消息图和 State timeline，查谁等待谁、哪个 Artifact 被覆盖、终止器为何未触发。回放使用 Fake Model 与固定消息，副作用工具禁用。
+
+```mermaid
+%% id: multi-agent-net-benefit-gate
+%% title: Multi-Agent 净收益验收门
+%% alt: 单 Agent 基线与多 Agent 候选使用同一数据集比较成功率权限隔离成本延迟和终止可靠性，未达门槛则回退
+flowchart TD
+    Dataset["同一黄金集与故障注入"] --> Single["单 Agent 基线"]
+    Dataset --> Multi["Multi-Agent 候选"]
+    Single --> Metrics["成功率 / 权限隔离 / 成本<br/>P95 / 人工介入 / 终止可靠性"]
+    Multi --> Metrics
+    Metrics --> Gain{"净收益达到预设门槛？"}
+    Gain -->|是| Adopt["采用并固定预算、状态与回滚"]
+    Gain -->|否| Revert["回退单 Agent 或确定性 Workflow"]
+```
+
+本书的受限 Reviewer/Executor Fixture 在 CrewAI 1.15.12、AutoGen AgentChat 0.7.5 和 Semantic Kernel 1.44.1 中都能拒绝越权工具、导出状态并在四条消息内终止，但均未胜过一条消息的单 Agent 基线。这个结果说明“框架可运行”和“拆分有价值”是两个不同命题；代码与稳定证据位于 `examples/framework_comparison/multi_agent_spike/`。
 
 ### 常见反模式与安全
 

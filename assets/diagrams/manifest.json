@@ -1392,6 +1392,18 @@
     "png_path": "png/ch22-multi-agent-frameworks-1b311d2e37ed.png"
   },
   {
+    "source_path": "docs/part-04-frameworks/ch22-multi-agent-frameworks.md",
+    "index": 5,
+    "semantic_id": "multi-agent-framework-evidence-gate",
+    "title": "Multi-Agent 框架同题证据门禁",
+    "alt": "三个框架实现同一受限任务，并与单 Agent 基线比较权限状态消息和终止结果",
+    "diagram_id": "ch22-multi-agent-frameworks-1be5a91bb4c9",
+    "source": "%% id: multi-agent-framework-evidence-gate\n%% title: Multi-Agent 框架同题证据门禁\n%% alt: 三个框架实现同一受限任务，并与单 Agent 基线比较权限状态消息和终止结果\nflowchart LR\n    Spec[\"同一任务契约\"] --> Crew[\"CrewAI Flow\"]\n    Spec --> Auto[\"AutoGen Team\"]\n    Spec --> SK[\"Semantic Kernel Plugins\"]\n    Crew --> Gate[\"Tool Policy / State Export<br/>Message Limit / Termination\"]\n    Auto --> Gate\n    SK --> Gate\n    Base[\"单 Agent：1 条消息\"] --> Compare{\"协作净收益\"}\n    Gate --> Compare\n    Compare -->|本 Fixture 未证明| Simple[\"优先单 Agent 或普通工作流\"]\n",
+    "source_asset": "source/ch22-multi-agent-frameworks-1be5a91bb4c9.mmd",
+    "svg_path": "svg/ch22-multi-agent-frameworks-1be5a91bb4c9.svg",
+    "png_path": "png/ch22-multi-agent-frameworks-1be5a91bb4c9.png"
+  },
+  {
     "source_path": "docs/part-05-engineering/index.md",
     "index": 1,
     "semantic_id": "agent-production-engineering-loop",
@@ -2302,6 +2314,18 @@
     "source_asset": "source/ch32-multi-agent-principles-a83286a3eb17.mmd",
     "svg_path": "svg/ch32-multi-agent-principles-a83286a3eb17.svg",
     "png_path": "png/ch32-multi-agent-principles-a83286a3eb17.png"
+  },
+  {
+    "source_path": "docs/part-07-advanced/ch32-multi-agent-principles.md",
+    "index": 5,
+    "semantic_id": "multi-agent-net-benefit-gate",
+    "title": "Multi-Agent 净收益验收门",
+    "alt": "单 Agent 基线与多 Agent 候选使用同一数据集比较成功率权限隔离成本延迟和终止可靠性，未达门槛则回退",
+    "diagram_id": "ch32-multi-agent-principles-fe6dafcac906",
+    "source": "%% id: multi-agent-net-benefit-gate\n%% title: Multi-Agent 净收益验收门\n%% alt: 单 Agent 基线与多 Agent 候选使用同一数据集比较成功率权限隔离成本延迟和终止可靠性，未达门槛则回退\nflowchart TD\n    Dataset[\"同一黄金集与故障注入\"] --> Single[\"单 Agent 基线\"]\n    Dataset --> Multi[\"Multi-Agent 候选\"]\n    Single --> Metrics[\"成功率 / 权限隔离 / 成本<br/>P95 / 人工介入 / 终止可靠性\"]\n    Multi --> Metrics\n    Metrics --> Gain{\"净收益达到预设门槛？\"}\n    Gain -->|是| Adopt[\"采用并固定预算、状态与回滚\"]\n    Gain -->|否| Revert[\"回退单 Agent 或确定性 Workflow\"]\n",
+    "source_asset": "source/ch32-multi-agent-principles-fe6dafcac906.mmd",
+    "svg_path": "svg/ch32-multi-agent-principles-fe6dafcac906.svg",
+    "png_path": "png/ch32-multi-agent-principles-fe6dafcac906.png"
   },
   {
     "source_path": "docs/part-07-advanced/ch33-agentic-coding.md",

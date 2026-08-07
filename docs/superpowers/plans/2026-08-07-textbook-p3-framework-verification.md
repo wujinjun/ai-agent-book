@@ -42,11 +42,11 @@ flowchart LR
 
 ## Task 4：CrewAI、AutoGen 与 Semantic Kernel
 
-- [ ] 每个框架只实现同一受限 Reviewer/Executor 协作任务，不堆叠角色。
-- [ ] 测试消息上限、共享状态、工具权限、终止条件和循环检测。
-- [ ] 记录单 Agent 基线，只有净收益为正时才推荐 Multi-Agent。
-- [ ] 对 Semantic Kernel 使用独立 .NET 或 Python 环境，以官方当前支持面为准。
-- [ ] 更新第 22、32、38 章的能力矩阵和不适用条件。
+- [x] 每个框架只实现同一受限 Reviewer/Executor 协作任务，不堆叠角色。
+- [x] 测试消息上限、共享状态、工具权限、终止条件和强制不批准路径。
+- [x] 记录单 Agent 基线；本 Fixture 未出现净收益，因此不推荐增加角色。
+- [x] Semantic Kernel 使用独立 Python 3.12 环境，并明确只验证 Kernel/Plugin 当前支持面。
+- [x] 更新第 22、32、38 章的能力矩阵和不适用条件。
 
 ## Task 5：OpenAI Agents SDK 与 PydanticAI 补充验证
 

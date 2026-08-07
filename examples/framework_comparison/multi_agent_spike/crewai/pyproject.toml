@@ -1,0 +1,18 @@
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ai-agent-book-crewai-spike"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+dependencies = ["crewai==1.15.12"]
+
+[project.optional-dependencies]
+test = ["pytest==9.1.1"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.hatch.build.targets.wheel]
+include = ["runner.py"]

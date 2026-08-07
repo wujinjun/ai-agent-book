@@ -61,7 +61,7 @@
 | 第19章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 真实 Provider 与生产服务部署 | P3—P4 |
 | 第20章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 数据库 Checkpointer 和外部副作用恢复 | P4 |
 | 第21章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 原生候选、真实 Embedding、Citation、P95 与成本 ADR | P3—P4 |
-| 第22章 | `publishable_draft` | `inline_only` | `official_docs_checked` | `pdf_epub_verified` | 三种框架最小链路实测 | P2—P3 |
+| 第22章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 真实 Provider、分布式恢复与 SK 原生 Agent Orchestration | P3—P4 |
 | 第23章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 独立练习与答案 | P1—P5 |
 | 第24章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | SSE 恢复、鉴权与限流实测 | P1—P4 |
 | 第25章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 迁移、备份和故障恢复演练 | P1—P4 |
@@ -71,13 +71,13 @@
 | 第29章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 将正文 Schema 落为持续回归流水线 | P4 |
 | 第30章 | `publishable_draft` | `offline_verified` | `official_docs_checked` | `pdf_epub_verified` | 将威胁模型落为项目攻击回归集 | P4 |
 | 第31章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 压测、模型路由和质量约束实验 | P1—P4 |
-| 第32章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 单 Agent 对照与协作净收益评估 | P1—P4 |
+| 第32章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 扩大黄金集并评估真实模型协作净收益 | P4 |
 | 第33章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 沙箱、补丁回滚和真实仓库实验 | P1—P4 |
 | 第34章 | `publishable_draft` | `inline_only` | `official_docs_checked` | `pdf_epub_verified` | Browser Agent 可重复 UI 测试工程 | P1—P4 |
 | 第35章 | `publishable_draft` | `inline_only` | `official_docs_checked` | `pdf_epub_verified` | OCR、音频、视频和多模态评估 | P1—P4 |
 | 第36章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 在项目 10 落地 Outbox 与拆分演练 | P4 |
 | 第37章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | SLA、灰度、运营和商业化案例 | P1—P5 |
-| 第38章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 扩展 LangChain、LlamaIndex 与多 Agent 候选 | P3 |
+| 第38章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 完整 RAG ADR、真实 Provider 与升级回归 | P3—P4 |
 
 ## 10 个项目完成矩阵
 

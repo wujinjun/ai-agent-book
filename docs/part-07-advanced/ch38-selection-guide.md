@@ -1,6 +1,6 @@
 # 第38章：技术选型指南
 
-最后核对日期：2026-08-07。OpenAI Agents SDK 0.18.3、PydanticAI 2.25.0、LangChain 1.3.14 与 LlamaIndex Core 0.14.23 已隔离实跑；其他框架的社区活跃度、许可证、API 和支持状态仍必须在决策当天复核。
+最后核对日期：2026-08-07。OpenAI Agents SDK 0.18.3、PydanticAI 2.25.0、LangChain 1.3.14、LlamaIndex Core 0.14.23、CrewAI 1.15.12、AutoGen AgentChat 0.7.5 与 Semantic Kernel 1.44.1 已隔离实跑；社区活跃度、许可证、API 和支持状态仍必须在决策当天复核。
 
 ## 章节导读
 
@@ -96,6 +96,8 @@ OpenAI Agents SDK 适合希望快速获得 Tool、Handoff、Guardrail、Session 
 LangGraph 的价值在显式状态和持久执行，而不是“让 Agent 更聪明”。LangChain 提供广泛集成和高层 Agent API，适合快速组合，但项目应限制抽象渗透。LlamaIndex 在数据摄取、索引与检索方面有优势，选择前要用真实语料验证 Chunk、Metadata 和 Citation 能否导出。
 
 CrewAI、AutoGen 和 Semantic Kernel 都能表达多 Agent 或编排，但角色数量不是评价指标。若两个角色共享同一上下文、工具和目标，普通函数或 Reviewer Node 往往更便宜。使用前必须验证终止、共享状态、错误恢复、预算和 Trace，而不是只看对话演示。
+
+本书的同题 Spike 给出了更窄、可复现的证据。CrewAI 1.15.12 的 Flow、AutoGen AgentChat 0.7.5 的两 Agent Team、Semantic Kernel 1.44.1 的 Kernel/Plugin 路径均通过权限拒绝、状态导出、消息上限和确定终止测试；AutoGen 额外验证了框架 Team State 与组合终止条件。Semantic Kernel 没有使用原生 Agent Orchestration，因此能力矩阵不得把这次测试外推为全部编排模式已验证。三候选均未在此 Fixture 中证明相对单 Agent 的净收益。
 
 ## 最小实验
 
@@ -305,7 +307,7 @@ def weighted_score(criteria: list[CriterionScore]) -> float:
 3. 面试问题：如何降低框架锁定？何时拒绝 Multi-Agent？社区活跃度如何核实？
 4. 延伸阅读：各框架官方文档与变更日志、Architecture Decision Records、契约测试、可逆架构决策。
 
-本章对应代码目录：当前可运行工作流位于 `projects/08-research-workflow/`；跨框架对照工程列入质量路线图 P2—P3。
+本章对应代码目录：可运行工作流位于 `projects/08-research-workflow/`；统一研究/RAG 对照与受限 Multi-Agent 同题实测位于 `examples/framework_comparison/` 和 `examples/framework_comparison/multi_agent_spike/`。
 
 ## 练习参考答案
 

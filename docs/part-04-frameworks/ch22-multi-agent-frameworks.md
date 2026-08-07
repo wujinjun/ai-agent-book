@@ -1,6 +1,6 @@
 # 第22章：CrewAI、AutoGen 与其他 Multi-Agent 框架
 
-最后核对日期：2026-07-11；依据 CrewAI、AutoGen 与 Microsoft Semantic Kernel 官方文档核对。
+最后核对日期：2026-08-07；CrewAI 1.15.12、AutoGen AgentChat 0.7.5 与 Semantic Kernel 1.44.1 已在独立 Python 3.12 环境安装实测。
 
 ## 导读、目标与前置知识
 本章比较 CrewAI、AutoGen、Semantic Kernel 等角色协作与任务编排方案，重点是通信、成本、调试和“不使用 Multi-Agent”的判断。
@@ -126,6 +126,28 @@ Plugin 描述函数输入、输出与副作用，但授权仍在服务内部。K
 | 适用 | 内容/研究 + Flow | 多 Agent 原型与事件系统 | Microsoft/.NET 企业应用 |
 
 表格只描述当前总体定位，社区活跃、API 稳定和许可要在决策当天重查。不要根据 GitHub Star 或演示角色数量选型。
+
+### 同题实测：通过接线不等于值得拆分
+
+本书使用同一个受限补丁任务验证三个候选：Executor 只能修改 Fixture 中的 `app.py`，必须拒绝读取 Secret；Reviewer 决定批准或退回；运行时最多允许四条角色消息。CrewAI 版本使用类型化 `Flow`，AutoGen 使用原生 `RoundRobinGroupChat` 与组合终止条件，Semantic Kernel 使用 `Kernel` 与两个 `kernel_function` Plugin。全部离线测试均覆盖批准路径和强制不批准路径。
+
+```mermaid
+%% id: multi-agent-framework-evidence-gate
+%% title: Multi-Agent 框架同题证据门禁
+%% alt: 三个框架实现同一受限任务，并与单 Agent 基线比较权限状态消息和终止结果
+flowchart LR
+    Spec["同一任务契约"] --> Crew["CrewAI Flow"]
+    Spec --> Auto["AutoGen Team"]
+    Spec --> SK["Semantic Kernel Plugins"]
+    Crew --> Gate["Tool Policy / State Export<br/>Message Limit / Termination"]
+    Auto --> Gate
+    SK --> Gate
+    Base["单 Agent：1 条消息"] --> Compare{"协作净收益"}
+    Gate --> Compare
+    Compare -->|本 Fixture 未证明| Simple["优先单 Agent 或普通工作流"]
+```
+
+三个实现都用两条角色消息完成任务，单 Agent 基线只需一条。独立 Reviewer 提供职责隔离，但这个小型 Fixture 没有测出成功率收益，因此结论不是“三个框架都推荐”，而是“它们能表达该边界，但本任务应保留更简单方案”。完整代码、固定版本、源码哈希和直接测试见 `examples/framework_comparison/multi_agent_spike/`。Semantic Kernel 当前证据只覆盖 Kernel/Plugin 接线，不冒充原生 Agent Orchestration 实测。
 
 ### 成本、终止与调试
 

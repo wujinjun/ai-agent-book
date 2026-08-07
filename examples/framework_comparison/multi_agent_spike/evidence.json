@@ -1,0 +1,47 @@
+{
+  "checked_at": "2026-08-07",
+  "python": "3.12.13",
+  "spec": "bounded-review-v1",
+  "baseline": {
+    "candidate": "single_agent_baseline",
+    "task_success": true,
+    "messages": 1,
+    "review_independence": false
+  },
+  "candidates": [
+    {
+      "framework": "crewai",
+      "version": "1.15.12",
+      "task_success": true,
+      "messages": 2,
+      "message_limit": 4,
+      "forbidden_tool_denied": true,
+      "termination_reason": "approved",
+      "state_exported": true,
+      "source_sha256": "282657b54a1bfec37fd2d65e59ca6416d6ab5558cc5325a2267bc31421a56c96"
+    },
+    {
+      "framework": "autogen-agentchat",
+      "version": "0.7.5",
+      "task_success": true,
+      "messages": 2,
+      "message_limit": 4,
+      "forbidden_tool_denied": true,
+      "termination_reason": "approved",
+      "state_exported": true,
+      "source_sha256": "bf18fb3d0a808830b29fad65eb5a2625bec38d7bc27bec519d052b1647dcf0c8"
+    },
+    {
+      "framework": "semantic-kernel",
+      "version": "1.44.1",
+      "task_success": true,
+      "messages": 2,
+      "message_limit": 4,
+      "forbidden_tool_denied": true,
+      "termination_reason": "approved",
+      "state_exported": true,
+      "source_sha256": "3ffe288758cf993710ef8b65bd210254d3f43c8649a6d7f11628ba7811a9484e"
+    }
+  ],
+  "conclusion": "All candidates satisfy the bounded contract; none proves net benefit over the one-message baseline. AutoGen additionally exercises native AgentChat team state and termination."
+}
