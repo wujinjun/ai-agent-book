@@ -1,6 +1,6 @@
 # 版本核查清单
 
-官方资料最后核对：2026-07-11。仓库完成度审计：2026-08-06。
+官方资料最后核对：各条目单独记录。仓库完成度审计：2026-08-06。
 
 两个日期含义不同：完成度审计只核对仓库中已有文件、测试与声明，不能据此推断外部框架 API 已在 2026-08-06 重新验证。
 
@@ -8,7 +8,7 @@
 
 | 主题 | 当前状态 | 核查要求 |
 |---|---|---|
-| OpenAI Agents SDK | 官方文档已核对；未安装实测 | Agent、Runner、handoff、guardrail、session、MCP 与 tracing 的具体代码仍以安装版复验为准 |
+| OpenAI Agents SDK | 2026-08-07 固定并安装实测 `openai-agents==0.18.3` | `examples/openai_agents_sdk/` 离线验证 Runner、工具、结构化输出、handoff、agent-as-tool、阻塞 guardrail、SQLiteSession 与敏感 Trace 配置；MCP 在线/远程集成仍留待 P3 |
 | PydanticAI | 官方文档已核对；未安装实测 | Agent、deps_type、output_type、RunContext、TestModel 与 override 需在引入依赖时复验 |
 | LangGraph | 已安装实测 | 1.2.9；项目 8 覆盖 StateGraph、RetryPolicy、Checkpoint、interrupt 与 Command(resume) |
 | MCP | 2026-08-06 已核对当前 2026-07-28 规范；未引入官方 SDK | 第 11 章已说明无状态核心与旧版迁移；项目 3 仍是 2025-11-25 JSON-RPC/stdio 教学子集，需迁移并用当前官方 SDK 实测 |

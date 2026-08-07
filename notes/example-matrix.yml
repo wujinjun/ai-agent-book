@@ -76,7 +76,7 @@ examples:
     offline_command: python -m openai_agents_sdk_example.main --offline
     test_command: python -m pytest -q
     dependency_group: framework
-    complete: false
+    complete: true
   - name: pydanticai_service
     chapter: 19
     package: pydanticai_service

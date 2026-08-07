@@ -1,6 +1,6 @@
 # 第18章：OpenAI Agents SDK
 
-最后核对日期：2026-07-11；依据 OpenAI Agents SDK 官方文档，代码编写时仍须以安装版本为准。
+最后核对日期：2026-08-07；本章核心代码已按官方文档和隔离安装的 `openai-agents==0.18.3` 复验。后续升级仍须先运行本章独立示例的回归测试。
 
 ## 导读、目标与前置知识
 SDK 用少量原语管理 Agent、工具、handoff、guardrail、session 与 tracing。本章目标是理解它替开发者承担的运行时职责及适用边界。前置知识为第17章。
@@ -60,7 +60,7 @@ flowchart LR
 Guardrail 负责模型交互前后的检查，工具和数据库边界仍执行确定性授权。Trace 与审计日志分别服务调试和合规记录。
 
 ## 最小与完整工程
-最小流程是定义 Agent 并用 Runner 执行。由于接口变化快，本书的可运行项目在安装 `openai-agents` 后读取该版本示例，不在未安装时伪造签名。工程版应固定版本、设置 `max_turns`、配置敏感 Trace、处理 guardrail tripwire、工具失败和 session 并发，并用 Fake/测试模型隔离在线调用。
+最小流程是定义 Agent 并用 Runner 执行。本书在独立 Python 3.12 环境固定 `openai-agents==0.18.3`，以实现 SDK `Model` 接口的 `ScriptedModel` 离线验证 Responses 输出项，不模拟模型推理，也不访问网络。工程版应固定版本、设置 `max_turns`、配置敏感 Trace、处理 guardrail tripwire、工具失败和 session 并发，并用 Fake/测试模型隔离在线调用。
 
 ## 误区、调试、实践与安全
 Handoff 不自动意味着更优多 Agent；guardrail 不是数据库权限；Tracing 默认行为需要检查敏感数据设置。调试查看 Runner 回合、工具参数、handoff 目标和最终 output type。只在需要托管循环、handoff、session 或 Trace 时引入 SDK；短流程可直接用 Responses API。
@@ -127,4 +127,4 @@ SDK 可以把 MCP Server 能力提供给 Agent。连接初始化、工具缓存�
 项目结构把 Agent 定义、工具、依赖、guardrails、session 与入口分开。单元测试直接测试工具和 guardrail；运行时测试使用可控模型或录制的协议响应；在线 smoke test 使用专门低权限账号。版本升级先运行工具选择、handoff、output type、session 和 Trace 回归。
 
 常见误区包括把 SDK 当成托管业务平台、把 guardrail 当授权、为每个角色创建 Agent，以及默认 Trace 可以记录全部数据。选型时与第17章原生 Runtime 对照：若流程只有一次模型调用和一个工具，引入 SDK 未必带来净收益。
-总结：SDK 用少量原语提供受测运行时，但业务状态、权限与评估仍由应用负责。练习：对照原生 Runtime 写迁移 ADR，并为 handoff 加上下文过滤测试。面试：Agent-as-tool 与 handoff 有何差异？为什么仍需外部权限？Session 与 Memory 如何区分？延伸阅读与官方资料：[Agents SDK](https://openai.github.io/openai-agents-python/)、[Running agents](https://openai.github.io/openai-agents-python/running_agents/)、[Tracing](https://openai.github.io/openai-agents-python/tracing/)、[MCP](https://openai.github.io/openai-agents-python/mcp/)。代码目录状态：当前示例未安装运行，固定版本的独立工程列入质量路线图 P2—P3。
+总结：SDK 用少量原语提供受测运行时，但业务状态、权限与评估仍由应用负责。练习：对照原生 Runtime 写迁移 ADR，并为 handoff 加上下文过滤测试。面试：Agent-as-tool 与 handoff 有何差异？为什么仍需外部权限？Session 与 Memory 如何区分？延伸阅读与官方资料：[Agents SDK](https://openai.github.io/openai-agents-python/)、[Running agents](https://openai.github.io/openai-agents-python/running_agents/)、[Tracing](https://openai.github.io/openai-agents-python/tracing/)、[MCP](https://openai.github.io/openai-agents-python/mcp/)。本章对应代码目录为 [`examples/openai_agents_sdk/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/openai_agents_sdk)，包含离线入口、固定依赖和成功/失败路径测试。

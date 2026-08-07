@@ -114,11 +114,11 @@ Each README must include purpose, architecture diagram, installation, offline ru
 
 **Chapter:** 18. **Dependencies:** dedicated Python 3.12 environment with a pinned OpenAI Agents SDK.
 
-- [ ] Inspect the installed SDK and official OpenAI documentation before writing API code.
-- [ ] Test tools, structured output, handoff/agent-as-tool choice, guardrail, session and tracing with supported Fake/test facilities.
-- [ ] Provide an offline-default command; online smoke tests are opt-in and budget-limited.
-- [ ] Record exact installed version and check date in `notes/version-check.md`.
-- [ ] Link chapter 18, run isolated tests and commit `feat: add tested OpenAI Agents SDK example`.
+- [x] Inspect the installed SDK and official OpenAI documentation before writing API code.
+- [x] Test tools, structured output, handoff/agent-as-tool choice, guardrail, session and tracing with supported Fake/test facilities.
+- [x] Provide an offline-default command; online smoke tests are opt-in and budget-limited.
+- [x] Record exact installed version and check date in `notes/version-check.md`.
+- [x] Link chapter 18, run isolated tests and commit `feat: add tested OpenAI Agents SDK example`.
 
 ## Task 11: Build `examples/pydanticai_service/`
 

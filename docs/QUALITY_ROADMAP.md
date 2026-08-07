@@ -50,7 +50,7 @@
 - [x] 创建 `examples/structured_extractor/`。
 - [x] 创建 `examples/minimal_agent/`。
 - [x] 创建 `examples/long_term_memory/`。
-- [ ] 创建 `examples/openai_agents_sdk/`。
+- [x] 创建 `examples/openai_agents_sdk/`。
 - [ ] 创建 `examples/pydanticai_service/`。
 - [ ] 创建 `examples/framework_comparison/`。
 - [ ] 每个示例包含 README、入口、独立依赖、环境样例、Fixture 和测试。
@@ -61,7 +61,7 @@
 
 ## P3：框架实测与版本核查
 
-- [ ] 固定并实测 OpenAI Agents SDK。
+- [x] 固定并实测 OpenAI Agents SDK 0.18.3 的核心运行时路径；MCP 集成继续按本阶段剩余任务验证。
 - [ ] 固定并实测 PydanticAI。
 - [ ] 固定并实测 LangChain 和 LlamaIndex。
 - [ ] 实测 CrewAI、AutoGen 和 Semantic Kernel 的最小协作链路。
