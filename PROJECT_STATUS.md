@@ -24,8 +24,8 @@
 
 - 当前 Python 3.12.13 环境下，根测试和十项目测试共 107 项通过。
 - 根代码包含 Tool Runtime、十个项目领域模块、出版管线和质量审计；十个项目入口都能在离线模式运行。
-- P2 规划的 11 个独立示例中已有 9 个完成目录契约、离线运行、直接测试和章节双向链接；PydanticAI Service 与框架对照尚未完成。`tool_runtime` 是规划外的既有工程，不计入 9/11。
-- LangGraph 项目使用固定版本并有直接测试；OpenAI Agents SDK 0.18.3 已在独立 Python 3.12 环境实测核心运行时路径；PydanticAI、LangChain、LlamaIndex、CrewAI、AutoGen 和 Semantic Kernel 尚未全部安装实测。
+- P2 规划的 11 个独立示例中已有 10 个完成目录契约、离线运行、直接测试和章节双向链接；Framework Comparison 尚未完成。`tool_runtime` 是规划外的既有工程，不计入 10/11。
+- LangGraph 项目使用固定版本并有直接测试；OpenAI Agents SDK 0.18.3 与 PydanticAI 2.25.0 已在各自独立 Python 3.12 环境实测核心路径；LangChain、LlamaIndex、CrewAI、AutoGen 和 Semantic Kernel 尚未全部安装实测。
 - Mock、Fixture 和本地协议测试只证明适配边界与控制逻辑，不代表真实第三方账号联调。
 
 ## 项目成熟度
@@ -41,7 +41,7 @@
 - LangGraph 固定并实测 `1.2.9`；项目 8 覆盖 `StateGraph`、`RetryPolicy`、Checkpoint、`interrupt` 与 `Command(resume)`。
 - MCP 第 11—12 章已于 2026-08-06 按 2026-07-28 当前规范复核；项目 3 仍按 2025-11-25 实现 JSON-RPC/stdio 教学子集，没有声称覆盖当前官方 SDK、Streamable HTTP 和远程授权的全部能力。
 - SQLAlchemy 2.0.51、Psycopg 3.3.4 和 Redis client 8.0.1 已用于项目路径测试。
-- OpenAI Agents SDK 0.18.3 已于 2026-08-07 按官方文档和安装包复验；PydanticAI、LangChain、LlamaIndex、CrewAI、AutoGen 和 Semantic Kernel 仍须在 P3 固定版本后复验。
+- OpenAI Agents SDK 0.18.3 与 PydanticAI 2.25.0 已于 2026-08-07 按官方文档和安装包复验；LangChain、LlamaIndex、CrewAI、AutoGen 和 Semantic Kernel 仍须在 P3 固定版本后复验。
 - 2026 版是维护目标年份，不表示外部 API 在全年保持不变。
 
 ## 出版完成度

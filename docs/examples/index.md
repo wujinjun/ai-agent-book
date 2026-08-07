@@ -27,7 +27,7 @@ flowchart LR
 | [Minimal Agent](https://github.com/wujinjun/ai-agent-book/tree/main/examples/minimal_agent) | 9、17 | 可恢复 Runtime、权限与终止策略 | 已完成：崩溃恢复验证 |
 | [Long-term Memory](https://github.com/wujinjun/ai-agent-book/tree/main/examples/long_term_memory) | 15 | 写入治理、来源、TTL、更正与删除 | 已完成：SQLite + Fake Clock |
 | [OpenAI Agents SDK](https://github.com/wujinjun/ai-agent-book/tree/main/examples/openai_agents_sdk) | 18 | 工具、结构化输出、Handoff、Agent-as-tool、Guardrail、Session 与 Trace | 已完成：固定并实测 0.18.3 |
-| PydanticAI Service | 19 | 类型安全 Agent 与 FastAPI | 待核对版本 |
+| [PydanticAI Service](https://github.com/wujinjun/ai-agent-book/tree/main/examples/pydanticai_service) | 19 | 类型化依赖、工具与输出，有限重试和 FastAPI 错误映射 | 已完成：固定并实测 2.25.0 |
 | Framework Comparison | 38 | 同一垂直切片、证据与可逆 ADR | 待实施 |
 
 机器可读的真实状态记录在 `notes/example-matrix.yml`。表中未完成示例不会链接到不存在的目录；各示例交付后，本页将增加安装命令、预期输出和源码入口。

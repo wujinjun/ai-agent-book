@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ai-agent-book-pydanticai-service"
+version = "0.1.0"
+description = "Typed PydanticAI and FastAPI service with deterministic offline tests"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "pydantic-ai-slim==2.25.0",
+  "fastapi==0.116.1",
+  "httpx==0.28.1",
+]
+
+[project.optional-dependencies]
+test = ["pytest==8.4.1", "pytest-asyncio==1.0.0", "ruff==0.12.2", "mypy==2.3.0"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pydanticai_service"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["pydanticai_service"]
+mypy_path = "src"

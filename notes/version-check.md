@@ -9,7 +9,7 @@
 | 主题 | 当前状态 | 核查要求 |
 |---|---|---|
 | OpenAI Agents SDK | 2026-08-07 固定并安装实测 `openai-agents==0.18.3` | `examples/openai_agents_sdk/` 离线验证 Runner、工具、结构化输出、handoff、agent-as-tool、阻塞 guardrail、SQLiteSession 与敏感 Trace 配置；MCP 在线/远程集成仍留待 P3 |
-| PydanticAI | 官方文档已核对；未安装实测 | Agent、deps_type、output_type、RunContext、TestModel 与 override 需在引入依赖时复验 |
+| PydanticAI | 2026-08-07 固定并安装实测 `pydantic-ai-slim==2.25.0` | `examples/pydanticai_service/` 离线验证 Agent、`deps_type`、`output_type`、`RunContext`、Tool Schema、output validator、`TestModel`、`FunctionModel`、`Agent.override` 与 FastAPI 错误映射；真实 Provider 联调仍留待后续受控验证 |
 | LangGraph | 已安装实测 | 1.2.9；项目 8 覆盖 StateGraph、RetryPolicy、Checkpoint、interrupt 与 Command(resume) |
 | MCP | 2026-08-06 已核对当前 2026-07-28 规范；未引入官方 SDK | 第 11 章已说明无状态核心与旧版迁移；项目 3 仍是 2025-11-25 JSON-RPC/stdio 教学子集，需迁移并用当前官方 SDK 实测 |
 | LangChain / LlamaIndex | 官方文档已核对；未安装实测 | 包拆分、推荐抽象、弃用接口在添加示例依赖时复验 |

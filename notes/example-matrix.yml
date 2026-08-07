@@ -84,7 +84,7 @@ examples:
     offline_command: python -m pydanticai_service.main --offline
     test_command: python -m pytest -q
     dependency_group: framework
-    complete: false
+    complete: true
   - name: framework_comparison
     chapter: 38
     package: framework_comparison

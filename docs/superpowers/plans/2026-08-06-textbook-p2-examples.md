@@ -124,10 +124,10 @@ Each README must include purpose, architecture diagram, installation, offline ru
 
 **Chapter:** 19. **Dependencies:** dedicated Python 3.12 environment with pinned PydanticAI and FastAPI.
 
-- [ ] Inspect the installed package and official documentation before implementing.
-- [ ] Test dependency injection, Tool validation, result validation, bounded retry and service error mapping with the official test model/facility available in that version.
-- [ ] Add a FastAPI endpoint and offline integration tests without a paid API.
-- [ ] Record exact version/check date, link chapter 19 and commit `feat: add tested PydanticAI service example`.
+- [x] Inspect the installed package and official documentation before implementing.
+- [x] Test dependency injection, Tool validation, result validation, bounded retry and service error mapping with the official test model/facility available in that version.
+- [x] Add a FastAPI endpoint and offline integration tests without a paid API.
+- [x] Record exact version/check date, link chapter 19 and commit `feat: add tested PydanticAI service example`.
 
 ## Task 12: Build `examples/framework_comparison/`
 

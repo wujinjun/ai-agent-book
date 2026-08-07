@@ -51,7 +51,7 @@
 - [x] 创建 `examples/minimal_agent/`。
 - [x] 创建 `examples/long_term_memory/`。
 - [x] 创建 `examples/openai_agents_sdk/`。
-- [ ] 创建 `examples/pydanticai_service/`。
+- [x] 创建 `examples/pydanticai_service/`。
 - [ ] 创建 `examples/framework_comparison/`。
 - [ ] 每个示例包含 README、入口、独立依赖、环境样例、Fixture 和测试。
 - [ ] 每个示例覆盖成功、参数错误、超时和权限边界中适用的路径。
@@ -62,7 +62,7 @@
 ## P3：框架实测与版本核查
 
 - [x] 固定并实测 OpenAI Agents SDK 0.18.3 的核心运行时路径；MCP 集成继续按本阶段剩余任务验证。
-- [ ] 固定并实测 PydanticAI。
+- [x] 固定并实测 PydanticAI 2.25.0 的类型化依赖、工具、输出、测试模型与 FastAPI 路径；真实 Provider 联调仍按后续阶段验证。
 - [ ] 固定并实测 LangChain 和 LlamaIndex。
 - [ ] 实测 CrewAI、AutoGen 和 Semantic Kernel 的最小协作链路。
 - [ ] 使用官方 MCP SDK 增加 stdio 和 Streamable HTTP 示例。

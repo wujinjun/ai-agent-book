@@ -1,6 +1,6 @@
 # 第19章：PydanticAI
 
-最后核对日期：2026-07-11；依据 Pydantic AI 官方 Overview、Agents 与 Testing 文档核对。
+最后核对日期：2026-08-07；本章核心代码已按官方 Dependencies、Tools、Output 与 Testing 文档和隔离安装的 `pydantic-ai-slim==2.25.0` 复验。
 
 ## 导读、目标与前置知识
 PydanticAI 强调类型安全、依赖注入、验证和模型抽象。本章目标是判断它在 Python 业务服务中的价值。前置知识为 Pydantic、async/await 与第17章。
@@ -106,7 +106,7 @@ async def account_status(ctx: RunContext[SupportDeps]) -> str:
     return await ctx.deps.repository.status(ctx.deps.customer_id)
 ```
 
-示例形态按 2026-07-11 官方文档核对；模型名称与依赖版本在真实项目中通过配置固定。`CustomerRepository` 应只暴露当前客户可用操作，而不是通用 SQL。
+示例形态按 2026-08-07 官方文档和隔离安装版本核对；模型名称与依赖版本在真实项目中通过配置固定。`CustomerRepository` 应只暴露当前客户可用操作，而不是通用 SQL。
 
 ### Tool、Output 与 Validation
 
@@ -163,4 +163,4 @@ FastAPI dependency 构造当前主体与 Repository，路由调用异步 `agent.
 ### 常见误区、调试与安全
 
 常见误区是把类型安全等同于事实安全、把依赖注入当权限系统、让所有验证错误无限反馈模型。调试查看模型消息、工具调用、validation error 与 Usage，并区分框架、供应商和领域错误。安全上依赖最小权限、工具验证主体、输出再鉴权、测试禁止真实模型请求。
-总结：PydanticAI 擅长把类型、依赖、工具和输出放进 Python 工程边界，但复杂持久工作流仍需图或 durable engine。练习：为 FastAPI 工单服务设计依赖类型并用 TestModel 测试。面试：输出校验和业务校验如何分层？何时 PydanticAI 比图工作流更合适？TestModel 与 FunctionModel 如何选择？延伸阅读：[Pydantic AI Overview](https://pydantic.dev/docs/ai/overview/)、Agents 与 Testing 官方文档。代码目录状态：当前示例未安装运行，固定版本的 FastAPI 工程列入质量路线图 P2—P3。
+总结：PydanticAI 擅长把类型、依赖、工具和输出放进 Python 工程边界，但复杂持久工作流仍需图或 durable engine。练习：为 FastAPI 工单服务设计依赖类型并用 TestModel 测试。面试：输出校验和业务校验如何分层？何时 PydanticAI 比图工作流更合适？TestModel 与 FunctionModel 如何选择？延伸阅读：[Dependencies](https://pydantic.dev/docs/ai/core-concepts/dependencies/)、[Tools](https://pydantic.dev/docs/ai/tools-toolsets/tools/)、[Output](https://pydantic.dev/docs/ai/core-concepts/output/)与[Testing](https://pydantic.dev/docs/ai/guides/testing/)。本章对应代码目录为 [`examples/pydanticai_service/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/pydanticai_service)，包含固定依赖、离线入口、FastAPI 集成以及成功与失败路径测试。
