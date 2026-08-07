@@ -51,7 +51,7 @@
 - MkDocs HTML 严格构建、断链、缺图、alt、重复 ID 和残留 Mermaid 自动审计已建立。
 - PDF 当前为 400 页 A4、11,740,686 字节；封面、目录、章节过渡、代码、表格、图示和末页已渲染抽样，自动出版审计通过。
 - EPUB3 为 12,553,294 字节，包含 226 张正文 SVG 与 226 张 PNG 回退，具备 nav、spine、严格 XHTML 与资源引用检查；HTML 下载目录同时包含最新 PDF 和 EPUB。
-- GitHub Release `v2026.7.0` 已发布 P0 前的完整 `output/` 压缩包、PDF 和 EPUB；本轮 P1 产物已在本地重建，尚未发布为新 Release。
+- GitHub `main` 已包含提交 `54dc936`，标签 `v2026.8.0` 已推送。新版完整 `output/` 压缩包、400 页 PDF、EPUB3 与 SHA256 已在本地生成；对应 GitHub Release 尚未创建，因此当前公开下载仍以旧 Release `v2026.7.0` 为准。
 - Apple Books、Calibre、移动阅读器、黑白打印、孤行寡行和最终商业版式仍需人工复验。
 
 ## 尚未完成
