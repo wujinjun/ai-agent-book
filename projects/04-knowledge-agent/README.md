@@ -72,6 +72,25 @@ docker run --rm ai-agent-book/project-4
 
 `PgVectorKnowledgeRepository` 使用 Psycopg 实际创建 vector 扩展、写入 128 维教学向量、建立 HNSW 索引并执行带租户条件的余弦查询。根级 Compose 使用 `pgvector/pgvector:pg17`，数据库端口只绑定宿主 loopback；`scripts/verify_pgvector.py` 提供可重复的真实摄取与检索验收。
 
+`VersionedKnowledgePipeline` 进一步把摄取变成持久队列：提交时绑定原文、Chunk 配置和黄金集指纹；Worker 构建候选版本，只有 Recall@K 与 MRR 同时达标才在一个事务中归档旧版本并激活新版本。进程中断留下的 `running` Job 会恢复到队列，失败只公开错误类型，原始异常与文档内容不会进入 API 响应。
+
+```mermaid
+%% id: project4-ingestion-release-state
+%% title: 知识库摄取与索引发布状态机
+%% alt: 摄取任务从排队运行到候选评估，达标后原子激活，不达标拒绝，进程中断可恢复排队
+stateDiagram-v2
+    [*] --> Queued
+    Queued --> Running: worker lease
+    Running --> Queued: process restart recovery
+    Running --> Failed: parser or integrity failure
+    Running --> Candidate: chunks + embeddings
+    Candidate --> Active: Recall and MRR pass
+    Candidate --> Rejected: release gate fails
+    Active --> Archived: newer candidate passes
+```
+
+状态机把“文档处理成功”和“索引允许发布”分开。离线哈希向量仍只是测试 Adapter；正式 Embedding 或 Reranker 替换后必须使用同一黄金集门禁重新生成证据。
+
 ## 目录、配置与扩展
 
 ```text

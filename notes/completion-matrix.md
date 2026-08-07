@@ -86,7 +86,7 @@
 | 项目1 | `service_template` | 离线模型、流事件、历史、Usage；持久 Run、SSE 回放、预算、取消与审计 | Provider 受控联调、流中断续传压测 | P4 |
 | 项目2 | `service_template` | Tool Loop、校验、并行、重试、审批；持久 Run 与幂等服务边界 | 真实天气、审批恢复专项链路 | P4 |
 | 项目3 | `service_template` | 官方 SDK 2.0.0 Tool/Resource/Prompt、stdio/HTTP；租户化服务边界 | OAuth、Origin、取消、超时和部署治理 | P4 |
-| 项目4 | `service_template` | 四格式解析、检索、引用、评估、pgvector；持久 Run 与观测 | Worker、OCR、正式模型、索引版本和黄金集 | P4 |
+| 项目4 | `production_reference` | 四格式解析、pgvector、持久摄取 Worker、完整性指纹、版本索引、黄金发布门禁、原子切换、恢复、租户 API 与引用 | OCR、正式 Embedding/Reranker、规模压测与外部验证 | P4—P9 |
 | 项目5 | `service_template` | Diff、规则、语义 Review、报告、HTTP；权限、幂等与审计 | GitHub App、Sandbox、Webhook 和去重 | P4 |
 | 项目6 | `service_template` | Provider、日报、绑定审批、审计；持久服务状态 | 真实账号适配、Outbox 和冲突处理 | P4 |
 | 项目7 | `service_template` | 多 Provider、指标、来源、事实/推断；持久服务状态 | 正式数据源、财报解析和时效评估 | P4 |

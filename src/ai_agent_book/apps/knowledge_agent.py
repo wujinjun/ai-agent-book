@@ -2,15 +2,23 @@
 
 from __future__ import annotations
 
+import json
 import math
 import re
+import sqlite3
 import xml.etree.ElementTree as ET
+from datetime import UTC, datetime
 from hashlib import sha256
 from pathlib import Path
+from typing import Literal
+from uuid import uuid4
 from zipfile import BadZipFile, ZipFile
 
 import psycopg
+from fastapi import FastAPI
 from pydantic import BaseModel, Field
+
+from ai_agent_book.project_service import PrincipalDep
 
 
 class ParsedPage(BaseModel):
@@ -309,3 +317,383 @@ class PgVectorKnowledgeRepository:
             )
             for row in rows
         ]
+
+
+class GoldenCase(BaseModel):
+    query: str
+    expected_text: str
+
+
+class IngestionJob(BaseModel):
+    job_id: str
+    tenant_id: str
+    source: str
+    source_hash: str
+    status: Literal["queued", "running", "succeeded", "failed"]
+    attempts: int = Field(ge=0)
+    version_id: str | None = None
+    error_type: str | None = None
+
+
+class IndexVersion(BaseModel):
+    version_id: str
+    tenant_id: str
+    source_hash: str
+    status: Literal["candidate", "active", "archived", "rejected"]
+    recall_at_k: float = Field(ge=0, le=1)
+    mrr: float = Field(ge=0, le=1)
+    chunk_count: int = Field(ge=0)
+
+
+class VersionedKnowledgePipeline:
+    """Durable ingestion queue with evaluation-gated index activation.
+
+    The pipeline uses the deterministic embedding only as an offline adapter. The
+    versioning, tenant boundary, release gate and recovery rules are production
+    concerns and remain unchanged when a real embedding/reranker is injected.
+    """
+
+    def __init__(
+        self,
+        database_path: Path,
+        *,
+        minimum_recall: float = 0.8,
+        minimum_mrr: float = 0.7,
+        chunk_size: int = 400,
+        overlap: int = 60,
+    ) -> None:
+        self.database_path = database_path
+        self.database_path.parent.mkdir(parents=True, exist_ok=True)
+        self.minimum_recall = minimum_recall
+        self.minimum_mrr = minimum_mrr
+        self.chunk_size = chunk_size
+        self.overlap = overlap
+        self._migrate()
+
+    @staticmethod
+    def _now() -> str:
+        return datetime.now(UTC).isoformat(timespec="milliseconds")
+
+    def _connect(self) -> sqlite3.Connection:
+        connection = sqlite3.connect(self.database_path, timeout=5)
+        connection.row_factory = sqlite3.Row
+        connection.execute("PRAGMA journal_mode=WAL")
+        return connection
+
+    def _migrate(self) -> None:
+        with self._connect() as db:
+            db.executescript(
+                """
+                CREATE TABLE IF NOT EXISTS ingestion_jobs (
+                    job_id TEXT PRIMARY KEY,
+                    tenant_id TEXT NOT NULL,
+                    source TEXT NOT NULL,
+                    source_hash TEXT NOT NULL,
+                    golden_json TEXT NOT NULL,
+                    status TEXT NOT NULL,
+                    attempts INTEGER NOT NULL DEFAULT 0,
+                    version_id TEXT,
+                    error_type TEXT,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL,
+                    UNIQUE(tenant_id, source_hash)
+                );
+                CREATE TABLE IF NOT EXISTS index_versions (
+                    version_id TEXT PRIMARY KEY,
+                    tenant_id TEXT NOT NULL,
+                    source_hash TEXT NOT NULL,
+                    status TEXT NOT NULL,
+                    recall_at_k REAL NOT NULL,
+                    mrr REAL NOT NULL,
+                    chunk_count INTEGER NOT NULL,
+                    chunks_json TEXT NOT NULL,
+                    created_at TEXT NOT NULL
+                );
+                CREATE UNIQUE INDEX IF NOT EXISTS one_active_index_per_tenant
+                    ON index_versions(tenant_id) WHERE status='active';
+                CREATE TABLE IF NOT EXISTS ingestion_events (
+                    sequence INTEGER PRIMARY KEY AUTOINCREMENT,
+                    job_id TEXT NOT NULL,
+                    event_type TEXT NOT NULL,
+                    created_at TEXT NOT NULL
+                );
+                """
+            )
+
+    @staticmethod
+    def _job(row: sqlite3.Row) -> IngestionJob:
+        return IngestionJob(
+            job_id=row["job_id"],
+            tenant_id=row["tenant_id"],
+            source=row["source"],
+            source_hash=row["source_hash"],
+            status=row["status"],
+            attempts=row["attempts"],
+            version_id=row["version_id"],
+            error_type=row["error_type"],
+        )
+
+    def _fingerprint(self, source: Path, golden_json: str) -> str:
+        material = b"\0".join(
+            (
+                source.read_bytes(),
+                golden_json.encode(),
+                f"chunk={self.chunk_size};overlap={self.overlap}".encode(),
+            )
+        )
+        return sha256(material).hexdigest()
+
+    def submit(
+        self,
+        path: Path,
+        *,
+        tenant_id: str,
+        golden_cases: list[GoldenCase],
+    ) -> tuple[IngestionJob, bool]:
+        source = path.resolve()
+        golden_json = json.dumps(
+            [case.model_dump() for case in golden_cases], ensure_ascii=False, sort_keys=True
+        )
+        source_hash = self._fingerprint(source, golden_json)
+        now = self._now()
+        with self._connect() as db:
+            existing = db.execute(
+                "SELECT * FROM ingestion_jobs WHERE tenant_id=? AND source_hash=?",
+                (tenant_id, source_hash),
+            ).fetchone()
+            if existing:
+                return self._job(existing), False
+            job_id = str(uuid4())
+            db.execute(
+                """INSERT INTO ingestion_jobs
+                   (job_id,tenant_id,source,source_hash,golden_json,status,created_at,updated_at)
+                   VALUES (?,?,?,?,?,'queued',?,?)""",
+                (
+                    job_id,
+                    tenant_id,
+                    str(source),
+                    source_hash,
+                    golden_json,
+                    now,
+                    now,
+                ),
+            )
+            db.execute(
+                "INSERT INTO ingestion_events(job_id,event_type,created_at) VALUES (?,?,?)",
+                (job_id, "queued", now),
+            )
+            row = db.execute("SELECT * FROM ingestion_jobs WHERE job_id=?", (job_id,)).fetchone()
+            assert row is not None
+            return self._job(row), True
+
+    def recover_incomplete(self) -> int:
+        """Return interrupted leases to the queue after a process restart."""
+        with self._connect() as db:
+            rows = db.execute(
+                "SELECT job_id FROM ingestion_jobs WHERE status='running'"
+            ).fetchall()
+            now = self._now()
+            db.execute(
+                "UPDATE ingestion_jobs SET status='queued',updated_at=? WHERE status='running'",
+                (now,),
+            )
+            for row in rows:
+                db.execute(
+                    "INSERT INTO ingestion_events(job_id,event_type,created_at) VALUES (?,?,?)",
+                    (row["job_id"], "recovered", now),
+                )
+        return len(rows)
+
+    def process_next(self, *, tenant_id: str | None = None) -> IngestionJob | None:
+        with self._connect() as db:
+            if tenant_id is None:
+                row = db.execute(
+                    """SELECT * FROM ingestion_jobs WHERE status='queued'
+                       ORDER BY created_at LIMIT 1"""
+                ).fetchone()
+            else:
+                row = db.execute(
+                    """SELECT * FROM ingestion_jobs
+                       WHERE status='queued' AND tenant_id=?
+                       ORDER BY created_at LIMIT 1""",
+                    (tenant_id,),
+                ).fetchone()
+            if row is None:
+                return None
+            job_id = str(row["job_id"])
+            attempts = int(row["attempts"]) + 1
+            db.execute(
+                """UPDATE ingestion_jobs SET status='running',attempts=?,updated_at=?
+                   WHERE job_id=? AND status='queued'""",
+                (attempts, self._now(), job_id),
+            )
+
+        try:
+            return self._build_candidate(job_id)
+        except Exception as exc:
+            with self._connect() as db:
+                db.execute(
+                    """UPDATE ingestion_jobs SET status='failed',error_type=?,updated_at=?
+                       WHERE job_id=?""",
+                    (type(exc).__name__, self._now(), job_id),
+                )
+                db.execute(
+                    "INSERT INTO ingestion_events(job_id,event_type,created_at) VALUES (?,?,?)",
+                    (job_id, "failed", self._now()),
+                )
+                failed = db.execute(
+                    "SELECT * FROM ingestion_jobs WHERE job_id=?", (job_id,)
+                ).fetchone()
+                assert failed is not None
+                return self._job(failed)
+
+    def _build_candidate(self, job_id: str) -> IngestionJob:
+        with self._connect() as db:
+            job = db.execute(
+                "SELECT * FROM ingestion_jobs WHERE job_id=?", (job_id,)
+            ).fetchone()
+            assert job is not None
+        source = Path(str(job["source"]))
+        if self._fingerprint(source, str(job["golden_json"])) != job["source_hash"]:
+            raise ValueError("source changed after ingestion was queued")
+        kb = KnowledgeBase(chunk_size=self.chunk_size, overlap=self.overlap)
+        kb.ingest(source, tenant_id=str(job["tenant_id"]))
+        golden = [GoldenCase.model_validate(item) for item in json.loads(job["golden_json"])]
+        dataset: list[tuple[str, str]] = []
+        for case in golden:
+            expected = next(
+                (chunk.chunk_id for chunk in kb.chunks if case.expected_text in chunk.text),
+                "missing-expected-chunk",
+            )
+            dataset.append((case.query, expected))
+        metrics = evaluate_retrieval(kb, dataset, tenant_id=str(job["tenant_id"]))
+        version_seed = (
+            f"{job['tenant_id']}:{job['source_hash']}:{self.chunk_size}:{self.overlap}"
+        )
+        version_id = sha256(version_seed.encode()).hexdigest()[:20]
+        accepted = (
+            bool(kb.chunks)
+            and metrics.recall_at_k >= self.minimum_recall
+            and metrics.mrr >= self.minimum_mrr
+        )
+        version_status = "active" if accepted else "rejected"
+        now = self._now()
+        with self._connect() as db:
+            if accepted:
+                db.execute(
+                    """UPDATE index_versions SET status='archived'
+                       WHERE tenant_id=? AND status='active'""",
+                    (job["tenant_id"],),
+                )
+            db.execute(
+                """INSERT OR REPLACE INTO index_versions
+                   (version_id,tenant_id,source_hash,status,recall_at_k,mrr,
+                    chunk_count,chunks_json,created_at)
+                   VALUES (?,?,?,?,?,?,?,?,?)""",
+                (
+                    version_id,
+                    job["tenant_id"],
+                    job["source_hash"],
+                    version_status,
+                    metrics.recall_at_k,
+                    metrics.mrr,
+                    len(kb.chunks),
+                    json.dumps([chunk.model_dump() for chunk in kb.chunks], ensure_ascii=False),
+                    now,
+                ),
+            )
+            db.execute(
+                """UPDATE ingestion_jobs SET status='succeeded',version_id=?,updated_at=?
+                   WHERE job_id=?""",
+                (version_id, now, job_id),
+            )
+            db.execute(
+                "INSERT INTO ingestion_events(job_id,event_type,created_at) VALUES (?,?,?)",
+                (job_id, "activated" if accepted else "rejected", now),
+            )
+            completed = db.execute(
+                "SELECT * FROM ingestion_jobs WHERE job_id=?", (job_id,)
+            ).fetchone()
+            assert completed is not None
+            return self._job(completed)
+
+    def active_version(self, tenant_id: str) -> IndexVersion | None:
+        with self._connect() as db:
+            row = db.execute(
+                """SELECT * FROM index_versions
+                   WHERE tenant_id=? AND status='active'""",
+                (tenant_id,),
+            ).fetchone()
+        if row is None:
+            return None
+        return IndexVersion(
+            version_id=row["version_id"],
+            tenant_id=row["tenant_id"],
+            source_hash=row["source_hash"],
+            status=row["status"],
+            recall_at_k=row["recall_at_k"],
+            mrr=row["mrr"],
+            chunk_count=row["chunk_count"],
+        )
+
+    def answer(self, query: str, *, tenant_id: str, top_k: int = 3) -> KnowledgeAnswer:
+        with self._connect() as db:
+            row = db.execute(
+                """SELECT chunks_json FROM index_versions
+                   WHERE tenant_id=? AND status='active'""",
+                (tenant_id,),
+            ).fetchone()
+        if row is None:
+            return KnowledgeAnswer(text="证据不足，无法回答。", citations=[])
+        kb = KnowledgeBase(chunk_size=self.chunk_size, overlap=self.overlap)
+        kb.chunks = [Chunk.model_validate(item) for item in json.loads(row["chunks_json"])]
+        return kb.answer(query, tenant_id=tenant_id, top_k=top_k)
+
+
+class IngestionCreate(BaseModel):
+    content: str = Field(min_length=1, max_length=2_000_000)
+    golden_cases: list[GoldenCase] = Field(min_length=1, max_length=100)
+
+
+class KnowledgeQuery(BaseModel):
+    query: str = Field(min_length=1, max_length=20_000)
+    top_k: int = Field(default=3, ge=1, le=20)
+
+
+def attach_knowledge_routes(
+    app: FastAPI,
+    pipeline: VersionedKnowledgePipeline,
+    *,
+    import_root: Path,
+) -> None:
+    """Attach tenant-scoped ingestion, worker and query routes to project 4."""
+    import_root.mkdir(parents=True, exist_ok=True)
+
+    @app.post("/v1/knowledge/ingestions", response_model=IngestionJob)
+    async def create_ingestion(body: IngestionCreate, principal: PrincipalDep) -> IngestionJob:
+        principal.require("project:run")
+        tenant_dir = import_root / sha256(principal.tenant_id.encode()).hexdigest()[:16]
+        tenant_dir.mkdir(parents=True, exist_ok=True)
+        content_hash = sha256(body.content.encode()).hexdigest()
+        source = tenant_dir / f"{content_hash}.md"
+        if not source.exists():
+            source.write_text(body.content, encoding="utf-8")
+        job, _ = pipeline.submit(
+            source,
+            tenant_id=principal.tenant_id,
+            golden_cases=body.golden_cases,
+        )
+        return job
+
+    @app.post("/v1/knowledge/worker/process-one", response_model=IngestionJob | None)
+    async def process_ingestion(principal: PrincipalDep) -> IngestionJob | None:
+        principal.require("project:admin")
+        return pipeline.process_next(tenant_id=principal.tenant_id)
+
+    @app.get("/v1/knowledge/index", response_model=IndexVersion | None)
+    async def active_index(principal: PrincipalDep) -> IndexVersion | None:
+        return pipeline.active_version(principal.tenant_id)
+
+    @app.post("/v1/knowledge/query", response_model=KnowledgeAnswer)
+    async def query_knowledge(body: KnowledgeQuery, principal: PrincipalDep) -> KnowledgeAnswer:
+        return pipeline.answer(body.query, tenant_id=principal.tenant_id, top_k=body.top_k)
