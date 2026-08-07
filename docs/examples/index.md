@@ -30,7 +30,7 @@ flowchart LR
 | [PydanticAI Service](https://github.com/wujinjun/ai-agent-book/tree/main/examples/pydanticai_service) | 19 | 类型化依赖、工具与输出，有限重试和 FastAPI 错误映射 | 已完成：固定并实测 2.25.0 |
 | [Framework Comparison](https://github.com/wujinjun/ai-agent-book/tree/main/examples/framework_comparison) | 38 | 三个隔离候选的同题实跑、故障注入、加权敏感性与可逆 ADR | 已完成：20 次实跑证据 + 源码哈希 |
 
-机器可读的真实状态记录在 `notes/example-matrix.yml`。表中未完成示例不会链接到不存在的目录；各示例交付后，本页将增加安装命令、预期输出和源码入口。
+机器可读的真实状态记录在 `notes/example-matrix.yml`。当前 11 个计划内示例均已交付，表中的完成状态以目录契约、离线运行、直接测试和章节双向链接为依据；后续在线 Provider 冒烟测试会单独记录，不能用来替代确定性离线验收。
 
 ## 统一运行边界
 
