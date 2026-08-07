@@ -61,8 +61,10 @@ flowchart TD
 `输入 → LangGraph Plan → 带 RetryPolicy 的 Search → Read → Reviewer 条件边 → interrupt → Command(resume) → Report`。独立实现位于 `src/ai_agent_book/apps/langgraph_research.py`，固定使用并实测 `langgraph==1.2.9`，直接测试位于 `tests/test_langgraph_research_app.py`。
 
 ## 运行、测试与部署
+CLI 用于观察领域事件；`api.py` 提供持久 Run、幂等、租户隔离、取消、SSE 回放、Trace 与指标：
 ```bash
 PYTHONPATH=src .venv/bin/python projects/08-research-workflow/main.py
+PYTHONPATH=src DATABASE_PATH=.data/project-8.db .venv/bin/uvicorn --app-dir projects/08-research-workflow api:app --port 8108
 PYTHONPATH=src .venv/bin/python -m pytest tests/test_langgraph_research_app.py -q
 docker build -f projects/08-research-workflow/Dockerfile -t ai-agent-book/project-8 .
 docker run --rm ai-agent-book/project-8

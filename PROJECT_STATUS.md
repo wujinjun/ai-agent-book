@@ -22,7 +22,7 @@
 
 ## 代码完成度
 
-- 当前 Python 3.12.13 环境下，根级测试共 115 项通过；独立示例验收器另在 11 个隔离环境执行 69 项安装、离线运行、测试、Ruff、mypy 与证据再生检查，全部通过；官方 MCP SDK 2.0.0 子工程有 8 项隔离测试，LangChain/LlamaIndex RAG 候选各有直接测试，CrewAI/AutoGen/Semantic Kernel 同题候选各有 2 项直接测试，均通过。
+- 当前 Python 3.12.13 环境下，根级测试共 186 项通过；其中十项目共享服务契约按项目参数化验证持久化、幂等、租户权限、预算、取消、SSE 回放、指标与重建恢复；独立示例验收器另在 11 个隔离环境执行 69 项检查。官方 MCP SDK、RAG 与 Multi-Agent 候选的隔离测试也均通过。
 - 根代码包含 Tool Runtime、十个项目领域模块、出版管线和质量审计；十个项目入口都能在离线模式运行。
 - P2 规划的 11 个独立示例已全部完成目录契约、离线运行、直接测试、章节双向链接和根级隔离环境编排；Framework Comparison 还使用三个隔离环境生成带版本与源码哈希的同题证据。`tool_runtime` 是规划外的既有工程，不计入 11/11。P2 的索引、图示和三种出版格式也已重新构建并审计通过。
 - LangGraph 项目使用固定版本并有直接测试；OpenAI Agents SDK 0.18.3、PydanticAI 2.25.0、LangChain 1.3.14、LlamaIndex Core 0.14.23、CrewAI 1.15.12、AutoGen AgentChat 0.7.5 与 Semantic Kernel 1.44.1 已在各自独立 Python 3.12 环境实测明确范围。
@@ -30,7 +30,7 @@
 
 ## 项目成熟度
 
-- 项目 1—9 当前为 `vertical_slice`：主要教学链路可以离线运行，但服务化、持久化、恢复、观测、权限或真实 Provider 仍需增强。
+- 项目 1—9 已达到 `service_template`：保留各自领域纵切面，并新增项目级 FastAPI、SQLite Run 状态、幂等、租户权限、预算、取消、SSE 回放、审计、Trace、指标和统一安全 Compose；真实 Provider 与专项恢复能力仍需增强。
 - 项目 10 当前为 `service_template`：具备 API、数据库、Redis 队列、租户、Trace 和 Evaluation 基础，但 OIDC/RBAC、迁移、DLQ、管理界面和备份恢复尚未达到生产参考标准。
 - 项目 4 的 pgvector 路径、项目 8 的 LangGraph 路径和项目 10 的纵向链路是当前较深入的工程实现。
 - 当前没有项目标记为 `production_reference` 或 `externally_validated`。
@@ -47,7 +47,7 @@
 
 ## 出版完成度
 
-- 全仓库共有 223 张 Mermaid 图，已经生成 SVG、2x PNG 和内容哈希清单；HTML、PDF 和 EPUB 使用预渲染资产，不依赖阅读器现场执行 Mermaid。
+- 全仓库共有 224 张 Mermaid 图，已经生成 SVG、2x PNG 和内容哈希清单；HTML、PDF 和 EPUB 使用预渲染资产，不依赖阅读器现场执行 Mermaid。
 - MkDocs HTML 严格构建、断链、缺图、alt、重复 ID 和残留 Mermaid 自动审计已建立。
 - PDF 当前为 391 页 A4、11,587,861 字节；封面、目录、框架章节、表格、图示和末页已人工抽样，自动出版审计通过。
 - EPUB3 为 12,178,768 字节，包含 220 张正文 SVG 与 220 张 PNG 回退，具备 nav、spine、严格 XHTML 与资源引用检查；HTML 下载目录同时包含最新 PDF 和 EPUB。
@@ -68,4 +68,4 @@
 
 ## 当前验证证据
 
-2026-08-08 在 Python 3.12.13 下重新运行 Ruff、mypy 和 115 项根级测试；11 个独立环境的 69 项 P2 验收、MCP SDK 子工程 8 项测试、两个 RAG 框架候选及三种 Multi-Agent 候选的直接测试全部通过。重建 223 组图示资产和 MkDocs HTML；PDF/EPUB 当前仍是上一轮已审计产物，将在后续全文与项目强化完成后统一重建。上一轮 PDF 为 391 页、11,587,861 字节，EPUB 为 12,178,768 字节并含 220 组 SVG/PNG 正文图像。出版产物的最终多设备发行验收仍以 P7 和 P9 为准。
+2026-08-08 在 Python 3.12.13 下重新运行 Ruff、mypy 和 186 项根级测试；11 个独立环境的 69 项 P2 验收、MCP SDK、RAG 与 Multi-Agent 候选直接测试全部通过。十项目服务契约与 Compose 配置已验证，重建 224 组图示资产和 MkDocs HTML；PDF/EPUB 将在后续全文与项目强化完成后统一重建。上一轮 PDF 为 391 页、11,587,861 字节，EPUB 为 12,178,768 字节并含 220 组 SVG/PNG 正文图像。出版产物的最终多设备发行验收仍以 P7 和 P9 为准。

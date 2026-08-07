@@ -60,8 +60,10 @@ Server 不接受任意路径、任意 SQL 或任意系统命令。错误响应�
 `initialize → 能力发现 → tools/call 或 resources/read → 文件/系统/SQLite → JSON-RPC 响应`。协议实现位于 `src/ai_agent_book/apps/mcp_local.py`，直接测试位于 `tests/test_mcp_local_app.py`。
 
 ## 运行、测试与部署
+CLI 用于观察领域事件；`api.py` 提供持久 Run、幂等、租户隔离、取消、SSE 回放、Trace 与指标：
 ```bash
 PYTHONPATH=src .venv/bin/python projects/03-mcp-local-agent/main.py
+PYTHONPATH=src DATABASE_PATH=.data/project-3.db .venv/bin/uvicorn --app-dir projects/03-mcp-local-agent api:app --port 8103
 PYTHONPATH=src .venv/bin/python -m pytest tests/test_mcp_local_app.py -q
 docker build -f projects/03-mcp-local-agent/Dockerfile -t ai-agent-book/project-3 .
 docker run --rm ai-agent-book/project-3

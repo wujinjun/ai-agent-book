@@ -83,15 +83,15 @@
 
 | 项目 | 当前成熟度 | 已验证范围 | 主要缺口 | 目标阶段 |
 |---|---|---|---|---|
-| 项目1 | `vertical_slice` | 离线模型、流事件、历史、Usage 和错误 | 服务 API、恢复、预算、观测 | P4 |
-| 项目2 | `vertical_slice` | Tool Loop、校验、并行、重试和审批 | 真实 Provider、幂等写入、审批恢复 | P4 |
-| 项目3 | `vertical_slice` | 旧 JSON-RPC 教学子集；官方 SDK 2.0.0 Tool/Resource/Prompt、stdio 与无状态 HTTP | OAuth、Origin、取消、超时和部署治理 | P4 |
-| 项目4 | `vertical_slice` | 四格式解析、检索、引用、评估和 pgvector 路径 | Worker、OCR、正式模型、索引版本和黄金集 | P4 |
-| 项目5 | `vertical_slice` | Diff、规则、语义 Review、报告和 HTTP 边界 | GitHub App、Sandbox、Webhook 和去重 | P4 |
-| 项目6 | `vertical_slice` | Provider 边界、总结、日报、审批和审计 | 真实账号适配、Outbox 和冲突处理 | P4 |
-| 项目7 | `vertical_slice` | 多 Provider、技术指标、来源和事实/推断 | 正式数据源、财报解析和时效评估 | P4 |
-| 项目8 | `vertical_slice` | LangGraph、RetryPolicy、Checkpoint 和中断 | 持久存储、真实检索、Worker 和恢复演练 | P4 |
-| 项目9 | `vertical_slice` | 五角色、共享状态、预算和终止 | 仓库沙箱、补丁回滚、单 Agent 基线 | P4 |
+| 项目1 | `service_template` | 离线模型、流事件、历史、Usage；持久 Run、SSE 回放、预算、取消与审计 | Provider 受控联调、流中断续传压测 | P4 |
+| 项目2 | `service_template` | Tool Loop、校验、并行、重试、审批；持久 Run 与幂等服务边界 | 真实天气、审批恢复专项链路 | P4 |
+| 项目3 | `service_template` | 官方 SDK 2.0.0 Tool/Resource/Prompt、stdio/HTTP；租户化服务边界 | OAuth、Origin、取消、超时和部署治理 | P4 |
+| 项目4 | `service_template` | 四格式解析、检索、引用、评估、pgvector；持久 Run 与观测 | Worker、OCR、正式模型、索引版本和黄金集 | P4 |
+| 项目5 | `service_template` | Diff、规则、语义 Review、报告、HTTP；权限、幂等与审计 | GitHub App、Sandbox、Webhook 和去重 | P4 |
+| 项目6 | `service_template` | Provider、日报、绑定审批、审计；持久服务状态 | 真实账号适配、Outbox 和冲突处理 | P4 |
+| 项目7 | `service_template` | 多 Provider、指标、来源、事实/推断；持久服务状态 | 正式数据源、财报解析和时效评估 | P4 |
+| 项目8 | `service_template` | LangGraph、RetryPolicy、Checkpoint、中断；持久 Run 服务 | 数据库 Checkpointer、真实检索、Worker 和恢复演练 | P4 |
+| 项目9 | `service_template` | 五角色、共享状态、预算、终止；权限、取消与审计 | 仓库 Sandbox、补丁回滚、扩大单 Agent 基线 | P4 |
 | 项目10 | `service_template` | API、数据库、Redis 队列、租户、Trace 和 Eval 基础 | OIDC/RBAC、迁移、DLQ、管理面和备份恢复 | P4 |
 
 当前没有项目标记为 `production_reference` 或 `externally_validated`。达到这些状态必须补齐相应阶段的直接证据，不能仅根据 README 描述升级状态。

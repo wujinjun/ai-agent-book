@@ -58,8 +58,10 @@ flowchart TD
 `行情/新闻/公告 Provider → 并发采集 → 数据时间与来源 → SMA/收益率/RSI → 事实与推断分栏 → 结构化报告`。独立实现位于 `src/ai_agent_book/apps/stock_research.py`，直接测试位于 `tests/test_stock_research_app.py`。
 
 ## 运行、测试与部署
+CLI 用于观察领域事件；`api.py` 提供持久 Run、幂等、租户隔离、取消、SSE 回放、Trace 与指标：
 ```bash
 PYTHONPATH=src .venv/bin/python projects/07-stock-research-agent/main.py
+PYTHONPATH=src DATABASE_PATH=.data/project-7.db .venv/bin/uvicorn --app-dir projects/07-stock-research-agent api:app --port 8107
 PYTHONPATH=src .venv/bin/python -m pytest tests/test_stock_research_app.py -q
 docker build -f projects/07-stock-research-agent/Dockerfile -t ai-agent-book/project-7 .
 docker run --rm ai-agent-book/project-7

@@ -57,8 +57,10 @@ stateDiagram-v2
 `输入 → 配置加载 → JSONL 历史 → Mock/兼容 HTTP 模型 → SSE delta → Usage → 持久化`。独立实现位于 `src/ai_agent_book/apps/minimal_assistant.py`，直接测试位于 `tests/test_minimal_assistant_app.py`。
 
 ## 运行、测试与部署
+CLI 用于观察领域事件；`api.py` 提供持久 Run、幂等、租户隔离、取消、SSE 回放、Trace 与指标：
 ```bash
 PYTHONPATH=src .venv/bin/python projects/01-minimal-assistant/main.py
+PYTHONPATH=src DATABASE_PATH=.data/project-1.db .venv/bin/uvicorn --app-dir projects/01-minimal-assistant api:app --port 8101
 PYTHONPATH=src .venv/bin/python -m pytest tests/test_minimal_assistant_app.py -q
 docker build -f projects/01-minimal-assistant/Dockerfile -t ai-agent-book/project-1 .
 docker run --rm ai-agent-book/project-1

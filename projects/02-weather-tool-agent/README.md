@@ -59,8 +59,10 @@ sequenceDiagram
 `输入 → Planner → ToolCall 列表 → Pydantic 校验 → 审批策略 → 并行工具 → Observation`。独立实现位于 `src/ai_agent_book/apps/weather_agent.py`，测试位于 `tests/test_weather_agent_app.py`。
 
 ## 运行、测试与部署
+CLI 用于观察领域事件；`api.py` 提供持久 Run、幂等、租户隔离、取消、SSE 回放、Trace 与指标：
 ```bash
 PYTHONPATH=src .venv/bin/python projects/02-weather-tool-agent/main.py
+PYTHONPATH=src DATABASE_PATH=.data/project-2.db .venv/bin/uvicorn --app-dir projects/02-weather-tool-agent api:app --port 8102
 PYTHONPATH=src .venv/bin/python -m pytest tests/test_weather_agent_app.py -q
 docker build -f projects/02-weather-tool-agent/Dockerfile -t ai-agent-book/project-2 .
 docker run --rm ai-agent-book/project-2

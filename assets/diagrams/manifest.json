@@ -1896,6 +1896,18 @@
     "png_path": "png/index-6ffa9d43fa5e.png"
   },
   {
+    "source_path": "docs/part-06-projects/index.md",
+    "index": 2,
+    "semantic_id": "ten-project-production-service-contract",
+    "title": "十个项目共享的生产服务契约",
+    "alt": "客户端请求经租户权限预算和幂等门禁进入项目 API，持久 Run 调用领域适配器并输出 SSE Trace 审计和指标",
+    "diagram_id": "index-57d491b3ea1e",
+    "source": "%% id: ten-project-production-service-contract\n%% title: 十个项目共享的生产服务契约\n%% alt: 客户端请求经租户权限预算和幂等门禁进入项目 API，持久 Run 调用领域适配器并输出 SSE Trace 审计和指标\nflowchart LR\n    Client[\"Client + Idempotency-Key\"] --> Gate[\"Tenant / Role / Budget\"]\n    Gate --> API[\"Project-scoped FastAPI\"]\n    API --> Runs[(\"Durable Run Store\")]\n    Runs --> Adapter[\"Project Domain Adapter\"]\n    Adapter --> Runs\n    Runs --> Lifecycle[\"Queued / Running / Succeeded<br/>Failed / Cancelled\"]\n    Runs --> Evidence[\"SSE Replay / Trace / Audit / Metrics\"]\n",
+    "source_asset": "source/index-57d491b3ea1e.mmd",
+    "svg_path": "svg/index-57d491b3ea1e.svg",
+    "png_path": "png/index-57d491b3ea1e.png"
+  },
+  {
     "source_path": "projects/01-minimal-assistant/README.md",
     "index": 1,
     "semantic_id": "project1-streaming-assistant-sequence",

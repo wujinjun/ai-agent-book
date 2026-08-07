@@ -57,8 +57,10 @@ flowchart TD
 `Git 仓库 → Diff 新增行 → 静态规则 + 语义 Reviewer → 去重/风险排序 → Markdown 报告 → 审批后可选 PR 评论`。独立实现位于 `src/ai_agent_book/apps/code_review.py`，直接测试位于 `tests/test_code_review_app.py`。
 
 ## 运行、测试与部署
+CLI 用于观察领域事件；`api.py` 提供持久 Run、幂等、租户隔离、取消、SSE 回放、Trace 与指标：
 ```bash
 PYTHONPATH=src .venv/bin/python projects/05-code-review-agent/main.py
+PYTHONPATH=src DATABASE_PATH=.data/project-5.db .venv/bin/uvicorn --app-dir projects/05-code-review-agent api:app --port 8105
 PYTHONPATH=src .venv/bin/python -m pytest tests/test_code_review_app.py -q
 docker build -f projects/05-code-review-agent/Dockerfile -t ai-agent-book/project-5 .
 docker run --rm ai-agent-book/project-5

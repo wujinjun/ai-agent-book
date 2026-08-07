@@ -55,8 +55,10 @@ flowchart LR
 `输入 → PDF/DOCX/PPTX/Markdown 解析 → 重叠切分 → 哈希向量 → 租户过滤 → 混合检索/重排 → 页码引用 → 评估`。独立实现位于 `src/ai_agent_book/apps/knowledge_agent.py`，pgvector 表与 HNSW 索引位于 `schema.sql`，直接测试位于 `tests/test_knowledge_agent_app.py`。
 
 ## 运行、测试与部署
+CLI 用于观察领域事件；`api.py` 提供持久 Run、幂等、租户隔离、取消、SSE 回放、Trace 与指标：
 ```bash
 PYTHONPATH=src .venv/bin/python projects/04-knowledge-agent/main.py
+PYTHONPATH=src DATABASE_PATH=.data/project-4.db .venv/bin/uvicorn --app-dir projects/04-knowledge-agent api:app --port 8104
 PYTHONPATH=src .venv/bin/python -m pytest tests/test_knowledge_agent_app.py -q
 docker build -f projects/04-knowledge-agent/Dockerfile -t ai-agent-book/project-4 .
 docker run --rm ai-agent-book/project-4

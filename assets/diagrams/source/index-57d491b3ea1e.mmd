@@ -1,0 +1,11 @@
+%% id: ten-project-production-service-contract
+%% title: 十个项目共享的生产服务契约
+%% alt: 客户端请求经租户权限预算和幂等门禁进入项目 API，持久 Run 调用领域适配器并输出 SSE Trace 审计和指标
+flowchart LR
+    Client["Client + Idempotency-Key"] --> Gate["Tenant / Role / Budget"]
+    Gate --> API["Project-scoped FastAPI"]
+    API --> Runs[("Durable Run Store")]
+    Runs --> Adapter["Project Domain Adapter"]
+    Adapter --> Runs
+    Runs --> Lifecycle["Queued / Running / Succeeded<br/>Failed / Cancelled"]
+    Runs --> Evidence["SSE Replay / Trace / Audit / Metrics"]

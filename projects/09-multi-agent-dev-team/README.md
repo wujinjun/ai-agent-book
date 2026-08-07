@@ -60,8 +60,10 @@ flowchart TD
 `需求 → Product 验收条件 → Planner 计划 → Coder Artifact → Tester → Reviewer → 硬终止`。所有角色只能通过版本化共享状态通信，独立实现位于 `src/ai_agent_book/apps/multi_agent_team.py`，直接测试位于 `tests/test_multi_agent_team_app.py`。
 
 ## 运行、测试与部署
+CLI 用于观察领域事件；`api.py` 提供持久 Run、幂等、租户隔离、取消、SSE 回放、Trace 与指标：
 ```bash
 PYTHONPATH=src .venv/bin/python projects/09-multi-agent-dev-team/main.py
+PYTHONPATH=src DATABASE_PATH=.data/project-9.db .venv/bin/uvicorn --app-dir projects/09-multi-agent-dev-team api:app --port 8109
 PYTHONPATH=src .venv/bin/python -m pytest tests/test_multi_agent_team_app.py -q
 docker build -f projects/09-multi-agent-dev-team/Dockerfile -t ai-agent-book/project-9 .
 docker run --rm ai-agent-book/project-9

@@ -13,7 +13,10 @@ def test_all_ten_projects_are_registered() -> None:
 def test_each_project_has_runnable_and_deployable_files() -> None:
     for project in PROJECTS.values():
         directory = ROOT / "projects" / f"{project.project_id:02d}-{project.slug}"
-        for name in ("README.md", "main.py", ".env.example", "Dockerfile"):
+        required = ["README.md", "main.py", ".env.example", "Dockerfile"]
+        if project.project_id < 10:
+            required.append("api.py")
+        for name in required:
             assert (directory / name).is_file(), f"missing {directory / name}"
         assert list((directory / "tests").glob("test_*.py")), f"missing project test: {directory}"
         dockerfile = (directory / "Dockerfile").read_text(encoding="utf-8")

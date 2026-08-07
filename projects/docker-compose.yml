@@ -1,0 +1,102 @@
+x-service: &service
+  build:
+    context: ..
+    dockerfile: projects/service.Dockerfile
+  restart: unless-stopped
+  read_only: true
+  tmpfs:
+    - /tmp:size=64m,noexec,nosuid
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+  deploy:
+    resources:
+      limits:
+        cpus: "1.0"
+        memory: 512M
+
+services:
+  project-1:
+    <<: *service
+    build:
+      context: ..
+      dockerfile: projects/service.Dockerfile
+      args: {PROJECT_SLUG: 01-minimal-assistant}
+    ports: ["127.0.0.1:8101:8000"]
+    volumes: ["project-1-data:/app/data"]
+  project-2:
+    <<: *service
+    build:
+      context: ..
+      dockerfile: projects/service.Dockerfile
+      args: {PROJECT_SLUG: 02-weather-tool-agent}
+    ports: ["127.0.0.1:8102:8000"]
+    volumes: ["project-2-data:/app/data"]
+  project-3:
+    <<: *service
+    build:
+      context: ..
+      dockerfile: projects/service.Dockerfile
+      args: {PROJECT_SLUG: 03-mcp-local-agent}
+    ports: ["127.0.0.1:8103:8000"]
+    volumes: ["project-3-data:/app/data"]
+  project-4:
+    <<: *service
+    build:
+      context: ..
+      dockerfile: projects/service.Dockerfile
+      args: {PROJECT_SLUG: 04-knowledge-agent}
+    ports: ["127.0.0.1:8104:8000"]
+    volumes: ["project-4-data:/app/data"]
+  project-5:
+    <<: *service
+    build:
+      context: ..
+      dockerfile: projects/service.Dockerfile
+      args: {PROJECT_SLUG: 05-code-review-agent}
+    ports: ["127.0.0.1:8105:8000"]
+    volumes: ["project-5-data:/app/data"]
+  project-6:
+    <<: *service
+    build:
+      context: ..
+      dockerfile: projects/service.Dockerfile
+      args: {PROJECT_SLUG: 06-office-agent}
+    ports: ["127.0.0.1:8106:8000"]
+    volumes: ["project-6-data:/app/data"]
+  project-7:
+    <<: *service
+    build:
+      context: ..
+      dockerfile: projects/service.Dockerfile
+      args: {PROJECT_SLUG: 07-stock-research-agent}
+    ports: ["127.0.0.1:8107:8000"]
+    volumes: ["project-7-data:/app/data"]
+  project-8:
+    <<: *service
+    build:
+      context: ..
+      dockerfile: projects/service.Dockerfile
+      args: {PROJECT_SLUG: 08-research-workflow}
+    ports: ["127.0.0.1:8108:8000"]
+    volumes: ["project-8-data:/app/data"]
+  project-9:
+    <<: *service
+    build:
+      context: ..
+      dockerfile: projects/service.Dockerfile
+      args: {PROJECT_SLUG: 09-multi-agent-dev-team}
+    ports: ["127.0.0.1:8109:8000"]
+    volumes: ["project-9-data:/app/data"]
+
+volumes:
+  project-1-data:
+  project-2-data:
+  project-3-data:
+  project-4-data:
+  project-5-data:
+  project-6-data:
+  project-7-data:
+  project-8-data:
+  project-9-data:

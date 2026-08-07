@@ -59,8 +59,10 @@ sequenceDiagram
 `邮件与日历 Provider → 时间窗口过滤 → 摘要/日报 → 内容摘要绑定审批 → Mock/Webhook 发布 → JSONL 审计`。独立实现位于 `src/ai_agent_book/apps/office_agent.py`，直接测试位于 `tests/test_office_agent_app.py`。
 
 ## 运行、测试与部署
+CLI 用于观察领域事件；`api.py` 提供持久 Run、幂等、租户隔离、取消、SSE 回放、Trace 与指标：
 ```bash
 PYTHONPATH=src .venv/bin/python projects/06-office-agent/main.py
+PYTHONPATH=src DATABASE_PATH=.data/project-6.db .venv/bin/uvicorn --app-dir projects/06-office-agent api:app --port 8106
 PYTHONPATH=src .venv/bin/python -m pytest tests/test_office_agent_app.py -q
 docker build -f projects/06-office-agent/Dockerfile -t ai-agent-book/project-6 .
 docker run --rm ai-agent-book/project-6
