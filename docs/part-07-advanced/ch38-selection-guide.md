@@ -1,6 +1,6 @@
 # 第38章：技术选型指南
 
-最后核对日期：2026-07-11。社区活跃度、许可证、API 和支持状态必须在决策当天复核。
+最后核对日期：2026-08-07。OpenAI Agents SDK 0.18.3、PydanticAI 2.25.0 与本章同题 Spike 已隔离实跑；其他框架的社区活跃度、许可证、API 和支持状态仍必须在决策当天复核。
 
 ## 章节导读
 
@@ -137,6 +137,33 @@ flowchart LR
 ```
 
 Spike 必须覆盖失败、恢复、权限与 Trace，而不只是 happy-path。ADR 记录当规模、团队或版本变化时重新评估的触发条件。
+
+### 本章同题 Spike 的实测结果
+
+独立工程固定 `research-security-v1`：检索两个来源、第一次搜索注入瞬时失败、跨租户文档由确定性 Policy 拒绝，最终报告必须区分来源事实与综合推断。Native、OpenAI Agents SDK 与 PydanticAI 分别在独立 Python 3.12 环境运行 20 次，候选进程只交换规范化 JSON 证据，避免把框架依赖强装进同一环境。
+
+| 候选 | 固定版本 | 任务成功 | Tool Accuracy | 故障恢复 | 状态导出 | 成本代理 |
+|---|---|---:|---:|---:|---:|---:|
+| Native Runtime | Python stdlib | 通过 | 1.00 | 通过 | 通过 | 4 次决策 |
+| OpenAI Agents SDK | 0.18.3 | 通过 | 1.00 | 通过 | 通过 | 5 次模型请求 |
+| PydanticAI | 2.25.0 | 通过 | 1.00 | 通过 | 通过 | 5 次模型请求 |
+
+```mermaid
+%% id: framework-comparison-evidence-chain
+%% title: 框架同题 Spike 的可验证证据链
+%% alt: 固定规格分别驱动三个隔离候选并汇总统一证据，经过源码哈希、评分和敏感性分析形成可回滚 ADR
+flowchart LR
+    Spec["固定 Spec + Golden + Fault + Policy"] --> Native["Native isolated run"]
+    Spec --> SDK["Agents SDK 0.18.3 isolated run"]
+    Spec --> PAI["PydanticAI 2.25.0 isolated run"]
+    Native --> Evidence["统一 Evidence + source SHA-256"]
+    SDK --> Evidence
+    PAI --> Evidence
+    Evidence --> Score["加权评分 + ±20% 敏感性"]
+    Score --> ADR["选择 / 不确定性 / 回滚 / 复审触发"]
+```
+
+三个候选在本地 50 ms 运行时预算内都满足延迟门槛，因此不使用亚毫秒差异制造虚假优势。当前 ADR 为这个短且无需持久 Checkpoint 的切片选择 Native，原因只是少一次成本代理请求；它明确不外推真实 Provider 延迟、模型质量或长任务恢复。需求加入 Handoff、强类型依赖、持久中断或 Trace 硬约束时必须重新 Spike。完整证据、源码哈希与可逆 ADR 位于 [`examples/framework_comparison/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/framework_comparison)。
 
 生产适用性不能只从文档推断。Spike 应注入模型超时、无效工具参数、Checkpoint 恢复和权限拒绝，观察是否能从 Trace 中定位根因，并检查框架能否导出原始消息与状态。
 

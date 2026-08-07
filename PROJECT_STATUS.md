@@ -24,7 +24,7 @@
 
 - 当前 Python 3.12.13 环境下，根测试和十项目测试共 107 项通过。
 - 根代码包含 Tool Runtime、十个项目领域模块、出版管线和质量审计；十个项目入口都能在离线模式运行。
-- P2 规划的 11 个独立示例中已有 10 个完成目录契约、离线运行、直接测试和章节双向链接；Framework Comparison 尚未完成。`tool_runtime` 是规划外的既有工程，不计入 10/11。
+- P2 规划的 11 个独立示例已全部完成目录契约、离线运行、直接测试和章节双向链接；Framework Comparison 还使用三个隔离环境生成带版本与源码哈希的同题证据。`tool_runtime` 是规划外的既有工程，不计入 11/11。根级全量隔离环境编排与出版复验仍是 P2 最终验收项。
 - LangGraph 项目使用固定版本并有直接测试；OpenAI Agents SDK 0.18.3 与 PydanticAI 2.25.0 已在各自独立 Python 3.12 环境实测核心路径；LangChain、LlamaIndex、CrewAI、AutoGen 和 Semantic Kernel 尚未全部安装实测。
 - Mock、Fixture 和本地协议测试只证明适配边界与控制逻辑，不代表真实第三方账号联调。
 

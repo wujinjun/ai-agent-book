@@ -92,4 +92,4 @@ examples:
     offline_command: python -m framework_comparison.main --fixture research
     test_command: python -m pytest -q
     dependency_group: isolated
-    complete: false
+    complete: true

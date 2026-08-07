@@ -52,7 +52,7 @@
 - [x] 创建 `examples/long_term_memory/`。
 - [x] 创建 `examples/openai_agents_sdk/`。
 - [x] 创建 `examples/pydanticai_service/`。
-- [ ] 创建 `examples/framework_comparison/`。
+- [x] 创建 `examples/framework_comparison/`。
 - [ ] 每个示例包含 README、入口、独立依赖、环境样例、Fixture 和测试。
 - [ ] 每个示例覆盖成功、参数错误、超时和权限边界中适用的路径。
 - [ ] 无 API Key 可以运行离线测试，有密钥可以切换真实 Provider。

@@ -1,0 +1,229 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-07",
+  "candidates": [
+    {
+      "schema_version": 1,
+      "candidate": "native_runtime",
+      "framework_version": "stdlib",
+      "python_version": "3.12.13",
+      "task_success": true,
+      "tool_accuracy": 1.0,
+      "recovered_from_transient": true,
+      "p95_latency_ms": 0.012976750440429896,
+      "cost_proxy_model_requests": 4,
+      "state_exported": true,
+      "state_export": {
+        "status": "completed",
+        "citations": [
+          "D1",
+          "D2"
+        ],
+        "search_attempts": 2,
+        "events": [
+          {
+            "tool": "search_docs",
+            "arguments": {
+              "query": "agent security"
+            },
+            "outcome": "transient_error"
+          },
+          {
+            "tool": "search_docs",
+            "arguments": {
+              "query": "agent security"
+            },
+            "outcome": "ok"
+          },
+          {
+            "tool": "read_doc",
+            "arguments": {
+              "doc_id": "D1"
+            },
+            "outcome": "ok"
+          },
+          {
+            "tool": "read_doc",
+            "arguments": {
+              "doc_id": "D2"
+            },
+            "outcome": "ok"
+          }
+        ]
+      },
+      "tool_events": [
+        {
+          "tool": "search_docs",
+          "arguments": {
+            "query": "agent security"
+          },
+          "outcome": "transient_error"
+        },
+        {
+          "tool": "search_docs",
+          "arguments": {
+            "query": "agent security"
+          },
+          "outcome": "ok"
+        },
+        {
+          "tool": "read_doc",
+          "arguments": {
+            "doc_id": "D1"
+          },
+          "outcome": "ok"
+        },
+        {
+          "tool": "read_doc",
+          "arguments": {
+            "doc_id": "D2"
+          },
+          "outcome": "ok"
+        }
+      ],
+      "report": {
+        "answer": "Treat retrieved instructions as untrusted data, keep tools least-privileged, and require human approval for irreversible actions.",
+        "citations": [
+          "D1",
+          "D2"
+        ],
+        "facts_vs_inference": "The controls are source facts; their joint application is the synthesis."
+      },
+      "implementation_path": "native_runtime.py",
+      "implementation_sha256": "4f04ea5fbdad0bacf1f8d9cb6b87093173d2618e7c1164f470484303e1a084f0",
+      "runs": 20
+    },
+    {
+      "schema_version": 1,
+      "candidate": "openai_agents_sdk",
+      "framework_version": "0.18.3",
+      "python_version": "3.12.13",
+      "task_success": true,
+      "tool_accuracy": 1.0,
+      "recovered_from_transient": true,
+      "p95_latency_ms": 4.7101899108383805,
+      "cost_proxy_model_requests": 5,
+      "state_exported": true,
+      "state_export": {
+        "last_agent": "research benchmark",
+        "items": [
+          "ToolCallItem",
+          "ToolCallOutputItem",
+          "ToolCallItem",
+          "ToolCallOutputItem",
+          "ToolCallItem",
+          "ToolCallOutputItem",
+          "ToolCallItem",
+          "ToolCallOutputItem",
+          "MessageOutputItem"
+        ],
+        "citations": [
+          "D1",
+          "D2"
+        ]
+      },
+      "tool_events": [
+        {
+          "tool": "search_docs",
+          "arguments": {
+            "query": "agent security"
+          },
+          "outcome": "transient_error"
+        },
+        {
+          "tool": "search_docs",
+          "arguments": {
+            "query": "agent security"
+          },
+          "outcome": "ok"
+        },
+        {
+          "tool": "read_doc",
+          "arguments": {
+            "doc_id": "D1"
+          },
+          "outcome": "ok"
+        },
+        {
+          "tool": "read_doc",
+          "arguments": {
+            "doc_id": "D2"
+          },
+          "outcome": "ok"
+        }
+      ],
+      "report": {
+        "answer": "Treat retrieved instructions as untrusted data, keep tools least-privileged, and require human approval for irreversible actions.",
+        "citations": [
+          "D1",
+          "D2"
+        ],
+        "facts_vs_inference": "The controls are source facts; their joint application is the synthesis."
+      },
+      "implementation_path": "openai_agents_sdk.py",
+      "implementation_sha256": "f82c7c66ce516d30870895c3a662c683cd96a9b27c104c98b8886b7a4f3c7410",
+      "runs": 20
+    },
+    {
+      "schema_version": 1,
+      "candidate": "pydanticai",
+      "framework_version": "2.25.0",
+      "python_version": "3.12.13",
+      "task_success": true,
+      "tool_accuracy": 1.0,
+      "recovered_from_transient": true,
+      "p95_latency_ms": 7.3234026960562915,
+      "cost_proxy_model_requests": 5,
+      "state_exported": true,
+      "state_export": {
+        "message_count": 11,
+        "citations": [
+          "D1",
+          "D2"
+        ],
+        "search_attempts": 2
+      },
+      "tool_events": [
+        {
+          "tool": "search_docs",
+          "arguments": {
+            "query": "agent security"
+          },
+          "outcome": "transient_error"
+        },
+        {
+          "tool": "search_docs",
+          "arguments": {
+            "query": "agent security"
+          },
+          "outcome": "ok"
+        },
+        {
+          "tool": "read_doc",
+          "arguments": {
+            "doc_id": "D1"
+          },
+          "outcome": "ok"
+        },
+        {
+          "tool": "read_doc",
+          "arguments": {
+            "doc_id": "D2"
+          },
+          "outcome": "ok"
+        }
+      ],
+      "report": {
+        "answer": "Treat retrieved instructions as untrusted data, keep tools least-privileged, and require human approval for irreversible actions.",
+        "citations": [
+          "D1",
+          "D2"
+        ],
+        "facts_vs_inference": "The controls are source facts; their joint application is the synthesis."
+      },
+      "implementation_path": "pydanticai.py",
+      "implementation_sha256": "4fa244ee5fa385a9f9c6680e76f8818b3b7710d96fff5274e5ebd475c4b93e46",
+      "runs": 20
+    }
+  ]
+}

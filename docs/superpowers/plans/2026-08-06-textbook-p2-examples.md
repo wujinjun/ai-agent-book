@@ -133,11 +133,11 @@ Each README must include purpose, architecture diagram, installation, offline ru
 
 **Chapter:** 38. **Dependencies:** orchestration only; candidate implementations run in their own environments.
 
-- [ ] Define one research-workflow fixture, golden set, fault cases and weighted criteria before implementing candidates.
-- [ ] Compare the native Runtime with the two closest framework candidates; do not require all frameworks merely to fill a table.
-- [ ] Collect Task Success, Tool Accuracy, recovery, P95, cost proxy, state export and implementation evidence.
-- [ ] Generate a reversible ADR with uncertainty, sensitivity analysis and rollback.
-- [ ] Link chapter 38, run comparison tests and commit `feat: add framework comparison spike`.
+- [x] Define one research-workflow fixture, golden set, fault cases and weighted criteria before implementing candidates.
+- [x] Compare the native Runtime with the two closest framework candidates; do not require all frameworks merely to fill a table.
+- [x] Collect Task Success, Tool Accuracy, recovery, P95, cost proxy, state export and implementation evidence.
+- [x] Generate a reversible ADR with uncertainty, sensitivity analysis and rollback.
+- [x] Link chapter 38, run comparison tests and commit `feat: add framework comparison spike`.
 
 ## Task 13: P2 repository acceptance
 
