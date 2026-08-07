@@ -50,8 +50,8 @@
 | 第8章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 独立幂等与审批恢复工程 | P2 |
 | 第9章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 持久 Checkpoint、取消和恢复工程 | P2—P4 |
 | 第10章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 将正文对照模板落为批量基准 | P4 |
-| 第11章 | `publishable_draft` | `offline_verified` | `official_docs_checked` | `pdf_epub_verified` | 当前官方 SDK 与远程授权实测 | P3 |
-| 第12章 | `publishable_draft` | `offline_verified` | `official_docs_checked` | `pdf_epub_verified` | 当前官方 SDK、Streamable HTTP 和部署 | P3—P4 |
+| 第11章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 远程 OAuth、Origin 与对象授权 | P4 |
+| 第12章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 取消、超时、远程授权和部署压测 | P4 |
 | 第13章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 正式 Embedding、Reranker 和版本化黄金集 | P4 |
 | 第14章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 将正文消融模板落为正式批量实验 | P4 |
 | 第15章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 向量记忆、规模压测与跨系统删除 | P4 |
@@ -85,7 +85,7 @@
 |---|---|---|---|---|
 | 项目1 | `vertical_slice` | 离线模型、流事件、历史、Usage 和错误 | 服务 API、恢复、预算、观测 | P4 |
 | 项目2 | `vertical_slice` | Tool Loop、校验、并行、重试和审批 | 真实 Provider、幂等写入、审批恢复 | P4 |
-| 项目3 | `vertical_slice` | JSON-RPC/stdio 教学子集、文件、系统和 SQLite | 官方 SDK、远程传输和授权 | P3—P4 |
+| 项目3 | `vertical_slice` | 旧 JSON-RPC 教学子集；官方 SDK 2.0.0 Tool/Resource/Prompt、stdio 与无状态 HTTP | OAuth、Origin、取消、超时和部署治理 | P4 |
 | 项目4 | `vertical_slice` | 四格式解析、检索、引用、评估和 pgvector 路径 | Worker、OCR、正式模型、索引版本和黄金集 | P4 |
 | 项目5 | `vertical_slice` | Diff、规则、语义 Review、报告和 HTTP 边界 | GitHub App、Sandbox、Webhook 和去重 | P4 |
 | 项目6 | `vertical_slice` | Provider 边界、总结、日报、审批和审计 | 真实账号适配、Outbox 和冲突处理 | P4 |

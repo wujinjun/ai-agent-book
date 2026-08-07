@@ -22,7 +22,7 @@
 
 ## 代码完成度
 
-- 当前 Python 3.12.13 环境下，根级测试共 110 项通过；独立示例验收器另在 11 个隔离环境执行 69 项安装、离线运行、测试、Ruff、mypy 与证据再生检查，全部通过。
+- 当前 Python 3.12.13 环境下，根级测试共 112 项通过；独立示例验收器另在 11 个隔离环境执行 69 项安装、离线运行、测试、Ruff、mypy 与证据再生检查，全部通过；官方 MCP SDK 2.0.0 子工程另有 8 项隔离测试通过。
 - 根代码包含 Tool Runtime、十个项目领域模块、出版管线和质量审计；十个项目入口都能在离线模式运行。
 - P2 规划的 11 个独立示例已全部完成目录契约、离线运行、直接测试、章节双向链接和根级隔离环境编排；Framework Comparison 还使用三个隔离环境生成带版本与源码哈希的同题证据。`tool_runtime` 是规划外的既有工程，不计入 11/11。P2 的索引、图示和三种出版格式也已重新构建并审计通过。
 - LangGraph 项目使用固定版本并有直接测试；OpenAI Agents SDK 0.18.3 与 PydanticAI 2.25.0 已在各自独立 Python 3.12 环境实测核心路径；LangChain、LlamaIndex、CrewAI、AutoGen 和 Semantic Kernel 尚未全部安装实测。
@@ -39,7 +39,7 @@
 ## 版本核查边界
 
 - LangGraph 固定并实测 `1.2.9`；项目 8 覆盖 `StateGraph`、`RetryPolicy`、Checkpoint、`interrupt` 与 `Command(resume)`。
-- MCP 第 11—12 章已于 2026-08-06 按 2026-07-28 当前规范复核；项目 3 仍按 2025-11-25 实现 JSON-RPC/stdio 教学子集，没有声称覆盖当前官方 SDK、Streamable HTTP 和远程授权的全部能力。
+- MCP 第 11—12 章已于 2026-08-07 按 2026-07-28 规范与官方 Python SDK `mcp==2.0.0` 复核；项目 3 保留 2025-11-25 手写教学子集，并新增官方 SDK Tool、Resource、Prompt、stdio 与无状态 Streamable HTTP 实测。远程 OAuth、Origin、取消和高负载超时仍未标记完成。
 - SQLAlchemy 2.0.51、Psycopg 3.3.4 和 Redis client 8.0.1 已用于项目路径测试。
 - OpenAI Agents SDK 0.18.3 与 PydanticAI 2.25.0 已于 2026-08-07 按官方文档和安装包复验；LangChain、LlamaIndex、CrewAI、AutoGen 和 Semantic Kernel 仍须在 P3 固定版本后复验。
 - 2026 版是维护目标年份，不表示外部 API 在全年保持不变。
@@ -48,8 +48,8 @@
 
 - 全仓库共有 220 张 Mermaid 图，已经生成 SVG、2x PNG 和内容哈希清单；HTML、PDF 和 EPUB 使用预渲染资产，不依赖阅读器现场执行 Mermaid。
 - MkDocs HTML 严格构建、断链、缺图、alt、重复 ID 和残留 Mermaid 自动审计已建立。
-- PDF 当前为 390 页 A4、11,554,324 字节；封面、目录、框架章节、表格、图示和末页已人工抽样，自动出版审计通过。
-- EPUB3 为 12,149,043 字节，包含 219 张正文 SVG 与 219 张 PNG 回退，具备 nav、spine、严格 XHTML 与资源引用检查；HTML 下载目录同时包含最新 PDF 和 EPUB。
+- PDF 当前为 390 页 A4、11,561,071 字节；封面、目录、框架章节、表格、图示和末页已人工抽样，自动出版审计通过。
+- EPUB3 为 12,149,463 字节，包含 219 张正文 SVG 与 219 张 PNG 回退，具备 nav、spine、严格 XHTML 与资源引用检查；HTML 下载目录同时包含最新 PDF 和 EPUB。
 - GitHub Release `v2026.7.0` 已发布 P0 前的完整 `output/` 压缩包、PDF 和 EPUB；本轮 P1 产物已在本地重建，尚未发布为新 Release。
 - Apple Books、Calibre、移动阅读器、黑白打印、孤行寡行和最终商业版式仍需人工复验。
 
@@ -67,4 +67,4 @@
 
 ## 当前验证证据
 
-2026-08-07 在 Python 3.12.13 下重新运行 Ruff、mypy 和 110 项根级测试；11 个独立环境的 69 项 P2 验收全部通过。重建 220 组图示资产、MkDocs HTML、390 页 PDF 和 EPUB，视觉语义审计与自动出版审计均通过。PDF 为 11,554,324 字节，EPUB 为 12,149,043 字节并含 219 组 SVG/PNG 正文图像。出版产物的最终多设备发行验收仍以 P7 和 P9 为准。
+2026-08-07 在 Python 3.12.13 下重新运行 Ruff、mypy 和 112 项根级测试；11 个独立环境的 69 项 P2 验收与 MCP SDK 子工程 8 项测试全部通过。重建 220 组图示资产、MkDocs HTML、390 页 PDF 和 EPUB，视觉语义审计与自动出版审计均通过。PDF 为 11,561,071 字节，EPUB 为 12,149,463 字节并含 219 组 SVG/PNG 正文图像。出版产物的最终多设备发行验收仍以 P7 和 P9 为准。

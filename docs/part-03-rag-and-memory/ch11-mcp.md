@@ -1,6 +1,6 @@
 # 第11章：MCP 基础
 
-最后核对日期：2026-08-06；本章按当前 MCP 规范修订版 2026-07-28 核对，并单独说明 2025-11-25 客户端的迁移差异。
+最后核对日期：2026-08-07；本章按 MCP 2026-07-28 与官方 Python SDK `mcp==2.0.0` 核对，并单独说明 2025-11-25 客户端的迁移差异。
 
 ## 章节导读、学习目标与前置知识
 MCP 用统一协议连接模型应用与上下文能力。本章目标是区分 Client、Server、Tool、Resource、Prompt、Transport 和生命周期。前置知识为第8章。
@@ -40,7 +40,9 @@ Client 管理协议请求与传输，Server 声明能力。stdio 适合本地子
 }
 ```
 
-本书项目 3 的手写 JSON-RPC 循环是协议教学子集，目前仍对应旧生命周期，用于观察消息边界而非宣称完整兼容当前 SDK。迁移到 2026-07-28 的任务记录在版本核查清单中；在迁移完成前，项目 README 必须明确版本限制。
+本书项目 3 保留手写 JSON-RPC 循环作为旧生命周期教学子集，同时在 `projects/03-mcp-local-agent/official_sdk/` 提供官方 SDK 2.0.0 实现。后者用官方高层 Client 验证 Tool、Resource、Prompt，并分别通过真实 stdio 子进程和 loopback Streamable HTTP 调用；两条路径不得混成一个“兼容所有版本”的示例。
+
+官方 SDK 实测还说明一个重要边界：2026-07-28 的 HTTP 路径可以无状态扩展，但文件访问仍要逐次执行 `safe_join`、文件类型、大小和编码检查。协议消除连接会话，不会自动提供主体认证、对象授权或审计。
 
 ## 数据层、传输层与生命周期
 
@@ -276,7 +278,7 @@ stdio 最常见的故障是普通 `print` 污染 stdout。保留子进程的原�
 
 ## 总结、练习、面试与延伸阅读
 
-MCP 统一连接，不决定业务权限。练习：为文件 Server 写威胁模型，并分别画出旧版初始化和当前无状态关闭时序；为同一知识查询分别设计 REST 与 MCP 接口。面试：Resource 与 Tool 如何选择？stdio 与 Streamable HTTP 的信任边界有何不同？能力发现为什么不等于授权？延伸阅读：[MCP 2026-07-28 基础协议](https://modelcontextprotocol.io/specification/2026-07-28/basic/index)、[当前传输规范](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports)、[Server 原语](https://modelcontextprotocol.io/specification/2026-07-28/server/index)与[2026-07-28 发布说明](https://blog.modelcontextprotocol.io/posts/2026-07-28/)。代码目录：`projects/03-mcp-local-agent/`。
+MCP 统一连接，不决定业务权限。练习：为文件 Server 写威胁模型，并分别画出旧版初始化和当前无状态关闭时序；为同一知识查询分别设计 REST 与 MCP 接口。面试：Resource 与 Tool 如何选择？stdio 与 Streamable HTTP 的信任边界有何不同？能力发现为什么不等于授权？延伸阅读：[MCP 2026-07-28 基础协议](https://modelcontextprotocol.io/specification/2026-07-28/basic/index)、[当前传输规范](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports)、[Server 原语](https://modelcontextprotocol.io/specification/2026-07-28/server/index)与[官方 Python SDK](https://github.com/modelcontextprotocol/python-sdk)。代码目录：`projects/03-mcp-local-agent/`，当前 SDK 切片位于 `projects/03-mcp-local-agent/official_sdk/`。
 
 ## 练习参考答案
 

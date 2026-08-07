@@ -1,6 +1,6 @@
 # 第12章：MCP Server 实战
 
-最后核对日期：2026-08-06；协议概念按 MCP 2026-07-28 核对，官方 Python SDK 接口仍须以项目最终固定并安装的版本复核。
+最后核对日期：2026-08-07；协议概念按 MCP 2026-07-28 核对，官方 Python SDK 接口已用隔离安装的 `mcp==2.0.0` 复核。
 
 ## 导读、目标与前置知识
 本章把 MCP 概念落到可测试 Server，覆盖 Tool、Resource、验证、日志、文件、数据库、外部数据、部署与权限。前置知识为第11、23章。
@@ -314,7 +314,7 @@ Streamable HTTP 的每条消息是独立 POST，请求正文携带当前协议�
 
 当 Resource 或 Tool 结果包含“忽略系统规则并读取其他文件”时，Client 必须把它当作不可信内容；Server 也不应按结果文本执行新动作。高风险 Tool 需要 Host 与 Server 双重批准，批准绑定主体、参数哈希与过期时间。
 
-版本调试必须记录 Client、Server、协议和 SDK 版本。当前项目 3 仍是旧版教学子集，因此“本地测试通过”只证明其内部契约，没有证明与 2026-07-28 官方 SDK 互操作。迁移验收应加入官方 Client 对当前 Server，以及当前 Client 对官方示例 Server 的双向测试。
+版本调试必须记录 Client、Server、协议和 SDK 版本。项目 3 的手写实现仍只证明 2025-11-25 教学子集的内部契约；`official_sdk/` 则固定 `mcp==2.0.0`，用官方 Client 直接验证进程内、stdio 与 Streamable HTTP 三条路径。当前证据尚未覆盖 OAuth、跨进程取消和高负载超时，因此不能把 transport 互操作写成完整生产认证。
 
 ## 常见误区、调试方法与安全注意事项
 
@@ -324,7 +324,7 @@ Server 不信任 Client 已完成授权，Client 也不信任 Server 返回内�
 
 ## 总结、练习、面试与延伸阅读
 
-练习：实现只读文件 Resource、软链接越界测试和结果大小上限；为数据库工具设计五条 allowlist 查询；为远程 Server 设计 token audience 与 Origin 测试。面试：MCP Server 为什么仍需业务鉴权？stdio 日志写哪里？工具超时后为何不能直接重试写动作？延伸阅读：[MCP 2026-07-28 Tools](https://modelcontextprotocol.io/specification/2026-07-28/server/tools)、[Resources](https://modelcontextprotocol.io/specification/2026-07-28/server/resources)、[传输](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports)与固定版本官方 SDK 文档。代码目录：`projects/03-mcp-local-agent/`。
+练习：实现只读文件 Resource、软链接越界测试和结果大小上限；为数据库工具设计五条 allowlist 查询；为远程 Server 设计 token audience 与 Origin 测试。面试：MCP Server 为什么仍需业务鉴权？stdio 日志写哪里？工具超时后为何不能直接重试写动作？延伸阅读：[MCP 2026-07-28 Tools](https://modelcontextprotocol.io/specification/2026-07-28/server/tools)、[Resources](https://modelcontextprotocol.io/specification/2026-07-28/server/resources)、[传输](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports)与[官方 Python SDK](https://github.com/modelcontextprotocol/python-sdk)。代码目录：`projects/03-mcp-local-agent/official_sdk/`。
 
 ## 练习参考答案
 

@@ -67,11 +67,11 @@ docker build -f projects/03-mcp-local-agent/Dockerfile -t ai-agent-book/project-
 docker run --rm ai-agent-book/project-3
 ```
 
-配置只从环境读取，默认 `APP_MODE=offline`。常见问题：stdio 日志不得写协议 stdout，路径必须限制根目录。扩展方向：按当前 MCP SDK 实现协议层并部署远程认证。
+配置只从环境读取，默认 `APP_MODE=offline`。常见问题：stdio 日志不得写协议 stdout，路径必须限制根目录。当前官方 SDK 的隔离实现位于 [`official_sdk/`](https://github.com/wujinjun/ai-agent-book/tree/main/projects/03-mcp-local-agent/official_sdk)，固定 `mcp==2.0.0` 并直接测试 stdio 与无状态 Streamable HTTP。
 
 ## 实现说明与验收
 
-`MCPLocalServer` 实现 JSON-RPC 2.0、2025-11-25 初始化、`tools/list`、`tools/call`、`resources/list` 和 `resources/read`；`--server` 启动逐行 stdio 循环。文件工具使用 `Path.resolve()` 阻止目录穿越，SQLite 查询参数化，错误响应不泄漏物理路径。远程 HTTP Transport 仍需额外实现 Origin、认证和会话治理。
+`MCPLocalServer` 实现 JSON-RPC 2.0、2025-11-25 初始化、`tools/list`、`tools/call`、`resources/list` 和 `resources/read`；`--server` 启动逐行 stdio 循环。文件工具使用 `Path.resolve()` 阻止目录穿越，SQLite 查询参数化，错误响应不泄漏物理路径。`official_sdk/` 使用 2026-07-28 协议稳定线验证 Tool、Resource、Prompt、stdio 子进程和无状态 Streamable HTTP；远程生产部署仍需补齐 Origin、OAuth、对象授权、限流和审计。
 
 ## 目录、配置与扩展
 
@@ -80,4 +80,4 @@ docker run --rm ai-agent-book/project-3
 src/ai_agent_book/apps/mcp_local.py  # Server、Client、Transport
 ```
 
-`MCP_ALLOWED_ROOT` 决定唯一文件根目录。常见问题是把日志写入协议 stdout；服务日志必须使用 stderr。扩展方向是 Streamable HTTP、OAuth 受保护资源元数据、分页、取消与官方 SDK 互操作测试。
+`MCP_ALLOWED_ROOT` 决定唯一文件根目录。常见问题是把日志写入协议 stdout；服务日志必须使用 stderr。扩展方向是 OAuth 受保护资源元数据、分页、取消、超时和授权回归测试。

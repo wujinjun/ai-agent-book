@@ -26,11 +26,11 @@ flowchart LR
 
 ## Task 2：官方 MCP SDK
 
-- [ ] 核对当前 MCP 规范、Python SDK 官方仓库和安全建议。
-- [ ] 固定 SDK 版本，分别实现 stdio 与 Streamable HTTP 最小工程。
+- [x] 核对当前 MCP 规范、Python SDK 官方仓库和安全建议。
+- [x] 固定 `mcp==2.0.0`，分别实现并直接测试 stdio 与无状态 Streamable HTTP 最小工程。
 - [ ] 覆盖 Tool、Resource、Prompt、能力发现、参数错误、取消和超时。
 - [ ] 测试 Origin、授权、会话/无状态边界、日志输出不污染 stdio 协议。
-- [ ] 更新第 11、12 章和项目 3，保留 2025-11-25 教学子集的历史边界说明。
+- [x] 更新第 11、12 章和项目 3，保留 2025-11-25 教学子集的历史边界说明。
 
 ## Task 3：LangChain 与 LlamaIndex 同题 RAG
 

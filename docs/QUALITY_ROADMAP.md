@@ -66,7 +66,7 @@
 - [x] 固定并实测 PydanticAI 2.25.0 的类型化依赖、工具、输出、测试模型与 FastAPI 路径；真实 Provider 联调仍按后续阶段验证。
 - [ ] 固定并实测 LangChain 和 LlamaIndex。
 - [ ] 实测 CrewAI、AutoGen 和 Semantic Kernel 的最小协作链路。
-- [ ] 使用官方 MCP SDK 增加 stdio 和 Streamable HTTP 示例。
+- [x] 使用官方 MCP Python SDK 2.0.0 增加并直接测试 stdio 和无状态 Streamable HTTP 示例；远程 OAuth 与 Origin 治理留在 P4。
 - [ ] 为易冲突框架建立独立环境。
 - [ ] 完成原生、LangChain、LlamaIndex 的同题 RAG 对照。
 - [ ] 更新框架选型矩阵、版本、核对日期和弃用信息。

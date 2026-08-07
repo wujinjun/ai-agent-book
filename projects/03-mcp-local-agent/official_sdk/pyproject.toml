@@ -1,0 +1,41 @@
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ai-agent-book-mcp-official"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+dependencies = ["mcp==2.0.0"]
+
+[project.optional-dependencies]
+test = [
+  "mypy==2.3.0",
+  "pytest==9.1.1",
+  "pytest-asyncio==1.4.0",
+  "ruff==0.16.1",
+]
+
+[project.scripts]
+mcp-local-official = "mcp_local_official.main:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mcp_local_official"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["mcp_local_official"]
+
