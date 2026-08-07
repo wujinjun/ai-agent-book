@@ -1,6 +1,6 @@
 # 第21章：LangChain 与 LlamaIndex
 
-最后核对日期：2026-07-11；依据 LangChain 1.x 与 LlamaIndex 官方文档核对，具体集成包仍须安装验证。
+最后核对日期：2026-08-07；LangChain 1.3.14（core 1.5.3）与 LlamaIndex Core 0.14.23 已在独立 Python 3.12 环境安装并完成同题检索实测。
 
 ## 导读、目标与前置知识
 LangChain 提供模型、Prompt、Tool、Retriever 和 Parser 等组合抽象；LangGraph承载有状态编排。LlamaIndex 聚焦 Document、Node、Index、Retriever 与 Query Engine。本章比较其适用场景与锁定风险。
@@ -95,7 +95,8 @@ Document 表示摄取源及 Metadata；Node 是经过解析/切分后用于索�
 这些对象是框架的数据模型，不应直接成为企业领域模型。业务层保存自己的 Document ID、版本、ACL 和来源位置，通过 Adapter 转成 LlamaIndex Node。否则升级框架或切换检索器时，数据库和 API 会被内部字段锁定。
 
 ```python
-# 结构示例；导入路径和构造器须以固定的 LlamaIndex 版本核对。
+# 已按 llama-index-core==0.14.23 的接口核对；生产代码仍需显式传入
+# embed_model、MetadataFilters、引用映射和拒答阈值。
 documents = reader.load_data()
 index = VectorStoreIndex.from_documents(documents)
 retriever = index.as_retriever(similarity_top_k=8)
@@ -116,9 +117,33 @@ LlamaIndex 连接器很多，版本和依赖拆分也频繁。项目固定只需
 
 工程在 `domain/` 定义 Chunk、Citation 和 Answer，在 `adapters/langchain.py`、`adapters/llamaindex.py` 做转换。这样可以同时跑两个候选或回退原生实现。不要在业务代码到处导入框架 Document/Node。
 
+本章同题 Spike 固定三份文档：alpha 租户的 MCP 与 RAG 文档，以及 beta 租户的秘密事故文档。Q1、Q2 应分别命中 D1、D2；alpha 主体的 Q3 即使与 D3 高度相似也不得越权召回，并且不能用相似度为零的 D1/D2 拼出答案。
+
+| 候选 | 固定版本 | Q1 | Q2 | Q3 跨租户与拒答 | 结果 |
+|---|---|---:|---:|---:|---:|
+| LangChain | 1.3.14 | D1 | D2 | `None` | 通过 |
+| LlamaIndex Core | 0.14.23 | D1 | D2 | `None` | 通过 |
+
+下图把表格背后的执行顺序显式展开：两个候选先在各自隔离环境加载同一规格，租户过滤发生在相似度选择之前，拒答阈值又发生在任何生成之前，最终证据绑定实现源码哈希。
+
+```mermaid
+%% id: langchain-llamaindex-rag-acl-spike
+%% title: LangChain 与 LlamaIndex 同题 ACL 检索证据链
+%% alt: 同一Fixture分别进入两个隔离框架环境，先执行租户过滤再计算相似度和拒答阈值，最后汇总带源码哈希的统一证据
+flowchart LR
+    Spec["同一 Documents / Query / ACL / Golden"] --> LC["LangChain 1.3.14"]
+    Spec --> LI["LlamaIndex Core 0.14.23"]
+    LC --> Filter["Tenant Filter"]
+    LI --> Filter
+    Filter --> Threshold["Similarity > 0.1"]
+    Threshold --> Evidence["D1 / D2 / None + source SHA-256"]
+```
+
+这条证据链特意把 ACL 放在相似度结果之前，把拒答阈值放在生成之前。完整 Fixture、两个隔离工程和 `evidence.json` 位于 [`examples/framework_comparison/rag_spike/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/framework_comparison/rag_spike)。当前结果不包含真实 Embedding、生成、外部 Vector Store、P95 或成本比较，因此只支持“两个候选都能实现本地检索边界”，不支持宣称某框架总体更优。
+
 ### 常见误区、调试、安全与选型
 
 常见误区：框架连接器多就等于 RAG 质量高；LangChain Agent 与 LangGraph 是竞争关系；LlamaIndex 只是一种向量数据库。调试展开实际 Prompt、工具、Retriever 候选与 callback/Trace，逐层确认。
 
 权限过滤不能只放在 response synthesizer；Tool 与 Reader 使用最小凭证；Prompt Injection 文档标记为数据。小流程、稳定接口或强性能控制可用原生实现；多集成快速验证可用 LangChain；数据摄取和 RAG 组合复杂时 LlamaIndex 更方便；持久工作流使用 LangGraph。
-总结：框架提供组合与集成，不替代数据质量、权限和评估。练习：实现同一检索基线的原生与框架版本并写 ADR。面试：LangChain 与 LangGraph 的职责差别？LlamaIndex 的 Node 为何不应成为领域模型？Query Engine 与 Retriever 有何区别？延伸阅读：[LangChain Agents](https://docs.langchain.com/oss/python/langchain/agents)、Structured Output 与 [LlamaIndex Framework](https://developers.llamaindex.ai/python/framework/) 官方文档。代码目录状态：三种实现的同题对照工程列入质量路线图 P2—P3，当前不标记为安装实测。
+总结：框架提供组合与集成，不替代数据质量、权限和评估。练习：为当前 Spike 加入真实 Embedding、Recall@k、P95 与 Citation 完整性并写 ADR。面试：LangChain 与 LangGraph 的职责差别？LlamaIndex 的 Node 为何不应成为领域模型？Query Engine 与 Retriever 有何区别？延伸阅读：[LangChain Agents](https://docs.langchain.com/oss/python/langchain/agents)、Structured Output 与 [LlamaIndex Framework](https://developers.llamaindex.ai/python/framework/) 官方文档。代码目录：`examples/framework_comparison/rag_spike/`。

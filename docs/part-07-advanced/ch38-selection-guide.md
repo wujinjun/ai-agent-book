@@ -1,6 +1,6 @@
 # 第38章：技术选型指南
 
-最后核对日期：2026-08-07。OpenAI Agents SDK 0.18.3、PydanticAI 2.25.0 与本章同题 Spike 已隔离实跑；其他框架的社区活跃度、许可证、API 和支持状态仍必须在决策当天复核。
+最后核对日期：2026-08-07。OpenAI Agents SDK 0.18.3、PydanticAI 2.25.0、LangChain 1.3.14 与 LlamaIndex Core 0.14.23 已隔离实跑；其他框架的社区活跃度、许可证、API 和支持状态仍必须在决策当天复核。
 
 ## 章节导读
 
@@ -168,6 +168,8 @@ flowchart LR
 三个候选在本地 50 ms 运行时预算内都满足延迟门槛，因此不使用亚毫秒差异制造虚假优势。当前 ADR 为这个短且无需持久 Checkpoint 的切片选择 Native，原因只是少一次成本代理请求；它明确不外推真实 Provider 延迟、模型质量或长任务恢复。需求加入 Handoff、强类型依赖、持久中断或 Trace 硬约束时必须重新 Spike。完整证据、源码哈希与可逆 ADR 位于 [`examples/framework_comparison/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/framework_comparison)。
 
 生产适用性不能只从文档推断。Spike 应注入模型超时、无效工具参数、Checkpoint 恢复和权限拒绝，观察是否能从 Trace 中定位根因，并检查框架能否导出原始消息与状态。
+
+针对 RAG 形态，仓库另用 `rag-acl-v1` 同题 Fixture 验证 LangChain 1.3.14 与 LlamaIndex Core 0.14.23。两个候选都正确返回 D1、D2，并在 alpha 主体查询 beta 秘密文档时返回 `None`；该结果只覆盖确定性 Embedding、Metadata ACL 与拒答阈值，不包含真实模型、外部索引、P95 和生成引用质量。证据位于 [`examples/framework_comparison/rag_spike/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/framework_comparison/rag_spike)。
 
 ### 从需求到候选过滤
 

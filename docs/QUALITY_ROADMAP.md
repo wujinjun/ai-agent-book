@@ -64,11 +64,11 @@
 
 - [x] 固定并实测 OpenAI Agents SDK 0.18.3 的核心运行时路径；MCP 集成继续按本阶段剩余任务验证。
 - [x] 固定并实测 PydanticAI 2.25.0 的类型化依赖、工具、输出、测试模型与 FastAPI 路径；真实 Provider 联调仍按后续阶段验证。
-- [ ] 固定并实测 LangChain 和 LlamaIndex。
+- [x] 固定并实测 LangChain 1.3.14 与 LlamaIndex Core 0.14.23 的同题检索、Metadata ACL 和拒答阈值；真实 Embedding、生成与外部索引留待 P4。
 - [ ] 实测 CrewAI、AutoGen 和 Semantic Kernel 的最小协作链路。
 - [x] 使用官方 MCP Python SDK 2.0.0 增加并直接测试 stdio 和无状态 Streamable HTTP 示例；远程 OAuth 与 Origin 治理留在 P4。
 - [ ] 为易冲突框架建立独立环境。
-- [ ] 完成原生、LangChain、LlamaIndex 的同题 RAG 对照。
+- [ ] 在已完成的 LangChain/LlamaIndex 同题检索证据上补入原生候选、真实 Embedding、Citation、P95 与成本后形成完整 RAG ADR。
 - [ ] 更新框架选型矩阵、版本、核对日期和弃用信息。
 - [ ] 建立框架升级回归测试。
 

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "fixture": "rag-acl-v1",
+  "documents": [
+    {"id": "D1", "tenant": "alpha", "text": "MCP stateless protocol requests carry metadata."},
+    {"id": "D2", "tenant": "alpha", "text": "RAG answers require source citations."},
+    {"id": "D3", "tenant": "beta", "text": "Secret tenant incident report."}
+  ],
+  "queries": [
+    {"id": "Q1", "tenant": "alpha", "text": "MCP stateless protocol", "expected": "D1"},
+    {"id": "Q2", "tenant": "alpha", "text": "RAG source citation", "expected": "D2"},
+    {"id": "Q3", "tenant": "alpha", "text": "secret tenant incident", "expected": null}
+  ]
+}
+

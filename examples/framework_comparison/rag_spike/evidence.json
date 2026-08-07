@@ -1,0 +1,58 @@
+{
+  "candidate_source_sha256": {
+    "langchain": "4d255e3d2543ab60698e9d3f1385b2deed466693979b6fa778cea6163ce1452f",
+    "llamaindex": "9e850b704a40924f927921a2fd5aca0ff3feb92cdc659bcd93591c1292269c1a"
+  },
+  "candidates": [
+    {
+      "candidate": "langchain",
+      "fixture": "rag-acl-v1",
+      "passed": true,
+      "results": [
+        {
+          "expected": "D1",
+          "query": "Q1",
+          "top": "D1"
+        },
+        {
+          "expected": "D2",
+          "query": "Q2",
+          "top": "D2"
+        },
+        {
+          "expected": null,
+          "query": "Q3",
+          "top": null
+        }
+      ],
+      "version": "1.3.14"
+    },
+    {
+      "candidate": "llamaindex",
+      "fixture": "rag-acl-v1",
+      "passed": true,
+      "results": [
+        {
+          "expected": "D1",
+          "query": "Q1",
+          "top": "D1"
+        },
+        {
+          "expected": "D2",
+          "query": "Q2",
+          "top": "D2"
+        },
+        {
+          "expected": null,
+          "query": "Q3",
+          "top": null
+        }
+      ],
+      "version": "0.14.23"
+    }
+  ],
+  "fixture_sha256": "b91c0fcc8d7d1262ee07b708a4884a13eebac1a8b5878692e2e9300d6d5dc65c",
+  "passed": true,
+  "schema_version": 1,
+  "scope": "offline deterministic retrieval and tenant ACL; no LLM generation"
+}

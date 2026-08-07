@@ -60,7 +60,7 @@
 | 第18章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | MCP 与真实 Provider 受控联调 | P3 |
 | 第19章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 真实 Provider 与生产服务部署 | P3—P4 |
 | 第20章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 数据库 Checkpointer 和外部副作用恢复 | P4 |
-| 第21章 | `publishable_draft` | `inline_only` | `official_docs_checked` | `pdf_epub_verified` | 原生、LangChain、LlamaIndex 对照 | P2—P3 |
+| 第21章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 原生候选、真实 Embedding、Citation、P95 与成本 ADR | P3—P4 |
 | 第22章 | `publishable_draft` | `inline_only` | `official_docs_checked` | `pdf_epub_verified` | 三种框架最小链路实测 | P2—P3 |
 | 第23章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 独立练习与答案 | P1—P5 |
 | 第24章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | SSE 恢复、鉴权与限流实测 | P1—P4 |

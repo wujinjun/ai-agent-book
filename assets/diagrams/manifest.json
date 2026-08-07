@@ -1332,6 +1332,18 @@
     "png_path": "png/ch21-langchain-llamaindex-e64cd28c7368.png"
   },
   {
+    "source_path": "docs/part-04-frameworks/ch21-langchain-llamaindex.md",
+    "index": 5,
+    "semantic_id": "langchain-llamaindex-rag-acl-spike",
+    "title": "LangChain 与 LlamaIndex 同题 ACL 检索证据链",
+    "alt": "同一Fixture分别进入两个隔离框架环境，先执行租户过滤再计算相似度和拒答阈值，最后汇总带源码哈希的统一证据",
+    "diagram_id": "ch21-langchain-llamaindex-6f50c31fab29",
+    "source": "%% id: langchain-llamaindex-rag-acl-spike\n%% title: LangChain 与 LlamaIndex 同题 ACL 检索证据链\n%% alt: 同一Fixture分别进入两个隔离框架环境，先执行租户过滤再计算相似度和拒答阈值，最后汇总带源码哈希的统一证据\nflowchart LR\n    Spec[\"同一 Documents / Query / ACL / Golden\"] --> LC[\"LangChain 1.3.14\"]\n    Spec --> LI[\"LlamaIndex Core 0.14.23\"]\n    LC --> Filter[\"Tenant Filter\"]\n    LI --> Filter\n    Filter --> Threshold[\"Similarity > 0.1\"]\n    Threshold --> Evidence[\"D1 / D2 / None + source SHA-256\"]\n",
+    "source_asset": "source/ch21-langchain-llamaindex-6f50c31fab29.mmd",
+    "svg_path": "svg/ch21-langchain-llamaindex-6f50c31fab29.svg",
+    "png_path": "png/ch21-langchain-llamaindex-6f50c31fab29.png"
+  },
+  {
     "source_path": "docs/part-04-frameworks/ch22-multi-agent-frameworks.md",
     "index": 1,
     "semantic_id": "multi-agent-supervisor-shared-state",

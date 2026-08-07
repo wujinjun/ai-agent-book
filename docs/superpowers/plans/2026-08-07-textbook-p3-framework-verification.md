@@ -34,10 +34,10 @@ flowchart LR
 
 ## Task 3：LangChain 与 LlamaIndex 同题 RAG
 
-- [ ] 分别固定 LangChain、LangGraph 相关包和 LlamaIndex 的当前版本。
-- [ ] 使用同一文档、Chunk、查询、ACL、黄金集和故障 Fixture。
+- [x] 分别固定 LangChain 1.3.14（core 1.5.3）和 LlamaIndex Core 0.14.23。
+- [x] 使用同一文档、查询、确定性 Embedding、ACL、黄金集和拒答场景。
 - [ ] 比较检索正确率、引用完整性、状态导出、P95 与成本代理。
-- [ ] 验证框架抽象无法绕过租户权限和数据来源校验。
+- [x] 验证两个框架均在检索阶段执行租户权限，并用阈值拒绝零相关候选。
 - [ ] 更新第 21、38 章，并生成可逆 ADR。
 
 ## Task 4：CrewAI、AutoGen 与 Semantic Kernel
