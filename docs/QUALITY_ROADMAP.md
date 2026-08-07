@@ -95,7 +95,8 @@
 - [ ] 项目 5：GitHub App/Webhook、Sandbox、多语言静态分析和评论审批。
 - [ ] 项目 6：邮件、日历、Notion/飞书适配器、Outbox 和审批令牌。
 - [ ] 项目 7：行情、公告、财报、新闻去重、来源时效和报告评估。
-- [ ] 项目 8：持久 Checkpoint、真实搜索、来源控制、任务恢复和 Worker。
+- [x] 项目 8：实现 SQLite 持久 Run Journal、来源 Allowlist、证据哈希、租户 Worker、人工审批和重启后确定性重放恢复，并明确与原生持久 Saver 的边界。
+- [ ] 项目 8 后续外部联调：真实搜索/内容读取、数据库原生 LangGraph Checkpointer 与副作用幂等演练。
 - [ ] 项目 9：仓库工作区、补丁回滚、测试 Sandbox、死循环检测和单 Agent 基线。
 - [ ] 项目 10：OIDC/RBAC、持久队列、模型网关、工具注册、MCP/RAG 管理、Trace/Eval 和备份恢复。
 

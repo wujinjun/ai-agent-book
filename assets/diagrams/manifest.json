@@ -2208,6 +2208,18 @@
     "png_path": "png/readme-21bf1d047974.png"
   },
   {
+    "source_path": "projects/08-research-workflow/README.md",
+    "index": 4,
+    "semantic_id": "project8-durable-replay-recovery",
+    "title": "LangGraph 持久输入与确定性重放恢复",
+    "alt": "受控证据写入持久日志，Worker 执行图到人工中断，重启后验证哈希并重放到中断，再应用审批完成或取消",
+    "diagram_id": "readme-222d16aa5ffb",
+    "source": "%% id: project8-durable-replay-recovery\n%% title: LangGraph 持久输入与确定性重放恢复\n%% alt: 受控证据写入持久日志，Worker 执行图到人工中断，重启后验证哈希并重放到中断，再应用审批完成或取消\nsequenceDiagram\n    participant API\n    participant DB as Durable Run Journal\n    participant W as LangGraph Worker\n    participant H as Human Approver\n    API->>DB: topic + allowlisted evidence + digest\n    W->>DB: lease queued run\n    W->>W: replay saved evidence to interrupt\n    W->>DB: awaiting_approval\n    Note over W,DB: process may restart here\n    H->>API: approve / reject\n    API->>DB: verify tenant + evidence digest\n    API->>W: rebuild graph and replay to interrupt\n    W->>W: Command(resume)\n    W->>DB: completed / cancelled + report\n",
+    "source_asset": "source/readme-222d16aa5ffb.mmd",
+    "svg_path": "svg/readme-222d16aa5ffb.svg",
+    "png_path": "png/readme-222d16aa5ffb.png"
+  },
+  {
     "source_path": "projects/09-multi-agent-dev-team/README.md",
     "index": 1,
     "semantic_id": "project9-shared-state-team-architecture",

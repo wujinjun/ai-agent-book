@@ -84,3 +84,30 @@ src/ai_agent_book/apps/langgraph_research.py  # LangGraph 1.2.9 图
 ```
 
 依赖固定 `langgraph==1.2.9`。常见问题是恢复时更换 `thread_id`，这会创建新线程而非恢复旧状态。扩展方向包括数据库 Checkpointer、真实搜索/读取 Provider、引用校验、流式事件和 Checkpoint Schema 迁移测试。
+
+## 跨进程恢复：持久输入与确定性重放
+
+当前固定的 LangGraph 安装只包含 `InMemorySaver`，因此本项目不把内存快照描述成跨进程持久化。`DurableResearchService` 将已通过来源 Allowlist 的证据、主题、哈希、状态和事件写入 SQLite；服务重启后重建同版本图，使用已保存的只读证据重放到 `interrupt`，再应用人工审批 `Command`。这样不会重复联网搜索，也能检测持久证据被篡改。
+
+```mermaid
+%% id: project8-durable-replay-recovery
+%% title: LangGraph 持久输入与确定性重放恢复
+%% alt: 受控证据写入持久日志，Worker 执行图到人工中断，重启后验证哈希并重放到中断，再应用审批完成或取消
+sequenceDiagram
+    participant API
+    participant DB as Durable Run Journal
+    participant W as LangGraph Worker
+    participant H as Human Approver
+    API->>DB: topic + allowlisted evidence + digest
+    W->>DB: lease queued run
+    W->>W: replay saved evidence to interrupt
+    W->>DB: awaiting_approval
+    Note over W,DB: process may restart here
+    H->>API: approve / reject
+    API->>DB: verify tenant + evidence digest
+    API->>W: rebuild graph and replay to interrupt
+    W->>W: Command(resume)
+    W->>DB: completed / cancelled + report
+```
+
+这种方案适用于重放安全的只读步骤。若图包含不可重复的外部写操作，必须改用支持事务 Checkpoint 的持久 Saver，并为每个副作用保存幂等回执；不能依赖重放侥幸不重复执行。

@@ -90,7 +90,7 @@
 | 项目5 | `service_template` | Diff、规则、语义 Review、报告、HTTP；权限、幂等与审计 | GitHub App、Sandbox、Webhook 和去重 | P4 |
 | 项目6 | `service_template` | Provider、日报、绑定审批、审计；持久服务状态 | 真实账号适配、Outbox 和冲突处理 | P4 |
 | 项目7 | `service_template` | 多 Provider、指标、来源、事实/推断；持久服务状态 | 正式数据源、财报解析和时效评估 | P4 |
-| 项目8 | `service_template` | LangGraph、RetryPolicy、Checkpoint、中断；持久 Run 服务 | 数据库 Checkpointer、真实检索、Worker 和恢复演练 | P4 |
+| 项目8 | `production_reference` | LangGraph、RetryPolicy、Interrupt、持久 Run Journal、证据 Allowlist/哈希、租户 Worker、审批与跨进程确定性重放恢复 | 真实搜索、原生数据库 Saver、副作用幂等与外部验证 | P4—P9 |
 | 项目9 | `service_template` | 五角色、共享状态、预算、终止；权限、取消与审计 | 仓库 Sandbox、补丁回滚、扩大单 Agent 基线 | P4 |
 | 项目10 | `service_template` | API、数据库、Redis 队列、租户、Trace 和 Eval 基础 | OIDC/RBAC、迁移、DLQ、管理面和备份恢复 | P4 |
 
