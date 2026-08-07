@@ -88,6 +88,24 @@ def write_build_config(root: Path, docs_dir: Path, output: Path) -> Path:
     return output
 
 
+def copy_publication_downloads(root: Path, site_dir: Path) -> int:
+    """Copy existing PDF/EPUB artifacts to the paths linked by the HTML homepage."""
+
+    sources = (
+        root / "output/pdf/ai-agent-book-2026.pdf",
+        root / "output/epub/ai-agent-book-2026.epub",
+    )
+    destination = site_dir / "downloads"
+    copied = 0
+    for source in sources:
+        if not source.is_file():
+            continue
+        destination.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, destination / source.name)
+        copied += 1
+    return copied
+
+
 def main() -> int:
     intermediate = ROOT / "output/intermediate"
     prepared_docs = prepare_html_sources(ROOT, intermediate / "html-docs")
@@ -103,11 +121,15 @@ def main() -> int:
         "--site-dir",
         str(ROOT / "output/html"),
     ]
+    site_dir = ROOT / "output/html"
+    command[-1] = str(site_dir)
     try:
         completed = subprocess.run(command, cwd=ROOT, check=False, timeout=180)
     except subprocess.TimeoutExpired:
         print("MkDocs 构建超过 180 秒，已终止。", file=sys.stderr)
         return 124
+    if completed.returncode == 0:
+        copy_publication_downloads(ROOT, site_dir)
     return completed.returncode
 
 

@@ -2606,6 +2606,18 @@
   {
     "source_path": "docs/part-07-advanced/ch38-selection-guide.md",
     "index": 5,
+    "semantic_id": "framework-comparison-evidence-chain",
+    "title": "框架同题 Spike 的可验证证据链",
+    "alt": "固定规格分别驱动三个隔离候选并汇总统一证据，经过源码哈希、评分和敏感性分析形成可回滚 ADR",
+    "diagram_id": "ch38-selection-guide-c67991fce6a7",
+    "source": "%% id: framework-comparison-evidence-chain\n%% title: 框架同题 Spike 的可验证证据链\n%% alt: 固定规格分别驱动三个隔离候选并汇总统一证据，经过源码哈希、评分和敏感性分析形成可回滚 ADR\nflowchart LR\n    Spec[\"固定 Spec + Golden + Fault + Policy\"] --> Native[\"Native isolated run\"]\n    Spec --> SDK[\"Agents SDK 0.18.3 isolated run\"]\n    Spec --> PAI[\"PydanticAI 2.25.0 isolated run\"]\n    Native --> Evidence[\"统一 Evidence + source SHA-256\"]\n    SDK --> Evidence\n    PAI --> Evidence\n    Evidence --> Score[\"加权评分 + ±20% 敏感性\"]\n    Score --> ADR[\"选择 / 不确定性 / 回滚 / 复审触发\"]\n",
+    "source_asset": "source/ch38-selection-guide-c67991fce6a7.mmd",
+    "svg_path": "svg/ch38-selection-guide-c67991fce6a7.svg",
+    "png_path": "png/ch38-selection-guide-c67991fce6a7.png"
+  },
+  {
+    "source_path": "docs/part-07-advanced/ch38-selection-guide.md",
+    "index": 6,
     "semantic_id": "framework-selection-evidence-funnel",
     "title": "框架选型证据漏斗",
     "alt": "所有候选先经过硬约束过滤，再做官方文档与本地版本核查，对证据不足且接近者执行同一Spike，最后加权评价并形成可回滚ADR",
@@ -2614,5 +2626,17 @@
     "source_asset": "source/ch38-selection-guide-51fa767d558a.mmd",
     "svg_path": "svg/ch38-selection-guide-51fa767d558a.svg",
     "png_path": "png/ch38-selection-guide-51fa767d558a.png"
+  },
+  {
+    "source_path": "docs/examples/index.md",
+    "index": 1,
+    "semantic_id": "index-diagram-1",
+    "title": "独立示例工程 图 1",
+    "alt": "独立示例工程 图 1",
+    "diagram_id": "index-a8d167436656",
+    "source": "flowchart LR\n    Chapter[\"章节原理与内联代码\"] --> Contract[\"示例工程契约\"]\n    Contract --> Offline[\"离线 Fixture / Fake\"]\n    Contract --> Online[\"可选在线 Adapter\"]\n    Offline --> Tests[\"成功与失败路径测试\"]\n    Online --> Tests\n    Tests --> Evidence[\"可复现实验与预期输出\"]\n",
+    "source_asset": "source/index-a8d167436656.mmd",
+    "svg_path": "svg/index-a8d167436656.svg",
+    "png_path": "png/index-a8d167436656.png"
   }
 ]

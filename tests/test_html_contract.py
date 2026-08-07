@@ -3,7 +3,7 @@ from pathlib import Path
 import yaml
 
 from ai_agent_book.book_manifest import _MkDocsNavigationLoader
-from scripts.build_html import prepare_html_sources, write_build_config
+from scripts.build_html import copy_publication_downloads, prepare_html_sources, write_build_config
 
 ROOT = Path(__file__).parents[1]
 
@@ -67,3 +67,20 @@ def test_temporary_mkdocs_config_adds_all_ten_project_pages(tmp_path: Path) -> N
     assert config.count("part-06-projects/project-") == 10
     assert "项目1：最小 AI Assistant" in config
     assert "项目10：企业级 Agent 平台" in config
+
+
+def test_html_build_copies_existing_pdf_and_epub_downloads(tmp_path: Path) -> None:
+    root = tmp_path / "book"
+    site = tmp_path / "site"
+    pdf = root / "output/pdf/ai-agent-book-2026.pdf"
+    epub = root / "output/epub/ai-agent-book-2026.epub"
+    pdf.parent.mkdir(parents=True)
+    epub.parent.mkdir(parents=True)
+    pdf.write_bytes(b"%PDF fixture")
+    epub.write_bytes(b"EPUB fixture")
+
+    copied = copy_publication_downloads(root, site)
+
+    assert copied == 2
+    assert (site / "downloads/ai-agent-book-2026.pdf").read_bytes() == b"%PDF fixture"
+    assert (site / "downloads/ai-agent-book-2026.epub").read_bytes() == b"EPUB fixture"

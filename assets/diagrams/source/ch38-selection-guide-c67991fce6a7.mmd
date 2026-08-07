@@ -1,0 +1,12 @@
+%% id: framework-comparison-evidence-chain
+%% title: 框架同题 Spike 的可验证证据链
+%% alt: 固定规格分别驱动三个隔离候选并汇总统一证据，经过源码哈希、评分和敏感性分析形成可回滚 ADR
+flowchart LR
+    Spec["固定 Spec + Golden + Fault + Policy"] --> Native["Native isolated run"]
+    Spec --> SDK["Agents SDK 0.18.3 isolated run"]
+    Spec --> PAI["PydanticAI 2.25.0 isolated run"]
+    Native --> Evidence["统一 Evidence + source SHA-256"]
+    SDK --> Evidence
+    PAI --> Evidence
+    Evidence --> Score["加权评分 + ±20% 敏感性"]
+    Score --> ADR["选择 / 不确定性 / 回滚 / 复审触发"]

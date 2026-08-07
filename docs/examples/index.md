@@ -44,3 +44,13 @@ python3.12 -m venv .venv
 ```
 
 具体命令以各示例 README 为准。任何真实密钥都不得写入仓库；`.env.example` 只声明变量名和安全默认值。
+
+仓库维护者可用根级编排器为 11 个示例分别创建虚拟环境，禁止把框架依赖合并成一个环境：
+
+```bash
+.venv/bin/python scripts/verify_examples.py \
+  --python /path/to/python3.12 \
+  --venv-root /tmp/ai-agent-book-example-venvs
+```
+
+编排器依次执行独立安装、离线入口、pytest、Ruff 和 mypy；框架对照还会跨 OpenAI Agents SDK 与 PydanticAI 两个解释器重生成同题证据。结果写入 `tmp/p2-example-verification.json`，任一检查失败都会返回非零退出码并保留对应命令与输出尾部。

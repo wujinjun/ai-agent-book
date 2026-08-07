@@ -1,6 +1,6 @@
 # 教材完成矩阵
 
-状态审计日期：2026-08-06。该日期只表示仓库交付审计，不表示所有外部 API 在当天重新核对。
+状态审计日期：2026-08-07。该日期只表示仓库交付审计，不表示所有外部 API 在当天重新核对。
 
 ## 状态词汇
 
@@ -41,12 +41,12 @@
 | 章节 | 正文 | 代码 | 版本 | 出版 | 主要缺口 | 目标阶段 |
 |---|---|---|---|---|---|---|
 | 第1章 | `publishable_draft` | `inline_only` | `stable_concepts` | `pdf_epub_verified` | 独立技术编辑、引用链接 | P6 |
-| 第2章 | `publishable_draft` | `inline_only` | `stable_concepts` | `pdf_epub_verified` | 独立 Token Counter 工程 | P2 |
-| 第3章 | `publishable_draft` | `inline_only` | `stable_concepts` | `pdf_epub_verified` | 独立 Attention 实验与数值测试 | P1—P2 |
-| 第4章 | `publishable_draft` | `inline_only` | `stable_concepts` | `pdf_epub_verified` | 独立采样实验与参数对照 | P1—P2 |
-| 第5章 | `publishable_draft` | `inline_only` | `stable_concepts` | `pdf_epub_verified` | 独立本地语义搜索工程 | P2 |
-| 第6章 | `publishable_draft` | `inline_only` | `stable_concepts` | `pdf_epub_verified` | Prompt 注册、版本和回归工程 | P1—P2 |
-| 第7章 | `publishable_draft` | `inline_only` | `stable_concepts` | `pdf_epub_verified` | 独立抽取器与失败注入 | P1—P2 |
+| 第2章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 目标模型 Tokenizer 在线对照 | P3—P4 |
+| 第3章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 与训练框架 Attention 对照 | P4 |
+| 第4章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 真实模型参数对照实验 | P4 |
+| 第5章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 正式 Embedding 与 Reranker 对照 | P4 |
+| 第6章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 远程 Prompt Registry 与发布审批 | P4 |
+| 第7章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 真实 Provider 受预算冒烟测试 | P3—P4 |
 | 第8章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 独立幂等与审批恢复工程 | P2 |
 | 第9章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 持久 Checkpoint、取消和恢复工程 | P2—P4 |
 | 第10章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 将正文对照模板落为批量基准 | P4 |
@@ -54,11 +54,11 @@
 | 第12章 | `publishable_draft` | `offline_verified` | `official_docs_checked` | `pdf_epub_verified` | 当前官方 SDK、Streamable HTTP 和部署 | P3—P4 |
 | 第13章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 正式 Embedding、Reranker 和版本化黄金集 | P4 |
 | 第14章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 将正文消融模板落为正式批量实验 | P4 |
-| 第15章 | `publishable_draft` | `inline_only` | `stable_concepts` | `pdf_epub_verified` | 长期记忆独立工程与持久删除治理 | P2—P4 |
+| 第15章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 向量记忆、规模压测与跨系统删除 | P4 |
 | 第16章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 多库性能与迁移实验 | P1—P4 |
-| 第17章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 独立轻量 Runtime 教程工程 | P2 |
-| 第18章 | `publishable_draft` | `inline_only` | `official_docs_checked` | `pdf_epub_verified` | 固定 SDK 版本并运行全部原语 | P2—P3 |
-| 第19章 | `publishable_draft` | `inline_only` | `official_docs_checked` | `pdf_epub_verified` | 固定版本、FastAPI 与 TestModel 实测 | P2—P3 |
+| 第17章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 生产存储与分布式恢复 | P4 |
+| 第18章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | MCP 与真实 Provider 受控联调 | P3 |
+| 第19章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 真实 Provider 与生产服务部署 | P3—P4 |
 | 第20章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 数据库 Checkpointer 和外部副作用恢复 | P4 |
 | 第21章 | `publishable_draft` | `inline_only` | `official_docs_checked` | `pdf_epub_verified` | 原生、LangChain、LlamaIndex 对照 | P2—P3 |
 | 第22章 | `publishable_draft` | `inline_only` | `official_docs_checked` | `pdf_epub_verified` | 三种框架最小链路实测 | P2—P3 |
@@ -77,7 +77,7 @@
 | 第35章 | `publishable_draft` | `inline_only` | `official_docs_checked` | `pdf_epub_verified` | OCR、音频、视频和多模态评估 | P1—P4 |
 | 第36章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 在项目 10 落地 Outbox 与拆分演练 | P4 |
 | 第37章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | SLA、灰度、运营和商业化案例 | P1—P5 |
-| 第38章 | `publishable_draft` | `inline_only` | `official_docs_checked` | `pdf_epub_verified` | 同一垂直切片跨框架实测 | P3 |
+| 第38章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 扩展 LangChain、LlamaIndex 与多 Agent 候选 | P3 |
 
 ## 10 个项目完成矩阵
 

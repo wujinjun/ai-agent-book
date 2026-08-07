@@ -141,13 +141,13 @@ Each README must include purpose, architecture diagram, installation, offline ru
 
 ## Task 13: P2 repository acceptance
 
-- [ ] Mark all 11 catalog entries complete only after their isolated tests pass.
-- [ ] Add root orchestration script that creates/reuses isolated environments without combining incompatible locks.
-- [ ] Run Ruff/mypy/root tests plus every example's direct test command.
-- [ ] Run all examples offline and compare documented expected output.
-- [ ] Rebuild index, diagrams, HTML, PDF and EPUB; run publication audit.
-- [ ] Update `notes/completion-matrix.md`, `PROJECT_STATUS.md`, `docs/QUALITY_ROADMAP.md` and version records.
-- [ ] Commit `feat: complete independent textbook examples` and create the P3 framework-verification plan.
+- [x] Mark all 11 catalog entries complete only after their isolated tests pass.
+- [x] Add root orchestration script that creates/reuses isolated environments without combining incompatible locks.
+- [x] Run Ruff/mypy/root tests plus every example's direct test command.
+- [x] Run all examples offline and compare documented expected output.
+- [x] Rebuild index, diagrams, HTML, PDF and EPUB; run publication audit.
+- [x] Update `notes/completion-matrix.md`, `PROJECT_STATUS.md`, `docs/QUALITY_ROADMAP.md` and version records.
+- [x] Commit `feat: complete independent textbook examples` and create the P3 framework-verification plan.
 
 ## Acceptance
 

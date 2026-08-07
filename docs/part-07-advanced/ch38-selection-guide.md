@@ -148,6 +148,8 @@ Spike 必须覆盖失败、恢复、权限与 Trace，而不只是 happy-path。
 | OpenAI Agents SDK | 0.18.3 | 通过 | 1.00 | 通过 | 通过 | 5 次模型请求 |
 | PydanticAI | 2.25.0 | 通过 | 1.00 | 通过 | 通过 | 5 次模型请求 |
 
+下图把表格背后的复现实验串成证据链：三个候选只接收同一规格，在隔离环境执行后输出统一 Schema，并由源码哈希、评分与敏感性分析共同约束 ADR。这样可以区分“框架文档宣称支持”与“本切片已经运行验证”。
+
 ```mermaid
 %% id: framework-comparison-evidence-chain
 %% title: 框架同题 Spike 的可验证证据链
