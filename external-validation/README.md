@@ -59,6 +59,8 @@ flowchart LR
    .venv/bin/python scripts/validate_external_evidence.py external-validation/evidence --allow-partial
    ```
 
+   局部检查的 `structurally_valid=True` 只说明当前已提交记录没有结构或阈值错误；在七份记录齐全前，输出必须同时显示 `complete=False`，不得把它表述为 P9 通过。
+
 5. 七份证据齐全后，对固定候选执行最终检查：
 
    ```bash

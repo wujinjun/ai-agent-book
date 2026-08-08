@@ -135,9 +135,7 @@ class RightsReview(EvidenceBase):
     private_opinion_reference: Annotated[str, Field(min_length=8, max_length=256)]
 
 
-type Evidence = (
-    IndependentReview | LearnerTrial | EnterprisePilot | DevicePrintQA | RightsReview
-)
+type Evidence = IndependentReview | LearnerTrial | EnterprisePilot | DevicePrintQA | RightsReview
 EVIDENCE_MODELS: dict[str, type[EvidenceBase]] = {
     "independent_review": IndependentReview,
     "learner_trial": LearnerTrial,
@@ -149,6 +147,7 @@ EVIDENCE_MODELS: dict[str, type[EvidenceBase]] = {
 
 class ValidationSummary(TypedDict):
     valid: bool
+    complete: bool
     records: int
     counts: dict[str, int]
     review_roles: list[str]
@@ -327,9 +326,7 @@ def validate_candidate_manifest(
 
 
 def _allowed_finalization_path(path: str) -> bool:
-    return path in FINALIZATION_ALLOWED_FILES or path.startswith(
-        FINALIZATION_ALLOWED_PREFIXES
-    )
+    return path in FINALIZATION_ALLOWED_FILES or path.startswith(FINALIZATION_ALLOWED_PREFIXES)
 
 
 def validate_release_lineage(
@@ -401,9 +398,7 @@ def validate_directory(
     counts: dict[str, int] = {}
     for record in records:
         counts[record.evidence_type] = counts.get(record.evidence_type, 0) + 1
-    review_roles = {
-        record.role for record in records if isinstance(record, IndependentReview)
-    }
+    review_roles = {record.role for record in records if isinstance(record, IndependentReview)}
     reviewer_ids = [
         record.reviewer_id for record in records if isinstance(record, IndependentReview)
     ]
@@ -454,8 +449,26 @@ def validate_directory(
             )
         )
 
+    complete = (
+        not issues
+        and review_roles == REQUIRED_REVIEW_ROLES
+        and len(reviewer_ids) == len(set(reviewer_ids)) == 3
+        and counts.get("independent_review", 0) == 3
+        and all(
+            counts.get(required, 0) == 1
+            for required in (
+                "learner_trial",
+                "enterprise_pilot",
+                "device_print_qa",
+                "rights_review",
+            )
+        )
+        and len(source_commits) == 1
+        and len(candidate_manifest_hashes) == 1
+    )
     return {
         "valid": not issues,
+        "complete": complete,
         "records": len(records),
         "counts": counts,
         "review_roles": sorted(review_roles),
@@ -485,7 +498,8 @@ def main() -> int:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:
         print(
-            f"External evidence valid={result['valid']}, records={result['records']}, "
+            f"External evidence structurally_valid={result['valid']}, "
+            f"complete={result['complete']}, records={result['records']}, "
             f"issues={len(result['issues'])}"
         )
         for issue in result["issues"]:

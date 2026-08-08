@@ -9,3 +9,4 @@
 ```
 
 在七份证据齐全前，该命令失败是预期行为，也正是 P9 不能关闭的机器可读证明。
+使用 `--allow-partial` 收集阶段性记录时，命令可能返回 `structurally_valid=True`，但只有七份记录全部满足阈值时 `complete` 才会为 `True`。

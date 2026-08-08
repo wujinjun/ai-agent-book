@@ -189,6 +189,7 @@ def test_complete_external_evidence_set_passes(tmp_path: Path) -> None:
     result = validate_directory(evidence)
 
     assert result["valid"] is True
+    assert result["complete"] is True
     assert result["records"] == 7
     assert result["issues"] == []
 
@@ -282,8 +283,13 @@ def test_empty_repository_evidence_cannot_close_p9(tmp_path: Path) -> None:
     result = validate_directory(evidence)
 
     assert result["valid"] is False
+    assert result["complete"] is False
     assert result["records"] == 0
     assert len(result["issues"]) == 6
+
+    partial = validate_directory(evidence, require_all=False)
+    assert partial["valid"] is True
+    assert partial["complete"] is False
 
 
 def test_distributed_templates_are_structurally_valid_but_fail_closed() -> None:
