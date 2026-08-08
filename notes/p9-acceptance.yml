@@ -46,6 +46,17 @@ repository_scope:
     review_pr: https://github.com/wujinjun/ai-agent-book/pull/2
     source_commit: e5ffef07df1a9ecc50ffc4db31594ac9bbc7946c
     kit_sha256: 70fd973b95aaf6b147b2a9e075655358d6541d02079f82e82a7abb48f84d9ee2
+  public_reading_preview:
+    status: passed
+    checked_at: 2026-08-08
+    url: https://wujinjun.github.io/ai-agent-book/
+    source_commit: e5ffef07df1a9ecc50ffc4db31594ac9bbc7946c
+    pages_commit: 4b0143f15b9a362075241be239215deef438b115
+    pages_tree: a2ac9d8be6d07cd92d506916a32140a3bb332b70
+    homepage_http: 200
+    pdf_download_http: 200
+    epub_download_http: 200
+    boundary: public_preview_not_final_release
   final_release_gate:
     status: enforced_fail_closed
     requires_complete_external_evidence: true
@@ -64,7 +75,7 @@ scores:
   kind: evidence_weighted_internal_estimate
   personal_system_learning: {current: 90, target: 95}
   enterprise_training: {current: 85, target: 90}
-  github_showcase: {current: 90, target: 95}
+  github_showcase: {current: 93, target: 95}
   commercial_publication: {current: 82, target: 90}
   ten_production_templates: {current: 80, target: 80}
 open_gaps:

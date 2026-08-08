@@ -32,6 +32,7 @@ python -m http.server 8000 --directory output/html
 
 ## 下载已发布版本
 
+- [在线阅读预览（当前 P9 候选内容）](https://wujinjun.github.io/ai-agent-book/)
 - [完整出版包（HTML、PDF、EPUB）](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.0/ai-agent-book-output-v2026.8.0.zip)
 - [PDF（400 页 A4 版）](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.0/ai-agent-book-2026-v2026.8.0.pdf)
 - [EPUB3](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.0/ai-agent-book-2026-v2026.8.0.epub)
@@ -39,7 +40,7 @@ python -m http.server 8000 --directory output/html
 
 发行说明与全部附件见 [GitHub Release v2026.8.0](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.0)。
 
-当前公开站点尚未承诺稳定 URL；可直接下载完整出版包中的 `html/`，或按 Quick Start 本地打开。仓库中的当前候选版为 454 页，并使用固定版本的 OFL 中文与代码字体；只有完成 P9 并发布新 Release 后才会替代上述 400 页公开版。
+在线阅读站已于 2026-08-08 在 GitHub Pages 实机验证首页、PDF 与 EPUB 下载均返回 HTTP 200。站点展示通过审计的 P9 候选内容，属于在线阅读预览，不是 P9 完成或商业出版终稿。仓库中的当前候选版为 454 页，并使用固定版本的 OFL 中文与代码字体；只有完成 P9 并发布新 Release 后才会替代上述 400 页正式发行版。
 
 ## 适合与不适合的读者
 
