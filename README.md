@@ -7,7 +7,7 @@
 
 这是一套面向软件工程师的中文技术教材工程。它不把 Agent 等同于某个框架，也不把能调用一次模型的脚本包装成生产系统；全书从 LLM 的生成机制出发，依次讨论结构化输出、工具调用、MCP、RAG、Memory、工作流、多 Agent，以及测试、部署、可观测性和安全治理。
 
-> 当前公开正式版本为 **v2026.8.0 / 多格式出版预览版**。第 1—38 章、11 个独立示例、十个项目与 HTML/PDF/EPUB 出版管线均已完成本轮复审；项目 4、8、10 达到离线 `production_reference`。P9 仓库内验收已经取得当前源码、Python 3.12、十项目容器和 256 项测试证据，但独立外审、真实试学/试讲、实体设备/印刷与最终 Release 尚未完成。外部参与者可下载只用于验收的 [`p9-candidate-034ac18` 预发布执行包](https://github.com/wujinjun/ai-agent-book/releases/tag/p9-candidate-034ac18)，在 [Issue #1](https://github.com/wujinjun/ai-agent-book/issues/1) 认领角色，并按照 [`external-validation/`](external-validation/) 操作；完整状态见 [`FINAL_ACCEPTANCE.md`](FINAL_ACCEPTANCE.md) 与 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
+> 当前公开正式版本为 **v2026.8.0 / 多格式出版预览版**。第 1—38 章、11 个独立示例、十个项目与 HTML/PDF/EPUB 出版管线均已完成本轮复审；项目 4、8、10 达到离线 `production_reference`。P9 仓库内验收已经取得当前源码、Python 3.12、十项目容器和 256 项测试证据，但独立外审、真实试学/试讲、实体设备/印刷与最终 Release 尚未完成。外部参与者可下载只用于验收的 [`p9-candidate-034ac18` 预发布执行包](https://github.com/wujinjun/ai-agent-book/releases/tag/p9-candidate-034ac18)，在 [Issue #1](https://github.com/wujinjun/ai-agent-book/issues/1) 认领角色、在 [Draft PR #2](https://github.com/wujinjun/ai-agent-book/pull/2) 逐行审阅，并按照 [`external-validation/`](external-validation/) 操作；完整状态见 [`FINAL_ACCEPTANCE.md`](FINAL_ACCEPTANCE.md) 与 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
 
 ![教材 HTML 首页：三栏导航、学习地图与离线下载入口](docs/assets/readme-home.png)
 

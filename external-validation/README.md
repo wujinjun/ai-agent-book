@@ -6,6 +6,8 @@
 
 参与者可在 [P9 外部验收跟踪 Issue #1](https://github.com/wujinjun/ai-agent-book/issues/1) 认领角色和报告进度。Issue 只用于公开协调；姓名、联系方式、签字件、原始测评数据、合同和法律意见仍须保存在受控渠道。
 
+技术与中文编辑审阅者可在 [Draft PR #2](https://github.com/wujinjun/ai-agent-book/pull/2) 对具体行提出意见。PR 在七份外部证据齐全前不得转为 Ready 或合并；若意见导致受保护内容变化，则当前候选失效并重新冻结。
+
 ```mermaid
 flowchart LR
     Candidate["固定候选 commit 与出版物"] --> Reviews["三类独立审阅"]

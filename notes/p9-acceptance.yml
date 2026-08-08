@@ -43,6 +43,7 @@ repository_scope:
     status: published_candidate
     release: https://github.com/wujinjun/ai-agent-book/releases/tag/p9-candidate-034ac18
     tracking_issue: https://github.com/wujinjun/ai-agent-book/issues/1
+    review_pr: https://github.com/wujinjun/ai-agent-book/pull/2
     source_commit: 034ac18e2f675aa2b73dcfcf83d23b0717b63656
     kit_sha256: 227c064f11ee9596be7ef800caf2efe571836b8c1d779335c0255af3008ecc02
   final_release_gate:
