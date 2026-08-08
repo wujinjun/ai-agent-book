@@ -96,6 +96,8 @@
 
 项目 4、8、10 已达到离线 `production_reference`，但没有项目标记为 `externally_validated`。外部状态必须有真实账号、远程系统或设备验收证据，不能仅根据 README 描述升级。
 
+P9 于 2026-08-08 从当前源码重建十个 Python 3.12 Linux 服务镜像，并逐个执行 Readiness；项目 10 同时启动 pgvector PostgreSQL 与 Redis。该结果关闭了“容器仅静态配置验证”的缺口，但不改变上述外部供应商和生产环境边界。运行证据见 `notes/p9-project-runtime-qa.md`。
+
 ## 企业培训交付矩阵
 
 | 交付物 | 状态 | 验收证据 | 后续边界 |

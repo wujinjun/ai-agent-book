@@ -411,13 +411,9 @@
     {
       "id": "pgvector",
       "url": "https://github.com/pgvector/pgvector",
-      "state": "verified_separately",
-      "error": "ConnectTimeout",
-      "verification": {
-        "checked": "2026-08-08",
-        "method": "official_page_open",
-        "final_url": "https://github.com/pgvector/pgvector"
-      }
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://github.com/pgvector/pgvector"
     },
     {
       "id": "milvus-docs",
@@ -597,9 +593,13 @@
     {
       "id": "compose-spec",
       "url": "https://docs.docker.com/compose/compose-file/",
-      "state": "ok",
-      "status_code": 200,
-      "final_url": "https://docs.docker.com/reference/compose-file/"
+      "state": "verified_separately",
+      "error": "ConnectError",
+      "verification": {
+        "checked": "2026-08-08",
+        "method": "official_page_open",
+        "final_url": "https://docs.docker.com/reference/compose-file/"
+      }
     },
     {
       "id": "celery-docs",

@@ -39,6 +39,7 @@ nav#TOC li { margin: 0.18em 0; break-inside: avoid; }
 nav#TOC a { color: #34495e; }
 section.level1 { break-before: page; }
 pre {
+  break-inside: avoid-page;
   padding: 8pt;
   border: 0.5pt solid #dce3ea;
   border-radius: 5pt;

@@ -90,7 +90,7 @@ flowchart LR
 ```dockerfile
 FROM python:3.12-slim AS build
 WORKDIR /build
-COPY pyproject.toml README.md ./
+COPY pyproject.toml README.md LICENSE-CODE ./
 COPY src ./src
 RUN pip wheel --no-cache-dir --wheel-dir /wheels .
 
@@ -105,6 +105,7 @@ CMD ["uvicorn", "agent_service.api:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
 构建上下文通过 `.dockerignore` 排除 `.git`、`.env`、缓存、测试产物和本地数据。Secret 不使用 `ARG` 或 `ENV` 写入镜像层；若构建需私有仓库凭证，使用 BuildKit secret mount。
+`pyproject.toml` 引用的许可证、README 等构建元数据必须同时进入 Builder；否则本地可编辑安装可能成功，而干净镜像会在生成包元数据时失败。本仓库的 P9 容器复验曾实际捕获这一错误，因此对所有 Dockerfile 增加了回归契约。
 
 ### 环境变量与 Secret
 
@@ -135,6 +136,21 @@ services:
 ```
 
 生产不直接复制开发 Compose 密码和卷配置；它只说明服务依赖。
+
+只读根文件系统与持久卷组合时，每一个状态路径都要显式落到可写卷，而不只是主数据库。例如项目 4 除服务状态外还有摄取 Pipeline 数据库和导入目录；漏掉任一路径都会让容器启动时因创建 `.data` 失败。配置应把相关路径作为一个整体审计：
+
+```yaml
+services:
+  knowledge-api:
+    read_only: true
+    volumes: ["knowledge-data:/app/data"]
+    environment:
+      DATABASE_PATH: /app/data/service.db
+      PIPELINE_DATABASE_PATH: /app/data/pipeline.db
+      IMPORT_ROOT: /app/data/imports
+```
+
+验收不能停留在 `docker compose config` 或镜像构建成功；还要启动服务、等待 Readiness，并逐个访问健康端点。这样才能发现包元数据遗漏、非 root 权限和次级状态路径等运行期问题。
 
 ### 健康检查与优雅关闭
 

@@ -2818,5 +2818,17 @@
     "source_asset": "source/index-a8d167436656.mmd",
     "svg_path": "svg/index-a8d167436656.svg",
     "png_path": "png/index-a8d167436656.png"
+  },
+  {
+    "source_path": "docs/final-acceptance.md",
+    "index": 1,
+    "semantic_id": "p9-final-acceptance-gates",
+    "title": "P9 最终验收门禁",
+    "alt": "仓库内技术出版培训证据完成后，还必须经过独立外审、真实试学试讲、实体设备印刷和最终发布，才能关闭 P9",
+    "diagram_id": "final-acceptance-c6517a5c5df1",
+    "source": "%% id: p9-final-acceptance-gates\n%% title: P9 最终验收门禁\n%% alt: 仓库内技术出版培训证据完成后，还必须经过独立外审、真实试学试讲、实体设备印刷和最终发布，才能关闭 P9\nflowchart LR\n    Repo[\"仓库内证据<br/>38章 / 10项目 / 245测试\"] --> Internal[\"三类维护者角色复审\"]\n    Internal --> External{外部门禁}\n    External --> Review[独立技术与中文外审]\n    External --> Trial[真实试学与企业试讲]\n    External --> Device[实体设备、印刷与权利核查]\n    Review --> Feedback[关闭 P0/P1 反馈]\n    Trial --> Feedback\n    Device --> Feedback\n    Feedback --> Score{五类目标均达标}\n    Score -->|是| Release[合并 main 并发布最终 Release]\n    Score -->|否| Improve[修订并重新验收]\n    Improve --> External\n",
+    "source_asset": "source/final-acceptance-c6517a5c5df1.mmd",
+    "svg_path": "svg/final-acceptance-c6517a5c5df1.svg",
+    "png_path": "png/final-acceptance-c6517a5c5df1.png"
   }
 ]

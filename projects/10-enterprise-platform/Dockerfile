@@ -1,6 +1,6 @@
 FROM python:3.12-slim
 WORKDIR /app
-COPY pyproject.toml README.md ./
+COPY pyproject.toml README.md LICENSE-CODE ./
 COPY src ./src
 COPY projects/10-enterprise-platform/main.py ./main.py
 COPY projects/10-enterprise-platform/api.py ./api.py

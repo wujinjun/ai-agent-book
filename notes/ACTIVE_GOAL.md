@@ -10,12 +10,11 @@
 
 ## 必须完成的工作
 
-1. 完成 P2 剩余 5 个独立可运行示例：Minimal Agent、Long-term Memory、OpenAI Agents SDK、PydanticAI Service、Framework Comparison。
-2. 继续增强十个完整项目的生产级深度，包括失败恢复、权限、部署、测试、可观测性和真实工程边界。
-3. 复审全文内容、逻辑关系、图表和版式；可以用图表达的关键关系优先使用 Mermaid、SVG、PNG 或必要的字符图，代码必须使用代码块。
-4. 在 Python 3.12 环境运行源码、静态检查和测试，并验证 HTML、PDF、EPUB 的生成、目录、内部链接和图形渲染。
-5. 更新 `PROJECT_STATUS.md`、完成矩阵和质量路线图，使完成度声明与证据一致。
-6. 最终把代码推送到 GitHub，并把 HTML/PDF/EPUB 等构建产物作为 GitHub Release 发布。
+1. 完成 P9 的独立 Agent 工程、Python 工程和中文出版外审，并关闭 P0/P1 反馈。
+2. 按 `training/p9-trial-protocol.md` 完成真实目标读者试学和企业培训试讲。
+3. 完成实体 iOS/Android 阅读器、商业印刷样张以及商业发行权利核查。
+4. 重新计算五类目标得分，只有全部达到门槛才关闭 P9。
+5. 将最终候选合并到 `main`，发布带 HTML/PDF/EPUB 和 SHA-256 的正式 GitHub Release。
 
 ## 当前证据状态
 
@@ -23,7 +22,9 @@
 - P1 的 16 个核心章节扩充与多格式出版验收已完成。
 - P2 的 11/11 个独立示例均已实现，并已通过根级隔离环境编排、全量离线复验和三格式出版验收。
 - 十个项目均已达到 `service_template`；项目 4、8、10 另达到离线 `production_reference`。真实第三方账号、云基础设施和生产流量验证仍属于外部验收边界。
-- 全文内容、逻辑、图表和版式复审已完成；HTML、400 页 PDF 与 EPUB3 已统一重建并通过自动审计和抽样目视检查。
-- 完成提交 `54dc936` 已快进推送至 GitHub `main`，标签 `v2026.8.0` 已推送。公开 [GitHub Release v2026.8.0](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.0) 已发布完整出版包、400 页 PDF、EPUB3 与 SHA256；公开 API 已核实其为正式发行且四个附件尺寸与本地产物一致。
+- P5—P8 的培训、引用、图形版式和 GitHub 展示仓库内范围已经完成；当前 P9 候选为 236 张图、454 页 PDF 和 EPUB3。
+- P9 已完成当前源码十项目 CLI/容器运行、全新 Python 3.12 环境、245 项测试、三格式出版、外链/密钥/隐私审计和三类维护者角色复审。
+- 公开 [GitHub Release v2026.8.0](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.0) 仍对应较早的 400 页候选；P7—P9 最新工作仍在 `feature/full-book-visual-review`，不能描述为最终正式版。
+- 独立外审、真实试学/试讲、实体设备/印刷、法律核查和最终 Release 尚未完成，P9 保持进行中。
 
 只有上述全部要求均有当前仓库、测试、构建产物和远端发布状态证明时，才可以宣布目标完成。

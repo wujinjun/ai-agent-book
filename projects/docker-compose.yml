@@ -49,6 +49,10 @@ services:
       args: {PROJECT_SLUG: 04-knowledge-agent}
     ports: ["127.0.0.1:8104:8000"]
     volumes: ["project-4-data:/app/data"]
+    environment:
+      DATABASE_PATH: /app/data/project-4.db
+      PIPELINE_DATABASE_PATH: /app/data/project-4-pipeline.db
+      IMPORT_ROOT: /app/data/imports
   project-5:
     <<: *service
     build:
@@ -81,6 +85,9 @@ services:
       args: {PROJECT_SLUG: 08-research-workflow}
     ports: ["127.0.0.1:8108:8000"]
     volumes: ["project-8-data:/app/data"]
+    environment:
+      DATABASE_PATH: /app/data/project-8.db
+      RESEARCH_DATABASE_PATH: /app/data/project-8-research.db
   project-9:
     <<: *service
     build:

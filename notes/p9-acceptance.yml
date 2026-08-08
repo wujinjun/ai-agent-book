@@ -1,0 +1,73 @@
+version: 1
+checked_at: 2026-08-08
+status: in_progress_external_evidence_required
+repository_scope:
+  chapters_reviewed: 38
+  project_clis_run: 10
+  project_service_images_built: 10
+  project_service_healthchecks_passed: 10
+  isolated_examples_verified: 11
+  python: 3.12.13
+  fresh_environment: passed
+  tests: 245
+  ruff: passed
+  mypy_targets: 46
+  diagrams: 236
+  reference_links: {ok: 104, restricted: 8, verified_separately: 1, failed: 0}
+  html: passed
+  pdf:
+    status: passed
+    pages: 454
+    bytes: 13325732
+    sha256: 09231d04f4c254dcbee05b205014d50a8036751facc079c3d0eb9f28078c16a9
+  epub:
+    status: passed
+    bytes: 13441239
+    sha256: d0175c4539119d004438ca68697aca13c0ebef6ea99f8d4a2c6522a7933e9c14
+  publication_audit: passed
+  secret_scan: passed
+  privacy_scan: passed
+internal_role_reviews:
+  agent_engineer: notes/p9-agent-engineering-review.md
+  python_engineer: notes/p9-python-engineering-review.md
+  chinese_editor: notes/p9-editorial-review.md
+scores:
+  kind: evidence_weighted_internal_estimate
+  personal_system_learning: {current: 90, target: 95}
+  enterprise_training: {current: 85, target: 90}
+  github_showcase: {current: 90, target: 95}
+  commercial_publication: {current: 82, target: 90}
+  ten_production_templates: {current: 80, target: 80}
+open_gaps:
+  - id: independent-agent-review
+    owner: independent Agent engineer
+    reason: maintainer role review cannot provide independent technical validation
+    next_review: 2026-08-22
+  - id: independent-python-review
+    owner: independent Python engineer
+    reason: concurrency, migration and load paths require a second reviewer
+    next_review: 2026-08-22
+  - id: independent-chinese-edit
+    owner: professional Chinese technical editor
+    reason: repository automation and maintainer edit do not equal three-stage publication editing
+    next_review: 2026-08-22
+  - id: learner-trial
+    owner: learner trial coordinator
+    reason: requires at least three real target readers and anonymized outcome data
+    next_review: 2026-08-22
+  - id: enterprise-pilot
+    owner: enterprise trainer
+    reason: requires a real 6-12 person class and pre/post assessment
+    next_review: 2026-08-22
+  - id: physical-device-and-print
+    owner: publisher and maintainer
+    reason: physical iOS/Android readers and commercial print proof are not available to automation
+    next_review: 2026-08-22
+  - id: legal-and-rights-opinion
+    owner: publisher legal reviewer
+    reason: documented boundaries do not replace a legal opinion for commercial distribution
+    next_review: 2026-08-22
+  - id: final-main-and-release
+    owner: repository maintainer
+    reason: public v2026.8.0 points to the earlier 400-page candidate; P7-P9 work remains on feature branch
+    next_review: 2026-08-22
