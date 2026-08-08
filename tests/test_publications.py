@@ -1,9 +1,8 @@
 from pathlib import Path
-from zipfile import ZipFile
 
 from pypdf import PdfReader
 
-from ai_agent_book.publications import BookChapter, build_epub, build_pdf
+from ai_agent_book.publications import BookChapter, build_pdf
 
 ROOT = Path(__file__).parents[1]
 
@@ -55,17 +54,9 @@ def test_pdf_preserves_underscores_in_inline_code_paths(tmp_path: Path) -> None:
     assert "tests/test_agent_app.py" in text
 
 
-def test_epub_has_required_container_and_navigation(tmp_path: Path) -> None:
-    output = tmp_path / "book.epub"
-    build_epub(
-        [BookChapter(title="第一章", markdown="# 第一章\n\n正文。")],
-        output,
-        book_title="测试书",
-    )
+def test_obsolete_ebooklib_fallback_is_not_a_release_path() -> None:
+    pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    requirements = (ROOT / "requirements.txt").read_text(encoding="utf-8")
 
-    with ZipFile(output) as archive:
-        names = archive.namelist()
-        assert names[0] == "mimetype"
-        assert archive.read("mimetype") == b"application/epub+zip"
-        assert "META-INF/container.xml" in names
-        assert any(name.endswith("nav.xhtml") for name in names)
+    assert "EbookLib" not in pyproject + requirements
+    assert not (ROOT / "scripts/build_publications.py").exists()

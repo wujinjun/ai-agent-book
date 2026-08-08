@@ -298,23 +298,6 @@
       ]
     },
     {
-      "name": "EbookLib",
-      "version": "0.19",
-      "license_metadata": "GNU Affero General Public License",
-      "license_expression": null,
-      "license_classifiers": [],
-      "license_files": [
-        {
-          "path": "ebooklib-0.19.dist-info/licenses/AUTHORS.txt",
-          "sha256": "287a4543ccb6ed0bdac121eb2c5248b2a9b7040771f87bb448152ef2c24efa62"
-        },
-        {
-          "path": "ebooklib-0.19.dist-info/licenses/LICENSE.txt",
-          "sha256": "57c8ff33c9c0cfc3ef00e650a1cc910d7ee479a8bc509f6c9209a7c2a11399d6"
-        }
-      ]
-    },
-    {
       "name": "fastapi",
       "version": "0.116.1",
       "license_metadata": null,
@@ -644,7 +627,7 @@
     }
   ],
   "dependency_closure_license_inventory": {
-    "pyproject_sha256": "6c49b05d4929051f8d51b806a808c54d6a4be41470f8745687196cd7366dd1c6",
+    "pyproject_sha256": "407bd3c992184e382774b3434535429a311407506e77f6534b44f3b9d8883a47",
     "environment": {
       "implementation_name": "cpython",
       "platform_machine": "arm64",
@@ -653,7 +636,6 @@
     },
     "roots": [
       "beautifulsoup4",
-      "ebooklib",
       "fastapi",
       "httpx",
       "langgraph",
@@ -868,24 +850,6 @@
           {
             "path": "distro-1.9.0.dist-info/LICENSE",
             "sha256": "cb5e8e7e5f4a3988e1063c142c60dc2df75605f4c46515e776e3aca6df976e14"
-          }
-        ],
-        "selected_extras": []
-      },
-      {
-        "name": "EbookLib",
-        "version": "0.19",
-        "license_metadata": "GNU Affero General Public License",
-        "license_expression": null,
-        "license_classifiers": [],
-        "license_files": [
-          {
-            "path": "ebooklib-0.19.dist-info/licenses/AUTHORS.txt",
-            "sha256": "287a4543ccb6ed0bdac121eb2c5248b2a9b7040771f87bb448152ef2c24efa62"
-          },
-          {
-            "path": "ebooklib-0.19.dist-info/licenses/LICENSE.txt",
-            "sha256": "57c8ff33c9c0cfc3ef00e650a1cc910d7ee479a8bc509f6c9209a7c2a11399d6"
           }
         ],
         "selected_extras": []
@@ -1140,24 +1104,6 @@
         "license_expression": null,
         "license_classifiers": [],
         "license_files": [],
-        "selected_extras": []
-      },
-      {
-        "name": "lxml",
-        "version": "6.1.1",
-        "license_metadata": "BSD-3-Clause",
-        "license_expression": null,
-        "license_classifiers": [],
-        "license_files": [
-          {
-            "path": "lxml-6.1.1.dist-info/licenses/LICENSE.txt",
-            "sha256": "8fc2b568133516e46845d2147917adeee1648e70ae9ab5ed6c5417afef4ce855"
-          },
-          {
-            "path": "lxml-6.1.1.dist-info/licenses/LICENSES.txt",
-            "sha256": "41d49dd406aa0e1548a6d5f21a30d6bf638b3cd96eb7289dd348d83ed2e40392"
-          }
-        ],
         "selected_extras": []
       },
       {
@@ -2174,14 +2120,6 @@
         "to": "cffi"
       },
       {
-        "from": "ebooklib",
-        "to": "lxml"
-      },
-      {
-        "from": "ebooklib",
-        "to": "six"
-      },
-      {
         "from": "fastapi",
         "to": "pydantic"
       },
@@ -2645,7 +2583,6 @@
     "A professional reviewer must confirm the rights_basis entries against private source records.",
     "Confirm printer trim, binding margin and bleed requirements; the current text-only PDF uses A4 media/crop boxes without a dedicated bleed workflow.",
     "Confirm that bundled SIL-OFL-1.1 font notices satisfy the final storefront, printer and commercial distribution terms.",
-    "Dependency ebooklib reports AGPL terms; confirm build-tool use and distribution obligations.",
     "EPUB embeds no font files and relies on reader system fonts; test final typography on the target storefronts and physical devices.",
     "Installed metadata is an inventory aid, not a legal compatibility opinion; review direct and transitive dependency terms for the commercial distribution model.",
     "PPTX visible runs use Noto Sans SC but the deck embeds no font files; install the bundled OFL font or confirm substitution on PowerPoint, Keynote and target projection computers."

@@ -26,7 +26,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest==8.4.1", "pytest-asyncio==1.0.0", "ruff==0.12.2", "mypy==1.16.1"]
 docs = ["mkdocs-material==9.6.14"]
-publish = ["reportlab==4.4.2", "pdfplumber==0.11.7", "pypdf==5.7.0", "EbookLib==0.19", "packaging==26.2"]
+publish = ["reportlab==4.4.2", "pdfplumber==0.11.7", "pypdf==5.7.0", "packaging==26.2"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/ai_agent_book"]
@@ -51,7 +51,7 @@ packages = ["ai_agent_book"]
 mypy_path = "src"
 
 [[tool.mypy.overrides]]
-module = ["reportlab.*", "ebooklib.*", "markdown.*", "bs4.*", "yaml.*"]
+module = ["reportlab.*", "bs4.*", "yaml.*"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]

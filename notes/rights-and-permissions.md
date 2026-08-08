@@ -20,7 +20,7 @@ OpenAI、ChatGPT、Claude、Anthropic、LangChain、LangGraph、LlamaIndex、Pyd
 
 PDF 构建固定使用仓库内的 Noto Sans SC 与 Source Code Pro，不再依赖构建机器上的 PingFang、Hiragino 或 Menlo。五个字体文件都固定到上游 commit、保存 SHA-256，并携带 SIL Open Font License 1.1；来源、许可文件和用途见 `assets/fonts/README.md` 与 `notes/asset-provenance.yml`。发行预检核对字体文件、许可文件、CSS 引用、PDF 字体嵌入/轮廓化状态及未批准系统字体，机器报告位于 `notes/distribution-asset-audit.json`。
 
-EPUB 不嵌入字体，以避免显著增加文件体积，并允许阅读器采用用户可访问性设置；因此仍需在目标商店和实体设备测试系统字体替换。培训 PPTX 使用系统字体且不嵌入字体，进入商业发行包前仍需验证 PowerPoint、Keynote 和投影设备上的替换效果。工程清单不能替代对最终合同、OFL 通知方式及印厂要求的专业审核。
+正式 EPUB 只通过 Pandoc EPUB3 管线生成；未被正式入口使用的 EbookLib 兼容实现及依赖已经删除，避免发行依赖清单继续携带无实际用途的 AGPL 构建工具。EPUB 不嵌入字体，以避免显著增加文件体积，并允许阅读器采用用户可访问性设置；因此仍需在目标商店和实体设备测试系统字体替换。培训 PPTX 使用系统字体且不嵌入字体，进入商业发行包前仍需验证 PowerPoint、Keynote 和投影设备上的替换效果。工程清单不能替代对最终合同、OFL 通知方式及印厂要求的专业审核。
 
 ## 当前结论与保留项
 

@@ -1,4 +1,4 @@
-"""从同一 Markdown 章节集合生成中文 PDF 与 EPUB。"""
+"""生成测试用轻量 PDF；正式 PDF/EPUB 始终使用 Pandoc 出版管线。"""
 
 from __future__ import annotations
 
@@ -148,45 +148,3 @@ def build_pdf(chapters: list[BookChapter], output: Path, *, book_title: str) -> 
         author="AI Agent Book contributors",
     )
     document.build(story, onFirstPage=footer, onLaterPages=footer)
-
-
-def build_epub(chapters: list[BookChapter], output: Path, *, book_title: str) -> None:
-    from ebooklib import epub
-    from markdown import markdown
-
-    if not chapters:
-        raise ValueError("至少需要一个章节")
-    output.parent.mkdir(parents=True, exist_ok=True)
-    book = epub.EpubBook()
-    book.set_identifier("ai-agent-book-2026")
-    book.set_title(book_title)
-    book.set_language("zh-CN")
-    book.add_author("AI Agent Book contributors")
-    items = []
-    for index, chapter in enumerate(chapters, 1):
-        item = epub.EpubHtml(
-            title=chapter.title, file_name=f"chapter-{index:02d}.xhtml", lang="zh-CN"
-        )
-        epub_source = chapter.markdown.replace(
-            "```mermaid", "**架构图（Mermaid 图示源码）**\n\n```text"
-        )
-        item.content = markdown(epub_source, extensions=["fenced_code", "tables"])
-        book.add_item(item)
-        items.append(item)
-    book.toc = tuple(items)
-    book.spine = ["nav", *items]
-    book.add_item(epub.EpubNcx())
-    book.add_item(epub.EpubNav())
-    style = (
-        "body{font-family:serif;line-height:1.75;margin:5%;}"
-        "code,pre{font-family:monospace;background:#f3f5f7;}"
-        "table{border-collapse:collapse;}"
-        "td,th{border:1px solid #aaa;padding:.35em;}"
-    )
-    css = epub.EpubItem(
-        uid="style", file_name="style/book.css", media_type="text/css", content=style
-    )
-    book.add_item(css)
-    for item in items:
-        item.add_item(css)
-    epub.write_epub(str(output), book, {})
