@@ -22,7 +22,7 @@ P9 已建立带权重的内部证据分：个人系统学习 90%、企业内部�
 
 ## 代码完成度
 
-- 当前 Python 3.12.13 环境下，根级与项目测试共 255 项通过；其中十项目共享服务契约按项目参数化验证持久化、幂等、租户权限、预算、取消、SSE 回放、指标与重建恢复，项目 4、8、10 另有生产恢复路径测试；独立示例、框架候选、发行资产、培训课件字体与最终发布证据契约测试也均通过。
+- 当前 Python 3.12.13 环境下，根级与项目测试共 256 项通过；其中十项目共享服务契约按项目参数化验证持久化、幂等、租户权限、预算、取消、SSE 回放、指标与重建恢复，项目 4、8、10 另有生产恢复路径测试；独立示例、框架候选、发行资产、培训课件字体与最终发布证据契约测试也均通过。
 - 根代码包含 Tool Runtime、十个项目领域模块、出版管线和质量审计；十个项目入口都能在离线模式运行。
 - P2 规划的 11 个独立示例已全部完成目录契约、离线运行、直接测试、章节双向链接和根级隔离环境编排；Framework Comparison 还使用三个隔离环境生成带版本与源码哈希的同题证据。`tool_runtime` 是规划外的既有工程，不计入 11/11。P2 的索引、图示和三种出版格式也已重新构建并审计通过。
 - LangGraph 项目使用固定版本并有直接测试；OpenAI Agents SDK 0.18.3、PydanticAI 2.25.0、LangChain 1.3.14、LlamaIndex Core 0.14.23、CrewAI 1.15.12、AutoGen AgentChat 0.7.5 与 Semantic Kernel 1.44.1 已在各自独立 Python 3.12 环境实测明确范围。
@@ -49,8 +49,8 @@ P9 已建立带权重的内部证据分：个人系统学习 90%、企业内部�
 
 - 当前候选共有 236 张 Mermaid 图，已经生成 SVG、2x PNG 和内容哈希清单；HTML、PDF 和 EPUB 使用预渲染资产，不依赖阅读器现场执行 Mermaid。
 - MkDocs HTML 严格构建、断链、缺图、alt、重复 ID 和残留 Mermaid 自动审计已建立。
-- 当前本地候选 PDF 为 454 页 A4、11,336,768 字节；封面、目录、正文、代码、图示和末页已重新栅格化抽检。Noto Sans SC 与 Source Code Pro 固定到上游 commit 并携带 OFL，发行预检确认未批准系统字体和硬失败均为 0。
-- P7 本地候选 EPUB3 为 13,443,806 字节，具备 nav、spine、严格 XHTML、跨文件片段和资源引用检查；Apple Books 实机与 Calibre 9.13.0 解析引擎复验通过，HTML 下载目录同时包含同次构建的 PDF 与 EPUB。
+- 当前本地候选 PDF 为 454 页 A4、11,337,048 字节；封面、目录、正文、代码、图示和末页已重新栅格化抽检。Noto Sans SC 与 Source Code Pro 固定到上游 commit 并携带 OFL，发行预检确认未批准系统字体和硬失败均为 0。
+- P7 本地候选 EPUB3 为 13,443,800 字节，具备 nav、spine、严格 XHTML、跨文件片段和资源引用检查；Apple Books 实机与 Calibre 9.13.0 解析引擎复验通过，HTML 下载目录同时包含同次构建的 PDF 与 EPUB。
 - GitHub `main` 已包含教材完成提交 `54dc936` 与状态提交 `c21dd9c`，标签 `v2026.8.0` 已推送。公开 [GitHub Release v2026.8.0](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.0) 已发布完整 `output/` 压缩包、400 页 PDF、EPUB3 与 SHA256；公开 API 复核为正式发行、非草稿、非预发布，四个附件尺寸与本地产物一致。
 - P7 的 macOS 实机、Calibre 引擎、390/768/1440px 视口与 12 页图稿联系表复验已完成；实体 iOS/Android、商业印刷样张和出版社终审仍由 P9 跟踪。
 
@@ -68,4 +68,4 @@ P9 已建立带权重的内部证据分：个人系统学习 90%、企业内部�
 
 ## 当前验证证据
 
-2026-08-08 在 Python 3.12.13 下重新运行 Ruff、mypy 和 255 项根级/项目测试，全部通过。全新虚拟环境安装 `.[dev,docs,publish]` 后再次完成测试、十项目 CLI、HTML、454 页 PDF、EPUB 与出版审计。十个 Linux 服务镜像从当前源码构建，项目 1—9 的 Readiness 及项目 10 的 API/PostgreSQL/Redis 健康检查通过；构建和启动过程中发现的许可证元数据及可写状态路径问题已修复并加入回归测试。PDF 已改用固定版本 OFL 字体，培训 PPTX 的 105 个可见文本框也统一为 Noto Sans SC；发行预检覆盖字体、页面盒、EPUB/PPTX 远程资源、素材来源和依赖许可元数据。最终标签强制校验七份外部证据、冻结候选清单、候选祖先关系、最终化差异白名单及完成状态矩阵。236 组 Mermaid 图、113 条外部参考链接、密钥、隐私和仓库卫生审计无未处理失败。结构化证据见 `notes/p9-project-runtime-qa.md`、`notes/distribution-asset-audit.json` 和 `notes/p9-acceptance.yml`。公开 v2026.8.0 Release 仍是上一版 400 页出版物，当前候选尚未在 P9 正式发布，不能把本地构建冒充公开 Release。
+2026-08-08 在 Python 3.12.13 下重新运行 Ruff、mypy 和 256 项根级/项目测试，全部通过。全新虚拟环境安装 `.[dev,docs,publish]` 后再次完成测试、十项目 CLI、HTML、454 页 PDF、EPUB 与出版审计。十个 Linux 服务镜像从当前源码构建，项目 1—9 的 Readiness 及项目 10 的 API/PostgreSQL/Redis 健康检查通过；构建和启动过程中发现的许可证元数据及可写状态路径问题已修复并加入回归测试。PDF 已改用固定版本 OFL 字体，培训 PPTX 的 105 个可见文本框也统一为 Noto Sans SC；发行预检覆盖字体、页面盒、EPUB/PPTX 远程资源、素材来源和依赖许可元数据。候选打包默认拒绝脏工作区；最终标签强制校验七份外部证据、冻结候选清单、候选祖先关系、最终化差异白名单及完成状态矩阵。236 组 Mermaid 图、113 条外部参考链接、密钥、隐私和仓库卫生审计无未处理失败。结构化证据见 `notes/p9-project-runtime-qa.md`、`notes/distribution-asset-audit.json` 和 `notes/p9-acceptance.yml`。公开 v2026.8.0 Release 仍是上一版 400 页出版物，当前候选尚未在 P9 正式发布，不能把本地构建冒充公开 Release。

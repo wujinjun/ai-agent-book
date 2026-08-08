@@ -207,6 +207,8 @@ def test_external_evidence_must_target_the_release_commit(tmp_path: Path) -> Non
     tampered = validate_directory(evidence)
     assert tampered["valid"] is False
     assert any("manifest hash mismatch" in issue for issue in tampered["issues"])
+    assert any("schema_version" in issue for issue in tampered["issues"])
+    assert any("artifacts must be a list" in issue for issue in tampered["issues"])
 
 
 def test_release_lineage_allows_evidence_only_and_rejects_reviewed_content_changes(

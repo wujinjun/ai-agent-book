@@ -4,9 +4,9 @@
 
 文件：`output/pdf/ai-agent-book-2026.pdf`
 
-规格：A4、454 页、11,336,768 字节
+规格：A4、454 页、11,337,048 字节
 
-SHA-256：`4157300878b67b725f7d56f23c54f99576ba5aabbd57040ac75f706d39e44536`
+SHA-256：`aefb32a515d4292ebcf55ac0b0f078b7d487eef7815b47300db5de916ac58b0f`
 
 ## 结论
 

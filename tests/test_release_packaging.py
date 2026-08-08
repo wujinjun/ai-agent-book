@@ -1,7 +1,10 @@
 import hashlib
 import json
+import subprocess
 import zipfile
 from pathlib import Path
+
+import pytest
 
 from scripts.package_release import package_release
 
@@ -76,3 +79,37 @@ def test_release_package_contains_site_editions_notes_and_valid_checksums(
     for path in (archive, pdf, epub, pptx, notes, release_manifest):
         expected = hashlib.sha256(path.read_bytes()).hexdigest()
         assert f"{expected}  {path.name}" in manifest
+
+
+def test_local_release_candidate_rejects_a_dirty_git_worktree(tmp_path: Path) -> None:
+    (tmp_path / "output/html").mkdir(parents=True)
+    (tmp_path / "output/pdf").mkdir(parents=True)
+    (tmp_path / "output/epub").mkdir(parents=True)
+    (tmp_path / "training/slides").mkdir(parents=True)
+    (tmp_path / "output/html/index.html").write_text("<h1>book</h1>", encoding="utf-8")
+    (tmp_path / "output/pdf/ai-agent-book-2026.pdf").write_bytes(b"pdf")
+    (tmp_path / "output/epub/ai-agent-book-2026.epub").write_bytes(b"epub")
+    (tmp_path / "training/slides/ai-agent-engineering-training.pptx").write_bytes(b"pptx")
+    changelog = tmp_path / "CHANGELOG.md"
+    changelog.write_text("# changes\n", encoding="utf-8")
+    (tmp_path / ".gitignore").write_text("output/\n", encoding="utf-8")
+
+    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "config", "user.name", "Test"], cwd=tmp_path, check=True)
+    subprocess.run(
+        ["git", "config", "user.email", "test@example.invalid"],
+        cwd=tmp_path,
+        check=True,
+    )
+    subprocess.run(
+        ["git", "add", ".gitignore", "CHANGELOG.md", "training"],
+        cwd=tmp_path,
+        check=True,
+    )
+    subprocess.run(["git", "commit", "-qm", "candidate"], cwd=tmp_path, check=True)
+
+    package_release(tmp_path, "clean", tmp_path / "output/release-clean")
+    changelog.write_text("# changed after candidate\n", encoding="utf-8")
+
+    with pytest.raises(RuntimeError, match="clean Git worktree"):
+        package_release(tmp_path, "dirty", tmp_path / "output/release-dirty")

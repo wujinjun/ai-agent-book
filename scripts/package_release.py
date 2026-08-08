@@ -37,6 +37,25 @@ def resolve_source_commit(root: Path, override: str | None = None) -> str:
     return candidate
 
 
+def ensure_clean_worktree(root: Path) -> None:
+    result = subprocess.run(
+        ["git", "status", "--porcelain", "--untracked-files=all"],
+        cwd=root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(f"cannot inspect Git worktree: {result.stderr.strip()}")
+    dirty = [line for line in result.stdout.splitlines() if line.strip()]
+    if dirty:
+        preview = ", ".join(dirty[:8])
+        raise RuntimeError(
+            "release candidate requires a clean Git worktree; commit or remove changes: "
+            f"{preview}"
+        )
+
+
 def artifact_record(path: Path, role: str) -> dict[str, Any]:
     return {
         "role": role,
@@ -95,6 +114,7 @@ def package_release(
     destination: Path,
     *,
     source_commit: str | None = None,
+    require_clean: bool = True,
 ) -> list[Path]:
     pdf = root / "output/pdf/ai-agent-book-2026.pdf"
     epub = root / "output/epub/ai-agent-book-2026.epub"
@@ -104,6 +124,9 @@ def package_release(
     for required in (pdf, epub, html / "index.html", training_pptx, changelog):
         if not required.exists():
             raise RuntimeError(f"release input missing: {required}")
+
+    if require_clean and source_commit is None and not os.environ.get("GITHUB_ACTIONS"):
+        ensure_clean_worktree(root)
 
     safe_version = version.replace("/", "-")
     commit = resolve_source_commit(root, source_commit)
@@ -185,8 +208,14 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--version", default="snapshot")
     parser.add_argument("--destination", type=Path, default=ROOT / "output/release")
+    parser.add_argument("--allow-dirty", action="store_true")
     args = parser.parse_args()
-    for path in package_release(ROOT, args.version, args.destination):
+    for path in package_release(
+        ROOT,
+        args.version,
+        args.destination,
+        require_clean=not args.allow_dirty,
+    ):
         print(path)
     return 0
 

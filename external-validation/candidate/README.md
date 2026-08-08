@@ -1,7 +1,8 @@
 # 冻结候选清单
 
-外部验收开始前，将打包器生成的 `RELEASE_MANIFEST-<版本>.json` 复制到本目录并命名为
-`release-manifest.json`。清单必须来自已经推送且不再修改的候选 commit。
+外部验收开始前，在干净 Git 工作区运行打包器，将生成的
+`RELEASE_MANIFEST-<版本>.json` 复制到本目录并命名为 `release-manifest.json`。清单必须来自
+已经推送且不再修改的候选 commit；打包器默认拒绝把含未提交修改的本地产物绑定到 `HEAD`。
 
 七份证据记录同时填写该文件的 SHA-256。最终标签门禁会验证：
 

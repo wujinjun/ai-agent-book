@@ -39,9 +39,10 @@ flowchart LR
 
 ## 使用方法
 
-1. 固定并推送候选 commit。构建发布包，把候选清单复制到固定路径并计算哈希：
+1. 提交并推送全部候选内容，确认工作区干净。构建发布包，把候选清单复制到固定路径并计算哈希；本地打包器发现任何未提交或未跟踪文件时会拒绝运行：
 
    ```bash
+   test -z "$(git status --porcelain)"
    candidate_commit="$(git rev-parse HEAD)"
    .venv/bin/python scripts/package_release.py --version p9-candidate
    cp output/release/RELEASE_MANIFEST-p9-candidate.json \

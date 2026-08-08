@@ -6,7 +6,7 @@
 
 - `README.md`、`PROJECT_STATUS.md`、`FINAL_ACCEPTANCE.md` 和完成矩阵；
 - 由同一 commit 生成的 HTML、PDF、EPUB、培训 PPTX、`RELEASE_MANIFEST` 与 SHA-256；
-- Python 3.12 安装命令、255 项测试、十项目运行说明和质量审计；
+- Python 3.12 安装命令、256 项测试、十项目运行说明和质量审计；
 - P0—P9 路线图、声明边界、版本核对清单、许可文件和参考资料。
 
 每位审阅者至少记录 6 个实际抽样文件或产物，不接受只阅读首页后给出结论。

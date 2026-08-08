@@ -267,6 +267,10 @@ def validate_candidate_manifest(
         return [*issues, f"candidate manifest cannot be read: {exc}"]
     if not isinstance(document, dict):
         return [*issues, "candidate manifest must be a JSON object"]
+    if document.get("schema_version") != 1:
+        issues.append("candidate manifest schema_version must be 1")
+    if not isinstance(document.get("version"), str) or not document["version"].strip():
+        issues.append("candidate manifest version must be a non-empty string")
     if document.get("source_commit") not in source_commits:
         issues.append(
             "candidate manifest source_commit does not match evidence: "
@@ -275,13 +279,48 @@ def validate_candidate_manifest(
     artifacts = document.get("artifacts")
     if not isinstance(artifacts, list):
         return [*issues, "candidate manifest artifacts must be a list"]
-    roles = {
-        role
-        for item in artifacts
-        if isinstance(item, dict) and isinstance((role := item.get("role")), str)
-    }
     required_roles = {"book_pdf", "book_epub", "training_pptx", "release_notes"}
-    missing_roles = required_roles - roles
+    roles: list[str] = []
+    files: list[str] = []
+    for index, item in enumerate(artifacts):
+        if not isinstance(item, dict):
+            issues.append(f"candidate manifest artifact {index} must be an object")
+            continue
+        role = item.get("role")
+        filename = item.get("file")
+        size = item.get("bytes")
+        digest = item.get("sha256")
+        if not isinstance(role, str):
+            issues.append(f"candidate manifest artifact {index} has invalid role")
+        else:
+            roles.append(role)
+        if (
+            not isinstance(filename, str)
+            or Path(filename).name != filename
+            or filename in {"", ".", ".."}
+        ):
+            issues.append(f"candidate manifest artifact {index} has unsafe file name")
+        else:
+            files.append(filename)
+        if not isinstance(size, int) or isinstance(size, bool) or size <= 0:
+            issues.append(f"candidate manifest artifact {index} has invalid byte size")
+        if (
+            not isinstance(digest, str)
+            or re.fullmatch(r"[0-9a-f]{64}", digest) is None
+            or set(digest) == {"0"}
+        ):
+            issues.append(f"candidate manifest artifact {index} has invalid SHA-256")
+
+    if len(roles) != len(set(roles)):
+        issues.append("candidate manifest artifact roles must be unique")
+    if len(files) != len(set(files)):
+        issues.append("candidate manifest artifact file names must be unique")
+    unexpected_roles = set(roles) - required_roles
+    if unexpected_roles:
+        issues.append(
+            f"candidate manifest has unexpected artifact roles: {sorted(unexpected_roles)}"
+        )
+    missing_roles = required_roles - set(roles)
     if missing_roles:
         issues.append(f"candidate manifest missing artifact roles: {sorted(missing_roles)}")
     return issues

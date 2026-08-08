@@ -4,9 +4,9 @@
 
 文件：`output/epub/ai-agent-book-2026.epub`
 
-大小：13,443,806 字节
+大小：13,443,800 字节
 
-SHA-256：`eb2106e1b3db35dad7d2788b953086f2ac6f077d90eb240bbfac57a0b11bfa8e`
+SHA-256：`31de5806f70815eb6cdd8cb6bd259a7b96c2566109940462a61a88754251a24d`
 
 ## 结论
 

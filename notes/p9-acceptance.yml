@@ -9,7 +9,7 @@ repository_scope:
   isolated_examples_verified: 11
   python: 3.12.13
   fresh_environment: passed
-  tests: 255
+  tests: 256
   ruff: passed
   mypy_targets: 49
   diagrams: 236
@@ -18,12 +18,12 @@ repository_scope:
   pdf:
     status: passed
     pages: 454
-    bytes: 11336768
-    sha256: 4157300878b67b725f7d56f23c54f99576ba5aabbd57040ac75f706d39e44536
+    bytes: 11337048
+    sha256: aefb32a515d4292ebcf55ac0b0f078b7d487eef7815b47300db5de916ac58b0f
   epub:
     status: passed
-    bytes: 13443806
-    sha256: eb2106e1b3db35dad7d2788b953086f2ac6f077d90eb240bbfac57a0b11bfa8e
+    bytes: 13443800
+    sha256: 31de5806f70815eb6cdd8cb6bd259a7b96c2566109940462a61a88754251a24d
   training_pptx:
     status: passed_repository_scope
     slides: 16
@@ -46,6 +46,7 @@ repository_scope:
     requires_candidate_ancestry: true
     finalization_delta_allowlist: true
     requires_candidate_manifest_hash: true
+    requires_clean_candidate_worktree: true
     requires_complete_score_matrix: true
     html_downloads_match_root_artifacts: true
     release_manifest_roles: [book_pdf, book_epub, training_pptx, release_notes]
