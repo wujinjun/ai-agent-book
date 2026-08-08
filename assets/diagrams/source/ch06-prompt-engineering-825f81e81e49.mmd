@@ -1,0 +1,11 @@
+%% id: prompt-version-release-lifecycle
+%% title: Prompt 版本发布生命周期
+%% alt: 展示模板变更从版本化、离线评估、安全测试、灰度发布到监控回滚的闭环
+flowchart LR
+    Edit[模板与 Schema 变更] --> Version[生成不可变版本]
+    Version --> Offline[黄金集离线评估]
+    Offline --> Security[注入与边界测试]
+    Security --> Canary[小流量灰度]
+    Canary --> Observe{质量成本是否达标}
+    Observe -->|是| Release[扩大发布]
+    Observe -->|否| Rollback[回滚旧版本]

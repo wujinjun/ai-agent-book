@@ -1,0 +1,20 @@
+%% id: langgraph-project8-checkpoint-lifecycle
+%% title: 项目 8 的 Checkpoint、中断与恢复生命周期
+%% alt: 同一thread id运行研究图，每个super step保存快照，审批节点interrupt后API持久化审批任务，Command恢复时节点从头重跑并完成报告
+sequenceDiagram
+    participant API as Task API
+    participant G as Compiled Graph
+    participant C as Checkpointer
+    participant H as Human
+    API->>G: invoke(input, thread_id)
+    loop 每个 super-step
+        G->>C: 保存 StateSnapshot
+    end
+    G-->>API: interrupt payload
+    API-->>H: 展示证据和审批动作
+    H->>API: 签名审批决定
+    API->>G: Command(resume=decision), same thread_id
+    G->>C: 加载最新 Checkpoint
+    G->>G: 从 Approval 节点开头重跑
+    G->>C: 保存 completed 状态
+    G-->>API: report + status

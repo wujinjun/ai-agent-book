@@ -1,0 +1,14 @@
+%% id: multimodal-parallel-ingestion
+%% title: 多模态并行解析与证据汇聚
+%% alt: 图像视觉音频 ASR 视频关键帧和文档结构解析并行生成带定位 Evidence 后统一检索和引用
+flowchart TB
+    Image --> Vision["vision model"]
+    Audio --> ASR["ASR + diarization"]
+    Video --> Frames["keyframes + timeline"]
+    Video --> ASR
+    Document --> Parse["text/layout/tables/images"]
+    Vision --> Evidence
+    ASR --> Evidence
+    Frames --> Evidence
+    Parse --> Evidence
+    Evidence --> Retrieve --> MultimodalModel --> Citation

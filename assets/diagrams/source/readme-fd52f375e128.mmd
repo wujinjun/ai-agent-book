@@ -1,0 +1,14 @@
+%% id: project5-finding-evidence-model
+%% title: Code Review Finding 证据模型
+%% alt: 每条发现连接文件新行号规则或模型来源风险等级证据说明和去重指纹并汇总报告
+flowchart TB
+    Diff[受限 Git Diff] --> Location[file + new line]
+    Static[确定性规则] --> Finding[Typed Finding]
+    Semantic[结构化 LLM Reviewer] --> Finding
+    Location --> Finding
+    Finding --> Risk[severity + confidence]
+    Finding --> Evidence[message + evidence]
+    Finding --> Fingerprint[dedup fingerprint]
+    Risk --> Report[Markdown 或 SARIF 报告]
+    Evidence --> Report
+    Fingerprint --> Report

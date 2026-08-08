@@ -1,0 +1,12 @@
+%% id: embedding-model-index-migration
+%% title: Embedding 模型与索引迁移
+%% alt: 新 Embedding 模型在独立集合回填向量并双读评估，通过后切换流量且保留旧索引回滚
+flowchart LR
+    Old[旧模型与 active 索引] --> Serve[线上服务]
+    Snapshot[同一文档快照] --> NewEmbed[新模型离线回填]
+    NewEmbed --> NewIndex[独立候选索引]
+    NewIndex --> Dual[双读黄金集与影子流量]
+    Dual --> Gate{召回延迟权限均达标}
+    Gate -->|是| Switch[原子切换]
+    Gate -->|否| Old
+    Switch --> Rollback[观察期保留旧索引]

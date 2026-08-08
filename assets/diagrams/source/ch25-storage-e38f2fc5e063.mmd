@@ -1,0 +1,11 @@
+%% id: multi-tenant-storage-boundaries
+%% title: 多租户存储隔离边界
+%% alt: 请求主体经租户上下文进入数据库 RLS、向量 tenant 过滤和带权限版本的缓存键并统一审计
+flowchart LR
+    Principal[已认证主体] --> Tenant[不可变 tenant context]
+    Tenant --> PG[PostgreSQL RLS 与对象授权]
+    Tenant --> Vector[向量检索强制 tenant 与 ACL]
+    Tenant --> Cache[缓存键 tenant + permission version]
+    PG --> Audit[访问审计]
+    Vector --> Audit
+    Cache --> Audit

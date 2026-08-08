@@ -1,0 +1,7 @@
+%% id: agent-storage-responsibility-map
+%% title: Agent 数据存储职责分工
+%% alt: API 将事实状态审计写入 PostgreSQL，缓存限流队列协调写入 Redis，检索向量与元数据进入 pgvector
+flowchart LR
+    API --> Postgres["PostgreSQL: users/tasks/state/audit"]
+    API --> Redis["Redis: cache/rate/job coordination"]
+    Retriever --> Vector["pgvector: chunks/metadata"]

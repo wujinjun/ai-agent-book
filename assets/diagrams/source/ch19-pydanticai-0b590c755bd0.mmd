@@ -1,0 +1,7 @@
+%% id: pydanticai-provider-capability-boundary
+%% title: PydanticAI 模型抽象与能力差异
+%% alt: 领域代码通过类型化 Agent 连接模型能力配置依赖与校验输出并以契约测试暴露供应商差异
+flowchart LR
+    Domain --> TypedAgent --> ModelProfile["model/provider capabilities"]
+    TypedAgent --> Deps["typed dependencies"]
+    TypedAgent --> Output["validated output"] --> BusinessValidation

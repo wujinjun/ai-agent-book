@@ -1,0 +1,11 @@
+%% id: multi-agent-net-benefit-gate
+%% title: Multi-Agent 净收益验收门
+%% alt: 单 Agent 基线与多 Agent 候选使用同一数据集比较成功率权限隔离成本延迟和终止可靠性，未达门槛则回退
+flowchart TD
+    Dataset["同一黄金集与故障注入"] --> Single["单 Agent 基线"]
+    Dataset --> Multi["Multi-Agent 候选"]
+    Single --> Metrics["成功率 / 权限隔离 / 成本<br/>P95 / 人工介入 / 终止可靠性"]
+    Multi --> Metrics
+    Metrics --> Gain{"净收益达到预设门槛？"}
+    Gain -->|是| Adopt["采用并固定预算、状态与回滚"]
+    Gain -->|否| Revert["回退单 Agent 或确定性 Workflow"]

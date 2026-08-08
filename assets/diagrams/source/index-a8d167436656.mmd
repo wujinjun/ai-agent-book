@@ -1,0 +1,7 @@
+flowchart LR
+    Chapter["章节原理与内联代码"] --> Contract["示例工程契约"]
+    Contract --> Offline["离线 Fixture / Fake"]
+    Contract --> Online["可选在线 Adapter"]
+    Offline --> Tests["成功与失败路径测试"]
+    Online --> Tests
+    Tests --> Evidence["可复现实验与预期输出"]

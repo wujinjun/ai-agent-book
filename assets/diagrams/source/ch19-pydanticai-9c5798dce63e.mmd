@@ -1,0 +1,16 @@
+%% id: pydanticai-fastapi-request-lifecycle
+%% title: PydanticAI 与 FastAPI 请求生命周期
+%% alt: FastAPI 鉴权构造最小权限依赖后调用异步 Agent，经业务校验返回响应并记录用量与 Trace
+sequenceDiagram
+    participant C as Client
+    participant F as FastAPI
+    participant A as Typed Agent
+    participant D as Dependencies
+    participant B as Business Validation
+    C->>F: 请求与身份
+    F->>D: 构造最小权限依赖
+    F->>A: agent.run(task, deps)
+    A->>D: 受控工具调用
+    A-->>F: typed output + usage
+    F->>B: 外部事实与权限校验
+    B-->>C: 稳定 API 响应

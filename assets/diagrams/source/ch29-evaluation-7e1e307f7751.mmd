@@ -1,0 +1,8 @@
+%% id: agent-test-pyramid-detailed
+%% title: Agent 单元、集成与 E2E 测试边界
+%% alt: Schema Policy State Budget 位于单元层，模型工具检索存储位于集成层，部署工作流位于 E2E 层
+flowchart TB
+    E2E["E2E: deployed workflow"]
+    Integration["Integration: model/tool/retrieval/storage"]
+    Unit["Unit: schema/policy/state/budget"]
+    Unit --> Integration --> E2E

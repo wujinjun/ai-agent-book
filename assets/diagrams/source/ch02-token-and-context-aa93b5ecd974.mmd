@@ -1,0 +1,14 @@
+%% id: context-window-memory-boundary
+%% title: 上下文窗口与长期记忆的边界
+%% alt: 单次请求上下文由运行时组装，结束后不会自动持久化，长期记忆写入外部存储并在后续请求按需检索
+flowchart TB
+    Store["外部持久存储<br/>事实 / 摘要 / 原始记录"] --> Retrieve["权限过滤与检索"]
+    Recent["近期对话"] --> Assemble["Context Assembly"]
+    Retrieve --> Assemble
+    Rules["系统规则 / Tool Schema"] --> Assemble
+    Assemble --> Window["单次上下文窗口"]
+    Window --> Model["模型调用"]
+    Model --> Result["回答 / 工具意图"]
+    Result --> Write{"是否写入记忆？"}
+    Write -->|经过策略与同意| Store
+    Write -->|否| End["请求结束"]

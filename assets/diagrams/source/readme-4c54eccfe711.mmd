@@ -1,0 +1,12 @@
+%% id: project4-ingestion-release-state
+%% title: 知识库摄取与索引发布状态机
+%% alt: 摄取任务从排队运行到候选评估，达标后原子激活，不达标拒绝，进程中断可恢复排队
+stateDiagram-v2
+    [*] --> Queued
+    Queued --> Running: worker lease
+    Running --> Queued: process restart recovery
+    Running --> Failed: parser or integrity failure
+    Running --> Candidate: chunks + embeddings
+    Candidate --> Active: Recall and MRR pass
+    Candidate --> Rejected: release gate fails
+    Active --> Archived: newer candidate passes

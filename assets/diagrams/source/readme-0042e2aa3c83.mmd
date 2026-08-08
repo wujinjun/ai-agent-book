@@ -1,0 +1,13 @@
+%% id: project3-mcp-jsonrpc-sequence
+%% title: MCP 本地 JSON-RPC 生命周期
+%% alt: Client 初始化协商后列出工具资源，调用只读能力并在 stdio 上接收 JSON-RPC 结果或稳定错误
+sequenceDiagram
+    participant C as MCP Client
+    participant S as Local Server
+    C->>S: initialize 2025-11-25
+    S-->>C: capabilities and serverInfo
+    C->>S: initialized notification
+    C->>S: tools/list or resources/list
+    S-->>C: available capabilities
+    C->>S: tools/call or resources/read
+    S-->>C: result or JSON-RPC error

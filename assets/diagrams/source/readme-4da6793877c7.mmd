@@ -1,0 +1,14 @@
+%% id: project2-tool-approval-sequence
+%% title: 天气 Agent 写工具审批时序
+%% alt: Runtime 校验告警工具参数后向人工展示目标内容，批准与调用 ID 匹配才执行并写审计
+sequenceDiagram
+    participant R as Runtime
+    participant P as Approval Policy
+    participant H as Human
+    participant T as Alert Tool
+    R->>P: call_id + validated arguments
+    P-->>H: target content and risk
+    H-->>P: approve or reject
+    P-->>R: decision bound to call_id
+    R->>T: execute only when approved
+    T-->>R: structured observation

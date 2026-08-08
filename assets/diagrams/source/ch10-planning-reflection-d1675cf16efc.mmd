@@ -1,0 +1,10 @@
+%% id: plan-execute-review-replan-loop
+%% title: 规划执行评审与重规划闭环
+%% alt: 目标经 Planner 形成任务队列，由 Executor 产出证据并经 Reviewer 决定完成或局部重规划
+flowchart LR
+    Goal["目标"] --> Planner["Planner：可验证步骤与依赖"]
+    Planner --> Queue["就绪任务"] --> Executor["Executor"]
+    Executor --> Evidence["产物与证据"] --> Reviewer["Reviewer"]
+    Reviewer -->|通过| Done["完成"]
+    Reviewer -->|局部失败| Replan["受限重规划"] --> Queue
+    Reviewer -->|不可恢复| Stop["停止/人工介入"]

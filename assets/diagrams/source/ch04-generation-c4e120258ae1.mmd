@@ -1,0 +1,14 @@
+%% id: decoding-parameter-decision-tree
+%% title: Temperature、Top-k 与 Top-p 的选择树
+%% alt: 任务先区分结构化确定性与开放生成，确定性任务降低随机性，开放任务再按候选集合需求选择 Top-p 或 Top-k
+flowchart TB
+    Task["生成任务"] --> Exact{"抽取 / 分类 / 严格回归？"}
+    Exact -->|是| Low["低随机性或贪心<br/>重点验证 Schema 与事实"]
+    Exact -->|否| Diverse{"需要多个创意候选？"}
+    Diverse -->|否| Moderate["中等 Temperature<br/>保留有限变化"]
+    Diverse -->|是| Shape{"候选数应随分布变化？"}
+    Shape -->|是| TopP["Top-p<br/>累计概率动态截断"]
+    Shape -->|否| TopK["Top-k<br/>固定候选数量"]
+    TopP --> Eval["用任务集评估质量 / 成本"]
+    TopK --> Eval
+    Moderate --> Eval

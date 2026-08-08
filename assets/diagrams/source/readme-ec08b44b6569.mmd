@@ -1,0 +1,12 @@
+%% id: project1-streaming-assistant-sequence
+%% title: 最小 Assistant 流式对话时序
+%% alt: 用户请求由会话服务保存历史并发送模型适配器，再将增量事件和用量流式返回
+sequenceDiagram
+    participant U as User
+    participant S as AssistantSession
+    participant M as Model Adapter
+    U->>S: prompt
+    S->>S: append history
+    S->>M: messages + config
+    M-->>S: delta events
+    S-->>U: stream + usage

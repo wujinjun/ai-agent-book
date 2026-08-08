@@ -1,0 +1,3628 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="面向软件工程师的 AI Agent 原理、工程与项目教材">
+      
+      
+        <meta name="author" content="AI Agent Book contributors">
+      
+      
+      
+        <link rel="prev" href="../ch11-mcp/">
+      
+      
+        <link rel="next" href="../ch13-rag/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>第12章 MCP Server - AI Agent 从零到实战（2026版）</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#12mcp-server" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="AI Agent 从零到实战（2026版）" class="md-header__button md-logo" aria-label="AI Agent 从零到实战（2026版）" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Agent 从零到实战（2026版）
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              第12章 MCP Server
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="light-blue"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../copyright/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  版权与使用说明
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../edition/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  版本与发行信息
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../preface/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  前言
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../learning-guide/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  学习指南
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../training/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  企业培训版
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../part-01-foundations/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第一篇 LLM 与 AI Agent 基础
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../part-02-agent-core/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第二篇 Prompt、工具与 Agent 核心
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第三篇 MCP、RAG 与 Memory
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../part-04-frameworks/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第四篇 Agent 框架
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../part-05-engineering/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第五篇 Agent 工程化
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../part-06-projects/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第六篇 完整项目实战
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../part-07-advanced/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第七篇 高级主题
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../examples/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  独立示例
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../book-index/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  全书索引
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../glossary/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  术语表
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../references/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  参考资料
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../QUALITY_ROADMAP/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  质量路线图
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../final-acceptance/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  最终验收状态
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../project-status/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  项目状态
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="AI Agent 从零到实战（2026版）" class="md-nav__button md-logo" aria-label="AI Agent 从零到实战（2026版）" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    AI Agent 从零到实战（2026版）
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../copyright/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    版权与使用说明
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../edition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    版本与发行信息
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../preface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    前言
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    学习指南
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../training/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    企业培训版
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            企业培训版
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../training/instructor-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    讲师手册
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../training/student-lab-manual/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    学员实验手册
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../training/assessment-rubric/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    评分标准
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../training/question-bank/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    章节题库与考试
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../training/enterprise-cases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    企业案例
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../training/workshops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    工作坊
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../training/offline-training-pack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    离线培训包
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../training/common-mistakes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    常见学员错误
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../training/slides/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    幻灯片说明
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part-01-foundations/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第一篇 LLM 与 AI Agent 基础
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            第一篇 LLM 与 AI Agent 基础
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-01-foundations/ch01-what-is-llm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第1章 什么是大语言模型
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-01-foundations/ch02-token-and-context/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第2章 Token 与上下文窗口
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-01-foundations/ch03-transformer-attention/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第3章 Transformer 与 Attention
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-01-foundations/ch04-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第4章 LLM 生成机制
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-01-foundations/ch05-embedding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第5章 Embedding 与语义表示
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part-02-agent-core/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第二篇 Prompt、工具与 Agent 核心
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            第二篇 Prompt、工具与 Agent 核心
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-02-agent-core/ch06-prompt-engineering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第6章 Prompt Engineering
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-02-agent-core/ch07-structured-output/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第7章 Structured Output
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-02-agent-core/ch08-tool-calling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第8章 Tool Calling
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-02-agent-core/ch09-agent-runtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第9章 Agent Runtime
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-02-agent-core/ch10-planning-reflection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第10章 Planning 与 Reflection
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第三篇 MCP、RAG 与 Memory
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            第三篇 MCP、RAG 与 Memory
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch11-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第11章 MCP 基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    第12章 MCP Server
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    第12章 MCP Server
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      导读、目标与前置知识
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      核心原理与流程
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      最小实验
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      误区、调试、实践与安全
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#server" class="md-nav__link">
+    <span class="md-ellipsis">
+      Server 边界与目录结构
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tool-resource" class="md-nav__link">
+    <span class="md-ellipsis">
+      文件系统 Tool 与 Resource
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      数据库与外部服务工具
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      参数、结果与错误设计
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      可观测、测试与部署
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      工程案例
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="工程案例">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      结构化错误边界
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stdio" class="md-nav__link">
+    <span class="md-ellipsis">
+      stdio 纯净性测试
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      远程部署与关闭
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      失败分析与调试
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      常见误区、调试方法与安全注意事项
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结、练习、面试与延伸阅读
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      练习参考答案
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      本章引用
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch13-rag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第13章 RAG 基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch14-advanced-rag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第14章 高级 RAG
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch15-memory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第15章 Memory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch16-vector-databases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第16章 向量数据库
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part-04-frameworks/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第四篇 Agent 框架
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            第四篇 Agent 框架
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-04-frameworks/ch17-native-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第17章 原生 API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-04-frameworks/ch18-openai-agents-sdk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第18章 OpenAI Agents SDK
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-04-frameworks/ch19-pydanticai/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第19章 PydanticAI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-04-frameworks/ch20-langgraph/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第20章 LangGraph
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-04-frameworks/ch21-langchain-llamaindex/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第21章 LangChain 与 LlamaIndex
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-04-frameworks/ch22-multi-agent-frameworks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第22章 Multi-Agent 框架
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part-05-engineering/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第五篇 Agent 工程化
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            第五篇 Agent 工程化
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-05-engineering/ch23-python-engineering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第23章 Python 工程基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-05-engineering/ch24-fastapi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第24章 FastAPI 服务化
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-05-engineering/ch25-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第25章 数据存储
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-05-engineering/ch26-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第26章 Docker 与部署
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-05-engineering/ch27-job-queues/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第27章 异步任务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-05-engineering/ch28-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第28章 Observability
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-05-engineering/ch29-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第29章 Agent Evaluation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-05-engineering/ch30-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第30章 安全与 Guardrails
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-05-engineering/ch31-cost-performance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第31章 成本与性能
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part-06-projects/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第六篇 完整项目实战
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_12" id="__nav_12_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            第六篇 完整项目实战
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目1：最小 AI Assistant
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-02/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目2：天气与工具调用 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-03/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目3：MCP 本地工具 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-04/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目4：企业知识库 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-05/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目5：代码 Review Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-06/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目6：自动办公 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-07/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目7：股票研究 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目8：LangGraph 研究工作流 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-09/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目9：Multi-Agent 软件开发团队
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目10：企业级 Agent 平台
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part-07-advanced/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第七篇 高级主题
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_13" id="__nav_13_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            第七篇 高级主题
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-07-advanced/ch32-multi-agent-principles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第32章 Multi-Agent 原理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-07-advanced/ch33-agentic-coding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第33章 Agentic Coding
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-07-advanced/ch34-browser-computer-use/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第34章 Browser 与 Computer Use
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-07-advanced/ch35-multimodal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第35章 多模态 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-07-advanced/ch36-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第36章 Agent 架构设计
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-07-advanced/ch37-demo-to-product/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第37章 从 Demo 到产品
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-07-advanced/ch38-selection-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第38章 技术选型
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    独立示例
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../book-index/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    全书索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    术语表
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    参考资料
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../QUALITY_ROADMAP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    质量路线图
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../final-acceptance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    最终验收状态
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project-status/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目状态
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      导读、目标与前置知识
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      核心原理与流程
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      最小实验
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      误区、调试、实践与安全
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#server" class="md-nav__link">
+    <span class="md-ellipsis">
+      Server 边界与目录结构
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tool-resource" class="md-nav__link">
+    <span class="md-ellipsis">
+      文件系统 Tool 与 Resource
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      数据库与外部服务工具
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      参数、结果与错误设计
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      可观测、测试与部署
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      工程案例
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="工程案例">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      结构化错误边界
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stdio" class="md-nav__link">
+    <span class="md-ellipsis">
+      stdio 纯净性测试
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      远程部署与关闭
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      失败分析与调试
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      常见误区、调试方法与安全注意事项
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结、练习、面试与延伸阅读
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      练习参考答案
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      本章引用
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="12mcp-server">第12章：MCP Server 实战</h1>
+<p>最后核对日期：2026-08-07；协议概念按 MCP 2026-07-28 核对，官方 Python SDK 接口已用隔离安装的 <code>mcp==2.0.0</code> 复核。</p>
+<h2 id="_1">导读、目标与前置知识</h2>
+<p>本章把 MCP 概念落到可测试 Server，覆盖 Tool、Resource、验证、日志、文件、数据库、外部数据、部署与权限。前置知识为第11、23章。</p>
+<p>学习目标是能够实现并测试一个最小示例，再把它扩展为具备策略、可观测和部署边界的完整工程。</p>
+<h2 id="_2">核心原理与流程</h2>
+<p>MCP Server 不只是协议端点，它还需要策略、领域服务和后端适配层。主时序图显示每次调用必须经过的控制点。</p>
+<figure class="book-diagram">
+<picture>
+<source type="image/svg+xml" srcset="../../assets/diagrams/svg/ch12-mcp-server-7f71657441a2.svg">
+<img src="../../assets/diagrams/png/ch12-mcp-server-7f71657441a2.png" alt="Client 调用经 Server、Policy 校验后访问 Backend 并返回结构化结果的完整时序" loading="lazy">
+</picture>
+<figcaption><span class="figure-number">图 12-1</span>：MCP Server 策略校验与执行时序</figcaption>
+</figure>
+
+<p>协议成功不代表业务成功；参数、权限、超时和上游错误都需要稳定错误码并进入 Trace。</p>
+<figure class="book-diagram">
+<picture>
+<source type="image/svg+xml" srcset="../../assets/diagrams/svg/ch12-mcp-server-4b155fd9844e.svg">
+<img src="../../assets/diagrams/png/ch12-mcp-server-4b155fd9844e.png" alt="协议适配层依次连接策略层、领域服务和文件数据库外部服务适配器" loading="lazy">
+</picture>
+<figcaption><span class="figure-number">图 12-2</span>：MCP Server 分层架构</figcaption>
+</figure>
+
+<p>分层使 SDK 或协议升级不会迫使领域逻辑重写，也让安全测试能够直接覆盖 Policy 与 Adapter 边界。</p>
+<figure class="book-diagram">
+<picture>
+<source type="image/svg+xml" srcset="../../assets/diagrams/svg/ch12-mcp-server-9263b9eb639a.svg">
+<img src="../../assets/diagrams/png/ch12-mcp-server-9263b9eb639a.png" alt="将协议参数策略业务上游和内部错误分别映射为拒绝、观察、有限重试或告警" loading="lazy">
+</picture>
+<figcaption><span class="figure-number">图 12-3</span>：MCP Server 错误分类与处理</figcaption>
+</figure>
+
+<p>把所有异常都包装成文本会迫使模型猜测处理方式。稳定 code 与 retryable 字段让 Host 保持确定性控制。</p>
+<figure class="book-diagram">
+<picture>
+<source type="image/svg+xml" srcset="../../assets/diagrams/svg/ch12-mcp-server-288aa897c883.svg">
+<img src="../../assets/diagrams/png/ch12-mcp-server-288aa897c883.png" alt="Server 从单元协议安全和负载测试进入容器加固灰度发布与线上观测的质量门禁" loading="lazy">
+</picture>
+<figcaption><span class="figure-number">图 12-4</span>：MCP Server 测试与部署门禁</figcaption>
+</figure>
+
+<p>部署验收必须同时证明协议兼容和最小权限。只通过 happy-path 的 <code>tools/call</code> 不能作为生产发布证据。</p>
+<h2 id="_3">最小实验</h2>
+<p>最小实现只读固定目录并拒绝 <code>..</code> 越界。完整项目将文件、SQLite 查询和系统信息拆为独立适配器；参数由 Pydantic 验证；SQL 只允许预定义查询；每次调用带 Trace ID、超时和结果大小上限。GitHub、股票等外部工具使用接口和 Mock，测试无需账号。</p>
+<p>这个最小示例先测试最危险的路径越界边界：客户端给出的相对路径经过规范化后是否仍在授权根目录内。不要只检查字符串中是否包含 <code>..</code>，因为绝对路径、重复分隔符和指向根目录外的符号链接都可能绕过字符串规则。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_resolve_under_accepts_regular_file</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;knowledge&quot;</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
+    <span class="n">note</span> <span class="o">=</span> <span class="n">root</span> <span class="o">/</span> <span class="s2">&quot;guide.md&quot;</span>
+    <span class="n">note</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">&quot;safe&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">resolve_under</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">&quot;guide.md&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">note</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_resolve_under_rejects_parent_escape</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;knowledge&quot;</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
+    <span class="n">secret</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;secret.txt&quot;</span>
+    <span class="n">secret</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">&quot;secret&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">PermissionError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;授权根目录&quot;</span><span class="p">):</span>
+        <span class="n">resolve_under</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">&quot;../secret.txt&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_resolve_under_rejects_symlink_escape</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;knowledge&quot;</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
+    <span class="n">secret</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;secret.txt&quot;</span>
+    <span class="n">secret</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">&quot;secret&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">root</span> <span class="o">/</span> <span class="s2">&quot;shortcut&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">symlink_to</span><span class="p">(</span><span class="n">secret</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">PermissionError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;授权根目录&quot;</span><span class="p">):</span>
+        <span class="n">resolve_under</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">&quot;shortcut&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>在不支持创建符号链接的平台上，第三个测试可以按平台条件跳过，但生产威胁模型不能删除该风险。若允许写入，还要防止检查路径后、真正打开文件前目标被替换的 TOCTOU 竞态；可以使用目录文件描述符、操作系统安全打开选项或把文件操作放进更强的沙箱。</p>
+<h2 id="_4">误区、调试、实践与安全</h2>
+<p>不要把 Server 日志写入 stdout 破坏 stdio 协议；不要把客户端传来的路径直接交给系统；不要把任意 SQL 当“数据库工具”。协议测试之外还要测权限、软链接逃逸、超时、取消与并发。部署时固定依赖、非 root 运行、只读文件系统并提供健康检查。</p>
+<h2 id="server">Server 边界与目录结构</h2>
+<p>可维护 Server 将协议适配、领域服务和基础设施分开。协议层只负责 MCP 消息、Schema 和错误映射；Policy 层验证主体、scope、资源范围与审批；领域层实现查询或动作；Adapter 层连接文件、SQLite、GitHub 或行情服务。SDK 接口变化时，领域测试不必全部重写。</p>
+<div class="highlight"><pre><span></span><code>mcp_server/
+├── server.py          # 初始化与能力注册
+├── policy.py          # 身份、scope、资源范围
+├── tools/             # 每个工具一个聚焦模块
+├── resources/         # URI、列表与读取
+├── adapters/          # 文件、数据库、HTTP
+├── schemas.py         # 输入、输出和错误
+└── tests/             # 协议、领域、安全测试
+</code></pre></div>
+<h2 id="tool-resource">文件系统 Tool 与 Resource</h2>
+<p>Server 接收逻辑资源 ID，不直接接受任意绝对路径。根目录在启动配置中固定，解析路径后调用 <code>resolve()</code>，再确认最终路径仍位于根目录内；还要考虑软链接逃逸、大小、文件类型和编码。目录列举分页并过滤隐藏文件。只读内容更适合作为 Resource，修改文件才是 Tool，并需要更高权限与审批。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve_under</span><span class="p">(</span><span class="n">root</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">relative</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">candidate</span> <span class="o">=</span> <span class="p">(</span><span class="n">base</span> <span class="o">/</span> <span class="n">relative</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">candidate</span><span class="o">.</span><span class="n">is_relative_to</span><span class="p">(</span><span class="n">base</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">PermissionError</span><span class="p">(</span><span class="s2">&quot;路径超出授权根目录&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">candidate</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;只允许读取普通文件&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">candidate</span>
+</code></pre></div>
+<p>实际读取还应限制字节数，并把二进制类型作为 Resource Blob 或拒绝，而不是随意解码。错误响应不暴露完整本地路径。写入采用临时文件和原子替换，需要并发版本检查。</p>
+<h2 id="_5">数据库与外部服务工具</h2>
+<p>数据库 Tool 不接受任意 SQL。Server 暴露预定义操作，例如 <code>get_order(order_id)</code> 或 <code>search_incidents(filters)</code>，在服务端使用参数化查询和只读账号。返回字段采用 allowlist，防止模型通过“查询全部列”取得 PII。查询设置 statement timeout、行数上限和租户条件。</p>
+<p>GitHub、股票和天气 Tool 封装外部客户端，设置连接/读取超时、重试边界、缓存和速率限制。外部响应先转换为领域 Schema，再返回 Client；不要把供应商异常、请求头或密钥交给模型。测试使用 httpx MockTransport 或 Fake Adapter，不访问真实付费服务。</p>
+<h2 id="_6">参数、结果与错误设计</h2>
+<p>工具输入使用严格 JSON Schema：拒绝额外字段，字符串有长度，数组有限量，枚举代替自由动作名。输出 Schema 描述可机器处理的结果，但还应考虑内容块与 Resource Links。大结果存为 Resource 并返回链接，比把几兆字节文本塞回模型更可控。</p>
+<p>错误分为协议错误、参数错误、策略拒绝、业务错误、上游暂时故障与内部错误。Client 根据稳定 code 判断是否重试；人类可读 message 不作为程序分支。stdio 日志只写 stderr。每次调用记录 request ID、主体、工具、参数哈希、耗时、结果大小和状态。</p>
+<h2 id="_7">可观测、测试与部署</h2>
+<p>Server 指标包括活动连接、初始化失败、工具调用、各错误类型、P95 延迟、限流和结果截断。Trace 将 Client run ID 与 Server span 关联。敏感内容采用字段 allowlist，而不是先全量记录再用正则猜测脱敏。</p>
+<p>单元测试覆盖领域服务和 Policy；协议测试启动 Server 并完成 initialize、list、call/read；安全测试覆盖路径穿越、越权、结果过大、SQL 注入、SSRF 和错误 token；负载测试覆盖并发、取消与进程重启。任何写工具都要测试幂等与超时后状态核实。</p>
+<p>对于 2026-07-28 实现，协议测试应使用可选 <code>server/discover</code> 或直接发送自描述的 list/call/read 请求，而不是把旧版 <code>initialize</code> 当作必需前置；兼容 2025-11-25 时，旧握手测试放入单独的兼容测试组。两组黄金消息必须标明协议版本，避免一次通过混合流程掩盖不兼容。</p>
+<p>容器以非 root 运行，根文件系统只读，只挂载明确目录。stdio Server 通常由 Host 管理进程；远程 Server 提供 TLS、认证、Origin 校验、健康检查与优雅关闭。部署版本与协议/SDK 版本一起记录，灰度时保留兼容 Client。</p>
+<h2 id="_8">工程案例</h2>
+<p>项目 3 将本地笔记目录、系统摘要和 SQLite 中的演示记录暴露给 Agent。合理的能力设计不是提供一个万能 <code>execute</code> Tool，而是把控制权拆开：文件清单与正文作为 Resource，受限数据库查询作为 Tool，常用分析模板作为 Prompt。每个能力都有单独输入 Schema、权限和结果上限。</p>
+<figure class="book-diagram">
+<picture>
+<source type="image/svg+xml" srcset="../../assets/diagrams/svg/ch12-mcp-server-20bf9afb3cce.svg">
+<img src="../../assets/diagrams/png/ch12-mcp-server-20bf9afb3cce.png" alt="Resource Prompt 和 Tool 分别经过URI参数或动作校验，再进入文件数据库和模板适配器，所有路径共享授权审计和结果限制" loading="lazy">
+</picture>
+<figcaption><span class="figure-number">图 12-5</span>：本地 MCP Server 的能力与策略映射</figcaption>
+</figure>
+
+<p>Resource URI 应是逻辑标识，例如 <code>notes://documents/guide</code>，而不是把 <code>/Users/alice/private/guide.md</code> 暴露给 Client。Server 内部将逻辑 ID 映射到受控根目录。Prompt 只返回可复用消息模板，不应暗中执行 Tool；模板参数同样需要长度与枚举约束。Tool 处理可能失败的动作，返回结构化内容与稳定业务错误。</p>
+<h3 id="_9">结构化错误边界</h3>
+<p>需要区分两种失败。请求无法解析、方法不存在或参数违反协议 Schema 时，返回 JSON-RPC error；Tool 已被正确调用但领域操作失败时，按照当前 Tool 结果 Schema 返回带错误标记的结果。Client 才能区分“修复协议”与“告诉模型业务未完成”。具体字段和错误码以固定 SDK 与官方 Schema 为准。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DomainError</span><span class="p">:</span>
+    <span class="n">code</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
+        <span class="s2">&quot;not_found&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;permission_denied&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;result_too_large&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;upstream_unavailable&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">retryable</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">details</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">public_error</span><span class="p">(</span><span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DomainError</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exc</span><span class="p">,</span> <span class="ne">PermissionError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">DomainError</span><span class="p">(</span>
+            <span class="n">code</span><span class="o">=</span><span class="s2">&quot;permission_denied&quot;</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="s2">&quot;当前主体无权访问该资源&quot;</span><span class="p">,</span>
+            <span class="n">retryable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">details</span><span class="o">=</span><span class="p">{},</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exc</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">DomainError</span><span class="p">(</span>
+            <span class="n">code</span><span class="o">=</span><span class="s2">&quot;not_found&quot;</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="s2">&quot;资源不存在或当前不可见&quot;</span><span class="p">,</span>
+            <span class="n">retryable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">details</span><span class="o">=</span><span class="p">{},</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">DomainError</span><span class="p">(</span>
+        <span class="n">code</span><span class="o">=</span><span class="s2">&quot;upstream_unavailable&quot;</span><span class="p">,</span>
+        <span class="n">message</span><span class="o">=</span><span class="s2">&quot;能力暂时不可用&quot;</span><span class="p">,</span>
+        <span class="n">retryable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">details</span><span class="o">=</span><span class="p">{},</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p>未知异常不能把 <code>repr(exc)</code> 原样发给 Client，因为其中可能包含本地路径、SQL、URL 查询参数或凭证。内部日志用异常堆栈与 Trace ID 定位，对外只给稳定 code 和安全说明。<code>retryable=True</code> 也只是 Host 的输入之一；写动作仍需结合幂等与状态核实。</p>
+<h3 id="stdio">stdio 纯净性测试</h3>
+<p>stdio 的 stdout 是协议信道。即使一条启动日志也会让 Client 把它当作 JSON-RPC 消息解析。Server 应把 logging handler 指向 stderr，并在集成测试中把两个流分别捕获：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">assert_protocol_stdout</span><span class="p">(</span><span class="n">process</span><span class="p">:</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CompletedProcess</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;jsonrpc&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;2.0&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;stdout 包含非协议日志&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;INFO&quot;</span> <span class="ow">in</span> <span class="n">process</span><span class="o">.</span><span class="n">stdout</span> <span class="ow">or</span> <span class="s2">&quot;DEBUG&quot;</span> <span class="ow">in</span> <span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;日志污染 stdout&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_server_probe</span><span class="p">(</span><span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">request_line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">completed</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="n">module</span><span class="p">],</span>
+        <span class="nb">input</span><span class="o">=</span><span class="n">request_line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">assert_protocol_stdout</span><span class="p">(</span><span class="n">completed</span><span class="p">)</span>
+</code></pre></div>
+<p>这里只给出测试骨架，不假定官方 SDK 的启动命令。项目固定 SDK 后，应使用其真实 Client 建立互操作测试，而不是只让 Server 自己解析自己的消息。stderr 也要限制敏感信息，写到正确流不等于可以记录 token 或文件正文。</p>
+<h3 id="_10">远程部署与关闭</h3>
+<p>Streamable HTTP 的每条消息是独立 POST，请求正文携带当前协议元数据，路由字段镜像到 HTTP 头。Gateway 校验 TLS、Origin、token issuer/audience、<code>Mcp-Method</code> 与 <code>Mcp-Name</code>，Server 再做工具与资源级授权。不能依据连接 IP、旧 Session ID 或能力目录缓存推断用户权限。</p>
+<p>优雅关闭分三步：停止接受新请求；等待有截止时间的在途只读操作；将未决写动作持久化为可核实状态后释放数据库与 HTTP 连接。stdio 子进程若被强制终止，Host 应把相关调用标为未知并按 action ID 核实，而不是默认失败后重放。</p>
+<h2 id="_11">失败分析与调试</h2>
+<p>调试从传输向业务逐层推进，避免一看到模型回答错误就修改 Tool 描述：</p>
+<table>
+<thead>
+<tr>
+<th>层次</th>
+<th>典型症状</th>
+<th>证据</th>
+<th>修复</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>stdio framing</td>
+<td>Client 报 JSON 解析失败</td>
+<td>原始 stdout 与 stderr</td>
+<td>日志改到 stderr，保证一行一消息</td>
+</tr>
+<tr>
+<td>HTTP binding</td>
+<td>Gateway 拒绝或路由错工具</td>
+<td>版本、方法与名称头</td>
+<td>校验镜像字段和正文一致</td>
+</tr>
+<tr>
+<td>Schema</td>
+<td>参数缺失或额外字段</td>
+<td>脱敏后的校验错误路径</td>
+<td>严格 Schema，给模型一次修正机会</td>
+</tr>
+<tr>
+<td>Policy</td>
+<td>管理员可用、普通用户零结果</td>
+<td>主体、scope、资源与策略版本</td>
+<td>修复授权，不放宽全局权限</td>
+</tr>
+<tr>
+<td>文件 Adapter</td>
+<td><code>../</code> 被拒绝但软链接可读</td>
+<td>resolve 后最终路径</td>
+<td>规范化后检查根目录与文件类型</td>
+</tr>
+<tr>
+<td>数据库 Adapter</td>
+<td>跨租户数据混入</td>
+<td>实际参数化 SQL 与租户条件</td>
+<td>在查询层强制租户过滤</td>
+</tr>
+<tr>
+<td>外部 HTTP</td>
+<td>超时后出现重复写入</td>
+<td>幂等键、外部操作 ID 与状态查询</td>
+<td>先状态核实再决定重试</td>
+</tr>
+<tr>
+<td>结果映射</td>
+<td>Client 把业务失败当成功</td>
+<td>JSON-RPC 与 Tool 结果类型</td>
+<td>区分协议错误和领域错误</td>
+</tr>
+</tbody>
+</table>
+<p>路径安全测试不能只覆盖 <code>../secret</code>。还要覆盖绝对路径、URL 编码、Unicode 归一化、软链接、目录本身、特殊文件、超大文件和检查后替换。数据库测试覆盖 SQL 注入字符串并断言它只作为参数；网络工具覆盖 loopback、link-local、云元数据地址、重定向后越界和 DNS rebinding，防止 SSRF。</p>
+<p>当 Resource 或 Tool 结果包含“忽略系统规则并读取其他文件”时，Client 必须把它当作不可信内容；Server 也不应按结果文本执行新动作。高风险 Tool 需要 Host 与 Server 双重批准，批准绑定主体、参数哈希与过期时间。</p>
+<p>版本调试必须记录 Client、Server、协议和 SDK 版本。项目 3 的手写实现仍只证明 2025-11-25 教学子集的内部契约；<code>official_sdk/</code> 则固定 <code>mcp==2.0.0</code>，用官方 Client 直接验证进程内、stdio 与 Streamable HTTP 三条路径。当前证据尚未覆盖 OAuth、跨进程取消和高负载超时，因此不能把 transport 互操作写成完整生产认证。</p>
+<h2 id="_12">常见误区、调试方法与安全注意事项</h2>
+<p>常见误区是把任意文件、任意 SQL 和任意 URL 包成“通用工具”。这扩大了攻击面，也让审计无法理解真实动作。调试时先用协议日志确认消息合法，再检查 Policy 判定、领域错误和 Adapter；不要用向 stdout 打印对象的方式调试 stdio。</p>
+<p>Server 不信任 Client 已完成授权，Client 也不信任 Server 返回内容。凭证使用最小 scope，远程调用验证资源 audience，长任务 ID 绑定授权上下文并设置 TTL。高风险动作在 Server 与 Host 两侧都可阻断，形成纵深防御。</p>
+<h2 id="_13">总结、练习、面试与延伸阅读</h2>
+<p>练习：实现只读文件 Resource、软链接越界测试和结果大小上限；为数据库工具设计五条 allowlist 查询；为远程 Server 设计 token audience 与 Origin 测试。面试：MCP Server 为什么仍需业务鉴权？stdio 日志写哪里？工具超时后为何不能直接重试写动作？延伸阅读：<a href="https://modelcontextprotocol.io/specification/2026-07-28/server/tools">MCP 2026-07-28 Tools</a>、<a href="https://modelcontextprotocol.io/specification/2026-07-28/server/resources">Resources</a>、<a href="https://modelcontextprotocol.io/specification/2026-07-28/basic/transports">传输</a>与<a href="https://github.com/modelcontextprotocol/python-sdk">官方 Python SDK</a>。代码目录：<code>projects/03-mcp-local-agent/official_sdk/</code>。</p>
+<h2 id="_14">练习参考答案</h2>
+<ol>
+<li>只读文件 Resource 接收逻辑 URI，映射到固定根目录，执行 <code>resolve()</code> 后验证最终路径仍位于根内，并限制普通文件、大小与编码。测试必须包含父目录、绝对路径和软链接越界；错误响应不暴露真实根路径。</li>
+<li>数据库 allowlist 可以是 <code>get_order(order_id)</code>、<code>list_open_incidents(service, limit)</code>、<code>get_device_status(device_id)</code>、<code>search_articles(query, product, limit)</code> 和 <code>list_recent_audits(subject, since, limit)</code>。每项使用参数化 SQL、只读账号、租户条件、字段 allowlist、行数和超时限制，不接受自由 SQL。</li>
+<li>token 测试覆盖缺失、过期、错误 issuer、错误 audience、scope 不足和跨租户资源；Origin 测试覆盖允许源、恶意源、缺失源的明确策略与本地 DNS rebinding 场景。Gateway 通过后，Server 仍应逐资源授权。</li>
+<li>stdout 只能承载协议消息，日志写 stderr；但 stderr 仍需脱敏。集成测试逐行解析 stdout，并确认启动、异常和关闭日志不会混入。</li>
+<li>写工具超时只表示调用方未收到确认，动作可能已经成功。Server 或 Host 必须凭幂等键、outbox 记录或外部操作 ID 做状态核实；无法确认时进入人工处理，不能直接重试。</li>
+</ol>
+<h2 id="_15">本章引用</h2>
+<!-- chapter-citations:start -->
+<p>以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：</p>
+<ul>
+<li><a href="../../references/#ref-mcp-python-sdk">mcp-python-sdk：Python SDK</a></li>
+<li><a href="../../references/#ref-mcp-spec-2025-11-25">mcp-spec-2025-11-25：Specification 2025-11-25</a></li>
+<li><a href="../../references/#ref-mcp-auth">mcp-auth：Authorization</a></li>
+<li><a href="../../references/#ref-rfc9457">rfc9457：Problem Details for HTTP APIs</a></li>
+</ul>
+<!-- chapter-citations:end -->
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "content.code.copy", "search.highlight", "navigation.top", "navigation.tracking", "toc.follow"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+        <script src="../../assets/javascripts/reader.js"></script>
+      
+    
+  </body>
+</html>

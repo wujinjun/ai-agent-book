@@ -1,0 +1,8 @@
+%% id: opentelemetry-agent-trace-propagation
+%% title: OpenTelemetry 跨服务 Trace 传播
+%% alt: Trace context 从 API 经队列传播到 Worker，并连接模型检索和工具子 Span
+flowchart LR
+    API["API span"] --> Queue["queue span"] --> Worker["worker run span"]
+    Worker --> Model["model span"]
+    Worker --> Retrieve["retrieval span"]
+    Worker --> Tool["tool span"]

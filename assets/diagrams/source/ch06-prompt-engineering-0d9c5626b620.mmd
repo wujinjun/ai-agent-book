@@ -1,0 +1,9 @@
+%% id: prompt-context-assembly-boundary
+%% title: Prompt 上下文组装与信任边界
+%% alt: 展示系统策略、用户任务、示例和不可信资料进入模型前的组装与校验关系
+flowchart LR
+    Policy["系统策略"] --> Assemble["上下文组装"]
+    Task["用户任务"] --> Assemble
+    Examples["少量示例"] --> Assemble
+    Data["检索资料：不可信数据"] --> Assemble
+    Assemble --> Model["模型"] --> Validate["结构与业务校验"]

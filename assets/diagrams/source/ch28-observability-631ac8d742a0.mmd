@@ -1,0 +1,5 @@
+flowchart LR
+    API["API span"] --> Queue["queue span"] --> Worker["worker run span"]
+    Worker --> Model["model span"]
+    Worker --> Retrieve["retrieval span"]
+    Worker --> Tool["tool span"]

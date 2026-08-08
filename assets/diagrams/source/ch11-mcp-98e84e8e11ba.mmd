@@ -1,0 +1,9 @@
+%% id: mcp-host-client-server-capabilities
+%% title: MCP Host、Client、Server 与能力原语
+%% alt: Agent Host 通过 MCP Client 发现 Server 暴露的 Tool、Resource 和 Prompt 能力
+flowchart LR
+    Host["Agent Host"] --> Client["MCP Client"]
+    Client <-->|"能力发现与调用"| Server["MCP Server"]
+    Server --> Tool["Tool：动作"]
+    Server --> Resource["Resource：可读取数据"]
+    Server --> Prompt["Prompt：可复用模板"]

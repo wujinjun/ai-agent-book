@@ -1,0 +1,11 @@
+%% id: service-extraction-evidence-gate
+%% title: 服务拆分的证据门禁
+%% alt: 模块先在单体内明确所有权和端口，只有容量故障安全或团队指标持续越阈值且团队能承担分布式成本时才拆分
+flowchart TD
+    Module["单体内清晰模块"] --> Contract{"数据所有权和端口稳定？"}
+    Contract -->|否| Refactor["先在单体内重构"]
+    Contract -->|是| Evidence{"量化触发条件持续成立？"}
+    Evidence -->|否| Keep["保持模块化单体"]
+    Evidence -->|是| Cost{"能承担网络、一致性、观测和 on-call？"}
+    Cost -->|否| Optimize["单体内扩容 / Worker 隔离"]
+    Cost -->|是| Extract["影子流量 + 契约测试 + 可回滚拆分"]

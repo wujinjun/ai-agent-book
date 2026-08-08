@@ -1,0 +1,3555 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="面向软件工程师的 AI Agent 原理、工程与项目教材">
+      
+      
+        <meta name="author" content="AI Agent Book contributors">
+      
+      
+      
+        <link rel="prev" href="../ch12-mcp-server/">
+      
+      
+        <link rel="next" href="../ch14-advanced-rag/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>第13章 RAG 基础 - AI Agent 从零到实战（2026版）</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#13rag" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="AI Agent 从零到实战（2026版）" class="md-header__button md-logo" aria-label="AI Agent 从零到实战（2026版）" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Agent 从零到实战（2026版）
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              第13章 RAG 基础
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="light-blue"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../copyright/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  版权与使用说明
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../edition/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  版本与发行信息
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../preface/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  前言
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../learning-guide/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  学习指南
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../training/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  企业培训版
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../part-01-foundations/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第一篇 LLM 与 AI Agent 基础
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../part-02-agent-core/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第二篇 Prompt、工具与 Agent 核心
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第三篇 MCP、RAG 与 Memory
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../part-04-frameworks/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第四篇 Agent 框架
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../part-05-engineering/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第五篇 Agent 工程化
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../part-06-projects/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第六篇 完整项目实战
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../part-07-advanced/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第七篇 高级主题
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../examples/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  独立示例
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../book-index/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  全书索引
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../glossary/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  术语表
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../references/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  参考资料
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../QUALITY_ROADMAP/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  质量路线图
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../final-acceptance/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  最终验收状态
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../project-status/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  项目状态
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="AI Agent 从零到实战（2026版）" class="md-nav__button md-logo" aria-label="AI Agent 从零到实战（2026版）" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    AI Agent 从零到实战（2026版）
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../copyright/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    版权与使用说明
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../edition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    版本与发行信息
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../preface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    前言
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    学习指南
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../training/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    企业培训版
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            企业培训版
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../training/instructor-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    讲师手册
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../training/student-lab-manual/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    学员实验手册
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../training/assessment-rubric/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    评分标准
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../training/question-bank/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    章节题库与考试
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../training/enterprise-cases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    企业案例
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../training/workshops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    工作坊
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../training/offline-training-pack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    离线培训包
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../training/common-mistakes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    常见学员错误
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../training/slides/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    幻灯片说明
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part-01-foundations/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第一篇 LLM 与 AI Agent 基础
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            第一篇 LLM 与 AI Agent 基础
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-01-foundations/ch01-what-is-llm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第1章 什么是大语言模型
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-01-foundations/ch02-token-and-context/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第2章 Token 与上下文窗口
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-01-foundations/ch03-transformer-attention/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第3章 Transformer 与 Attention
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-01-foundations/ch04-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第4章 LLM 生成机制
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-01-foundations/ch05-embedding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第5章 Embedding 与语义表示
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part-02-agent-core/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第二篇 Prompt、工具与 Agent 核心
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            第二篇 Prompt、工具与 Agent 核心
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-02-agent-core/ch06-prompt-engineering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第6章 Prompt Engineering
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-02-agent-core/ch07-structured-output/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第7章 Structured Output
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-02-agent-core/ch08-tool-calling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第8章 Tool Calling
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-02-agent-core/ch09-agent-runtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第9章 Agent Runtime
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-02-agent-core/ch10-planning-reflection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第10章 Planning 与 Reflection
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第三篇 MCP、RAG 与 Memory
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            第三篇 MCP、RAG 与 Memory
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch11-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第11章 MCP 基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch12-mcp-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第12章 MCP Server
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    第13章 RAG 基础
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    第13章 RAG 基础
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      导读、目标与前置知识
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      原理与架构图
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      最小实验
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      失败、调试、实践与安全
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      数据摄取与文档质量
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chunk" class="md-nav__link">
+    <span class="md-ellipsis">
+      Chunk、索引与检索
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prompt-augmentation-citation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prompt Augmentation 与 Citation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      工程案例
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="工程案例">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#retrieval-trace" class="md-nav__link">
+    <span class="md-ellipsis">
+      可追踪 Retrieval Trace
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      引用生成与验证
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      失败分析与调试
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      安全注意事项与评估
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结、练习、面试与延伸阅读
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      练习参考答案
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      本章引用
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch14-advanced-rag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第14章 高级 RAG
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch15-memory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第15章 Memory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ch16-vector-databases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第16章 向量数据库
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part-04-frameworks/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第四篇 Agent 框架
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            第四篇 Agent 框架
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-04-frameworks/ch17-native-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第17章 原生 API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-04-frameworks/ch18-openai-agents-sdk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第18章 OpenAI Agents SDK
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-04-frameworks/ch19-pydanticai/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第19章 PydanticAI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-04-frameworks/ch20-langgraph/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第20章 LangGraph
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-04-frameworks/ch21-langchain-llamaindex/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第21章 LangChain 与 LlamaIndex
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-04-frameworks/ch22-multi-agent-frameworks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第22章 Multi-Agent 框架
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part-05-engineering/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第五篇 Agent 工程化
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            第五篇 Agent 工程化
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-05-engineering/ch23-python-engineering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第23章 Python 工程基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-05-engineering/ch24-fastapi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第24章 FastAPI 服务化
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-05-engineering/ch25-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第25章 数据存储
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-05-engineering/ch26-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第26章 Docker 与部署
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-05-engineering/ch27-job-queues/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第27章 异步任务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-05-engineering/ch28-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第28章 Observability
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-05-engineering/ch29-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第29章 Agent Evaluation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-05-engineering/ch30-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第30章 安全与 Guardrails
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-05-engineering/ch31-cost-performance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第31章 成本与性能
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part-06-projects/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第六篇 完整项目实战
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_12" id="__nav_12_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            第六篇 完整项目实战
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目1：最小 AI Assistant
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-02/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目2：天气与工具调用 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-03/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目3：MCP 本地工具 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-04/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目4：企业知识库 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-05/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目5：代码 Review Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-06/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目6：自动办公 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-07/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目7：股票研究 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目8：LangGraph 研究工作流 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-09/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目9：Multi-Agent 软件开发团队
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-06-projects/project-10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目10：企业级 Agent 平台
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../part-07-advanced/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第七篇 高级主题
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_13" id="__nav_13_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            第七篇 高级主题
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-07-advanced/ch32-multi-agent-principles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第32章 Multi-Agent 原理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-07-advanced/ch33-agentic-coding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第33章 Agentic Coding
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-07-advanced/ch34-browser-computer-use/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第34章 Browser 与 Computer Use
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-07-advanced/ch35-multimodal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第35章 多模态 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-07-advanced/ch36-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第36章 Agent 架构设计
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-07-advanced/ch37-demo-to-product/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第37章 从 Demo 到产品
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../part-07-advanced/ch38-selection-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第38章 技术选型
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    独立示例
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../book-index/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    全书索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    术语表
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    参考资料
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../QUALITY_ROADMAP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    质量路线图
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../final-acceptance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    最终验收状态
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project-status/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目状态
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      导读、目标与前置知识
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      原理与架构图
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      最小实验
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      失败、调试、实践与安全
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      数据摄取与文档质量
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chunk" class="md-nav__link">
+    <span class="md-ellipsis">
+      Chunk、索引与检索
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prompt-augmentation-citation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prompt Augmentation 与 Citation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      工程案例
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="工程案例">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#retrieval-trace" class="md-nav__link">
+    <span class="md-ellipsis">
+      可追踪 Retrieval Trace
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      引用生成与验证
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      失败分析与调试
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      安全注意事项与评估
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结、练习、面试与延伸阅读
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      练习参考答案
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      本章引用
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="13rag">第13章：RAG 基础</h1>
+<p>最后核对日期：2026-07-11。</p>
+<h2 id="_1">导读、目标与前置知识</h2>
+<p>RAG 在生成前检索外部资料，适合知识频繁变化且需要引用的任务。本章覆盖加载、解析、切分、Embedding、索引、检索、重排、增强和引用。前置知识为第5章。</p>
+<p>学习目标是掌握完整链路的核心边界，并能从常见误区和失败 Trace 定位质量问题。</p>
+<h2 id="_2">原理与架构图</h2>
+<p>RAG 包含离线摄取与在线查询两条相交链路。下图先展示端到端主路径，后续图再拆解权限、索引版本与故障定位。</p>
+<figure class="book-diagram">
+<picture>
+<source type="image/svg+xml" srcset="../../assets/diagrams/svg/ch13-rag-84c280c6a445.svg">
+<img src="../../assets/diagrams/png/ch13-rag-84c280c6a445.png" alt="原始文档经解析切分索引后支持问题检索重排上下文生成和引用校验" loading="lazy">
+</picture>
+<figcaption><span class="figure-number">图 13-1</span>：RAG 摄取、检索、生成与引用主链路</figcaption>
+</figure>
+<p>RAG 与微调不同：RAG 在调用时提供证据，便于更新和引用；微调主要改变参数行为。二者可以组合。</p>
+<h2 id="_3">最小实验</h2>
+<p>最小系统处理 Markdown，返回 top-k 片段及文档 ID。工程版记录解析器、切分器、Embedding 和索引版本，支持增量更新、删除、权限过滤、引用定位和评估。生成 Prompt 要求只依据证据、缺证时拒答，并把事实句关联来源。</p>
+<p>这个最小示例不直接调用模型，而是验证“证据不足必须拒答”的确定性门禁。检索分数本身不可跨模型解释，因此示例使用业务校准后的最低证据分和最少证据数；阈值必须从评估集得到，不能照抄。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Evidence</span><span class="p">:</span>
+    <span class="n">chunk_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">document_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">location</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">relevance</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">authority</span><span class="p">:</span> <span class="nb">int</span>
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EvidenceDecision</span><span class="p">:</span>
+    <span class="n">answerable</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">evidence</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Evidence</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">reason</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">select_answerable_evidence</span><span class="p">(</span>
+    <span class="n">candidates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Evidence</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">minimum_relevance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">minimum_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EvidenceDecision</span><span class="p">:</span>
+    <span class="n">selected</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+        <span class="nb">sorted</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="n">item</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">candidates</span>
+                <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">relevance</span> <span class="o">&gt;=</span> <span class="n">minimum_relevance</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">authority</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="p">),</span>
+            <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="n">item</span><span class="o">.</span><span class="n">authority</span><span class="p">,</span> <span class="o">-</span><span class="n">item</span><span class="o">.</span><span class="n">relevance</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">chunk_id</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">minimum_count</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">EvidenceDecision</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="p">(),</span> <span class="s2">&quot;insufficient_evidence&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">EvidenceDecision</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">selected</span><span class="p">)</span>
+</code></pre></div>
+<p><code>authority</code> 不是让模型凭语气判断权威，而是摄取时由数据治理规则生成，例如正式制度高于个人草稿、当前版本高于已归档版本。门禁只能说明“候选满足进入生成阶段的最低条件”，不能保证证据一定支持最终主张；后续仍需 Citation Validator 和 Faithfulness 评估。</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">test_refuses_when_no_authoritative_evidence</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Evidence</span><span class="p">(</span><span class="s2">&quot;c1&quot;</span><span class="p">,</span> <span class="s2">&quot;draft&quot;</span><span class="p">,</span> <span class="s2">&quot;v1&quot;</span><span class="p">,</span> <span class="s2">&quot;line 2&quot;</span><span class="p">,</span> <span class="s2">&quot;个人猜测&quot;</span><span class="p">,</span> <span class="mf">0.92</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="n">decision</span> <span class="o">=</span> <span class="n">select_answerable_evidence</span><span class="p">(</span>
+        <span class="n">candidates</span><span class="p">,</span> <span class="n">minimum_relevance</span><span class="o">=</span><span class="mf">0.7</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">decision</span><span class="o">.</span><span class="n">answerable</span> <span class="ow">is</span> <span class="kc">False</span>
+    <span class="k">assert</span> <span class="n">decision</span><span class="o">.</span><span class="n">reason</span> <span class="o">==</span> <span class="s2">&quot;insufficient_evidence&quot;</span>
+</code></pre></div>
+<p>检索接口必须把租户过滤和引用元数据放进类型契约，而不是只返回一组字符串：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">RetrievedChunk</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">tenant_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">document_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">chunk_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">page</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">score</span><span class="p">:</span> <span class="nb">float</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">retrieve</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tenant_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">RetrievedChunk</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;先执行 tenant/ACL 过滤，再进行检索与重排。&quot;&quot;&quot;</span>
+    <span class="o">...</span>
+</code></pre></div>
+<p>省略 <code>tenant_id</code> 并在生成后删除敏感句子，不是可靠的权限控制；未授权内容一旦进入上下文就已经形成数据泄露风险。</p>
+<h2 id="_4">失败、调试、实践与安全</h2>
+<p>失败包括坏文档、OCR 错误、切分断裂、查询不匹配、召回不足、重排错误和模型忽略证据。调试必须保存每阶段候选。RAG 不适合强事务查询、简单结构化数据库问题或无可靠语料场景。文档可能包含间接注入，权限过滤必须在检索层执行。</p>
+<h2 id="_5">数据摄取与文档质量</h2>
+<p>RAG 的上限首先由语料决定。摄取阶段保存原始文件哈希、来源 URI、版本、权限、解析器版本和时间。PDF 可能是文本层、扫描图像或两者混合；Word、PPT 和 Markdown 的标题、表格、备注与链接结构也不同。解析器不能只返回一串无位置文本，否则引用无法回到页码或幻灯片。</p>
+<p>清洗去除重复页眉页脚、导航和乱码，但不应删除否定词、单位和表格表头。OCR 结果保存置信度与坐标，低置信页面进入人工检查。文档更新采用新版本并使旧 Chunk 失效，删除请求同时清理原文、向量、缓存和派生摘要。</p>
+<h2 id="chunk">Chunk、索引与检索</h2>
+<p>Chunk 需要自包含但不过度宽泛。技术手册常按标题层级与段落切分，表格把表头复制到每个相关块，代码按函数或类边界切分。Overlap 只在边界确有上下文损失时使用。每块 Metadata 包含文档、章节、页码、版本、时间、语言、租户和权限。</p>
+<p>检索前先做权限过滤和查询分类。Retriever 是执行候选召回的组件：稀疏检索对故障码、产品号和专有词敏感，稠密检索处理语义改写，混合检索可通过 Reciprocal Rank Fusion 等方法融合。初检取得较多候选，Reranker 对少量候选做更精细的 query-document 相关性判断。</p>
+<figure class="book-diagram">
+<picture>
+<source type="image/svg+xml" srcset="../../assets/diagrams/svg/ch13-rag-f50dce811e48.svg">
+<img src="../../assets/diagrams/png/ch13-rag-f50dce811e48.png" alt="查询经规范化和租户权限过滤后并行执行稀疏稠密检索再融合重排生成引用" loading="lazy">
+</picture>
+<figcaption><span class="figure-number">图 13-2</span>：带权限过滤的混合检索链路</figcaption>
+</figure>
+
+<p>索引不是一次性产物。Embedding 模型、维度、距离、切分器和预处理任何一项变化，都需要新索引版本。后台构建完成并通过评估后，再原子切换 active index；不要把不同 Embedding 空间的向量混在同一索引。</p>
+<figure class="book-diagram">
+<picture>
+<source type="image/svg+xml" srcset="../../assets/diagrams/svg/ch13-rag-90be15c6065c.svg">
+<img src="../../assets/diagrams/png/ch13-rag-90be15c6065c.png" alt="文档快照绑定解析切分和 Embedding 版本构建候选索引，评估通过后原子切换并可回滚" loading="lazy">
+</picture>
+<figcaption><span class="figure-number">图 13-3</span>：RAG 索引版本构建与切换</figcaption>
+</figure>
+
+<p>索引版本是文档、权限、解析、切分和向量空间的组合产物。任何一个组成部分变化都需要可比较的新版本，而不是混写旧集合。</p>
+<figure class="book-diagram">
+<picture>
+<source type="image/svg+xml" srcset="../../assets/diagrams/svg/ch13-rag-0918bab577a2.svg">
+<img src="../../assets/diagrams/png/ch13-rag-0918bab577a2.png" alt="从语料存在性开始逐层检查解析切分过滤召回重排上下文采用和引用支持关系" loading="lazy">
+</picture>
+<figcaption><span class="figure-number">图 13-4</span>：RAG 回答错误定位树</figcaption>
+</figure>
+
+<p>这棵树避免把所有 RAG 问题归咎于 Prompt。只有证据已经正确进入上下文而模型仍误用时，生成层才是首要修复位置。</p>
+<h2 id="prompt-augmentation-citation">Prompt Augmentation 与 Citation</h2>
+<p>进入 Prompt 的片段带稳定引用 ID、标题、位置和时间，并明确声明它们只是数据。模型被要求每个事实主张引用一个或多个证据，缺少证据时拒答。生成后 Citation Validator 确认引用 ID 存在、用户仍有权限，并可选检查引用片段是否支持主张。</p>
+<p>Grounding 指利用可追溯外部数据约束回答的事实基础，它不等同于“答案末尾带有链接”。Citation 解决来源定位，Faithfulness 检查主张是否得到所引证据支持，而 Grounding 还要求证据来自适当权限范围、版本和时间点。一个回答可能引用了真实文档，却误读文档或把过期版本当成当前事实；这时 Citation 存在，但 Grounding 仍然失败。工程上应分别记录检索命中、证据采用、主张—证据支持关系和无依据拒答，不能用单一“引用率”代替这些检查。</p>
+<p>回答末尾随意列几个来源不是可靠 Citation。引用应靠近对应主张，区分直接证据和模型推断。若两个来源冲突，回答说明冲突与各自时间，不把较新或较长来源默认当真。引用页面还应允许用户查看被使用的原文范围。</p>
+<h2 id="_6">工程案例</h2>
+<p>摄取 Worker 与在线查询服务分离。文档进入对象存储，解析和切分产生版本化 Chunk，Embedding Worker 写新索引，完成后切换索引。查询服务读取当前索引，执行 ACL、检索、重排、上下文预算和生成。评估服务定期运行黄金集，发现回归时阻止索引或模型升级。</p>
+<p>以企业制度问答为例，原始文件包括 PDF、Word 和扫描件。摄取并非“能抽出文本就成功”，而要经过解析质量门禁：页数是否一致、标题层级是否保留、表格表头是否关联到数据行、OCR 低置信区域是否标记、每个 Chunk 是否能回到原文位置。失败文件进入隔离队列，不写活动索引。</p>
+<figure class="book-diagram">
+<picture>
+<source type="image/svg+xml" srcset="../../assets/diagrams/svg/ch13-rag-a22d21f1320b.svg">
+<img src="../../assets/diagrams/png/ch13-rag-a22d21f1320b.png" alt="文档经过病毒检查解析结构校验切分引用定位和权限校验后才构建候选索引，失败项进入隔离队列" loading="lazy">
+</picture>
+<figcaption><span class="figure-number">图 13-5</span>：RAG 摄取质量门禁与证据可追踪性</figcaption>
+</figure>
+
+<p>结构感知 Chunking 需要按文档类型处理。制度条款可以按标题和条款编号切分，表格行要携带表名与表头，幻灯片要保留页标题和演讲者备注的来源区别，代码文档按符号边界切分。固定长度仍可作为兜底，但不能先把所有结构抹平再期待 Embedding 恢复。</p>
+<h3 id="retrieval-trace">可追踪 Retrieval Trace</h3>
+<p>每个在线请求生成 <code>query_id</code>，记录规范化查询、索引版本、权限过滤摘要、初检候选、融合分数、重排分数、进入上下文的 Chunk、生成引用和最终拒答原因。为保护隐私，正文可只记录内容哈希与受控对象引用。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CandidateTrace</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">chunk_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">sparse_rank</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">dense_rank</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">rerank_score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">selected</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">RetrievalTrace</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">query_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">tenant_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">index_version</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">candidates</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CandidateTrace</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">context_chunk_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">refusal_reason</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div>
+<p>这个 Trace 让团队回答“正确证据没被召回”“召回后被重排降权”“进入上下文但未被引用”三类完全不同的问题。若只保存最后的 Prompt，就无法知道候选阶段发生了什么；若只保存搜索分数，就无法解释生成阶段为何引用另一块。</p>
+<h3 id="_7">引用生成与验证</h3>
+<p>Generator 接收的每个证据块带不可由模型修改的 <code>chunk_id</code>、文档版本和位置。模型输出结构化主张，每条主张列出引用 ID；渲染层再根据允许集合把 ID 转为链接。这样模型不能通过编造 URL 获得“有引用”的假象。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Claim</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">citation_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">GroundedAnswer</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">claims</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Claim</span><span class="p">]</span>
+    <span class="n">unresolved</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_citations</span><span class="p">(</span><span class="n">answer</span><span class="p">:</span> <span class="n">GroundedAnswer</span><span class="p">,</span> <span class="n">allowed_ids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">unknown</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">citation_id</span>
+        <span class="k">for</span> <span class="n">claim</span> <span class="ow">in</span> <span class="n">answer</span><span class="o">.</span><span class="n">claims</span>
+        <span class="k">for</span> <span class="n">citation_id</span> <span class="ow">in</span> <span class="n">claim</span><span class="o">.</span><span class="n">citation_ids</span>
+        <span class="k">if</span> <span class="n">citation_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed_ids</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">unknown</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;回答引用了未提供的证据: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">unknown</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>这个校验只证明引用 ID 存在，不证明引用支持主张。Faithfulness 仍要用规则、模型 Judge 与人工抽检评价主张—证据关系。数字、日期和否定条件可以优先用确定性匹配做预检；高风险结论需要领域专家。</p>
+<p>最小领域接口不应直接返回数据库行，而返回 <code>RetrievedChunk(document_id, version, location, text, score)</code>。Generator 只接收已授权 Chunk。最终 <code>Answer</code> 包含文本、引用、无法确认事项和索引版本，便于审计与重放。</p>
+<p>Trace 记录 query、过滤器、候选 ID、稀疏/稠密/重排分数、进入上下文的片段、生成引用与耗时。正文和 query 按隐私策略脱敏或不落盘。指标分解为解析失败、索引新鲜度、Recall@k、无结果率、引用率、Faithfulness、P95 延迟与单查询成本。</p>
+<h2 id="_8">失败分析与调试</h2>
+<p>回答错误时按链路定位：权威文档是否存在；解析是否完整；Chunk 是否保留关键表头；过滤是否误排；正确 Chunk 是否进入 top-k；Reranker 是否降权；上下文是否被截断；模型是否采用证据；引用是否支持主张。只有最后两步失败时，调整生成 Prompt 才是主要手段。</p>
+<p>下面的故障表把症状绑定到可检查的证据：</p>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>可能层次</th>
+<th>首要证据</th>
+<th>不应先做的事</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文档里有答案但零结果</td>
+<td>解析、Chunk、ACL 或召回</td>
+<td>原文快照、解析输出、候选列表</td>
+<td>立即增加 Prompt 长度</td>
+</tr>
+<tr>
+<td>正确块排在第 30 名</td>
+<td>查询、融合或向量模型</td>
+<td>稀疏/稠密排名与分数</td>
+<td>只调生成 Temperature</td>
+</tr>
+<tr>
+<td>正确块进入上下文但答错</td>
+<td>上下文冲突或生成</td>
+<td>最终证据序列、主张与引用</td>
+<td>无限增大 top-k</td>
+</tr>
+<tr>
+<td>引用存在但不支持句子</td>
+<td>Citation/Faithfulness</td>
+<td>主张—证据配对</td>
+<td>只检查 URL 能否打开</td>
+</tr>
+<tr>
+<td>新制度上线仍答旧版本</td>
+<td>索引发布与缓存</td>
+<td>文档、索引和缓存版本</td>
+<td>修改问题措辞</td>
+</tr>
+<tr>
+<td>普通用户看到机密标题</td>
+<td>ACL 或缓存键</td>
+<td>候选产生前的过滤条件</td>
+<td>依赖模型拒绝输出</td>
+</tr>
+<tr>
+<td>无资料时仍给确定答案</td>
+<td>拒答门禁或评估缺失</td>
+<td>证据充分性判定</td>
+<td>用“请勿幻觉”代替门禁</td>
+</tr>
+</tbody>
+</table>
+<p>解析质量要单独监控。若扫描 PDF 的 OCR 把 <code>0.01</code> 识别成 <code>0.1</code>，检索可能正常命中，但答案仍是错误的。黄金文件应包含表格、双栏、页眉页脚、扫描页、脚注和混合语言，并断言文本、结构与位置。解析器升级与 Embedding 升级一样需要回归测试。</p>
+<p>RAG 不适合回答余额、库存、订单状态等强一致结构化事实，应调用业务 API；也不适合语料缺乏权威性或用户真正需要开放创作的场景。把所有业务统一到向量检索会损失精确性和事务语义。</p>
+<h2 id="_9">安全注意事项与评估</h2>
+<p>权限过滤在检索查询中执行，不能检索后再让模型“不要透露”。文档可能含间接 Prompt Injection、恶意链接和个人数据；摄取时扫描，Prompt 中隔离，工具不因文档指令改变。多租户索引即使共库也必须强制 tenant 条件，缓存键同样包含租户与权限版本。</p>
+<p>测试包含解析黄金文件、Chunk 边界、删除传播、ACL、检索指标、引用验证、注入文档和无答案拒答。评估集按真实问题分层，避免只用与文档标题高度相似的人工查询。检索层的 Recall@k 与最终回答正确率分别报告，不能用一个总分掩盖错误位置。</p>
+<h2 id="_10">总结、练习、面试与延伸阅读</h2>
+<p>练习：为维修手册设计切分与引用；构造无法回答问题并验证拒答；用十个真实查询比较稀疏、稠密和混合检索。面试：RAG 为什么仍会幻觉？何时直接 SQL 优于 RAG？如何定位正确文档未进入最终回答的原因？延伸阅读：Lewis et al., <em>Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</em>；目标解析器、Embedding 与向量库官方文档。代码目录：<code>projects/04-knowledge-agent/</code>。</p>
+<h2 id="_11">练习参考答案</h2>
+<ol>
+<li>维修手册按车型、系统、故障码、检查条件和步骤形成父块，按具体步骤形成检索子块；表格行携带表头。引用包含手册版本、章节、页码或稳定锚点。更新手册时构建新索引并验证后切换，不能混合新旧 Chunk。</li>
+<li>无法回答用例应包含“语料完全没有”“只有低权威草稿”“相关文档已撤权”“证据互相冲突”和“证据过期”。系统返回明确无法确认事项与可用证据，不生成填空式答案；测试断言 Generator 在门禁失败时根本不被调用。</li>
+<li>十个查询必须来自真实分布并标注相关文档，三种检索使用相同语料快照、ACL 和 top-k。报告 Recall@k、MRR、P95 延迟与零结果率；Hybrid 只有在净收益满足发布阈值时才采用。</li>
+<li>RAG 仍会幻觉，因为证据可能不存在、解析错误、召回遗漏、重排错误、上下文冲突，或模型从正确证据推导出不受支持的主张。引用 ID 校验只能防编造来源，不能替代 Faithfulness。</li>
+<li>余额、库存和订单状态等强一致数据应调用经过授权的业务 API 或 SQL 查询，因为向量索引可能延迟、近似并缺乏事务语义。RAG 更适合非结构化知识与来源解释，两者可以在同一 Agent 中按任务路由。</li>
+</ol>
+<h2 id="_12">本章引用</h2>
+<!-- chapter-citations:start -->
+<p>以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：</p>
+<ul>
+<li><a href="../../references/#ref-lewis2020">lewis2020：Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</a></li>
+<li><a href="../../references/#ref-karpukhin2020">karpukhin2020：Dense Passage Retrieval for Open-Domain Question Answering</a></li>
+<li><a href="../../references/#ref-khattab2020">khattab2020：ColBERT: Efficient and Effective Passage Search</a></li>
+<li><a href="../../references/#ref-liu2023lostmiddle">liu2023lostmiddle：Lost in the Middle: How Language Models Use Long Contexts</a></li>
+</ul>
+<!-- chapter-citations:end -->
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "content.code.copy", "search.highlight", "navigation.top", "navigation.tracking", "toc.follow"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+        <script src="../../assets/javascripts/reader.js"></script>
+      
+    
+  </body>
+</html>

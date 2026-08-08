@@ -1,0 +1,13 @@
+%% id: agent-routing-handoff-control
+%% title: Routing 与 Handoff 控制关系
+%% alt: Router 按任务和能力选择处理器，Handoff 传递最小共享状态并由 Supervisor 保留终止控制
+flowchart LR
+    Input[任务与结构化状态] --> Router{能力路由}
+    Router --> Research[研究处理器]
+    Router --> Code[代码处理器]
+    Router --> Human[人工处理器]
+    Research --> Handoff[受控 Handoff]
+    Code --> Handoff
+    Handoff --> Supervisor[Supervisor 校验状态与预算]
+    Supervisor --> Finish[完成]
+    Supervisor --> Router

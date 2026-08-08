@@ -1,0 +1,7 @@
+flowchart LR
+    Page --> DOM["DOM/accessibility tree"]
+    Page --> Shot["Screenshot"] --> OCR
+    DOM --> Observation
+    Shot --> Observation
+    OCR --> Observation
+    Observation --> Policy --> Action --> Verify["re-observe"]

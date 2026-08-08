@@ -1,0 +1,10 @@
+stateDiagram-v2
+    queued --> running
+    running --> waiting_approval
+    waiting_approval --> queued
+    running --> succeeded
+    running --> retry_wait
+    retry_wait --> queued
+    running --> failed
+    running --> cancelled
+    failed --> dead_letter

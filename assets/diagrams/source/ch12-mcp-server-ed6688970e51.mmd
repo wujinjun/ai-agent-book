@@ -1,0 +1,15 @@
+%% id: mcp-server-policy-execution-sequence
+%% title: MCP Server 策略校验与执行时序
+%% alt: Client 调用经 Server、Policy 校验后访问 Backend 并返回结构化结果的完整时序
+sequenceDiagram
+    participant C as Client
+    participant S as Server
+    participant P as Policy
+    participant B as Backend
+    C->>S: 初始化/发现
+    C->>S: 调用 + 参数
+    S->>P: 身份、范围、审批
+    P-->>S: 允许/拒绝
+    S->>B: 有限时执行
+    B-->>S: 结果
+    S-->>C: 结构化响应

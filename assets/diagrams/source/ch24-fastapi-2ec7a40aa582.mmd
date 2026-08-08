@@ -1,0 +1,11 @@
+%% id: fastapi-stream-protocol-decision
+%% title: Agent API 实时协议选择
+%% alt: 根据任务时长、是否需要持续事件和是否需要低延迟双向控制选择同步 REST、轮询、SSE 或 WebSocket
+flowchart TD
+    Request[客户端交互] --> Short{可在网关超时内完成}
+    Short -->|是| REST[同步 REST]
+    Short -->|否| Events{需要持续服务端事件}
+    Events -->|否| Poll[202 Run 资源加轮询]
+    Events -->|是| Duplex{需要低延迟双向控制}
+    Duplex -->|否| SSE[SSE + 事件 ID 重连]
+    Duplex -->|是| WS[WebSocket + 会话状态]

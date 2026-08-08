@@ -1,0 +1,16 @@
+%% id: p9-final-acceptance-gates
+%% title: P9 最终验收门禁
+%% alt: 仓库内技术出版培训证据完成后，还必须经过独立外审、真实试学试讲、实体设备印刷和最终发布，才能关闭 P9
+flowchart LR
+    Repo["仓库内证据<br/>38章 / 10项目 / 256测试"] --> Internal["三类维护者角色复审"]
+    Internal --> External{外部门禁}
+    External --> Review[独立技术与中文外审]
+    External --> Trial[真实试学与企业试讲]
+    External --> Device[实体设备、印刷与权利核查]
+    Review --> Feedback[关闭 P0/P1 反馈]
+    Trial --> Feedback
+    Device --> Feedback
+    Feedback --> Score{五类目标均达标}
+    Score -->|是| Release[合并 main 并发布最终 Release]
+    Score -->|否| Improve[修订并重新验收]
+    Improve --> External

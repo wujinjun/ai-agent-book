@@ -1,0 +1,10 @@
+%% id: openai-agents-sdk-runtime-components
+%% title: OpenAI Agents SDK Runtime 组件关系
+%% alt: Agent 配置由 Runner 驱动并连接工具 Handoff Guardrails Session 与 Trace 组件
+flowchart LR
+    Agent["Agent: instructions/tools/output"] --> Runner
+    Runner --> Tools
+    Runner --> Handoff
+    Runner --> Guardrails
+    Runner --> Session
+    Runner --> Trace

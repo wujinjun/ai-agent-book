@@ -1,0 +1,12 @@
+%% id: mcp-server-layered-architecture
+%% title: MCP Server 分层架构
+%% alt: 协议适配层依次连接策略层、领域服务和文件数据库外部服务适配器
+flowchart TB
+    Client[MCP Client] --> Protocol[协议层：消息 Schema 错误映射]
+    Protocol --> Policy[Policy：身份 scope 资源审批]
+    Policy --> Domain[领域服务：查询与动作]
+    Domain --> File[文件适配器]
+    Domain --> DB[数据库适配器]
+    Domain --> HTTP[外部 HTTP 适配器]
+    Observe[日志指标 Trace] -.贯穿.-> Protocol
+    Observe -.贯穿.-> Domain

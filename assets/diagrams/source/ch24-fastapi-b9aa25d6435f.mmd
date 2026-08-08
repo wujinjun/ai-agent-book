@@ -1,0 +1,3 @@
+flowchart LR
+    Client --> Auth --> API["FastAPI"] --> Queue["短任务直跑/长任务入队"] --> Agent
+    Agent --> SSE["SSE 事件"] --> Client

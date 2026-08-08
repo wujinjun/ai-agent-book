@@ -1,0 +1,6 @@
+flowchart LR
+    Prompt --> Model --> Parser
+    Query --> Retriever --> Documents --> Model
+    Agent["LangChain create_agent"] --> Runtime["LangGraph runtime"]
+    Runtime --> Tools
+    Runtime --> State

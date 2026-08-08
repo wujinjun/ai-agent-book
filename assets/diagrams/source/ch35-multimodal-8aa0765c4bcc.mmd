@@ -1,0 +1,5 @@
+%% id: multimodal-rag-main-pipeline
+%% title: 多模态 RAG 主链路
+%% alt: 图像音频视频文档经解码 OCR ASR 抽帧形成文本视觉元数据后检索生成并定位引用
+flowchart LR
+    Media["Image/Audio/Video/Docs"] --> Parse["decode/OCR/ASR/frames"] --> Index["text+visual metadata"] --> Retrieve --> Model --> Citation

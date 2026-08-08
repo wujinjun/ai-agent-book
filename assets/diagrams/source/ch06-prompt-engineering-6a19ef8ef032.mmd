@@ -1,0 +1,6 @@
+flowchart LR
+    Policy["系统策略"] --> Assemble["上下文组装"]
+    Task["用户任务"] --> Assemble
+    Examples["少量示例"] --> Assemble
+    Data["检索资料：不可信数据"] --> Assemble
+    Assemble --> Model["模型"] --> Validate["结构与业务校验"]

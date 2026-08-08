@@ -1,0 +1,4 @@
+flowchart LR
+    Goal --> Inspect["Repo map/search"] --> Plan --> Patch --> Test --> Review
+    Review -->|失败| Inspect
+    Review -->|通过| Diff["Human-readable diff"]

@@ -1,0 +1,12 @@
+%% id: coding-agent-tool-security-boundary
+%% title: Coding Agent 工具与沙箱边界
+%% alt: 模型提出文件终端和 Git 动作，Runtime 经过路径命令权限审批和 Secret 隔离后在 Sandbox 执行
+flowchart LR
+    Model[模型动作建议] --> Runtime[Coding Runtime]
+    Runtime --> Path[工作区路径限制]
+    Runtime --> Command[命令 allowlist 与风险分类]
+    Runtime --> Approval[破坏性或外部写入审批]
+    Path --> Sandbox[隔离 Sandbox]
+    Command --> Sandbox
+    Approval --> Sandbox
+    Secret[Secret Store] -.不向模型暴露.-> Sandbox

@@ -1,0 +1,14 @@
+%% id: browser-agent-error-recovery
+%% title: Browser Agent 错误恢复状态机
+%% alt: 浏览器动作后通过重新观察判断成功导航遮挡元素变化超时或登录失效并有限恢复或人工介入
+stateDiagram-v2
+    [*] --> Observe
+    Observe --> Act: 元素证据唯一
+    Act --> Verify
+    Verify --> Observe: 动作成功继续
+    Verify --> Recover: 弹窗 遮挡 导航或元素变化
+    Recover --> Observe: 有限恢复成功
+    Recover --> Human: 登录失效 验证码或歧义
+    Verify --> Failed: 超时或预算耗尽
+    Human --> Observe: 用户处理后恢复
+    Failed --> [*]

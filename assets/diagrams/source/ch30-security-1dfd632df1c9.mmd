@@ -1,0 +1,9 @@
+%% id: agent-security-policy-boundary
+%% title: Agent Policy 与工具安全边界
+%% alt: 用户网页邮件文档进入不可信模型后，动作必须经过不可绕过 Policy 和人工审批才能访问敏感数据
+flowchart LR
+    Untrusted["用户/网页/邮件/文档"] --> Model
+    Model --> Policy["不可绕过的 Policy Enforcement"] --> Tools
+    Tools --> Data["敏感数据/外部动作"]
+    Policy --> Approval["Human Approval"]
+    Tools --> Audit["Audit Log"]

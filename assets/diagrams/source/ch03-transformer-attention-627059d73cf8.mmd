@@ -1,0 +1,10 @@
+%% id: rnn-to-transformer-evolution
+%% title: 从 RNN 串行状态到 Transformer 内容寻址
+%% alt: RNN 让信息逐时间步传递，Transformer 让各位置通过 Attention 直接建立内容相关连接并行训练
+flowchart LR
+    Sequence["Token 序列"] --> RNN["RNN / LSTM<br/>隐藏状态逐步传递"]
+    RNN --> Serial["训练依赖串行<br/>长距离路径较长"]
+    Sequence --> Attn["Self-Attention<br/>位置间直接匹配"]
+    Attn --> Parallel["同层位置并行<br/>长距离直接访问"]
+    Serial --> Tradeoff["适合流式与小状态任务"]
+    Parallel --> Tradeoff2["适合大规模并行训练"]

@@ -1,0 +1,10 @@
+sequenceDiagram
+    participant S as Supervisor
+    participant W as Worker
+    participant B as Blackboard
+    participant R as Reviewer
+    S->>W: task contract + budget
+    W->>B: artifact v1 + evidence
+    B->>R: immutable artifact
+    R->>B: structured review
+    B->>S: approved/rejected

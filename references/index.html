@@ -1,0 +1,3074 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="面向软件工程师的 AI Agent 原理、工程与项目教材">
+      
+      
+        <meta name="author" content="AI Agent Book contributors">
+      
+      
+      
+        <link rel="prev" href="../glossary/">
+      
+      
+        <link rel="next" href="../QUALITY_ROADMAP/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>参考资料 - AI Agent 从零到实战（2026版）</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="AI Agent 从零到实战（2026版）" class="md-header__button md-logo" aria-label="AI Agent 从零到实战（2026版）" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Agent 从零到实战（2026版）
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              参考资料
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="light-blue"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../copyright/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  版权与使用说明
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../edition/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  版本与发行信息
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../preface/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  前言
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../learning-guide/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  学习指南
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../training/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  企业培训版
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../part-01-foundations/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第一篇 LLM 与 AI Agent 基础
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../part-02-agent-core/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第二篇 Prompt、工具与 Agent 核心
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../part-03-rag-and-memory/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第三篇 MCP、RAG 与 Memory
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../part-04-frameworks/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第四篇 Agent 框架
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../part-05-engineering/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第五篇 Agent 工程化
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../part-06-projects/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第六篇 完整项目实战
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../part-07-advanced/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  第七篇 高级主题
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../examples/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  独立示例
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../book-index/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  全书索引
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../glossary/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  术语表
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  参考资料
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../QUALITY_ROADMAP/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  质量路线图
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../final-acceptance/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  最终验收状态
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../project-status/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  项目状态
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="AI Agent 从零到实战（2026版）" class="md-nav__button md-logo" aria-label="AI Agent 从零到实战（2026版）" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    AI Agent 从零到实战（2026版）
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../copyright/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    版权与使用说明
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../edition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    版本与发行信息
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../preface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    前言
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    学习指南
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../training/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    企业培训版
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            企业培训版
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/instructor-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    讲师手册
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/student-lab-manual/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    学员实验手册
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/assessment-rubric/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    评分标准
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/question-bank/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    章节题库与考试
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/enterprise-cases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    企业案例
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/workshops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    工作坊
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/offline-training-pack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    离线培训包
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/common-mistakes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    常见学员错误
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/slides/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    幻灯片说明
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-01-foundations/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第一篇 LLM 与 AI Agent 基础
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            第一篇 LLM 与 AI Agent 基础
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-01-foundations/ch01-what-is-llm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第1章 什么是大语言模型
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-01-foundations/ch02-token-and-context/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第2章 Token 与上下文窗口
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-01-foundations/ch03-transformer-attention/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第3章 Transformer 与 Attention
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-01-foundations/ch04-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第4章 LLM 生成机制
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-01-foundations/ch05-embedding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第5章 Embedding 与语义表示
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-02-agent-core/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第二篇 Prompt、工具与 Agent 核心
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            第二篇 Prompt、工具与 Agent 核心
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-02-agent-core/ch06-prompt-engineering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第6章 Prompt Engineering
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-02-agent-core/ch07-structured-output/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第7章 Structured Output
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-02-agent-core/ch08-tool-calling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第8章 Tool Calling
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-02-agent-core/ch09-agent-runtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第9章 Agent Runtime
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-02-agent-core/ch10-planning-reflection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第10章 Planning 与 Reflection
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-03-rag-and-memory/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第三篇 MCP、RAG 与 Memory
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            第三篇 MCP、RAG 与 Memory
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-03-rag-and-memory/ch11-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第11章 MCP 基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-03-rag-and-memory/ch12-mcp-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第12章 MCP Server
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-03-rag-and-memory/ch13-rag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第13章 RAG 基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-03-rag-and-memory/ch14-advanced-rag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第14章 高级 RAG
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-03-rag-and-memory/ch15-memory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第15章 Memory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-03-rag-and-memory/ch16-vector-databases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第16章 向量数据库
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-04-frameworks/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第四篇 Agent 框架
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_10" id="__nav_10_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            第四篇 Agent 框架
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-04-frameworks/ch17-native-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第17章 原生 API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-04-frameworks/ch18-openai-agents-sdk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第18章 OpenAI Agents SDK
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-04-frameworks/ch19-pydanticai/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第19章 PydanticAI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-04-frameworks/ch20-langgraph/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第20章 LangGraph
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-04-frameworks/ch21-langchain-llamaindex/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第21章 LangChain 与 LlamaIndex
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-04-frameworks/ch22-multi-agent-frameworks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第22章 Multi-Agent 框架
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-05-engineering/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第五篇 Agent 工程化
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            第五篇 Agent 工程化
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-05-engineering/ch23-python-engineering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第23章 Python 工程基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-05-engineering/ch24-fastapi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第24章 FastAPI 服务化
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-05-engineering/ch25-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第25章 数据存储
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-05-engineering/ch26-docker-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第26章 Docker 与部署
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-05-engineering/ch27-job-queues/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第27章 异步任务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-05-engineering/ch28-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第28章 Observability
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-05-engineering/ch29-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第29章 Agent Evaluation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-05-engineering/ch30-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第30章 安全与 Guardrails
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-05-engineering/ch31-cost-performance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第31章 成本与性能
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-06-projects/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第六篇 完整项目实战
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_12" id="__nav_12_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            第六篇 完整项目实战
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-06-projects/project-01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目1：最小 AI Assistant
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-06-projects/project-02/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目2：天气与工具调用 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-06-projects/project-03/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目3：MCP 本地工具 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-06-projects/project-04/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目4：企业知识库 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-06-projects/project-05/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目5：代码 Review Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-06-projects/project-06/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目6：自动办公 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-06-projects/project-07/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目7：股票研究 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-06-projects/project-08/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目8：LangGraph 研究工作流 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-06-projects/project-09/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目9：Multi-Agent 软件开发团队
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-06-projects/project-10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目10：企业级 Agent 平台
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-07-advanced/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    第七篇 高级主题
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_13" id="__nav_13_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            第七篇 高级主题
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-07-advanced/ch32-multi-agent-principles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第32章 Multi-Agent 原理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-07-advanced/ch33-agentic-coding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第33章 Agentic Coding
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-07-advanced/ch34-browser-computer-use/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第34章 Browser 与 Computer Use
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-07-advanced/ch35-multimodal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第35章 多模态 Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-07-advanced/ch36-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第36章 Agent 架构设计
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-07-advanced/ch37-demo-to-product/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第37章 从 Demo 到产品
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-07-advanced/ch38-selection-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    第38章 技术选型
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    独立示例
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../book-index/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    全书索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    术语表
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    参考资料
+    
+  </span>
+  
+
+      </a>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../QUALITY_ROADMAP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    质量路线图
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../final-acceptance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    最终验收状态
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../project-status/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目状态
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="_1">参考资料</h1>
+<blockquote>
+<p>此文件由 <code>notes/publication-metadata.yml</code> 自动生成。具体 API 资料仍在对应章节记录版本与核对日期。</p>
+</blockquote>
+<ol>
+<li><span id="ref-vaswani2017"></span><strong>[vaswani2017]</strong> Vaswani, A. et al. <em><a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a></em>. NeurIPS, 2017.</li>
+<li><span id="ref-brown2020"></span><strong>[brown2020]</strong> Brown, T. et al. <em><a href="https://arxiv.org/abs/2005.14165">Language Models are Few-Shot Learners</a></em>. NeurIPS, 2020.</li>
+<li><span id="ref-ouyang2022"></span><strong>[ouyang2022]</strong> Ouyang, L. et al. <em><a href="https://arxiv.org/abs/2203.02155">Training Language Models to Follow Instructions with Human Feedback</a></em>. NeurIPS, 2022.</li>
+<li><span id="ref-bender2021"></span><strong>[bender2021]</strong> Bender, E. M. et al. <em><a href="https://doi.org/10.1145/3442188.3445922">On the Dangers of Stochastic Parrots</a></em>. ACM FAccT, 2021.</li>
+<li><span id="ref-bommasani2021"></span><strong>[bommasani2021]</strong> Bommasani, R. et al. <em><a href="https://arxiv.org/abs/2108.07258">On the Opportunities and Risks of Foundation Models</a></em>. Stanford CRFM, 2021.</li>
+<li><span id="ref-devlin2018"></span><strong>[devlin2018]</strong> Devlin, J. et al. <em><a href="https://arxiv.org/abs/1810.04805">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a></em>. NAACL, 2019.</li>
+<li><span id="ref-radford2019"></span><strong>[radford2019]</strong> Radford, A. et al. <em><a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">Language Models are Unsupervised Multitask Learners</a></em>. OpenAI Technical Report, 2019.</li>
+<li><span id="ref-kaplan2020"></span><strong>[kaplan2020]</strong> Kaplan, J. et al. <em><a href="https://arxiv.org/abs/2001.08361">Scaling Laws for Neural Language Models</a></em>. arXiv, 2020.</li>
+<li><span id="ref-hoffmann2022"></span><strong>[hoffmann2022]</strong> Hoffmann, J. et al. <em><a href="https://arxiv.org/abs/2203.15556">Training Compute-Optimal Large Language Models</a></em>. NeurIPS, 2022.</li>
+<li><span id="ref-touvron2023"></span><strong>[touvron2023]</strong> Touvron, H. et al. <em><a href="https://arxiv.org/abs/2307.09288">Llama 2: Open Foundation and Fine-Tuned Chat Models</a></em>. arXiv, 2023.</li>
+<li><span id="ref-wei2022"></span><strong>[wei2022]</strong> Wei, J. et al. <em><a href="https://arxiv.org/abs/2201.11903">Chain-of-Thought Prompting Elicits Reasoning in Large Language Models</a></em>. NeurIPS, 2022.</li>
+<li><span id="ref-kojima2022"></span><strong>[kojima2022]</strong> Kojima, T. et al. <em><a href="https://arxiv.org/abs/2205.11916">Large Language Models are Zero-Shot Reasoners</a></em>. NeurIPS, 2022.</li>
+<li><span id="ref-holtzman2020"></span><strong>[holtzman2020]</strong> Holtzman, A. et al. <em><a href="https://arxiv.org/abs/1904.09751">The Curious Case of Neural Text Degeneration</a></em>. ICLR, 2020.</li>
+<li><span id="ref-sennrich2016"></span><strong>[sennrich2016]</strong> Sennrich, R. et al. <em><a href="https://arxiv.org/abs/1508.07909">Neural Machine Translation of Rare Words with Subword Units</a></em>. ACL, 2016.</li>
+<li><span id="ref-kudo2018"></span><strong>[kudo2018]</strong> Kudo, T. and Richardson, J. <em><a href="https://aclanthology.org/D18-2012/">SentencePiece: A Simple and Language Independent Subword Tokenizer</a></em>. EMNLP System Demonstrations, 2018.</li>
+<li><span id="ref-mikolov2013"></span><strong>[mikolov2013]</strong> Mikolov, T. et al. <em><a href="https://arxiv.org/abs/1301.3781">Efficient Estimation of Word Representations in Vector Space</a></em>. ICLR Workshop, 2013.</li>
+<li><span id="ref-reimers2019"></span><strong>[reimers2019]</strong> Reimers, N. and Gurevych, I. <em><a href="https://arxiv.org/abs/1908.10084">Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks</a></em>. EMNLP-IJCNLP, 2019.</li>
+<li><span id="ref-johnson2017"></span><strong>[johnson2017]</strong> Johnson, J. et al. <em><a href="https://arxiv.org/abs/1702.08734">Billion-scale Similarity Search with GPUs</a></em>. IEEE Transactions on Big Data, 2019.</li>
+<li><span id="ref-malkov2018"></span><strong>[malkov2018]</strong> Malkov, Y. and Yashunin, D. <em><a href="https://arxiv.org/abs/1603.09320">Efficient and Robust Approximate Nearest Neighbor Search Using HNSW</a></em>. IEEE TPAMI, 2020.</li>
+<li><span id="ref-robertson2009"></span><strong>[robertson2009]</strong> Robertson, S. and Zaragoza, H. <em><a href="https://doi.org/10.1561/1500000019">The Probabilistic Relevance Framework: BM25 and Beyond</a></em>. Foundations and Trends in Information Retrieval, 2009.</li>
+<li><span id="ref-yao2022"></span><strong>[yao2022]</strong> Yao, S. et al. <em><a href="https://arxiv.org/abs/2210.03629">ReAct: Synergizing Reasoning and Acting in Language Models</a></em>. ICLR, 2023.</li>
+<li><span id="ref-schick2023"></span><strong>[schick2023]</strong> Schick, T. et al. <em><a href="https://arxiv.org/abs/2302.04761">Toolformer: Language Models Can Teach Themselves to Use Tools</a></em>. NeurIPS, 2023.</li>
+<li><span id="ref-karpas2022"></span><strong>[karpas2022]</strong> Karpas, E. et al. <em><a href="https://arxiv.org/abs/2205.00445">MRKL Systems: A Modular, Neuro-Symbolic Architecture for Tool Use</a></em>. arXiv, 2022.</li>
+<li><span id="ref-shinn2023"></span><strong>[shinn2023]</strong> Shinn, N. et al. <em><a href="https://arxiv.org/abs/2303.11366">Reflexion: Language Agents with Verbal Reinforcement Learning</a></em>. NeurIPS, 2023.</li>
+<li><span id="ref-wang2023plan"></span><strong>[wang2023plan]</strong> Wang, L. et al. <em><a href="https://arxiv.org/abs/2305.04091">Plan-and-Solve Prompting</a></em>. ACL, 2023.</li>
+<li><span id="ref-yao2023tot"></span><strong>[yao2023tot]</strong> Yao, S. et al. <em><a href="https://arxiv.org/abs/2305.10601">Tree of Thoughts: Deliberate Problem Solving with Large Language Models</a></em>. NeurIPS, 2023.</li>
+<li><span id="ref-madaan2023"></span><strong>[madaan2023]</strong> Madaan, A. et al. <em><a href="https://arxiv.org/abs/2303.17651">Self-Refine: Iterative Refinement with Self-Feedback</a></em>. NeurIPS, 2023.</li>
+<li><span id="ref-jsonschema2020"></span><strong>[jsonschema2020]</strong> JSON Schema Project <em><a href="https://json-schema.org/draft/2020-12">JSON Schema Draft 2020-12</a></em>. JSON Schema Specification, 2020. 核对：2026-08-08。</li>
+<li><span id="ref-pydantic-models"></span><strong>[pydantic-models]</strong> Pydantic Team <em><a href="https://docs.pydantic.dev/latest/concepts/models/">Pydantic Models</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-openai-quickstart"></span><strong>[openai-quickstart]</strong> OpenAI <em><a href="https://platform.openai.com/docs/quickstart/make-your-first-api-request">OpenAI API Developer Quickstart</a></em>. Official OpenAI Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-openai-evals"></span><strong>[openai-evals]</strong> OpenAI <em><a href="https://platform.openai.com/docs/api-reference/evals">Evals API Reference</a></em>. Official OpenAI Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-openai-compat"></span><strong>[openai-compat]</strong> OpenAI <em><a href="https://platform.openai.com/docs/api-reference/backward-compatibility">API Backward Compatibility</a></em>. Official OpenAI Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-openai-data-controls"></span><strong>[openai-data-controls]</strong> OpenAI <em><a href="https://platform.openai.com/docs/models/default-usage-policies-by-endpoint">Data Controls in the OpenAI Platform</a></em>. Official OpenAI Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-rfc8259"></span><strong>[rfc8259]</strong> Bray, T. <em><a href="https://www.rfc-editor.org/rfc/rfc8259">The JavaScript Object Notation Data Interchange Format</a></em>. IETF RFC 8259, 2017.</li>
+<li><span id="ref-jsonrpc20"></span><strong>[jsonrpc20]</strong> JSON-RPC Working Group <em><a href="https://www.jsonrpc.org/specification">JSON-RPC 2.0 Specification</a></em>. JSON-RPC Specification, 2010.</li>
+<li><span id="ref-patil2023gorilla"></span><strong>[patil2023gorilla]</strong> Patil, S. et al. <em><a href="https://arxiv.org/abs/2305.15334">Gorilla: Large Language Model Connected with Massive APIs</a></em>. arXiv, 2023.</li>
+<li><span id="ref-qin2023toolllm"></span><strong>[qin2023toolllm]</strong> Qin, Y. et al. <em><a href="https://arxiv.org/abs/2307.16789">ToolLLM: Facilitating Large Language Models to Master 16000+ APIs</a></em>. ICLR, 2024.</li>
+<li><span id="ref-ruan2023toolbench"></span><strong>[ruan2023toolbench]</strong> Qin, Y. et al. <em><a href="https://arxiv.org/abs/2304.08354">Tool Learning with Foundation Models</a></em>. arXiv, 2023.</li>
+<li><span id="ref-mcp-architecture"></span><strong>[mcp-architecture]</strong> Model Context Protocol <em><a href="https://modelcontextprotocol.io/docs/learn/architecture">Architecture Overview</a></em>. Official MCP Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-mcp-spec-2025-11-25"></span><strong>[mcp-spec-2025-11-25]</strong> Model Context Protocol <em><a href="https://modelcontextprotocol.io/specification/2025-11-25">Specification 2025-11-25</a></em>. Official MCP Specification, 2025. 核对：2026-08-08。</li>
+<li><span id="ref-mcp-auth"></span><strong>[mcp-auth]</strong> Model Context Protocol <em><a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">Authorization</a></em>. Official MCP Specification, 2025. 核对：2026-08-08。</li>
+<li><span id="ref-mcp-changelog"></span><strong>[mcp-changelog]</strong> Model Context Protocol <em><a href="https://modelcontextprotocol.io/specification/2025-11-25/changelog">Specification Key Changes</a></em>. Official MCP Specification, 2025. 核对：2026-08-08。</li>
+<li><span id="ref-mcp-python-sdk"></span><strong>[mcp-python-sdk]</strong> Model Context Protocol <em><a href="https://github.com/modelcontextprotocol/python-sdk">Python SDK</a></em>. Official GitHub Repository, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-lewis2020"></span><strong>[lewis2020]</strong> Lewis, P. et al. <em><a href="https://arxiv.org/abs/2005.11401">Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</a></em>. NeurIPS, 2020.</li>
+<li><span id="ref-karpukhin2020"></span><strong>[karpukhin2020]</strong> Karpukhin, V. et al. <em><a href="https://arxiv.org/abs/2004.04906">Dense Passage Retrieval for Open-Domain Question Answering</a></em>. EMNLP, 2020.</li>
+<li><span id="ref-khattab2020"></span><strong>[khattab2020]</strong> Khattab, O. and Zaharia, M. <em><a href="https://arxiv.org/abs/2004.12832">ColBERT: Efficient and Effective Passage Search</a></em>. SIGIR, 2020.</li>
+<li><span id="ref-gao2022hyde"></span><strong>[gao2022hyde]</strong> Gao, L. et al. <em><a href="https://arxiv.org/abs/2212.10496">Precise Zero-Shot Dense Retrieval without Relevance Labels</a></em>. ACL, 2023.</li>
+<li><span id="ref-es2023ragas"></span><strong>[es2023ragas]</strong> Es, S. et al. <em><a href="https://arxiv.org/abs/2309.15217">RAGAS: Automated Evaluation of Retrieval Augmented Generation</a></em>. EACL System Demonstrations, 2024.</li>
+<li><span id="ref-asai2023selfrag"></span><strong>[asai2023selfrag]</strong> Asai, A. et al. <em><a href="https://arxiv.org/abs/2310.11511">Self-RAG: Learning to Retrieve, Generate, and Critique</a></em>. ICLR, 2024.</li>
+<li><span id="ref-yan2024crag"></span><strong>[yan2024crag]</strong> Yan, S. et al. <em><a href="https://arxiv.org/abs/2401.15884">Corrective Retrieval Augmented Generation</a></em>. arXiv, 2024.</li>
+<li><span id="ref-edge2024graphrag"></span><strong>[edge2024graphrag]</strong> Edge, D. et al. <em><a href="https://arxiv.org/abs/2404.16130">From Local to Global: A Graph RAG Approach</a></em>. arXiv, 2024.</li>
+<li><span id="ref-sarthi2024raptor"></span><strong>[sarthi2024raptor]</strong> Sarthi, P. et al. <em><a href="https://arxiv.org/abs/2401.18059">RAPTOR: Recursive Abstractive Processing for Tree-Organized Retrieval</a></em>. ICLR, 2024.</li>
+<li><span id="ref-liu2023lostmiddle"></span><strong>[liu2023lostmiddle]</strong> Liu, N. et al. <em><a href="https://arxiv.org/abs/2307.03172">Lost in the Middle: How Language Models Use Long Contexts</a></em>. Transactions of the ACL, 2024.</li>
+<li><span id="ref-borgeaud2022retro"></span><strong>[borgeaud2022retro]</strong> Borgeaud, S. et al. <em><a href="https://arxiv.org/abs/2112.04426">Improving Language Models by Retrieving from Trillions of Tokens</a></em>. ICML, 2022.</li>
+<li><span id="ref-park2023generativeagents"></span><strong>[park2023generativeagents]</strong> Park, J. et al. <em><a href="https://arxiv.org/abs/2304.03442">Generative Agents: Interactive Simulacra of Human Behavior</a></em>. UIST, 2023.</li>
+<li><span id="ref-packer2023memgpt"></span><strong>[packer2023memgpt]</strong> Packer, C. et al. <em><a href="https://arxiv.org/abs/2310.08560">MemGPT: Towards LLMs as Operating Systems</a></em>. arXiv, 2023.</li>
+<li><span id="ref-faiss-wiki"></span><strong>[faiss-wiki]</strong> Meta Research <em><a href="https://github.com/facebookresearch/faiss/wiki">Faiss Documentation</a></em>. Official GitHub Wiki, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-pgvector"></span><strong>[pgvector]</strong> pgvector Project <em><a href="https://github.com/pgvector/pgvector">pgvector</a></em>. Official GitHub Repository, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-milvus-docs"></span><strong>[milvus-docs]</strong> Milvus Project <em><a href="https://milvus.io/docs">Milvus Documentation</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-openai-agents-guide"></span><strong>[openai-agents-guide]</strong> OpenAI <em><a href="https://platform.openai.com/docs/guides/agents">Build Agents with the OpenAI Platform</a></em>. Official OpenAI Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-pydanticai-docs"></span><strong>[pydanticai-docs]</strong> Pydantic Team <em><a href="https://ai.pydantic.dev/">PydanticAI Documentation</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-pydanticai-tools"></span><strong>[pydanticai-tools]</strong> Pydantic Team <em><a href="https://ai.pydantic.dev/tools/">PydanticAI Function Tools</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-pydanticai-testing"></span><strong>[pydanticai-testing]</strong> Pydantic Team <em><a href="https://ai.pydantic.dev/testing/">PydanticAI Testing</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-langgraph-overview"></span><strong>[langgraph-overview]</strong> LangChain <em><a href="https://docs.langchain.com/oss/python/langgraph/overview">LangGraph Overview</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-langgraph-persistence"></span><strong>[langgraph-persistence]</strong> LangChain <em><a href="https://docs.langchain.com/oss/python/langgraph/persistence">LangGraph Persistence</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-langgraph-time-travel"></span><strong>[langgraph-time-travel]</strong> LangChain <em><a href="https://docs.langchain.com/oss/python/langgraph/use-time-travel">LangGraph Time Travel</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-langgraph-streaming"></span><strong>[langgraph-streaming]</strong> LangChain <em><a href="https://docs.langchain.com/oss/python/langgraph/event-streaming">LangGraph Event Streaming</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-langchain-docs"></span><strong>[langchain-docs]</strong> LangChain <em><a href="https://docs.langchain.com/oss/python/langchain/overview">LangChain Python Documentation</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-llamaindex-docs"></span><strong>[llamaindex-docs]</strong> LlamaIndex <em><a href="https://docs.llamaindex.ai/">LlamaIndex Documentation</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-crewai-docs"></span><strong>[crewai-docs]</strong> CrewAI <em><a href="https://docs.crewai.com/">CrewAI Documentation</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-autogen-docs"></span><strong>[autogen-docs]</strong> Microsoft <em><a href="https://microsoft.github.io/autogen/stable/">AutoGen Documentation</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-autogen-teams"></span><strong>[autogen-teams]</strong> Microsoft <em><a href="https://microsoft.github.io/autogen/stable/user-guide/agentchat-user-guide/tutorial/teams.html">AutoGen AgentChat Teams</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-semantic-kernel-docs"></span><strong>[semantic-kernel-docs]</strong> Microsoft <em><a href="https://learn.microsoft.com/semantic-kernel/overview/">Semantic Kernel Documentation</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-fastapi-docs"></span><strong>[fastapi-docs]</strong> FastAPI Project <em><a href="https://fastapi.tiangolo.com/">FastAPI Documentation</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-python312-docs"></span><strong>[python312-docs]</strong> Python Software Foundation <em><a href="https://docs.python.org/3.12/">Python 3.12 Documentation</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-pep621"></span><strong>[pep621]</strong> Python Packaging Authority <em><a href="https://peps.python.org/pep-0621/">PEP 621: Storing Project Metadata in pyproject.toml</a></em>. Python Enhancement Proposal, 2020.</li>
+<li><span id="ref-python-asyncio"></span><strong>[python-asyncio]</strong> Python Software Foundation <em><a href="https://docs.python.org/3.12/library/asyncio.html">asyncio — Asynchronous I/O</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-httpx-docs"></span><strong>[httpx-docs]</strong> Encode <em><a href="https://www.python-httpx.org/">HTTPX Documentation</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-pytest-docs"></span><strong>[pytest-docs]</strong> pytest Project <em><a href="https://docs.pytest.org/en/stable/">pytest Documentation</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-ruff-docs"></span><strong>[ruff-docs]</strong> Astral <em><a href="https://docs.astral.sh/ruff/">Ruff Documentation</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-postgresql-docs"></span><strong>[postgresql-docs]</strong> PostgreSQL Global Development Group <em><a href="https://www.postgresql.org/docs/">PostgreSQL Documentation</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-redis-docs"></span><strong>[redis-docs]</strong> Redis <em><a href="https://redis.io/docs/latest/">Redis Documentation</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-dockerfile-docs"></span><strong>[dockerfile-docs]</strong> Docker <em><a href="https://docs.docker.com/reference/dockerfile/">Dockerfile Reference</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-compose-spec"></span><strong>[compose-spec]</strong> Docker <em><a href="https://docs.docker.com/compose/compose-file/">Compose Specification</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-celery-docs"></span><strong>[celery-docs]</strong> Celery Project <em><a href="https://docs.celeryq.dev/en/stable/">Celery Documentation</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-dramatiq-docs"></span><strong>[dramatiq-docs]</strong> Dramatiq Project <em><a href="https://dramatiq.io/">Dramatiq Documentation</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-otel-spec"></span><strong>[otel-spec]</strong> OpenTelemetry <em><a href="https://opentelemetry.io/docs/specs/otel/">OpenTelemetry Specification</a></em>. CNCF Specification, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-w3c-trace-context"></span><strong>[w3c-trace-context]</strong> W3C <em><a href="https://www.w3.org/TR/trace-context/">Trace Context</a></em>. W3C Recommendation, 2021.</li>
+<li><span id="ref-owasp-llm-top10"></span><strong>[owasp-llm-top10]</strong> OWASP Foundation <em><a href="https://owasp.org/www-project-top-10-for-large-language-model-applications/">OWASP Top 10 for LLM Applications 2025</a></em>. OWASP GenAI Security Project, 2025. 核对：2026-08-08。 版本敏感，引用前须核对当前正式版本。</li>
+<li><span id="ref-owasp-agentic-top10"></span><strong>[owasp-agentic-top10]</strong> OWASP Foundation <em><a href="https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/">OWASP Top 10 for Agentic Applications</a></em>. OWASP GenAI Security Project, 2025. 核对：2026-08-08。</li>
+<li><span id="ref-owasp-api-top10"></span><strong>[owasp-api-top10]</strong> OWASP Foundation <em><a href="https://owasp.org/API-Security/editions/2023/en/0x11-t10/">OWASP API Security Top 10</a></em>. OWASP API Security Project, 2023. 核对：2026-08-08。</li>
+<li><span id="ref-nist-ai-rmf"></span><strong>[nist-ai-rmf]</strong> NIST <em><a href="https://doi.org/10.6028/NIST.AI.100-1">Artificial Intelligence Risk Management Framework 1.0</a></em>. NIST AI 100-1, 2023.</li>
+<li><span id="ref-nist-genai-profile"></span><strong>[nist-genai-profile]</strong> NIST <em><a href="https://doi.org/10.6028/NIST.AI.600-1">Artificial Intelligence Risk Management Framework: Generative AI Profile</a></em>. NIST AI 600-1, 2024.</li>
+<li><span id="ref-mitre-atlas"></span><strong>[mitre-atlas]</strong> MITRE <em><a href="https://atlas.mitre.org/">Adversarial Threat Landscape for Artificial-Intelligence Systems</a></em>. MITRE ATLAS, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-rfc9110"></span><strong>[rfc9110]</strong> Fielding, R. et al. <em><a href="https://www.rfc-editor.org/rfc/rfc9110">HTTP Semantics</a></em>. IETF RFC 9110, 2022.</li>
+<li><span id="ref-rfc9457"></span><strong>[rfc9457]</strong> Nottingham, M. et al. <em><a href="https://www.rfc-editor.org/rfc/rfc9457">Problem Details for HTTP APIs</a></em>. IETF RFC 9457, 2023.</li>
+<li><span id="ref-html-sse"></span><strong>[html-sse]</strong> WHATWG <em><a href="https://html.spec.whatwg.org/multipage/server-sent-events.html">Server-Sent Events</a></em>. HTML Living Standard, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-rfc6455"></span><strong>[rfc6455]</strong> Fette, I. and Melnikov, A. <em><a href="https://www.rfc-editor.org/rfc/rfc6455">The WebSocket Protocol</a></em>. IETF RFC 6455, 2011.</li>
+<li><span id="ref-kubernetes-docs"></span><strong>[kubernetes-docs]</strong> Kubernetes <em><a href="https://kubernetes.io/docs/home/">Kubernetes Documentation</a></em>. Official Documentation, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-twelve-factor"></span><strong>[twelve-factor]</strong> Wiggins, A. <em><a href="https://12factor.net/">The Twelve-Factor App</a></em>. Twelve-Factor Methodology, 2011.</li>
+<li><span id="ref-slsa"></span><strong>[slsa]</strong> OpenSSF <em><a href="https://slsa.dev/spec/">Supply-chain Levels for Software Artifacts</a></em>. SLSA Specification, 2026. 核对：2026-08-08。</li>
+<li><span id="ref-wu2023autogen"></span><strong>[wu2023autogen]</strong> Wu, Q. et al. <em><a href="https://arxiv.org/abs/2308.08155">AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation</a></em>. arXiv, 2023.</li>
+<li><span id="ref-liu2023agentbench"></span><strong>[liu2023agentbench]</strong> Liu, X. et al. <em><a href="https://arxiv.org/abs/2308.03688">AgentBench: Evaluating LLMs as Agents</a></em>. ICLR, 2024.</li>
+<li><span id="ref-zhou2023webarena"></span><strong>[zhou2023webarena]</strong> Zhou, S. et al. <em><a href="https://arxiv.org/abs/2307.13854">WebArena: A Realistic Web Environment for Building Autonomous Agents</a></em>. ICLR, 2024.</li>
+<li><span id="ref-xie2024osworld"></span><strong>[xie2024osworld]</strong> Xie, T. et al. <em><a href="https://arxiv.org/abs/2404.07972">OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks</a></em>. NeurIPS, 2024.</li>
+<li><span id="ref-jimenez2024swebench"></span><strong>[jimenez2024swebench]</strong> Jimenez, C. et al. <em><a href="https://arxiv.org/abs/2310.06770">SWE-bench: Can Language Models Resolve Real-World GitHub Issues?</a></em>. ICLR, 2024.</li>
+<li><span id="ref-radford2021clip"></span><strong>[radford2021clip]</strong> Radford, A. et al. <em><a href="https://arxiv.org/abs/2103.00020">Learning Transferable Visual Models From Natural Language Supervision</a></em>. ICML, 2021.</li>
+<li><span id="ref-radford2022whisper"></span><strong>[radford2022whisper]</strong> Radford, A. et al. <em><a href="https://arxiv.org/abs/2212.04356">Robust Speech Recognition via Large-Scale Weak Supervision</a></em>. ICML, 2023.</li>
+<li><span id="ref-alayrac2022flamingo"></span><strong>[alayrac2022flamingo]</strong> Alayrac, J. et al. <em><a href="https://arxiv.org/abs/2204.14198">Flamingo: a Visual Language Model for Few-Shot Learning</a></em>. NeurIPS, 2022.</li>
+<li><span id="ref-iso25010"></span><strong>[iso25010]</strong> ISO/IEC <em><a href="https://www.iso.org/standard/78176.html">Systems and Software Quality Models</a></em>. ISO/IEC 25010, 2023.</li>
+<li><span id="ref-spdx-spec"></span><strong>[spdx-spec]</strong> Linux Foundation <em><a href="https://spdx.github.io/spdx-spec/">SPDX Specification</a></em>. ISO/IEC 5962, 2022. 核对：2026-08-08。</li>
+<li><span id="ref-cc-by-nc-sa"></span><strong>[cc-by-nc-sa]</strong> Creative Commons <em><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode">Attribution-NonCommercial-ShareAlike 4.0 International</a></em>. Creative Commons Legal Code, 2013.</li>
+<li><span id="ref-mit-license"></span><strong>[mit-license]</strong> Open Source Initiative <em><a href="https://opensource.org/license/mit">The MIT License</a></em>. OSI Approved License, 2026. 核对：2026-08-08。</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "content.code.copy", "search.highlight", "navigation.top", "navigation.tracking", "toc.follow"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+        <script src="../assets/javascripts/reader.js"></script>
+      
+    
+  </body>
+</html>

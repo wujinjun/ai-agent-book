@@ -1,0 +1,19 @@
+%% id: native-runtime-turn-transaction
+%% title: 原生 Runtime 单轮状态转换
+%% alt: 每轮加载版本状态并检查终止，模型决策经校验策略和工具执行后持久化观察，版本冲突则重新加载而非覆盖
+sequenceDiagram
+    participant R as Runtime
+    participant S as StateStore
+    participant M as ModelGateway
+    participant P as Policy
+    participant T as ToolRegistry
+    R->>S: load(run_id)
+    R->>R: TerminationPolicy + Context
+    R->>M: decide(internal messages, schemas)
+    M-->>R: Decision
+    R->>P: validate(subject, action, budget)
+    P-->>R: allow / reject
+    R->>T: execute(call_id, args)
+    T-->>R: structured Observation
+    R->>S: save(new_state, expected_version)
+    S-->>R: committed / version conflict

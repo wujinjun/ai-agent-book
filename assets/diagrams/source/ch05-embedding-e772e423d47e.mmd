@@ -1,0 +1,18 @@
+%% id: hybrid-retrieval-evaluation-loop
+%% title: 混合检索的离线评价与上线闭环
+%% alt: 版本化查询集同时运行稀疏和稠密检索，经RRF与重排后计算Recall和MRR，达标后灰度上线并收集困难样本
+flowchart LR
+    Set["版本化查询集<br/>问题 + 相关文档"] --> Sparse["BM25 / 关键词"]
+    Set --> Dense["Embedding / ANN"]
+    Sparse --> RRF["RRF 候选融合"]
+    Dense --> RRF
+    RRF --> Filter["租户 / 车型 / 版本过滤"]
+    Filter --> Rerank["Reranker"]
+    Rerank --> Metrics["Recall@k / MRR / nDCG"]
+    Metrics --> Gate{"超过发布阈值？"}
+    Gate -->|否| Tune["分析失败样本<br/>切分 / 查询 / 参数"]
+    Tune --> Sparse
+    Tune --> Dense
+    Gate -->|是| Canary["灰度上线"]
+    Canary --> Hard["收集困难样本"]
+    Hard --> Set

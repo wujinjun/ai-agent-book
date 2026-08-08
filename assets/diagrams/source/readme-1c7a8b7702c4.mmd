@@ -1,0 +1,7 @@
+flowchart LR
+    User --> Runtime --> Schema{"参数有效？"}
+    Schema -->|否| Repair["有限修复"]
+    Schema -->|是| Weather["WeatherService"]
+    Weather --> Retry{"瞬时错误？"}
+    Retry -->|是且预算内| Weather
+    Retry -->|否| Result["来源 + attempts"]

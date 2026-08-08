@@ -1,0 +1,7 @@
+%% id: langchain-llamaindex-langgraph-layers
+%% title: LangChain、LlamaIndex 与 LangGraph 分层关系
+%% alt: LlamaIndex 负责摄取索引检索，LangChain 组合模型工具解析器，LangGraph 管理状态工作流
+flowchart LR
+    Data --> Llama["LlamaIndex: ingest/index/retrieve"] --> Context
+    Prompt --> Chain["LangChain: model/tool/parser composition"]
+    Context --> Chain --> Graph["LangGraph: state/workflow"]

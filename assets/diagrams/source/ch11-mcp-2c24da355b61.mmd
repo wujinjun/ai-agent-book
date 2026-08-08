@@ -1,0 +1,17 @@
+%% id: mcp-2026-stateless-discover-call
+%% title: MCP 2026-07-28 无状态发现与调用
+%% alt: Client可选调用server discover获取能力，然后发送携带版本客户端身份和能力元数据的独立工具请求，最后关闭传输
+sequenceDiagram
+    participant C as MCP Client
+    participant G as Gateway
+    participant S as MCP Server Instance
+    opt 可选能力发现
+        C->>G: server/discover + 每请求元数据
+        G->>S: 独立请求
+        S-->>C: 能力与缓存提示
+    end
+    C->>G: tools/call + version/clientInfo/capabilities
+    G->>S: 按 Mcp-Method / Mcp-Name 路由
+    S-->>C: complete / input_required / error
+    C->>C: 校验结果、策略与后续动作
+    C-xS: 关闭 HTTP 请求或 stdio 进程

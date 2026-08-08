@@ -1,0 +1,19 @@
+%% id: approved-idempotent-tool-state-machine
+%% title: 高风险工具的审批、幂等与状态核实流程
+%% alt: 工具提议先校验参数和权限，高风险动作取得绑定参数的审批后执行，超时时核实外部状态，再决定成功、同键重试或人工复核
+flowchart TD
+    Proposed["工具提议"] --> Validate{"Schema 与权限通过？"}
+    Validate -->|否| Rejected["拒绝"]
+    Validate -->|是| Risk{"高风险动作？"}
+    Risk -->|是| Approval{"审批令牌有效且参数未变？"}
+    Approval -->|否| Rejected
+    Approval -->|是| Execute["携带幂等键执行"]
+    Risk -->|否| Execute
+    Execute --> Result{"结果是否明确？"}
+    Result -->|成功| Succeeded["成功"]
+    Result -->|业务失败| Failed["失败"]
+    Result -->|超时或断连| Verify["查询外部状态"]
+    Verify -->|已执行| Succeeded
+    Verify -->|确认未执行| Retry["预算内使用同一幂等键重试"]
+    Retry --> Execute
+    Verify -->|无法核实| Manual["人工复核"]

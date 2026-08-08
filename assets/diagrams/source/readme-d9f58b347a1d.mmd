@@ -1,0 +1,9 @@
+sequenceDiagram
+    participant U as User
+    participant S as AssistantSession
+    participant M as Model Adapter
+    U->>S: prompt
+    S->>S: append history
+    S->>M: messages + config
+    M-->>S: delta events
+    S-->>U: stream + usage

@@ -1,0 +1,7 @@
+flowchart TB
+    API --> PG["PostgreSQL: facts/state/audit"]
+    Worker --> PG
+    API --> Redis["Redis: cache/rate/queue coordination"]
+    Retriever --> Vector["pgvector/vector service"]
+    Events["Outbox"] --> Worker
+    PG --> Backup["encrypted backup + restore test"]

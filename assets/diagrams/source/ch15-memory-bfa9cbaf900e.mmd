@@ -1,0 +1,10 @@
+%% id: memory-deletion-propagation
+%% title: Memory 删除与纠错传播
+%% alt: 用户删除或 TTL 过期从主记录传播到向量索引缓存派生摘要备份恢复策略并保留无原值审计
+flowchart LR
+    Trigger[用户删除 TTL 或纠错] --> Primary[主记录失效或新版本]
+    Primary --> Vector[向量索引不可检索]
+    Primary --> Cache[缓存失效]
+    Primary --> Derived[派生摘要重建或删除]
+    Primary --> Backup[备份恢复后再执行删除]
+    Primary --> Audit[仅保留无原值删除审计]

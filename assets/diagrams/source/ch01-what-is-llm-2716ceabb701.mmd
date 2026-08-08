@@ -1,0 +1,17 @@
+flowchart TB
+    AI["人工智能：研究与工程领域"] --> ML["机器学习：从数据学习参数"]
+    AI --> Symbolic["规则、搜索与符号方法"]
+    ML --> DL["深度学习：多层神经网络"]
+    DL --> Transformer["Transformer 架构"]
+    Transformer --> LLM["大语言模型"]
+    LLM --> Base["基础模型"]
+    LLM --> Chat["对齐后的聊天/推理模型"]
+    Chat --> Product["聊天产品：界面、文件、搜索、安全、账户"]
+    Chat --> Runtime["Agent Runtime：状态、循环、终止、追踪"]
+    Runtime --> Tools["工具与 MCP"]
+    Runtime --> RAG["RAG 与 Memory"]
+    Runtime --> Workflow["工作流、审批与恢复"]
+    Tools --> System["可部署的 Agent 系统"]
+    RAG --> System
+    Workflow --> System
+    System --> Ops["测试、评估、监控、安全与成本治理"]

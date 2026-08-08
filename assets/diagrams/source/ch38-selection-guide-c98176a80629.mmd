@@ -1,0 +1,12 @@
+%% id: agent-framework-selection-tree
+%% title: Agent 框架选型决策树
+%% alt: 根据流程状态固定性持久恢复类型安全和复杂 RAG 需求选择原生 API LangGraph PydanticAI Agents SDK 或 LlamaIndex
+flowchart TD
+    Start{"流程和状态是否固定？"} -->|大体固定| Recover{"需持久恢复、回放或 HITL？"}
+    Start -->|开放式工具循环| Typed{"是否强调 Python 类型与 DI？"}
+    Recover -->|是| Graph["LangGraph / 工作流引擎"]
+    Recover -->|否| Native["原生 API / 轻量 SDK"]
+    Typed -->|是| PAI["PydanticAI"]
+    Typed -->|否| SDK["Agents SDK / 原生 Runtime"]
+    Start --> Data{"核心是否是复杂数据与 RAG？"}
+    Data -->|是| Index["LlamaIndex 或自建检索层"]

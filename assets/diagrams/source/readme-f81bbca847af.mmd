@@ -1,0 +1,16 @@
+%% id: project9-role-artifact-sequence
+%% title: 软件团队角色与 Artifact 时序
+%% alt: Product 定义验收，Planner 形成计划，Coder 交付 Artifact，Tester 和 Reviewer 分别提交结构化结果给 Coordinator
+sequenceDiagram
+    participant P as Product
+    participant L as Planner
+    participant C as Coder
+    participant T as Tester
+    participant R as Reviewer
+    participant S as Shared State
+    P->>S: acceptance criteria
+    L->>S: executable plan
+    C->>S: artifact version + evidence
+    T->>S: test result
+    R->>S: review decision
+    S->>S: coordinator validates terminal gate

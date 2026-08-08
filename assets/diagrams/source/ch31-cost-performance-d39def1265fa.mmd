@@ -1,0 +1,11 @@
+%% id: model-routing-budget-decision
+%% title: 模型路由与任务预算决策
+%% alt: 根据任务类型风险复杂度上下文长度和能力要求选择允许模型并在预算不足时拒绝或降级
+flowchart TD
+    Task[任务] --> Classify[确定性类型与风险分类]
+    Classify --> Capability[所需 Tool Vision Reasoning Context]
+    Capability --> Allow[模型 allowlist 与数据驻留]
+    Allow --> Estimate[估算 Token 延迟与费用]
+    Estimate --> Budget{任务预算可承受}
+    Budget -->|是| Route[选择满足 SLA 的最低成本模型]
+    Budget -->|否| Degrade[缩小范围 异步执行或请求确认]

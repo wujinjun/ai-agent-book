@@ -1,0 +1,4 @@
+flowchart LR
+    Source["原始文档"] --> Parse["解析/清洗"] --> Chunk["切分/元数据"] --> Index["索引"]
+    Q["问题"] --> Retrieve["检索"] --> Rerank["重排"] --> Context["带引用上下文"] --> LLM["生成"] --> Check["引用校验"]
+    Index --> Retrieve

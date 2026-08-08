@@ -1,0 +1,11 @@
+%% id: agent-service-deployment-topology
+%% title: Agent 服务部署拓扑
+%% alt: 公网经 TLS 入口访问 API，API 与 Worker 使用 PostgreSQL Redis 模型网关并统一发送日志指标 Trace
+flowchart TB
+    Internet --> Proxy["Nginx/Ingress TLS"] --> API
+    API --> Worker
+    API --> Postgres
+    Worker --> Redis
+    Worker --> Model["Model Gateway"]
+    API --> Observe["Logs/Metrics/Traces"]
+    Worker --> Observe

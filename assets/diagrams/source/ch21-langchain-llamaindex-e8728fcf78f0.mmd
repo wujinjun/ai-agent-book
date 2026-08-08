@@ -1,0 +1,10 @@
+%% id: rag-framework-adapter-boundary
+%% title: RAG 领域模型与框架 Adapter 边界
+%% alt: 企业领域 Document Chunk Citation 经 Adapter 转换为 LangChain Document 或 LlamaIndex Node 避免框架类型扩散
+flowchart LR
+    Domain[领域 Document Chunk Citation] --> LCAdapter[LangChain Adapter]
+    Domain --> LIAdapter[LlamaIndex Adapter]
+    LCAdapter --> LCDoc[LangChain Document Retriever]
+    LIAdapter --> LINode[LlamaIndex Node Index Retriever]
+    LCDoc --> Result[统一领域检索结果]
+    LINode --> Result

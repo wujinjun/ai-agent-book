@@ -1,0 +1,10 @@
+%% id: project9-shared-state-team-architecture
+%% title: Multi-Agent 开发团队共享状态架构
+%% alt: Product Planner Coder Tester Reviewer 通过版本化共享状态协作，只有测试与评审同时通过才终止
+flowchart LR
+    Product --> State[("Versioned Shared State")]
+    Planner --> State
+    Coder --> Sandbox --> State
+    Tester --> State
+    Reviewer --> Gate{"tests passed AND reviewed?"}
+    State --> Gate -->|yes| Stop

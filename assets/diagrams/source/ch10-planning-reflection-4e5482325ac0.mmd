@@ -1,0 +1,19 @@
+%% id: plan-node-state-and-replanning
+%% title: 计划节点状态与局部重规划
+%% alt: 节点从等待依赖进入就绪执行和验证，失败可重试或触发局部重规划，仅失败节点和下游失效
+stateDiagram-v2
+    [*] --> Pending
+    Pending --> Ready: 所有任务依赖通过
+    Pending --> Blocked: 依赖失败
+    Ready --> Running
+    Running --> Validating: 产物已生成
+    Validating --> Passed: 验收通过
+    Validating --> Retryable: 局部可修复
+    Running --> Retryable: 暂时故障
+    Retryable --> Ready: 预算允许重试
+    Retryable --> Replanning: 同路径不再有效
+    Replanning --> Invalidated: 原节点及下游
+    Replanning --> Pending: 插入受限替代节点
+    Validating --> Terminal: 不可恢复
+    Passed --> [*]
+    Terminal --> [*]

@@ -1,0 +1,13 @@
+%% id: context-budget-partitions
+%% title: 企业知识助手的上下文预算分区
+%% alt: 总窗口先扣除输出保留量，再分给固定规则、工具定义、当前问题、历史消息和检索证据
+flowchart LR
+    Total["模型总窗口"] --> Output["输出保留量"]
+    Total --> Input["可用输入预算"]
+    Input --> Fixed["固定规则"]
+    Input --> Tools["工具 Schema"]
+    Input --> Query["当前问题"]
+    Input --> History["历史消息"]
+    Input --> Evidence["检索证据"]
+    History --> Compress["滑动窗口 / 摘要"]
+    Evidence --> Rank["去重 / 排序 / 截断"]

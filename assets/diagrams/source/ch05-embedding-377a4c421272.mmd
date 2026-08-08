@@ -1,0 +1,13 @@
+%% id: embedding-index-version-lifecycle
+%% title: Chunk、Embedding 与索引版本生命周期
+%% alt: 原文版本经过解析切分和指定 Embedding 模型写入索引，新版本原子切换，删除请求传播到 Chunk 向量缓存与备份策略
+flowchart TB
+    Source["原文版本 vN"] --> Parse["解析器版本"]
+    Parse --> Chunk["Chunk + Metadata"]
+    Chunk --> Model["Embedding 模型版本"]
+    Model --> Build["构建索引 vN"]
+    Build --> Verify["召回 / 权限 / 引用验证"]
+    Verify --> Switch["原子切换活动索引"]
+    New["原文或模型更新"] --> Parse
+    Delete["删除 / 撤权请求"] --> Propagate["传播到 Chunk / 向量 / 缓存"]
+    Propagate --> VerifyDelete["删除证明与审计"]

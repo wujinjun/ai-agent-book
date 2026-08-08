@@ -1,0 +1,4 @@
+flowchart LR
+    Domain --> TypedAgent --> ModelProfile["model/provider capabilities"]
+    TypedAgent --> Deps["typed dependencies"]
+    TypedAgent --> Output["validated output"] --> BusinessValidation

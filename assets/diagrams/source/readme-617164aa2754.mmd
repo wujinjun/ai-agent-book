@@ -1,0 +1,5 @@
+flowchart LR
+    Repo --> Diff --> Static["Deterministic Rules"] --> Findings
+    Diff --> LLM["LLM Reviewer Adapter"] --> Findings
+    Findings --> Deduplicate --> Report["line + rule + risk"]
+    Report --> Approval{"允许评论 PR？"}

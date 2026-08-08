@@ -1,0 +1,12 @@
+%% id: agent-deployment-evolution-decision
+%% title: 模块化单体到微服务演进决策
+%% alt: 根据独立扩缩容故障隔离安全边界团队所有权和部署节奏决定保持模块化单体或拆分服务
+flowchart TD
+    Module[清晰模块边界] --> Need{出现独立部署理由}
+    Need -->|仅代码组织| Monolith[保持模块化单体]
+    Need -->|独立扩缩容| Service[候选微服务]
+    Need -->|强安全或数据边界| Service
+    Need -->|不同团队发布节奏| Service
+    Service --> Cost{能承担网络一致性与运维成本}
+    Cost -->|否| Monolith
+    Cost -->|是| Split[通过稳定契约拆分]

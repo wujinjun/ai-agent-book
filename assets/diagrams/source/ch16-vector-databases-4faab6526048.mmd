@@ -1,0 +1,6 @@
+flowchart LR
+    Dataset --> Exact["Exact baseline"] --> Truth["top-k ground truth"]
+    Dataset --> Build["HNSW / IVF build"] --> ANN["ANN query"]
+    Truth --> Compare["Recall@k"]
+    ANN --> Compare
+    ANN --> Latency["P50/P95/P99 + throughput"]

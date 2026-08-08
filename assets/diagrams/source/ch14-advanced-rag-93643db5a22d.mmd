@@ -1,0 +1,17 @@
+%% id: advanced-rag-ablation-ladder
+%% title: 高级 RAG 逐项消融阶梯
+%% alt: 所有方案共享语料查询和评估器，从稠密基线依次增加Parent Child、Multi Query、Hybrid、Reranking和压缩，每步比较质量延迟成本
+flowchart LR
+    Data["固定语料 + 查询集 + ACL"] --> B0["B0 结构切分 + Dense"]
+    B0 --> B1["B1 + Parent-Child"]
+    B1 --> B2["B2 + Multi-Query"]
+    B2 --> B3["B3 + Hybrid"]
+    B3 --> B4["B4 + Reranking"]
+    B4 --> B5["B5 + Compression"]
+    B0 --> Eval["同一评估器"]
+    B1 --> Eval
+    B2 --> Eval
+    B3 --> Eval
+    B4 --> Eval
+    B5 --> Eval
+    Eval --> Metrics["Recall / MRR / Faithfulness<br/>P50 / P95 / 成本"]

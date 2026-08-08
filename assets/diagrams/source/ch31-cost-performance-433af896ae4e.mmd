@@ -1,0 +1,12 @@
+%% id: cost-performance-optimization-loop
+%% title: 成本与性能优化闭环
+%% alt: 基于 Trace 建立基线后定位瓶颈，单变量实施缓存压缩并行批处理或模型路由并用评估防止质量回归
+flowchart LR
+    Baseline[任务成功率 成本 P95 基线] --> Trace[按 Span 定位瓶颈]
+    Trace --> Change[选择单项优化]
+    Change --> Load[压测与故障场景]
+    Load --> Eval[黄金集与安全回归]
+    Eval --> Gate{质量与 SLA 达标}
+    Gate -->|是| Release[灰度发布并监控]
+    Gate -->|否| Revert[撤销或调整]
+    Release --> Baseline

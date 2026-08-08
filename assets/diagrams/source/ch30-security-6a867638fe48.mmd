@@ -1,0 +1,6 @@
+flowchart LR
+    Untrusted["用户/网页/邮件/文档"] --> Model
+    Model --> Policy["不可绕过的 Policy Enforcement"] --> Tools
+    Tools --> Data["敏感数据/外部动作"]
+    Policy --> Approval["Human Approval"]
+    Tools --> Audit["Audit Log"]

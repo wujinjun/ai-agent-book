@@ -1,0 +1,9 @@
+sequenceDiagram
+    participant G as Graph
+    participant C as Checkpointer
+    participant H as Human
+    G->>C: save state before interrupt
+    G-->>H: approval payload
+    H->>G: Command(resume=decision), same thread_id
+    G->>C: load checkpoint
+    G->>G: validate decision and continue

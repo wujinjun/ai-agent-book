@@ -1,0 +1,15 @@
+%% id: memory-write-gate-decision
+%% title: 长期记忆写入门禁
+%% alt: 根据信息未来价值稳定性用户同意敏感性来源置信和冲突判断是否写入长期记忆
+flowchart TD
+    Candidate[交互中的候选信息] --> Useful{未来任务有用且稳定}
+    Useful -->|否| Skip[仅保留当前上下文]
+    Useful -->|是| Consent{用户同意且用途明确}
+    Consent -->|否| Skip
+    Consent -->|是| Sensitive{禁止或高敏信息}
+    Sensitive -->|是| Reject[拒绝通用 Memory 写入]
+    Sensitive -->|否| Source{显式来源且置信足够}
+    Source -->|否| Review[标记推断或待确认]
+    Source -->|是| Conflict{与现有记录冲突}
+    Conflict -->|是| Review
+    Conflict -->|否| Store[幂等写入并设置 TTL]

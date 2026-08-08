@@ -1,0 +1,8 @@
+%% id: logs-metrics-traces-audit-boundaries
+%% title: Logs、Metrics、Trace 与 Audit 边界
+%% alt: Agent Run 同时产生事件日志聚合指标和因果 Trace，受保护动作另写独立审计日志
+flowchart TB
+    Run["Agent Run"] --> Log["Logs: events/errors"]
+    Run --> Metric["Metrics: rate/latency/cost"]
+    Run --> Trace["Trace: model/tool/retrieval spans"]
+    Action["Protected action"] --> Audit["Audit log"]

@@ -1,0 +1,6 @@
+%% id: native-agent-runtime-layers
+%% title: 原生 Agent Runtime 分层
+%% alt: 请求依次经过类型化状态、模型网关、决策校验和工具注册表并由策略与追踪横向约束
+flowchart LR
+    Request --> State["Typed State"] --> Model["Model Gateway"] --> Decision["Validated Decision"] --> Tools["Tool Registry"] --> State
+    Decision --> Final["Final Output"]

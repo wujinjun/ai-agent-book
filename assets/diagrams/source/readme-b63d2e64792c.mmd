@@ -1,0 +1,10 @@
+%% id: project3-mcp-local-capability-map
+%% title: MCP 本地 Agent 能力与策略图
+%% alt: MCP Client 发现能力后经过只读根目录策略访问文件系统信息和参数化数据库查询并生成审计结果
+flowchart LR
+    Client["MCP Client"] --> Discover["能力发现"] --> Policy["根目录 / 只读策略"]
+    Policy --> File["read_file"]
+    Policy --> System["system_info"]
+    Policy --> SQL["参数化 catalog query"]
+    File --> Result["Content + Audit"]
+    SQL --> Result

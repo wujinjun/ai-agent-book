@@ -1,0 +1,13 @@
+%% id: structured-output-error-decision
+%% title: 解析错误与重试决策树
+%% alt: 按语法错误、Schema 错误、业务冲突和外部事实缺失决定修复重试、拒绝或人工处理
+flowchart TD
+    Error[候选对象失败] --> Kind{错误类型}
+    Kind -->|JSON 语法| Syntax[一次格式修复]
+    Kind -->|字段或类型| Schema[反馈最小校验信息]
+    Kind -->|领域不变量| Domain[确定性业务拒绝]
+    Kind -->|外部事实或权限| External[查询权威系统或停止]
+    Syntax --> Limit{重试额度剩余}
+    Schema --> Limit
+    Limit -->|是| Retry[有限重试]
+    Limit -->|否| Failed[结构化失败结果]

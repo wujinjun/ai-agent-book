@@ -1,0 +1,16 @@
+%% id: durable-agent-run-state-machine
+%% title: 可恢复 Agent Run 状态机
+%% alt: Run 从排队运行到审批等待重试成功失败或取消并由 Worker 租约幂等和预算控制状态迁移
+stateDiagram-v2
+    [*] --> Queued
+    Queued --> Running: worker acquired
+    Running --> WaitingApproval: risky action
+    WaitingApproval --> Running: approved
+    WaitingApproval --> Cancelled: rejected/expired
+    Running --> Retrying: retryable failure
+    Retrying --> Running: backoff elapsed
+    Running --> Succeeded: terminal output
+    Running --> Failed: non-retryable failure
+    Succeeded --> [*]
+    Failed --> [*]
+    Cancelled --> [*]

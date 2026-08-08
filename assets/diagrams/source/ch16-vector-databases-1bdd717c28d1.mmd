@@ -1,0 +1,5 @@
+%% id: vector-index-version-query-flow
+%% title: 向量索引版本与查询链路
+%% alt: 文档版本经指定 Embedding 模型写入索引版本并在查询时结合权限过滤返回来源和分数
+flowchart LR
+    Write["文档版本"] --> Embed["模型版本"] --> Index["索引版本"] --> Query["过滤+近邻"] --> Result["来源+分数"]

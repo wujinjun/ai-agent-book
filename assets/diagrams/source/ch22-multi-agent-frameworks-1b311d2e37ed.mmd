@@ -1,0 +1,8 @@
+%% id: crewai-flow-crew-boundary
+%% title: CrewAI Flow 与 Crew 的组合边界
+%% alt: 确定性 Flow 在受控节点调用探索型 Research Crew，并校验其 Artifact 后推进下一状态
+flowchart LR
+    Event --> Flow["CrewAI Flow: deterministic state"]
+    Flow --> ResearchCrew["Crew: exploratory subtask"]
+    ResearchCrew --> Artifact
+    Artifact --> Validate --> Next

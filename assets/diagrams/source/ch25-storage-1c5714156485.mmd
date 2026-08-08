@@ -1,0 +1,4 @@
+flowchart LR
+    API --> Postgres["PostgreSQL: users/tasks/state/audit"]
+    API --> Redis["Redis: cache/rate/job coordination"]
+    Retriever --> Vector["pgvector: chunks/metadata"]

@@ -1,0 +1,6 @@
+flowchart TB
+    Supervisor --> WorkerA
+    Supervisor --> WorkerB
+    WorkerA --> Board["Typed Blackboard"]
+    WorkerB --> Board
+    Board --> Reviewer --> Supervisor

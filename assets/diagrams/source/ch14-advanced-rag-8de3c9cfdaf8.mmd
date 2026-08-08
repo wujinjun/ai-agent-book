@@ -1,0 +1,17 @@
+%% id: advanced-rag-technique-selection
+%% title: 高级 RAG 技术选择决策
+%% alt: 根据召回不足、上下文断裂、排序噪声、证据过长或关系密集选择对应增强技术
+flowchart TD
+    Failure[基线失败样本] --> Kind{主要失败}
+    Kind -->|表达不匹配| Rewrite[Query Rewrite 或 Multi-Query]
+    Kind -->|关键词与语义互补| Hybrid[Hybrid Search]
+    Kind -->|命中片段缺上下文| Parent[Parent-Child]
+    Kind -->|候选顺序差| Rerank[Reranker]
+    Kind -->|上下文过长| Compress[Context Compression]
+    Kind -->|跨文档关系密集| Graph[Graph RAG 评估]
+    Rewrite --> Eval[对基线做成本质量评估]
+    Hybrid --> Eval
+    Parent --> Eval
+    Rerank --> Eval
+    Compress --> Eval
+    Graph --> Eval

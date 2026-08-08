@@ -1,0 +1,12 @@
+%% id: langgraph-research-state-machine
+%% title: LangGraph 研究工作流状态机
+%% alt: 研究任务从规划到研究评审并在证据不足时循环，高风险时中断审批后写作结束
+stateDiagram-v2
+    [*] --> Plan
+    Plan --> Research
+    Research --> Review
+    Review --> Research: 证据不足
+    Review --> Approval: 高风险
+    Approval --> Write: 人工通过
+    Review --> Write: 通过
+    Write --> [*]

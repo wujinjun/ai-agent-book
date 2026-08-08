@@ -1,0 +1,5 @@
+flowchart TB
+    Run["Agent Run"] --> Log["Logs: events/errors"]
+    Run --> Metric["Metrics: rate/latency/cost"]
+    Run --> Trace["Trace: model/tool/retrieval spans"]
+    Action["Protected action"] --> Audit["Audit log"]

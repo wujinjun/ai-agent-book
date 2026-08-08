@@ -1,0 +1,8 @@
+stateDiagram-v2
+    [*] --> Plan
+    Plan --> Search
+    Search --> Read
+    Read --> Review
+    Review --> Search: evidence insufficient
+    Review --> Write: approved
+    Write --> [*]

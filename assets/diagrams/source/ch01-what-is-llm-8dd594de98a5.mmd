@@ -1,0 +1,13 @@
+%% id: llm-training-alignment-runtime-lifecycle
+%% title: 预训练、微调、对齐与运行时配置的生命周期
+%% alt: 大规模语料先完成预训练，再经指令微调和偏好安全对齐发布模型，运行时通过上下文检索和工具使用模型
+flowchart LR
+    Corpus["大规模语料"] --> Pretrain["预训练<br/>学习通用序列规律"]
+    Pretrain --> Base["基础模型"]
+    Base --> SFT["指令微调"]
+    SFT --> Align["偏好 / 安全对齐"]
+    Align --> Release["已发布模型版本"]
+    Release --> Runtime["运行时调用"]
+    Prompt["System Prompt / Few-shot"] --> Runtime
+    RAG["检索材料 / 工具结果"] --> Runtime
+    Runtime -.不更新参数.-> Release

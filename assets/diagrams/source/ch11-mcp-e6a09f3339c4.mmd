@@ -1,0 +1,13 @@
+%% id: mcp-transport-trust-boundaries
+%% title: stdio 与 Streamable HTTP 信任边界
+%% alt: 对比本地子进程 stdio 的进程权限边界和远程 HTTP 的网络认证 Origin 与令牌边界
+flowchart TB
+    subgraph Local[stdio 本地边界]
+        Host[Host 进程] --> Child[受限 Server 子进程]
+        Child --> FS[允许的文件与环境]
+    end
+    subgraph Remote[Streamable HTTP 远程边界]
+        Client[远程 Client] --> TLS[TLS 与 Origin 校验]
+        TLS --> Auth[认证与 token audience]
+        Auth --> Server[远程 MCP Server]
+    end

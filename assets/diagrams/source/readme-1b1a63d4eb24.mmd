@@ -1,0 +1,11 @@
+%% id: project8-langgraph-research-state
+%% title: LangGraph 研究工作流状态图
+%% alt: 研究任务从规划搜索读取评审到写作，证据不足循环检索并在通过后结束
+stateDiagram-v2
+    [*] --> Plan
+    Plan --> Search
+    Search --> Read
+    Read --> Review
+    Review --> Search: evidence insufficient
+    Review --> Write: approved
+    Write --> [*]

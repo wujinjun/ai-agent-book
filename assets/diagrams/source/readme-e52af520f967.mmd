@@ -1,0 +1,13 @@
+%% id: project10-auth-dlq-backup-flow
+%% title: 企业平台认证、重试、DLQ 与备份恢复
+%% alt: 身份令牌经验证和数据库 RBAC 进入任务，Worker 失败有限重试后进入租户 DLQ，管理员可重放，数据库通过一致性快照备份
+flowchart LR
+    Token["OIDC Adapter<br/>or local signed token"] --> Identity["Verified tenant + user"]
+    Identity --> RBAC[("Database RBAC")]
+    RBAC --> Run["Durable queued Run"] --> Worker
+    Worker -->|success| Trace["Trace + Evaluation + Metrics"]
+    Worker -->|transient failure| Retry{"attempt budget"}
+    Retry -->|remaining| Run
+    Retry -->|exhausted| DLQ["Tenant-scoped DLQ"]
+    Admin["Admin approval"] --> DLQ --> Run
+    RBAC --> Backup["SQLite backup API<br/>or PostgreSQL managed snapshot"]

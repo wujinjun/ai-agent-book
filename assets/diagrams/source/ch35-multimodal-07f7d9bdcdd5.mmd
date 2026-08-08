@@ -1,0 +1,11 @@
+flowchart TB
+    Image --> Vision["vision model"]
+    Audio --> ASR["ASR + diarization"]
+    Video --> Frames["keyframes + timeline"]
+    Video --> ASR
+    Document --> Parse["text/layout/tables/images"]
+    Vision --> Evidence
+    ASR --> Evidence
+    Frames --> Evidence
+    Parse --> Evidence
+    Evidence --> Retrieve --> MultimodalModel --> Citation

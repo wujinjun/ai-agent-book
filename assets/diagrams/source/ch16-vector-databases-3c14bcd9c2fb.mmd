@@ -1,0 +1,9 @@
+%% id: ann-exact-recall-benchmark
+%% title: 精确检索与 ANN 召回基准
+%% alt: 同一数据集分别生成精确 top-k 真值和 HNSW IVF 近似结果并比较 Recall 与尾延迟吞吐
+flowchart LR
+    Dataset --> Exact["Exact baseline"] --> Truth["top-k ground truth"]
+    Dataset --> Build["HNSW / IVF build"] --> ANN["ANN query"]
+    Truth --> Compare["Recall@k"]
+    ANN --> Compare
+    ANN --> Latency["P50/P95/P99 + throughput"]

@@ -1,0 +1,13 @@
+%% id: multimodal-evidence-data-model
+%% title: 多模态 Evidence 数据模型
+%% alt: 原始媒体哈希连接文本视觉音频派生表示，每条证据保存坐标时间码置信度版本和 ACL
+flowchart TB
+    Media[原始 media_id 与 hash] --> Text[文本或 ASR]
+    Media --> Visual[图像区域或关键帧]
+    Media --> Layout[文档版面与表格]
+    Text --> Evidence[统一 Evidence]
+    Visual --> Evidence
+    Layout --> Evidence
+    Evidence --> Location[page box timecode]
+    Evidence --> Quality[confidence model version]
+    Evidence --> Access[source version ACL]

@@ -1,0 +1,9 @@
+%% id: agent-evaluation-metric-map
+%% title: Agent 分层评估指标图
+%% alt: 任务成功由工具准确率检索召回引用忠实度安全拒绝成本延迟等分层指标共同解释
+flowchart TB
+    Success[Task Success Rate] --> Tool[工具选择与参数准确率]
+    Success --> Retrieval[Recall nDCG 与权限过滤]
+    Success --> Answer[正确性 Faithfulness 与 Citation]
+    Success --> Safety[注入拒绝 越权与审批]
+    Success --> Efficiency[Token 成本 P95 延迟]

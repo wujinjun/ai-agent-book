@@ -1,0 +1,10 @@
+%% id: advanced-rag-evaluation-matrix
+%% title: 高级 RAG 分层评估矩阵
+%% alt: 摄取检索重排生成和系统层分别以质量指标与延迟成本安全指标进行发布比较
+flowchart LR
+    Ingest[摄取：解析与引用位置] --> Retrieval[检索：Recall MRR nDCG]
+    Retrieval --> Ranking[重排：相关性与排序增益]
+    Ranking --> Generation[生成：正确性 Faithfulness 引用]
+    Generation --> System[系统：P95 成本 权限与拒答]
+    Baseline[简单基线] -.逐层对比.-> Retrieval
+    Candidate[候选策略] -.逐层对比.-> Retrieval

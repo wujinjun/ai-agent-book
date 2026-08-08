@@ -1,0 +1,12 @@
+%% id: multi-agent-framework-pattern-selection
+%% title: Multi-Agent 框架模式选择
+%% alt: 根据流程确定性消息复杂度和企业技术栈选择 CrewAI Flow Crew AutoGen AgentChat Core 或 Semantic Kernel
+flowchart TD
+    Need[多 Agent 协作需求] --> Flow{流程与状态可明确枚举}
+    Flow -->|是| CrewFlow[CrewAI Flow 或图工作流]
+    Flow -->|否| Message{需要复杂消息与事件运行时}
+    Message -->|快速对话原型| AgentChat[AutoGen AgentChat]
+    Message -->|分布式事件系统| Core[AutoGen Core]
+    Message -->|否| Role[CrewAI Crew]
+    Need --> DotNet{Microsoft 或 .NET 企业栈}
+    DotNet -->|是| SK[Semantic Kernel 候选]

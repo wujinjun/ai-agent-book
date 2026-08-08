@@ -1,0 +1,12 @@
+%% id: project5-pr-comment-approval
+%% title: GitHub PR 评论审批门禁
+%% alt: Review 报告默认仅本地生成，只有仓库权限参数摘要和人工批准均通过时才调用 GitHub 评论接口并审计
+flowchart TD
+    Report[已验证 Review 报告] --> Local[默认本地交付]
+    Report --> Publish{请求评论 PR}
+    Publish --> Auth[GitHub App 仓库权限]
+    Auth --> Summary[展示 PR 与评论摘要]
+    Summary --> Approval{人工批准}
+    Approval -->|否| Local
+    Approval -->|是| API[调用 GitHub 评论 API]
+    API --> Audit[记录 response ID 与状态]

@@ -1,0 +1,14 @@
+%% id: langgraph-checkpoint-side-effect-boundary
+%% title: Checkpoint 与外部副作用边界
+%% alt: Node 在执行外部动作前使用幂等键或 Outbox 并在动作后保存 Checkpoint，以避免崩溃恢复时重复执行
+sequenceDiagram
+    participant G as Graph Node
+    participant O as Outbox or Idempotency Store
+    participant X as External System
+    participant C as Checkpointer
+    G->>O: reserve(action_id)
+    O-->>G: new or previous result
+    G->>X: execute with action_id
+    X-->>G: result
+    G->>O: record result
+    G->>C: save state snapshot

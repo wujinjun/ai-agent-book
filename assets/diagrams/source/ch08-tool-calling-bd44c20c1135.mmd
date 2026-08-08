@@ -1,0 +1,11 @@
+%% id: tool-error-retry-idempotency-decision
+%% title: 工具错误、重试与幂等决策
+%% alt: 按超时暂时故障、权限拒绝和业务错误分类并结合幂等能力决定是否安全重试
+flowchart TD
+    Failure[工具调用失败] --> Type{失败类型}
+    Type -->|超时或暂时故障| Safe{动作可幂等重放}
+    Type -->|限流| Backoff[退避并计入预算]
+    Type -->|权限拒绝| Deny[停止并审计]
+    Type -->|业务拒绝| Observe[回传结构化观察]
+    Safe -->|是| Retry[使用同一幂等键重试]
+    Safe -->|否或未知| Reconcile[查询外部状态或人工核对]

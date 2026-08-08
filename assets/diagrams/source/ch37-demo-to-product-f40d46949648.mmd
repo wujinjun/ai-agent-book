@@ -1,0 +1,16 @@
+%% id: agent-ux-run-state-model
+%% title: Agent 产品用户界面状态模型
+%% alt: 用户任务在 queued running waiting approval partial completed failed cancelled 状态间变化并提供进度引用重试和控制
+stateDiagram-v2
+    [*] --> Queued
+    Queued --> Running
+    Running --> Partial: 进度与可验证中间产物
+    Partial --> Running
+    Running --> WaitingApproval: 高风险动作
+    WaitingApproval --> Running: 批准
+    WaitingApproval --> Cancelled: 拒绝或过期
+    Running --> Completed
+    Running --> Failed
+    Failed --> Queued: 用户确认安全重试
+    Completed --> [*]
+    Cancelled --> [*]

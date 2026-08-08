@@ -1,0 +1,8 @@
+flowchart LR
+    Request --> Context["input tokens"] --> Model["generation/reasoning"] --> Tools --> Review
+    Context --> Cost
+    Model --> Cost
+    Tools --> Cost
+    Review --> Cost
+    Cost --> Budget{"task budget"}
+    Budget -->|near limit| Degrade

@@ -1,0 +1,8 @@
+%% id: pydanticai-typed-agent-boundaries
+%% title: PydanticAI 类型化 Agent 边界
+%% alt: 请求经 Agent 与模型交互并通过类型化依赖调用校验工具，最终输出类型化对象进入业务服务
+flowchart LR
+    Request --> Agent --> Model
+    Agent --> Dependencies["Typed Dependencies"]
+    Agent --> Tools["Validated Tools"]
+    Model --> Output["Typed Output"] --> Service["FastAPI/Business"]

@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant API
+    participant DB
+    participant Q as Broker
+    participant W as Worker
+    API->>DB: create job queued
+    API->>Q: publish job_id
+    W->>Q: claim
+    W->>DB: lease + running
+    W->>W: execute/checkpoint
+    W->>DB: progress/final
+    W->>Q: ack

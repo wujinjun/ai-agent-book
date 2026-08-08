@@ -1,0 +1,5 @@
+flowchart TB
+    E2E["E2E: deployed workflow"]
+    Integration["Integration: model/tool/retrieval/storage"]
+    Unit["Unit: schema/policy/state/budget"]
+    Unit --> Integration --> E2E

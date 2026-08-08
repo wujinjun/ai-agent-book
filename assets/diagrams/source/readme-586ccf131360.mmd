@@ -1,0 +1,6 @@
+flowchart LR
+    Market["Market Data + as_of"] --> Facts
+    Filings["Filings / News + source"] --> Facts
+    Facts --> Indicators --> Inference["显式标注推断"]
+    Facts --> Report
+    Inference --> Report["研究报告 + 免责声明"]

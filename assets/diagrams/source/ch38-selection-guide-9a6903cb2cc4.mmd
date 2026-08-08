@@ -1,0 +1,14 @@
+%% id: framework-lockin-risk-map
+%% title: Agent 框架锁定风险图
+%% alt: 消息类型装饰器状态格式 Prompt Hub 观测数据和供应商工具形成锁定，并通过领域契约 Adapter 黄金集与导出降低风险
+flowchart LR
+    LockIn[锁定来源] --> Messages[消息与事件类型]
+    LockIn --> Decorators[装饰器与 Tool Schema]
+    LockIn --> State[Checkpoint 与 State 格式]
+    LockIn --> Prompt[Prompt Hub 与配置]
+    LockIn --> Trace[观测与评估数据]
+    Messages --> Controls[领域契约与 Adapter]
+    Decorators --> Controls
+    State --> Export[状态导出与迁移测试]
+    Prompt --> Versions[自有不可变版本]
+    Trace --> OTel[开放遥测与黄金集]

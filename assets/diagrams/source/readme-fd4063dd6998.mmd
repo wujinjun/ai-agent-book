@@ -1,0 +1,5 @@
+flowchart LR
+    Files["PDF / Office / Markdown"] --> Parse --> Chunk --> Index
+    Query --> ACL["Tenant / ACL Filter"] --> Retrieve --> Rerank
+    Index --> Retrieve
+    Rerank --> Answer["Grounded Answer"] --> Citation["document + page + score"]

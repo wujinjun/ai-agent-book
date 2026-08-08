@@ -1,0 +1,21 @@
+%% id: modular-monolith-agent-data-flow
+%% title: 模块化单体 Agent 平台的数据与控制流
+%% alt: API在单体事务中创建Run和Outbox，Worker取得任务后经Runtime调用Model Gateway Tool Registry Knowledge Memory并产生Trace与评估事件
+sequenceDiagram
+    participant U as User
+    participant API as API / Identity
+    participant DB as PostgreSQL
+    participant O as Outbox Relay
+    participant W as Worker / Runtime
+    participant M as Model Gateway
+    participant T as Tool Registry
+    participant E as Eval / Observability
+    U->>API: 创建任务
+    API->>DB: transaction: Run + Outbox event
+    DB-->>API: committed run_id
+    O->>DB: claim unpublished event
+    O->>W: RunQueued(event_id)
+    W->>M: 模型决策
+    W->>T: 授权并执行工具
+    W->>DB: versioned state + new outbox
+    O->>E: RunCompleted / ToolCompleted

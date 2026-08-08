@@ -1,0 +1,11 @@
+%% id: project9-cost-termination-gate
+%% title: Multi-Agent 成本与硬终止门禁
+%% alt: 每次角色调用检查消息 Token 和轮数预算，重复或无新增 Artifact 时停止，测试与评审均通过才成功
+flowchart TD
+    Next[候选角色调用] --> Budget{消息 Token 轮数预算}
+    Budget -->|耗尽| Stop[budget_exceeded]
+    Budget -->|剩余| Progress{产生新 Artifact 或验证证据}
+    Progress -->|否| Stop
+    Progress -->|是| Gate{tests_passed 且 review_approved}
+    Gate -->|是| Success[成功终止]
+    Gate -->|否| Next

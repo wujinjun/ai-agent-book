@@ -1,0 +1,11 @@
+%% id: workflow-autonomy-selection
+%% title: Workflow 与自主 Agent 选择决策
+%% alt: 根据路径可枚举性、风险、审计要求和环境不确定性选择工作流或受限自主 Agent
+flowchart TD
+    Task[待实现任务] --> Known{主要路径可枚举}
+    Known -->|是| Risk{副作用或合规风险高}
+    Risk -->|是| Workflow[确定性 Workflow]
+    Risk -->|否| Hybrid[Workflow 骨架加局部模型路由]
+    Known -->|否| Recover{失败可检测且可恢复}
+    Recover -->|是| Agent[受预算约束的自主 Agent]
+    Recover -->|否| Human[缩小范围或人工流程]

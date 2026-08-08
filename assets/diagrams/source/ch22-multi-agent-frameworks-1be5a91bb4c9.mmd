@@ -1,0 +1,13 @@
+%% id: multi-agent-framework-evidence-gate
+%% title: Multi-Agent 框架同题证据门禁
+%% alt: 三个框架实现同一受限任务，并与单 Agent 基线比较权限状态消息和终止结果
+flowchart LR
+    Spec["同一任务契约"] --> Crew["CrewAI Flow"]
+    Spec --> Auto["AutoGen Team"]
+    Spec --> SK["Semantic Kernel Plugins"]
+    Crew --> Gate["Tool Policy / State Export<br/>Message Limit / Termination"]
+    Auto --> Gate
+    SK --> Gate
+    Base["单 Agent：1 条消息"] --> Compare{"协作净收益"}
+    Gate --> Compare
+    Compare -->|本 Fixture 未证明| Simple["优先单 Agent 或普通工作流"]

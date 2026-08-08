@@ -1,0 +1,18 @@
+%% id: native-runtime-ports-and-adapters
+%% title: 原生 Runtime 的端口与适配器
+%% alt: Runtime核心依赖模型网关工具注册表状态存储策略追踪和终止端口，各端口可由Fake或生产适配器替换
+flowchart TB
+    Core["Agent Runtime Core"] --> MG["ModelGateway"]
+    Core --> TR["ToolRegistry"]
+    Core --> SS["StateStore"]
+    Core --> PO["Policy"]
+    Core --> TE["TerminationPolicy"]
+    Core --> Trace["Tracer"]
+    MG --> FakeM["Fake Model"]
+    MG --> Vendor["Vendor SDK Adapter"]
+    TR --> FakeT["Fake Tools"]
+    TR --> Domain["Domain Adapters"]
+    SS --> Memory["In-memory"]
+    SS --> SQL["PostgreSQL"]
+    Trace --> Noop["No-op"]
+    Trace --> OTel["OpenTelemetry"]

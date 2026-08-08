@@ -1,0 +1,13 @@
+sequenceDiagram
+    participant U as User
+    participant R as Runtime
+    participant M as Model
+    participant T as Tool
+    U->>R: 任务
+    R->>M: 消息 + 工具 Schema
+    M-->>R: 工具名 + 参数
+    R->>R: 校验、鉴权、审批、幂等检查
+    R->>T: 执行（超时）
+    T-->>R: 结构化结果/错误
+    R->>M: Observation
+    M-->>R: 最终回答或下一动作

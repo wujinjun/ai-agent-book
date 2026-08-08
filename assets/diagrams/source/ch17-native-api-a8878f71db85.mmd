@@ -1,0 +1,13 @@
+%% id: native-runtime-error-boundaries
+%% title: 原生 Runtime 错误与重试边界
+%% alt: 输入策略模型工具业务和内部错误按可修复性幂等性分别进入拒绝有限重试状态核对或告警
+flowchart TD
+    Failure[运行失败] --> Kind{错误来源}
+    Kind -->|输入或 Schema| Reject[拒绝并返回稳定错误]
+    Kind -->|Policy| Audit[停止并审计]
+    Kind -->|模型暂时故障| ModelRetry[预算内退避重试]
+    Kind -->|工具暂时故障| Idempotent{可幂等重放}
+    Idempotent -->|是| ToolRetry[同一调用 ID 重试]
+    Idempotent -->|否| Reconcile[核对外部状态]
+    Kind -->|业务拒绝| Observe[作为 Observation]
+    Kind -->|内部缺陷| Alert[终止并告警]

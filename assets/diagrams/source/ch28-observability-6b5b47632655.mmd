@@ -1,0 +1,15 @@
+%% id: observability-error-localization
+%% title: Agent 失败定位路径
+%% alt: 从异常 Run 沿 Trace 依次检查队列模型检索工具策略与最终采用环节并链接脱敏日志和指标
+flowchart TD
+    Alert[指标或用户报告] --> Run[定位 run_id]
+    Run --> Queue{队列等待异常}
+    Queue --> Model{模型错误或超时}
+    Model --> Retrieval{证据未召回或未进入上下文}
+    Retrieval --> Tool{工具失败或 Policy 拒绝}
+    Tool --> Output{输出未采用证据或校验失败}
+    Queue --> Trace[Trace Span 与结构化日志]
+    Model --> Trace
+    Retrieval --> Trace
+    Tool --> Trace
+    Output --> Trace

@@ -1,0 +1,5 @@
+flowchart TD
+    Goal --> Rules["AGENTS/docs/status"] --> Map["repo map"] --> Search
+    Search --> Plan --> Patch --> Verify["test/lint/type/build"] --> Review["diff + requirement audit"]
+    Review -->|issue| Search
+    Review -->|pass| Handoff["evidence + remaining risks"]

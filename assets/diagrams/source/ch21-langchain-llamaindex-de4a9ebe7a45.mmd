@@ -1,0 +1,4 @@
+flowchart LR
+    Data --> Llama["LlamaIndex: ingest/index/retrieve"] --> Context
+    Prompt --> Chain["LangChain: model/tool/parser composition"]
+    Context --> Chain --> Graph["LangGraph: state/workflow"]

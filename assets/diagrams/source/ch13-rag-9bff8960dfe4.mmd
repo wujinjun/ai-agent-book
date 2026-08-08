@@ -1,0 +1,8 @@
+flowchart TB
+    Query --> Normalize["normalize/classify"]
+    Normalize --> ACL["tenant + ACL filter"]
+    ACL --> Sparse
+    ACL --> Dense
+    Sparse --> Fuse
+    Dense --> Fuse
+    Fuse --> Rerank --> Evidence["evidence with location/version"] --> Generate --> VerifyCitation

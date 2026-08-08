@@ -1,0 +1,11 @@
+stateDiagram-v2
+    [*] --> Observe
+    Observe --> Decide
+    Decide --> Act: 工具动作
+    Act --> Observe: 结果/错误
+    Decide --> Handoff: 转交
+    Handoff --> Observe
+    Decide --> Finish: 最终回答
+    Decide --> Fail: 预算或策略拒绝
+    Finish --> [*]
+    Fail --> [*]

@@ -1,0 +1,10 @@
+%% id: container-healthcheck-boundaries
+%% title: Liveness、Readiness 与启动检查边界
+%% alt: 启动探针等待迁移和初始化，Liveness 只判断进程存活，Readiness 检查必要依赖并控制流量
+flowchart TD
+    Start[容器启动] --> Startup{初始化完成}
+    Startup -->|否| Wait[继续等待或失败退出]
+    Startup -->|是| Live[Liveness：事件循环可响应]
+    Live --> Ready{Readiness：必要 DB Queue 可用}
+    Ready -->|是| Traffic[接收流量]
+    Ready -->|否| Drain[从负载均衡摘除]

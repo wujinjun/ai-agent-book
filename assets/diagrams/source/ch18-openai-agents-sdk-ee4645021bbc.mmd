@@ -1,0 +1,6 @@
+%% id: openai-sdk-handoff-vs-agent-tool
+%% title: SDK Handoff 与 Agent-as-Tool 控制流
+%% alt: Triage 通过 Handoff 转移会话而 Manager 通过 Agent-as-Tool 调用 Researcher 后收回结果
+flowchart LR
+    Triage -->|handoff| Billing["Billing owns conversation"]
+    Manager -->|agent as tool| Researcher --> Manager

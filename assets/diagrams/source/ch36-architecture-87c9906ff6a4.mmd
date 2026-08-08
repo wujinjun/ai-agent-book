@@ -1,0 +1,19 @@
+%% id: agent-platform-control-data-planes
+%% title: Agent 平台控制面与数据面
+%% alt: 控制面管理 Agent Tool Model Policy Prompt 和评估版本，数据面按版本执行 Run Tool Retrieval 并产生 Trace Audit
+flowchart TB
+    subgraph Control[控制面]
+        Registry[Agent Tool Model Registry]
+        Policy[Policy 与权限配置]
+        Versions[Prompt Workflow Eval 版本]
+    end
+    subgraph DataPlane[数据面]
+        API[Run API]
+        Runtime[Runtime 与 Worker]
+        Services[Tool Retrieval Model Services]
+    end
+    Registry --> Runtime
+    Policy --> Runtime
+    Versions --> Runtime
+    API --> Runtime --> Services
+    Runtime --> Evidence[Trace Audit Usage Outcome]

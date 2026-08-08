@@ -1,0 +1,13 @@
+%% id: agent-job-lifecycle-state-machine
+%% title: Agent 长任务生命周期状态机
+%% alt: 任务从 queued 进入 running 后可等待审批成功重试失败取消或进入死信队列
+stateDiagram-v2
+    queued --> running
+    running --> waiting_approval
+    waiting_approval --> queued
+    running --> succeeded
+    running --> retry_wait
+    retry_wait --> queued
+    running --> failed
+    running --> cancelled
+    failed --> dead_letter

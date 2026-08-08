@@ -1,0 +1,13 @@
+%% id: coding-agent-long-task-checkpoint
+%% title: Coding Agent 长任务 Checkpoint
+%% alt: 长任务在需求理解仓库证据计划 Patch 验证结果和剩余风险处保存结构化 Checkpoint 并可安全恢复
+flowchart LR
+    Goal[需求与验收] --> Evidence[仓库规则与目标证据]
+    Evidence --> Plan[可验证计划]
+    Plan --> Patch[当前 Patch 与 diff]
+    Patch --> Verify[命令输出与退出码]
+    Verify --> Risk[剩余风险和下一动作]
+    CP[(Checkpoint)] -.保存.-> Evidence
+    CP -.保存.-> Plan
+    CP -.保存.-> Patch
+    CP -.保存.-> Verify

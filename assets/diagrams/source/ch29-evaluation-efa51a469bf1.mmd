@@ -1,0 +1,8 @@
+%% id: agent-evaluation-pyramid-overview
+%% title: Agent Evaluation 测试金字塔
+%% alt: 大量状态权限解析单元测试支撑模型检索工具集成测试和少量真实链路端到端测试
+flowchart TB
+    E2E["少量 E2E：真实链路"]
+    Integration["集成：模型/检索/工具契约"]
+    Unit["大量单元：状态、权限、解析"]
+    Unit --> Integration --> E2E

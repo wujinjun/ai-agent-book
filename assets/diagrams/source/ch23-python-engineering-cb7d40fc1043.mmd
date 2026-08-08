@@ -1,0 +1,10 @@
+%% id: python-agent-project-quality-pipeline
+%% title: Python Agent 工程结构与质量流水线
+%% alt: pyproject 和 src 包在 Python 3.12 虚拟环境中经过 Ruff mypy pytest 后构建 wheel 或容器
+flowchart TB
+    PyProject["pyproject.toml"] --> Venv["Python 3.12 .venv"]
+    Src["src package"] --> Tests
+    Venv --> Ruff
+    Venv --> Mypy
+    Venv --> Pytest
+    Src --> Build["wheel/container"]

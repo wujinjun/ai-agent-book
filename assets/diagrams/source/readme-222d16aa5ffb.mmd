@@ -1,0 +1,18 @@
+%% id: project8-durable-replay-recovery
+%% title: LangGraph 持久输入与确定性重放恢复
+%% alt: 受控证据写入持久日志，Worker 执行图到人工中断，重启后验证哈希并重放到中断，再应用审批完成或取消
+sequenceDiagram
+    participant API
+    participant DB as Durable Run Journal
+    participant W as LangGraph Worker
+    participant H as Human Approver
+    API->>DB: topic + allowlisted evidence + digest
+    W->>DB: lease queued run
+    W->>W: replay saved evidence to interrupt
+    W->>DB: awaiting_approval
+    Note over W,DB: process may restart here
+    H->>API: approve / reject
+    API->>DB: verify tenant + evidence digest
+    API->>W: rebuild graph and replay to interrupt
+    W->>W: Command(resume)
+    W->>DB: completed / cancelled + report

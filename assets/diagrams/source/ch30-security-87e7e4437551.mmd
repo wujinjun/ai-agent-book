@@ -1,0 +1,9 @@
+flowchart TB
+    User["User / attacker"] --> API["AuthN/AuthZ"] --> Runtime
+    Web["Untrusted web/docs/email"] --> Context
+    Runtime --> Context --> Model["Untrusted decision component"]
+    Model --> Policy["Policy enforcement"] --> Tools
+    Tools --> Data["Sensitive data"]
+    Tools --> External["External side effects"]
+    Policy --> Approval
+    Policy --> Audit

@@ -1,0 +1,10 @@
+%% id: langchain-llamaindex-rag-acl-spike
+%% title: LangChain 与 LlamaIndex 同题 ACL 检索证据链
+%% alt: 同一Fixture分别进入两个隔离框架环境，先执行租户过滤再计算相似度和拒答阈值，最后汇总带源码哈希的统一证据
+flowchart LR
+    Spec["同一 Documents / Query / ACL / Golden"] --> LC["LangChain 1.3.14"]
+    Spec --> LI["LlamaIndex Core 0.14.23"]
+    LC --> Filter["Tenant Filter"]
+    LI --> Filter
+    Filter --> Threshold["Similarity > 0.1"]
+    Threshold --> Evidence["D1 / D2 / None + source SHA-256"]

@@ -1,0 +1,14 @@
+%% id: planner-executor-reviewer-separation
+%% title: Planner、Executor 与 Reviewer 职责分离
+%% alt: Planner 输出计划，Executor 使用受限工具生成产物，Reviewer 根据独立标准和证据判定通过或返修
+sequenceDiagram
+    participant P as Planner
+    participant R as Runtime
+    participant E as Executor
+    participant V as Reviewer
+    P->>R: 任务 DAG 与验收条件
+    R->>E: 就绪任务、工具和预算
+    E-->>R: 产物、证据与执行记录
+    R->>V: 产物 + 独立 rubric
+    V-->>R: 通过 / 局部返修 / 拒绝
+    R-->>P: 仅在需要时提交失败上下文

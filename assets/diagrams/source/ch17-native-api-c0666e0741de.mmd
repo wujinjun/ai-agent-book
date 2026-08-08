@@ -1,0 +1,9 @@
+%% id: native-runtime-evolution-path
+%% title: 从脚本到轻量 Runtime 的演进路径
+%% alt: 单工具脚本随着第二供应商持久状态审批和并发需求逐步抽象网关存储策略与事件协议
+flowchart LR
+    Script[单模型单工具脚本] --> Loop[受测 Tool Loop]
+    Loop --> Gateway[第二供应商出现后抽象 Model Gateway]
+    Gateway --> Store[需要恢复后抽象 Checkpoint Store]
+    Store --> Policy[加入预算权限和审批]
+    Policy --> Events[稳定 stream resume 事件协议]

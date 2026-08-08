@@ -1,0 +1,10 @@
+%% id: project1-component-architecture
+%% title: 最小 Assistant 组件架构
+%% alt: CLI 或 FastAPI 通过 AssistantService 连接配置会话存储模型适配器事件流和 Usage 统计
+flowchart LR
+    Client[CLI 或 FastAPI] --> Service[AssistantService]
+    Service --> Config[Pydantic Settings]
+    Service --> History[JSONL Session Store]
+    Service --> Adapter[Mock 或 HTTP Model Adapter]
+    Adapter --> Events[delta usage error events]
+    Events --> Client
