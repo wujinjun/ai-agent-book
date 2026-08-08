@@ -5,10 +5,15 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
+import os
+import re
 import shutil
+import subprocess
 import tempfile
 import zipfile
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -19,6 +24,26 @@ def sha256(path: Path) -> str:
         for block in iter(lambda: source.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def resolve_source_commit(root: Path, override: str | None = None) -> str:
+    candidate = override or os.environ.get("GITHUB_SHA", "")
+    if not candidate:
+        candidate = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=root, text=True
+        ).strip()
+    if re.fullmatch(r"[0-9a-f]{40}", candidate) is None:
+        raise RuntimeError(f"invalid source commit: {candidate!r}")
+    return candidate
+
+
+def artifact_record(path: Path, role: str) -> dict[str, Any]:
+    return {
+        "role": role,
+        "file": path.name,
+        "bytes": path.stat().st_size,
+        "sha256": sha256(path),
+    }
 
 
 def release_notes(changelog: str, version: str) -> str:
@@ -45,43 +70,95 @@ def write_deterministic_zip(source: Path, output: Path, prefix: str) -> None:
             archive.writestr(info, path.read_bytes())
 
 
-def package_release(root: Path, version: str, destination: Path) -> list[Path]:
+def package_release(
+    root: Path,
+    version: str,
+    destination: Path,
+    *,
+    source_commit: str | None = None,
+) -> list[Path]:
     pdf = root / "output/pdf/ai-agent-book-2026.pdf"
     epub = root / "output/epub/ai-agent-book-2026.epub"
     html = root / "output/html"
+    training_pptx = root / "training/slides/ai-agent-engineering-training.pptx"
     changelog = root / "CHANGELOG.md"
-    for required in (pdf, epub, html / "index.html", changelog):
+    for required in (pdf, epub, html / "index.html", training_pptx, changelog):
         if not required.exists():
             raise RuntimeError(f"release input missing: {required}")
 
     safe_version = version.replace("/", "-")
+    commit = resolve_source_commit(root, source_commit)
     destination.mkdir(parents=True, exist_ok=True)
     pdf_output = destination / f"ai-agent-book-2026-{safe_version}.pdf"
     epub_output = destination / f"ai-agent-book-2026-{safe_version}.epub"
+    pptx_output = destination / f"ai-agent-engineering-training-{safe_version}.pptx"
     notes_output = destination / f"RELEASE_NOTES-{safe_version}.md"
+    manifest_output = destination / f"RELEASE_MANIFEST-{safe_version}.json"
     archive_output = destination / f"ai-agent-book-output-{safe_version}.zip"
     checksum_output = destination / f"SHA256SUMS-{safe_version}.txt"
     shutil.copy2(pdf, pdf_output)
     shutil.copy2(epub, epub_output)
+    shutil.copy2(training_pptx, pptx_output)
     notes_output.write_text(
         release_notes(changelog.read_text(encoding="utf-8"), version),
+        encoding="utf-8",
+    )
+    manifest_output.write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "version": version,
+                "source_commit": commit,
+                "artifacts": [
+                    artifact_record(pdf_output, "book_pdf"),
+                    artifact_record(epub_output, "book_epub"),
+                    artifact_record(pptx_output, "training_pptx"),
+                    artifact_record(notes_output, "release_notes"),
+                ],
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n",
         encoding="utf-8",
     )
 
     with tempfile.TemporaryDirectory(prefix="ai-agent-book-release-") as directory:
         staging = Path(directory)
-        shutil.copytree(html, staging / "html")
+        staged_html = staging / "html"
+        shutil.copytree(html, staged_html)
+        downloads = staged_html / "downloads"
+        downloads.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(pdf_output, downloads / "ai-agent-book-2026.pdf")
+        shutil.copy2(epub_output, downloads / "ai-agent-book-2026.epub")
         shutil.copy2(pdf_output, staging / pdf_output.name)
         shutil.copy2(epub_output, staging / epub_output.name)
+        shutil.copy2(pptx_output, staging / pptx_output.name)
         shutil.copy2(notes_output, staging / notes_output.name)
+        shutil.copy2(manifest_output, staging / manifest_output.name)
         write_deterministic_zip(staging, archive_output, f"ai-agent-book-{safe_version}")
 
-    checksummed = (archive_output, pdf_output, epub_output, notes_output)
+    checksummed = (
+        archive_output,
+        pdf_output,
+        epub_output,
+        pptx_output,
+        notes_output,
+        manifest_output,
+    )
     checksum_output.write_text(
         "".join(f"{sha256(path)}  {path.name}\n" for path in checksummed),
         encoding="utf-8",
     )
-    return [archive_output, pdf_output, epub_output, notes_output, checksum_output]
+    return [
+        archive_output,
+        pdf_output,
+        epub_output,
+        pptx_output,
+        notes_output,
+        manifest_output,
+        checksum_output,
+    ]
 
 
 def main() -> int:

@@ -21,7 +21,7 @@
 
 ## 干净 Python 环境
 
-在 `/tmp` 创建全新 Python 3.12.13 虚拟环境，安装 `.[dev,docs,publish]` 后执行完整测试、HTML、PDF、EPUB 和出版审计。增加培训课件字体、发行资产与外部证据门禁后的最终套件为 253 项并全部通过，三种出版格式构建与审计通过。该验证不复用项目内 `.venv` 的 site-packages；十项目 CLI 也使用该环境再次运行。
+在 `/tmp` 创建全新 Python 3.12.13 虚拟环境，安装 `.[dev,docs,publish]` 后执行完整测试、HTML、PDF、EPUB 和出版审计。增加培训课件字体、发行资产、外部证据 commit 一致性与最终标签门禁后的最终套件为 254 项并全部通过，三种出版格式构建与审计通过。该验证不复用项目内 `.venv` 的 site-packages；十项目 CLI 也使用该环境再次运行。
 
 此外重新运行 11 个独立示例的隔离编排。每个示例在独立 Python 3.12 venv 中安装自己的 `pyproject.toml`，依次执行离线入口、直接测试、Ruff 和 mypy；Framework Comparison 还重新执行两个框架 Driver 的 strict mypy 与五轮隔离证据生成。报告 `tmp/p2-example-verification.json` 的 `passed` 为 `true`；该报告属于可再生临时证据，不提交虚拟环境。
 
@@ -36,6 +36,12 @@
 1. 首次干净构建在生成 Python 包元数据时失败，因为 Dockerfile 复制了 `pyproject.toml`，却没有复制其中声明的 `LICENSE-CODE`。全部项目 Dockerfile 和统一服务 Dockerfile 已修复，并增加契约测试。
 2. 首次启动时项目 4、8 因只读根文件系统失败：主数据库已在 `/app/data`，但 Pipeline/Research 子数据库仍回退到 `.data`。Compose 现显式映射全部状态路径到可写卷，并增加配置回归测试。
 3. 修复后重新执行完整构建和运行探针，十个项目服务全部通过。
+
+## 最终发布门禁烟测
+
+发布工作流原先允许版本标签沿用 `--allow-partial`，七份外部证据为空时仍可能进入 Release；该路径已改为失败关闭。标签任务现在要求完整证据、七份记录的 `source_commit` 与 `GITHUB_SHA` 一致，并要求 P9 状态矩阵通过 `--require-complete`。使用当前空证据目录实测，两条命令分别因缺少七类记录和状态仍为 `in_progress_external_evidence_required` 退出非零，证明未完成候选不会被当作最终版发布。
+
+发布包烟测同时验证版本化 PDF、EPUB、培训 PPTX、发行说明、候选清单、SHA-256 和离线 HTML。第一次实测发现 HTML 下载目录可夹带上一轮 PDF/EPUB；打包器现于临时目录强制覆盖本轮文件，回归测试与压缩包内字节哈希均证明嵌套下载和根级产物一致。
 
 ## 证据边界
 

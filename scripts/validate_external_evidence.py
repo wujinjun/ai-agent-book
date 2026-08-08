@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from datetime import date
 from pathlib import Path
 from typing import Annotated, Literal, TypedDict
@@ -215,7 +216,12 @@ def validate_record(record: Evidence) -> list[str]:
     return issues
 
 
-def validate_directory(directory: Path, *, require_all: bool = True) -> ValidationSummary:
+def validate_directory(
+    directory: Path,
+    *,
+    require_all: bool = True,
+    expected_source_commit: str | None = None,
+) -> ValidationSummary:
     records: list[Evidence] = []
     issues: list[str] = []
     for path in sorted(directory.glob("*.yml")):
@@ -238,6 +244,15 @@ def validate_directory(directory: Path, *, require_all: bool = True) -> Validati
     ]
     record_ids = [record.record_id for record in records]
     source_commits = {record.source_commit for record in records}
+    if expected_source_commit is not None:
+        if re.fullmatch(r"[0-9a-f]{40}", expected_source_commit) is None:
+            issues.append("expected source commit must be a 40-character lowercase Git SHA")
+        unexpected_commits = source_commits - {expected_source_commit}
+        if unexpected_commits:
+            issues.append(
+                "external evidence targets a different commit: "
+                f"expected {expected_source_commit}, found {sorted(unexpected_commits)}"
+            )
     if len(record_ids) != len(set(record_ids)):
         issues.append("record_id values must be unique")
     if require_all:
@@ -268,9 +283,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("evidence_dir", nargs="?", type=Path, default=DEFAULT_EVIDENCE_DIR)
     parser.add_argument("--allow-partial", action="store_true")
+    parser.add_argument("--expected-source-commit")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
-    result = validate_directory(args.evidence_dir, require_all=not args.allow_partial)
+    result = validate_directory(
+        args.evidence_dir,
+        require_all=not args.allow_partial,
+        expected_source_commit=args.expected_source_commit,
+    )
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:

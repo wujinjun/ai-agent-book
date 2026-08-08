@@ -39,6 +39,7 @@ REQUIRED_EVIDENCE = {
     "privacy_scan",
     "distribution_preflight",
     "external_evidence_intake",
+    "final_release_gate",
 }
 
 

@@ -132,6 +132,16 @@ def test_complete_external_evidence_set_passes(tmp_path: Path) -> None:
     assert result["issues"] == []
 
 
+def test_external_evidence_must_target_the_release_commit(tmp_path: Path) -> None:
+    evidence = tmp_path / "evidence"
+    _write_valid_evidence_set(evidence)
+
+    result = validate_directory(evidence, expected_source_commit="b" * 40)
+
+    assert result["valid"] is False
+    assert any("different commit" in issue for issue in result["issues"])
+
+
 def test_threshold_failure_is_not_accepted(tmp_path: Path) -> None:
     evidence = tmp_path / "evidence"
     _write_valid_evidence_set(evidence)

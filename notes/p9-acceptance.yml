@@ -9,7 +9,7 @@ repository_scope:
   isolated_examples_verified: 11
   python: 3.12.13
   fresh_environment: passed
-  tests: 253
+  tests: 254
   ruff: passed
   mypy_targets: 49
   diagrams: 236
@@ -18,12 +18,12 @@ repository_scope:
   pdf:
     status: passed
     pages: 454
-    bytes: 11336809
-    sha256: 5518af06f3288c789329d7f55bcfa0335bfaf28e8277db2226cd44021af65257
+    bytes: 11336293
+    sha256: e5eba5b8deccd063be819f778f1375203b4edaaad6b95bda03032fc9ed92e2d4
   epub:
     status: passed
-    bytes: 13443850
-    sha256: 890091c4943a054563472197569da9c28d85e23aa332d27f4e521d74cfd89eb0
+    bytes: 13443707
+    sha256: 56958509fd90a3a5aa955165ee426e7067ddd6d483dd6434286f67af3e90ec4a
   training_pptx:
     status: passed_repository_scope
     slides: 16
@@ -40,6 +40,13 @@ repository_scope:
   secret_scan: passed
   privacy_scan: passed
   external_evidence_intake: ready
+  final_release_gate:
+    status: enforced_fail_closed
+    requires_complete_external_evidence: true
+    requires_tag_commit_match: true
+    requires_complete_score_matrix: true
+    html_downloads_match_root_artifacts: true
+    release_manifest_roles: [book_pdf, book_epub, training_pptx, release_notes]
 internal_role_reviews:
   agent_engineer: notes/p9-agent-engineering-review.md
   python_engineer: notes/p9-python-engineering-review.md

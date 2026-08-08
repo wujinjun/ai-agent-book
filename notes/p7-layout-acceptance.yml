@@ -24,7 +24,7 @@ html:
 pdf:
   artifact: output/pdf/ai-agent-book-2026.pdf
   pages: 454
-  sha256: 5518af06f3288c789329d7f55bcfa0335bfaf28e8277db2226cd44021af65257
+  sha256: e5eba5b8deccd063be819f778f1375203b4edaaad6b95bda03032fc9ed92e2d4
   automated_audit: passed
   distribution_asset_audit: passed_with_manual_review_required
   embedded_or_outlined_font_resources: 1073
@@ -32,7 +32,7 @@ pdf:
   manual_render_spot_check: passed
 epub:
   artifact: output/epub/ai-agent-book-2026.epub
-  sha256: 890091c4943a054563472197569da9c28d85e23aa332d27f4e521d74cfd89eb0
+  sha256: 56958509fd90a3a5aa955165ee426e7067ddd6d483dd6434286f67af3e90ec4a
   automated_audit: passed
   apple_books_macos: passed
   calibre_9_13_engine: passed

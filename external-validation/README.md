@@ -35,7 +35,7 @@ flowchart LR
 | 实体设备与印刷 | 1 | iPhone、iPad、Android 实机和印刷样张通过 | [设备与印刷协议](device-print-protocol.md) |
 | 商业权利核查 | 1 | 独立专业核查、八类权利范围完整、无开放条件 | [权利核查协议](rights-review-protocol.md) |
 
-每份记录必须引用其核验的 40 位 Git commit。Reviewer 的姓名、公司邮箱、电话、签字件和法律意见正文保存在受控系统；仓库只提交匿名 `reviewer_id`、不含个人信息的汇总指标和私有原件引用或哈希。
+每份记录必须引用其核验的 40 位 Git commit。最终标签的发布门禁会把七份记录的 `source_commit` 与标签所指向的 `GITHUB_SHA` 比较；证据来自其他提交时，Release 会拒绝创建。Reviewer 的姓名、公司邮箱、电话、签字件和法律意见正文保存在受控系统；仓库只提交匿名 `reviewer_id`、不含个人信息的汇总指标和私有原件引用或哈希。
 
 ## 使用方法
 
@@ -47,13 +47,24 @@ flowchart LR
    .venv/bin/python scripts/validate_external_evidence.py external-validation/evidence --allow-partial
    ```
 
-4. 七份证据齐全后执行最终检查：
+4. 七份证据齐全后，对固定候选 commit 执行最终检查：
 
    ```bash
-   .venv/bin/python scripts/validate_external_evidence.py external-validation/evidence
+   candidate_commit="$(git rev-parse HEAD)"
+   .venv/bin/python scripts/validate_external_evidence.py \
+     external-validation/evidence \
+     --expected-source-commit "$candidate_commit"
    ```
 
-5. 验证器通过并不自动关闭 P9。维护者还必须核对私有原件、更新 `notes/p9-acceptance.yml`、重新计算五类目标分，并验证 main 与最终 GitHub Release。
+5. 构建发布候选并检查 `RELEASE_MANIFEST-<版本>.json`。该清单固定候选 commit，并记录 PDF、EPUB、培训 PPTX 和发行说明的文件名、大小与 SHA-256：
+
+   ```bash
+   .venv/bin/python scripts/package_release.py --version v2026.x.y
+   python -m json.tool output/release/RELEASE_MANIFEST-v2026.x.y.json
+   cd output/release && shasum -a 256 -c SHA256SUMS-v2026.x.y.txt
+   ```
+
+6. 验证器通过并不自动关闭 P9。维护者还必须核对私有原件、更新 `notes/p9-acceptance.yml`、重新计算五类目标分，并验证 main 与最终 GitHub Release。版本标签工作流还会强制执行完整证据校验和 `audit_final_acceptance.py --require-complete`；普通分支仍允许保留部分证据。
 
 ## 证据边界
 

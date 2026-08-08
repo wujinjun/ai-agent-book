@@ -7,7 +7,7 @@
 
 这是一套面向软件工程师的中文技术教材工程。它不把 Agent 等同于某个框架，也不把能调用一次模型的脚本包装成生产系统；全书从 LLM 的生成机制出发，依次讨论结构化输出、工具调用、MCP、RAG、Memory、工作流、多 Agent，以及测试、部署、可观测性和安全治理。
 
-> 当前公开版本为 **v2026.8.0 / 多格式出版预览版**。第 1—38 章、11 个独立示例、十个项目与 HTML/PDF/EPUB 出版管线均已完成本轮复审；项目 4、8、10 达到离线 `production_reference`。P9 仓库内验收已经取得当前源码、Python 3.12、十项目容器和 253 项测试证据，但独立外审、真实试学/试讲、实体设备/印刷与最终 Release 尚未完成。外部参与者可直接使用 [`external-validation/`](external-validation/) 执行包；完整状态见 [`FINAL_ACCEPTANCE.md`](FINAL_ACCEPTANCE.md) 与 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
+> 当前公开版本为 **v2026.8.0 / 多格式出版预览版**。第 1—38 章、11 个独立示例、十个项目与 HTML/PDF/EPUB 出版管线均已完成本轮复审；项目 4、8、10 达到离线 `production_reference`。P9 仓库内验收已经取得当前源码、Python 3.12、十项目容器和 254 项测试证据，但独立外审、真实试学/试讲、实体设备/印刷与最终 Release 尚未完成。外部参与者可直接使用 [`external-validation/`](external-validation/) 执行包；完整状态见 [`FINAL_ACCEPTANCE.md`](FINAL_ACCEPTANCE.md) 与 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
 
 ![教材 HTML 首页：三栏导航、学习地图与离线下载入口](docs/assets/readme-home.png)
 
@@ -162,6 +162,14 @@ PYTHONPATH=src python scripts/audit_publication.py all output
 - `output/epub/ai-agent-book-2026.epub`：带 SVG 首选图和 PNG 回退的 EPUB3。
 
 如果图形未变化，构建器会按内容哈希复用缓存。缺少 Mermaid CLI、Pandoc、Chrome 或字体时，脚本会明确退出，不会退回旧 ReportLab 文本版或把 Mermaid 源码放进 EPUB。
+
+发布候选使用下列命令打包：
+
+```bash
+python scripts/package_release.py --version v2026.x.y
+```
+
+打包器会生成版本化 HTML/PDF/EPUB、企业培训 PPTX、发行说明、`RELEASE_MANIFEST` 和 `SHA256SUMS`。候选清单把 Git commit 与三种主要发行文件的大小、SHA-256 绑定，方便独立审阅者确认自己检查的正是待发布版本。版本标签只有在七份 P9 外部证据齐全、证据 commit 与标签 commit 一致且最终状态矩阵达标时才允许创建 GitHub Release。
 
 ## 贡献与版本说明
 
