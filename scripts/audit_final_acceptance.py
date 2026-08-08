@@ -36,6 +36,7 @@ REQUIRED_EVIDENCE = {
     "epub",
     "secret_scan",
     "privacy_scan",
+    "distribution_preflight",
     "external_evidence_intake",
 }
 

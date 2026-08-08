@@ -10,12 +10,14 @@
 | 代码许可 | 示例代码许可、教材与代码边界 | `LICENSE-CODE` |
 | 依赖 | 直接/传递依赖、许可证兼容性、发行是否包含依赖二进制 | `pyproject.toml`、锁定版本记录 |
 | 贡献 | CLA、贡献者授权、第三方补丁 | `CLA.md`、Git 历史 |
-| 字体 | PDF/EPUB/PPTX 字体嵌入和再分发权 | 出版物字体清单与构建环境 |
+| 字体 | PDF/EPUB/PPTX 字体嵌入和再分发权 | `assets/fonts/`、`notes/asset-provenance.yml`、发行预检报告 |
 | 图片与图表 | 原创/生成来源、外部截图、Logo、照片和替代文本 | `assets/`、图形 manifest、培训课件 |
 | 商标 | 产品名、比较表、封面与营销描述是否暗示背书 | 正文、README、封面和发布页 |
 | 发行条款 | ISBN、平台条款、地域、付费课程、更新和撤回机制 | 商业合同与发布计划 |
 
 审阅者还应核查最终发布包的 SHA-256 与目标 commit，避免对旧版材料出具结论。私有法律意见、合同和个人身份信息不得提交仓库；只记录受控档案编号或不可逆哈希。
+
+先运行 `python scripts/audit_distribution_assets.py` 并阅读 `notes/distribution-asset-audit.json`。报告中的硬失败必须为 0；人工复核清单中的 OFL 通知、EPUB/PPTX 字体替换、依赖条款和印厂页面规范必须逐项形成结论，不能因为自动预检通过而跳过。
 
 ## 通过标准
 

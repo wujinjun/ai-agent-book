@@ -9,22 +9,27 @@ repository_scope:
   isolated_examples_verified: 11
   python: 3.12.13
   fresh_environment: passed
-  tests: 249
+  tests: 252
   ruff: passed
-  mypy_targets: 48
+  mypy_targets: 49
   diagrams: 236
   reference_links: {ok: 104, restricted: 8, verified_separately: 1, failed: 0}
   html: passed
   pdf:
     status: passed
-    pages: 455
-    bytes: 13328585
-    sha256: cf1803696ede885175be9365e4068446d7117fc70ceb626f224dca5d0a38b980
+    pages: 453
+    bytes: 11331105
+    sha256: 244e31538a352fc2f35c126ee8bea3dd3b6404e5a5fe0c7e99f6d12b177353d4
   epub:
     status: passed
-    bytes: 13441627
-    sha256: d6576cd11039dcaa205b22fa95664209dd94f55595529bf809ea496086751e19
+    bytes: 13441566
+    sha256: 6df92c2a086c4a31d873c1c2d1f39714684e5cd8db6bd56407342a1b87f17982
   publication_audit: passed
+  distribution_preflight:
+    status: passed_with_manual_review_required
+    hard_issues: 0
+    bundled_ofl_fonts: 5
+    report: notes/distribution-asset-audit.json
   secret_scan: passed
   privacy_scan: passed
   external_evidence_intake: ready

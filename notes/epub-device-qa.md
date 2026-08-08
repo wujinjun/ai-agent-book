@@ -4,13 +4,13 @@
 
 文件：`output/epub/ai-agent-book-2026.epub`
 
-大小：13,391,817 字节
+大小：13,441,566 字节
 
-SHA-256：`93291583bc1587dc2100d4910a3ed35f4dd764746998e695264840c37dfcefd8`
+SHA-256：`6df92c2a086c4a31d873c1c2d1f39714684e5cd8db6bd56407342a1b87f17982`
 
 ## 结论
 
-EPUB3 自动审计通过：76 个 XHTML 文档的本地文件引用、片段锚点、图片资源、替代文本、nav 与 spine 均有效。Apple Books 在当前 macOS 实机中完成目录、双页重排、正文、图示与 Python 代码块人工抽检；图形和代码均正常显示。Calibre 9.13.0 的解析与 HTMLZ 转换引擎完成独立交叉验证，没有 `Referenced file not found`、异常或回溯。
+EPUB3 自动审计通过：77 个 XHTML 文档的本地文件引用、片段锚点、图片资源、替代文本、nav 与 spine 均有效。Apple Books 在当前 macOS 实机中完成目录、双页重排、正文、图示与 Python 代码块人工抽检；图形和代码均正常显示。Calibre 9.13.0 的解析与 HTMLZ 转换引擎完成独立交叉验证，没有 `Referenced file not found`、异常或回溯。发行资产预检还确认 EPUB 没有远程运行时资源；163 个 `https` 地址均为读者主动访问的参考链接。
 
 ## 设备与阅读路径
 

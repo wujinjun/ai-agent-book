@@ -1,0 +1,590 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-08-08",
+  "status": "passed_with_manual_review_required",
+  "pdf": {
+    "path": "output/pdf/ai-agent-book-2026.pdf",
+    "sha256": "244e31538a352fc2f35c126ee8bea3dd3b6404e5a5fe0c7e99f6d12b177353d4",
+    "bytes": 11331105,
+    "pages": 453,
+    "media_boxes": {
+      "594.96x841.92": 453
+    },
+    "cropbox_differs_from_mediabox_pages": 0,
+    "font_resources": 1073,
+    "font_types": {
+      "/Type3": 1073
+    },
+    "named_font_subsets": {
+      "type3-outline": 1073
+    },
+    "non_embedded_fonts": [],
+    "unapproved_system_fonts": [],
+    "raster_image_xobjects": 2
+  },
+  "epub": {
+    "path": "output/epub/ai-agent-book-2026.epub",
+    "sha256": "6df92c2a086c4a31d873c1c2d1f39714684e5cd8db6bd56407342a1b87f17982",
+    "bytes": 13441566,
+    "archive_entries_by_suffix": {
+      ".css": 1,
+      ".ncx": 1,
+      ".opf": 1,
+      ".png": 237,
+      ".svg": 235,
+      ".xhtml": 77,
+      ".xml": 2,
+      "no_suffix": 1
+    },
+    "embedded_fonts": [],
+    "css_font_families": [
+      "\"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", sans-serif",
+      "Menlo, Monaco, Consolas, monospace"
+    ],
+    "external_runtime_resources": [],
+    "external_hyperlinks": 163
+  },
+  "pptx": {
+    "path": "training/slides/ai-agent-engineering-training.pptx",
+    "sha256": "0191f4a6c91f4ee087696d192692788f2ce751630e4efdbf00a1326ffb952fcc",
+    "bytes": 59788,
+    "slides": 16,
+    "typefaces": [
+      "+mj-lt",
+      "+mn-lt",
+      "Calibri",
+      "Calibri Light",
+      "Helvetica Neue"
+    ],
+    "embedded_fonts": [],
+    "external_runtime_resources": [],
+    "external_hyperlinks": 0
+  },
+  "source_assets": {
+    "registry": "notes/asset-provenance.yml",
+    "referenced_non_diagram_assets": [
+      "docs/assets/readme-home.png",
+      "docs/assets/trace-sample.png",
+      "docs/assets/training-deck-preview.png"
+    ],
+    "assets": [
+      {
+        "path": "assets/diagrams/manifest.json",
+        "kind": "generated_diagram_registry",
+        "origin": "repository Mermaid source blocks",
+        "generator": "scripts/build_diagrams.py",
+        "rights_basis": "original repository content rendered by the declared build tool",
+        "external_content": false,
+        "computed_sha256": "dd1b4d10ce8aa47d4c1d7800b83ca140d18363cc7cbae88bd361b7db3482a6e7",
+        "bytes": 276973
+      },
+      {
+        "path": "assets/fonts/noto-sans-sc/NotoSansSC-Bold.otf",
+        "kind": "distribution_font",
+        "origin": "notofonts/noto-cjk@f8d157532fbfaeda587e826d4cd5b21a49186f7c",
+        "source_url": "https://raw.githubusercontent.com/notofonts/noto-cjk/f8d157532fbfaeda587e826d4cd5b21a49186f7c/Sans/SubsetOTF/SC/NotoSansSC-Bold.otf",
+        "sha256": "c6cb5a93abaa9edc8ee7463b7ebb7f42d618d40e6ed2f7a5371c97b0b64767c0",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/noto-sans-sc/OFL.txt",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "c6cb5a93abaa9edc8ee7463b7ebb7f42d618d40e6ed2f7a5371c97b0b64767c0",
+        "bytes": 8543168
+      },
+      {
+        "path": "assets/fonts/noto-sans-sc/NotoSansSC-Regular.otf",
+        "kind": "distribution_font",
+        "origin": "notofonts/noto-cjk@f8d157532fbfaeda587e826d4cd5b21a49186f7c",
+        "source_url": "https://raw.githubusercontent.com/notofonts/noto-cjk/f8d157532fbfaeda587e826d4cd5b21a49186f7c/Sans/SubsetOTF/SC/NotoSansSC-Regular.otf",
+        "sha256": "faa6c9df652116dde789d351359f3d7e5d2285a2b2a1f04a2d7244df706d5ea9",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/noto-sans-sc/OFL.txt",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "faa6c9df652116dde789d351359f3d7e5d2285a2b2a1f04a2d7244df706d5ea9",
+        "bytes": 8331336
+      },
+      {
+        "path": "assets/fonts/source-code-pro/SourceCodePro-Bold.otf",
+        "kind": "distribution_font",
+        "origin": "adobe-fonts/source-code-pro@803b7e23ec97ae58b6232ea76519a76d428ba268",
+        "source_url": "https://raw.githubusercontent.com/adobe-fonts/source-code-pro/803b7e23ec97ae58b6232ea76519a76d428ba268/OTF/SourceCodePro-Bold.otf",
+        "sha256": "6f5a4a46a99ad1b92a8675e98f148272c8d2476fc0eb067247dd5eea6a3ad84c",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/source-code-pro/OFL.md",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "6f5a4a46a99ad1b92a8675e98f148272c8d2476fc0eb067247dd5eea6a3ad84c",
+        "bytes": 134020
+      },
+      {
+        "path": "assets/fonts/source-code-pro/SourceCodePro-It.otf",
+        "kind": "distribution_font",
+        "origin": "adobe-fonts/source-code-pro@803b7e23ec97ae58b6232ea76519a76d428ba268",
+        "source_url": "https://raw.githubusercontent.com/adobe-fonts/source-code-pro/803b7e23ec97ae58b6232ea76519a76d428ba268/OTF/SourceCodePro-It.otf",
+        "sha256": "6989245c8747ecef5d927f412b49e2cef495053434b635f560f20cc81a1433d1",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/source-code-pro/OFL.md",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "6989245c8747ecef5d927f412b49e2cef495053434b635f560f20cc81a1433d1",
+        "bytes": 107752
+      },
+      {
+        "path": "assets/fonts/source-code-pro/SourceCodePro-Regular.otf",
+        "kind": "distribution_font",
+        "origin": "adobe-fonts/source-code-pro@803b7e23ec97ae58b6232ea76519a76d428ba268",
+        "source_url": "https://raw.githubusercontent.com/adobe-fonts/source-code-pro/803b7e23ec97ae58b6232ea76519a76d428ba268/OTF/SourceCodePro-Regular.otf",
+        "sha256": "9f9664e2edf6f045c11e774f9bd0be6993971f2544a39061a5ce478b96b051f8",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/source-code-pro/OFL.md",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "9f9664e2edf6f045c11e774f9bd0be6993971f2544a39061a5ce478b96b051f8",
+        "bytes": 131128
+      },
+      {
+        "path": "docs/assets/readme-home.png",
+        "kind": "generated_product_screenshot",
+        "origin": "locally built HTML reading site",
+        "generator": "P8 responsive screenshot workflow",
+        "rights_basis": "screenshot of original repository UI and content",
+        "external_content": false,
+        "computed_sha256": "ffe7cf1387d329457aedf2d678a730c7b167025ecda71e75faf4eea1e7cf2572",
+        "bytes": 159235,
+        "pixels": {
+          "width": 1440,
+          "height": 900
+        }
+      },
+      {
+        "path": "docs/assets/trace-sample.png",
+        "kind": "generated_runtime_screenshot",
+        "origin": "normalized project 10 offline Trace fixture",
+        "generator": "scripts/build_trace_screenshot.py",
+        "rights_basis": "original repository code and synthetic data",
+        "external_content": false,
+        "computed_sha256": "5e2a300f30c5f513e952539d6fc2220fb5da33f89e5e678bf33ed16bfeb0348a",
+        "bytes": 169149,
+        "pixels": {
+          "width": 1600,
+          "height": 800
+        }
+      },
+      {
+        "path": "docs/assets/training-deck-preview.png",
+        "kind": "generated_contact_sheet",
+        "origin": "repository training slide deck",
+        "generator": "training slide rendering workflow",
+        "rights_basis": "contact sheet of original repository slides",
+        "external_content": false,
+        "computed_sha256": "54738c1d668e821d94fd1fcb3728d45c9c84558f435ce1be1bbc93b19ed209a1",
+        "bytes": 349044,
+        "pixels": {
+          "width": 2096,
+          "height": 1036
+        }
+      },
+      {
+        "path": "training/slides/ai-agent-engineering-training.pptx",
+        "kind": "generated_training_deck",
+        "origin": "repository training curriculum and diagrams",
+        "generator": "P5 training publication workflow",
+        "rights_basis": "original repository content; font use requires final distribution review",
+        "external_content": false,
+        "computed_sha256": "0191f4a6c91f4ee087696d192692788f2ce751630e4efdbf00a1326ffb952fcc",
+        "bytes": 59788
+      }
+    ],
+    "distribution_fonts": [
+      {
+        "path": "assets/fonts/noto-sans-sc/NotoSansSC-Bold.otf",
+        "kind": "distribution_font",
+        "origin": "notofonts/noto-cjk@f8d157532fbfaeda587e826d4cd5b21a49186f7c",
+        "source_url": "https://raw.githubusercontent.com/notofonts/noto-cjk/f8d157532fbfaeda587e826d4cd5b21a49186f7c/Sans/SubsetOTF/SC/NotoSansSC-Bold.otf",
+        "sha256": "c6cb5a93abaa9edc8ee7463b7ebb7f42d618d40e6ed2f7a5371c97b0b64767c0",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/noto-sans-sc/OFL.txt",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "c6cb5a93abaa9edc8ee7463b7ebb7f42d618d40e6ed2f7a5371c97b0b64767c0",
+        "bytes": 8543168
+      },
+      {
+        "path": "assets/fonts/noto-sans-sc/NotoSansSC-Regular.otf",
+        "kind": "distribution_font",
+        "origin": "notofonts/noto-cjk@f8d157532fbfaeda587e826d4cd5b21a49186f7c",
+        "source_url": "https://raw.githubusercontent.com/notofonts/noto-cjk/f8d157532fbfaeda587e826d4cd5b21a49186f7c/Sans/SubsetOTF/SC/NotoSansSC-Regular.otf",
+        "sha256": "faa6c9df652116dde789d351359f3d7e5d2285a2b2a1f04a2d7244df706d5ea9",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/noto-sans-sc/OFL.txt",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "faa6c9df652116dde789d351359f3d7e5d2285a2b2a1f04a2d7244df706d5ea9",
+        "bytes": 8331336
+      },
+      {
+        "path": "assets/fonts/source-code-pro/SourceCodePro-Bold.otf",
+        "kind": "distribution_font",
+        "origin": "adobe-fonts/source-code-pro@803b7e23ec97ae58b6232ea76519a76d428ba268",
+        "source_url": "https://raw.githubusercontent.com/adobe-fonts/source-code-pro/803b7e23ec97ae58b6232ea76519a76d428ba268/OTF/SourceCodePro-Bold.otf",
+        "sha256": "6f5a4a46a99ad1b92a8675e98f148272c8d2476fc0eb067247dd5eea6a3ad84c",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/source-code-pro/OFL.md",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "6f5a4a46a99ad1b92a8675e98f148272c8d2476fc0eb067247dd5eea6a3ad84c",
+        "bytes": 134020
+      },
+      {
+        "path": "assets/fonts/source-code-pro/SourceCodePro-It.otf",
+        "kind": "distribution_font",
+        "origin": "adobe-fonts/source-code-pro@803b7e23ec97ae58b6232ea76519a76d428ba268",
+        "source_url": "https://raw.githubusercontent.com/adobe-fonts/source-code-pro/803b7e23ec97ae58b6232ea76519a76d428ba268/OTF/SourceCodePro-It.otf",
+        "sha256": "6989245c8747ecef5d927f412b49e2cef495053434b635f560f20cc81a1433d1",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/source-code-pro/OFL.md",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "6989245c8747ecef5d927f412b49e2cef495053434b635f560f20cc81a1433d1",
+        "bytes": 107752
+      },
+      {
+        "path": "assets/fonts/source-code-pro/SourceCodePro-Regular.otf",
+        "kind": "distribution_font",
+        "origin": "adobe-fonts/source-code-pro@803b7e23ec97ae58b6232ea76519a76d428ba268",
+        "source_url": "https://raw.githubusercontent.com/adobe-fonts/source-code-pro/803b7e23ec97ae58b6232ea76519a76d428ba268/OTF/SourceCodePro-Regular.otf",
+        "sha256": "9f9664e2edf6f045c11e774f9bd0be6993971f2544a39061a5ce478b96b051f8",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/source-code-pro/OFL.md",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "9f9664e2edf6f045c11e774f9bd0be6993971f2544a39061a5ce478b96b051f8",
+        "bytes": 131128
+      }
+    ]
+  },
+  "direct_dependency_license_inventory": [
+    {
+      "name": "EbookLib",
+      "version": "0.19",
+      "license_metadata": "GNU Affero General Public License",
+      "license_classifiers": [],
+      "license_files": [
+        {
+          "path": "ebooklib-0.19.dist-info/licenses/AUTHORS.txt",
+          "sha256": "287a4543ccb6ed0bdac121eb2c5248b2a9b7040771f87bb448152ef2c24efa62"
+        },
+        {
+          "path": "ebooklib-0.19.dist-info/licenses/LICENSE.txt",
+          "sha256": "57c8ff33c9c0cfc3ef00e650a1cc910d7ee479a8bc509f6c9209a7c2a11399d6"
+        }
+      ]
+    },
+    {
+      "name": "PyYAML",
+      "version": "6.0.2",
+      "license_metadata": "MIT",
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "PyYAML-6.0.2.dist-info/LICENSE",
+          "sha256": "8d3928f9dc4490fd635707cb88eb26bd764102a7282954307d3e5167a577e8a4"
+        }
+      ]
+    },
+    {
+      "name": "SQLAlchemy",
+      "version": "2.0.51",
+      "license_metadata": "MIT",
+      "license_classifiers": [],
+      "license_files": [
+        {
+          "path": "sqlalchemy-2.0.51.dist-info/licenses/LICENSE",
+          "sha256": "e862bb5b904fb5513c3e14288d7a25a12eb0ecc7847a0a965d310e9a955e7cb9"
+        }
+      ]
+    },
+    {
+      "name": "beautifulsoup4",
+      "version": "4.15.0",
+      "license_metadata": "MIT License",
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "beautifulsoup4-4.15.0.dist-info/licenses/AUTHORS",
+          "sha256": "b989238918e1fdac1e46717cb405b63e92497a272413af0d989c1df6c8abcb6f"
+        },
+        {
+          "path": "beautifulsoup4-4.15.0.dist-info/licenses/LICENSE",
+          "sha256": "55b4d8d4b1e5bc86d10efac91b74c87bcb77526b0f5b9edaf8b9cd2adc7397b2"
+        }
+      ]
+    },
+    {
+      "name": "fastapi",
+      "version": "0.116.1",
+      "license_metadata": null,
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "fastapi-0.116.1.dist-info/licenses/LICENSE",
+          "sha256": "4ec89ffc81485b97fec584b2d4a961032eeffe834453894fd9c1274906cc744e"
+        }
+      ]
+    },
+    {
+      "name": "httpx",
+      "version": "0.28.1",
+      "license_metadata": "BSD-3-Clause",
+      "license_classifiers": [
+        "OSI Approved :: BSD License"
+      ],
+      "license_files": [
+        {
+          "path": "httpx-0.28.1.dist-info/licenses/LICENSE.md",
+          "sha256": "4ec59d544f12b5f539a3a716fd321ac58ccd8030b465221f2c880200cdf28d8d"
+        }
+      ]
+    },
+    {
+      "name": "langgraph",
+      "version": "1.2.9",
+      "license_metadata": null,
+      "license_classifiers": [],
+      "license_files": [
+        {
+          "path": "langgraph-1.2.9.dist-info/licenses/LICENSE",
+          "sha256": "d9bb52f2e3540d60ff50d8f0f5b6ba649b7fd346948c4c3d086c8afb120763c7"
+        }
+      ]
+    },
+    {
+      "name": "mkdocs-material",
+      "version": "9.6.14",
+      "license_metadata": null,
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "material/templates/.icons/fontawesome/LICENSE.txt",
+          "sha256": "9b914eae88817d63b576eab5aafde7068c7a1abae125d7cdfb034f1da43a9afc"
+        },
+        {
+          "path": "material/templates/.icons/material/LICENSE",
+          "sha256": "3bae6305bcaa6d10219b999f65c342034c2d40b1c0e8567fa08605e73ccba829"
+        },
+        {
+          "path": "material/templates/.icons/material/license.svg",
+          "sha256": "596532cf9c5e7bd94c4a87e21cbbe0477f6749e809eda008f490df7f78e11129"
+        },
+        {
+          "path": "material/templates/.icons/octicons/LICENSE",
+          "sha256": "3d8b9d9254e7aa7517ed5abc8df3a4bc230081a613e8e872fb6558e8759c9040"
+        },
+        {
+          "path": "material/templates/.icons/simple/LICENSE.md",
+          "sha256": "9046848b63a5c92bff14e4accca80bd987e0623b74adf9226ce5198d312b79d5"
+        },
+        {
+          "path": "material/templates/.icons/simple/unlicense.svg",
+          "sha256": "a1218634aa5ba8ab11cd14fa23d3e31eb12ae74ae2cd4cc814a5ca51c72870ee"
+        },
+        {
+          "path": "mkdocs_material-9.6.14.dist-info/licenses/LICENSE",
+          "sha256": "e1150f26b4c0f872627b39fda49ae3bd850304f2f7f3171ae0531c1f8f4dd078"
+        }
+      ]
+    },
+    {
+      "name": "mypy",
+      "version": "1.16.1",
+      "license_metadata": "MIT",
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "mypy-1.16.1.dist-info/licenses/LICENSE",
+          "sha256": "de341f6e031d021aab9eb27bdf713cc6fb844dee832ef3bcd4688bff5517220b"
+        },
+        {
+          "path": "mypy/typeshed/LICENSE",
+          "sha256": "295f8538c94ae5c3043301cf7cff1c852dab6a786a8ddee471e061b40d5ecabe"
+        }
+      ]
+    },
+    {
+      "name": "pdfplumber",
+      "version": "0.11.7",
+      "license_metadata": null,
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "pdfplumber-0.11.7.dist-info/licenses/LICENSE.txt",
+          "sha256": "0d48994da4d1321e395b5e64a724ed4dec63fb96b88ac5b88fc014771e690821"
+        }
+      ]
+    },
+    {
+      "name": "psycopg",
+      "version": "3.3.4",
+      "license_metadata": null,
+      "license_classifiers": [],
+      "license_files": [
+        {
+          "path": "psycopg-3.3.4.dist-info/licenses/LICENSE.txt",
+          "sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118"
+        }
+      ]
+    },
+    {
+      "name": "pydantic",
+      "version": "2.11.7",
+      "license_metadata": null,
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "pydantic-2.11.7.dist-info/licenses/LICENSE",
+          "sha256": "a9e186f3ca16b5eef84318e7a701721351a00cb7b8ae3a4394b67b49e3529ef3"
+        }
+      ]
+    },
+    {
+      "name": "pypdf",
+      "version": "5.7.0",
+      "license_metadata": null,
+      "license_classifiers": [
+        "OSI Approved :: BSD License"
+      ],
+      "license_files": [
+        {
+          "path": "pypdf-5.7.0.dist-info/licenses/LICENSE",
+          "sha256": "a97ac230e5f33ef10a5367a850eb01f91f1a0b064e34742c7794d2294557f524"
+        }
+      ]
+    },
+    {
+      "name": "pytest",
+      "version": "8.4.1",
+      "license_metadata": "MIT",
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "pytest-8.4.1.dist-info/licenses/AUTHORS",
+          "sha256": "79a5fc74739290f009cf3d0bf57ff20688f1cad9b84a24c77c4e2dec752f12fc"
+        },
+        {
+          "path": "pytest-8.4.1.dist-info/licenses/LICENSE",
+          "sha256": "ca836a5f9ecca3b2f350230faa20a48fb8b145653b5568d784862df864706b9b"
+        }
+      ]
+    },
+    {
+      "name": "pytest-asyncio",
+      "version": "1.0.0",
+      "license_metadata": null,
+      "license_classifiers": [],
+      "license_files": [
+        {
+          "path": "pytest_asyncio-1.0.0.dist-info/licenses/LICENSE",
+          "sha256": "a8ad31b1c3f40dca5a84119351b8fa8ddc868edd77fad8a8ebf6d8f2d16fa4ae"
+        }
+      ]
+    },
+    {
+      "name": "redis",
+      "version": "8.0.1",
+      "license_metadata": null,
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "redis-8.0.1.dist-info/licenses/LICENSE",
+          "sha256": "a57b250a5bf03d7afe55b74063313f2adb7b00d546c0ab149a89398333fe3cc8"
+        }
+      ]
+    },
+    {
+      "name": "reportlab",
+      "version": "4.4.2",
+      "license_metadata": "BSD license (see license.txt for details), Copyright (c) 2000-2025, ReportLab Inc.",
+      "license_classifiers": [
+        "OSI Approved :: BSD License"
+      ],
+      "license_files": [
+        {
+          "path": "reportlab-4.4.2.dist-info/licenses/LICENSE",
+          "sha256": "ef831761646313921375fc2cb888e8eeaf7da213d0b92852c10c42f3a0b4d138"
+        },
+        {
+          "path": "reportlab/fonts/DarkGarden-copying-gpl.txt",
+          "sha256": "1b2a567f289f66a143c56353e7b3d4fa5862514a5e3c5cfdf8b02ee5e5aaa953"
+        },
+        {
+          "path": "reportlab/fonts/DarkGarden-copying.txt",
+          "sha256": "3cd1020510efa7f6b3166a5a2740f92bd664a695ea179e0bda442e74cd0ef3a4"
+        },
+        {
+          "path": "reportlab/fonts/bitstream-vera-license.txt",
+          "sha256": "3361d054759a2fc686a2c058be82deaf9c2e6fe549be9004d7935a6c1736315d"
+        }
+      ]
+    },
+    {
+      "name": "ruff",
+      "version": "0.12.2",
+      "license_metadata": "MIT",
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "ruff-0.12.2.dist-info/licenses/LICENSE",
+          "sha256": "3209c0b7fb7257c05b16433728c1e974bac40000fef171b8e9e89f095623c954"
+        }
+      ]
+    },
+    {
+      "name": "uvicorn",
+      "version": "0.35.0",
+      "license_metadata": null,
+      "license_classifiers": [
+        "OSI Approved :: BSD License"
+      ],
+      "license_files": [
+        {
+          "path": "uvicorn-0.35.0.dist-info/licenses/LICENSE.md",
+          "sha256": "efe1acf3e62fb99c288b0ec73e5a773b7268ef4320fe757ea994214e4b63c371"
+        }
+      ]
+    }
+  ],
+  "hard_issues": [],
+  "manual_review_required": [
+    "A professional reviewer must confirm the rights_basis entries against private source records.",
+    "Confirm printer trim, binding margin and bleed requirements; the current text-only PDF uses A4 media/crop boxes without a dedicated bleed workflow.",
+    "Confirm that bundled SIL-OFL-1.1 font notices satisfy the final storefront, printer and commercial distribution terms.",
+    "Dependency EbookLib reports AGPL terms; confirm build-tool use and distribution obligations.",
+    "Dependency langgraph has no concise license signal in package metadata.",
+    "Dependency psycopg has no concise license signal in package metadata.",
+    "Dependency pytest-asyncio has no concise license signal in package metadata.",
+    "EPUB embeds no font files and relies on reader system fonts; test final typography on the target storefronts and physical devices.",
+    "Installed metadata is an inventory aid, not a legal compatibility opinion; review direct and transitive dependency terms for the commercial distribution model.",
+    "PPTX embeds no font files; confirm Calibri, Calibri Light and Helvetica Neue substitution on delivery computers or replace them with approved fonts."
+  ]
+}

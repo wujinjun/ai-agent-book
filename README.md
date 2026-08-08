@@ -7,7 +7,7 @@
 
 这是一套面向软件工程师的中文技术教材工程。它不把 Agent 等同于某个框架，也不把能调用一次模型的脚本包装成生产系统；全书从 LLM 的生成机制出发，依次讨论结构化输出、工具调用、MCP、RAG、Memory、工作流、多 Agent，以及测试、部署、可观测性和安全治理。
 
-> 当前公开版本为 **v2026.8.0 / 多格式出版预览版**。第 1—38 章、11 个独立示例、十个项目与 HTML/PDF/EPUB 出版管线均已完成本轮复审；项目 4、8、10 达到离线 `production_reference`。P9 仓库内验收已经取得当前源码、Python 3.12、十项目容器和 249 项测试证据，但独立外审、真实试学/试讲、实体设备/印刷与最终 Release 尚未完成。外部参与者可直接使用 [`external-validation/`](external-validation/) 执行包；完整状态见 [`FINAL_ACCEPTANCE.md`](FINAL_ACCEPTANCE.md) 与 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
+> 当前公开版本为 **v2026.8.0 / 多格式出版预览版**。第 1—38 章、11 个独立示例、十个项目与 HTML/PDF/EPUB 出版管线均已完成本轮复审；项目 4、8、10 达到离线 `production_reference`。P9 仓库内验收已经取得当前源码、Python 3.12、十项目容器和 252 项测试证据，但独立外审、真实试学/试讲、实体设备/印刷与最终 Release 尚未完成。外部参与者可直接使用 [`external-validation/`](external-validation/) 执行包；完整状态见 [`FINAL_ACCEPTANCE.md`](FINAL_ACCEPTANCE.md) 与 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
 
 ![教材 HTML 首页：三栏导航、学习地图与离线下载入口](docs/assets/readme-home.png)
 
@@ -39,7 +39,7 @@ python -m http.server 8000 --directory output/html
 
 发行说明与全部附件见 [GitHub Release v2026.8.0](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.0)。
 
-当前公开站点尚未承诺稳定 URL；可直接下载完整出版包中的 `html/`，或按 Quick Start 本地打开。仓库中的 P7 候选版已扩展到 447 页，只有完成 P9 并发布新 Release 后才会替代上述 400 页公开版。
+当前公开站点尚未承诺稳定 URL；可直接下载完整出版包中的 `html/`，或按 Quick Start 本地打开。仓库中的当前候选版为 453 页，并使用固定版本的 OFL 中文与代码字体；只有完成 P9 并发布新 Release 后才会替代上述 400 页公开版。
 
 ## 适合与不适合的读者
 

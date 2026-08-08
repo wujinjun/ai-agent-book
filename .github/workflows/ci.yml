@@ -49,4 +49,5 @@ jobs:
           .venv/bin/python scripts/build_html.py
           .venv/bin/python scripts/build_pandoc.py all
           PYTHONPATH=src .venv/bin/python scripts/audit_publication.py all output
+          .venv/bin/python scripts/audit_distribution_assets.py
           .venv/bin/python scripts/package_release.py --version ci

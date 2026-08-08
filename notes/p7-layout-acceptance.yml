@@ -2,7 +2,7 @@ version: 1
 checked_at: 2026-08-08
 status: passed_repository_scope
 diagram_review:
-  manifest_count: 235
+  manifest_count: 236
   contact_sheet_pages: 12
   semantic_ledger: notes/visual-review.yml
   checks:
@@ -23,13 +23,16 @@ html:
     - {width: 390, height: 844, overflow: 0, result: passed}
 pdf:
   artifact: output/pdf/ai-agent-book-2026.pdf
-  pages: 447
-  sha256: 7ff00ce66eb7d0bdc394f43156f8ab713dbe84c3fcb12fe9bc11875a01b38f75
+  pages: 453
+  sha256: 244e31538a352fc2f35c126ee8bea3dd3b6404e5a5fe0c7e99f6d12b177353d4
   automated_audit: passed
+  distribution_asset_audit: passed_with_manual_review_required
+  embedded_or_outlined_font_resources: 1073
+  unapproved_system_fonts: 0
   manual_render_spot_check: passed
 epub:
   artifact: output/epub/ai-agent-book-2026.epub
-  sha256: 93291583bc1587dc2100d4910a3ed35f4dd764746998e695264840c37dfcefd8
+  sha256: 6df92c2a086c4a31d873c1c2d1f39714684e5cd8db6bd56407342a1b87f17982
   automated_audit: passed
   apple_books_macos: passed
   calibre_9_13_engine: passed

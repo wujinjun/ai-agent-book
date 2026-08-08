@@ -18,13 +18,16 @@ OpenAI、ChatGPT、Claude、Anthropic、LangChain、LangGraph、LlamaIndex、Pyd
 
 ## 字体与出版工具
 
-Markdown 和网页优先使用系统字体栈，不把商业字体文件打包进仓库。PDF/EPUB 构建依赖宿主系统可用字体；发行包应嵌入或引用具有相应分发权的字体。培训 PPTX 使用生成环境提供的排版模板和系统字体，进入商业发行包前应在签约日期复核生成工具条款、模板许可和字体嵌入状态。
+PDF 构建固定使用仓库内的 Noto Sans SC 与 Source Code Pro，不再依赖构建机器上的 PingFang、Hiragino 或 Menlo。五个字体文件都固定到上游 commit、保存 SHA-256，并携带 SIL Open Font License 1.1；来源、许可文件和用途见 `assets/fonts/README.md` 与 `notes/asset-provenance.yml`。发行预检核对字体文件、许可文件、CSS 引用、PDF 字体嵌入/轮廓化状态及未批准系统字体，机器报告位于 `notes/distribution-asset-audit.json`。
+
+EPUB 不嵌入字体，以避免显著增加文件体积，并允许阅读器采用用户可访问性设置；因此仍需在目标商店和实体设备测试系统字体替换。培训 PPTX 使用系统字体且不嵌入字体，进入商业发行包前仍需验证 PowerPoint、Keynote 和投影设备上的替换效果。工程清单不能替代对最终合同、OFL 通知方式及印厂要求的专业审核。
 
 ## 当前结论与保留项
 
 - 开源内容、代码和商业版的许可边界已拆分，见 `LICENSE`、`LICENSE-CODE` 和 `COMMERCIAL_LICENSE.md`。
 - 外部贡献进入商业版前需要接受 CLA 或另行授权。
 - 当前未发现 Markdown 中直接嵌入的远程第三方图片；外链只作为引用或文档入口。
+- PDF 的固定 OFL 字体、EPUB/PPTX 远程运行资源、源图片来源、页面盒和直接依赖许可元数据均已进入自动发行预检；当前硬失败为 0，人工复核项保留在报告中。
 - 当前核查不是法律意见。商业合同、封面、ISBN 版 PDF/EPUB、字体和营销素材仍需出版社或法律顾问作最终核验。
 
 P9 的独立商业权利核查使用 `external-validation/rights-review-protocol.md` 和对应 YAML 模板。仓库只保存匿名结论、目标 commit 和受控原件引用；法律意见正文及审阅者身份保存在私有档案。

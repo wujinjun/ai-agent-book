@@ -21,7 +21,7 @@
 
 ## 干净 Python 环境
 
-在 `/tmp` 创建全新 Python 3.12.13 虚拟环境，安装 `.[dev,docs,publish]` 后执行完整测试、HTML、PDF、EPUB 和出版审计。增加外部证据门禁后的最终套件为 249 项并全部通过，三种出版格式构建与审计通过。该验证不复用项目内 `.venv` 的 site-packages；十项目 CLI 也使用该环境再次运行。
+在 `/tmp` 创建全新 Python 3.12.13 虚拟环境，安装 `.[dev,docs,publish]` 后执行完整测试、HTML、PDF、EPUB 和出版审计。增加发行资产与外部证据门禁后的最终套件为 252 项并全部通过，三种出版格式构建与审计通过。该验证不复用项目内 `.venv` 的 site-packages；十项目 CLI 也使用该环境再次运行。
 
 此外重新运行 11 个独立示例的隔离编排。每个示例在独立 Python 3.12 venv 中安装自己的 `pyproject.toml`，依次执行离线入口、直接测试、Ruff 和 mypy；Framework Comparison 还重新执行两个框架 Driver 的 strict mypy 与五轮隔离证据生成。报告 `tmp/p2-example-verification.json` 的 `passed` 为 `true`；该报告属于可再生临时证据，不提交虚拟环境。
 
