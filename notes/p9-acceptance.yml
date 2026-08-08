@@ -46,6 +46,15 @@ repository_scope:
     review_pr: https://github.com/wujinjun/ai-agent-book/pull/2
     source_commit: e5ffef07df1a9ecc50ffc4db31594ac9bbc7946c
     kit_sha256: 70fd973b95aaf6b147b2a9e075655358d6541d02079f82e82a7abb48f84d9ee2
+    milestone: https://github.com/wujinjun/ai-agent-book/milestone/1
+    work_items:
+      independent_agent_review: https://github.com/wujinjun/ai-agent-book/issues/3
+      independent_python_review: https://github.com/wujinjun/ai-agent-book/issues/4
+      independent_chinese_edit: https://github.com/wujinjun/ai-agent-book/issues/5
+      learner_trial: https://github.com/wujinjun/ai-agent-book/issues/6
+      enterprise_pilot: https://github.com/wujinjun/ai-agent-book/issues/7
+      physical_device_and_print: https://github.com/wujinjun/ai-agent-book/issues/8
+      legal_and_rights_opinion: https://github.com/wujinjun/ai-agent-book/issues/9
   public_reading_preview:
     status: passed
     checked_at: 2026-08-08
