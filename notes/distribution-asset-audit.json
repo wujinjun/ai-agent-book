@@ -4,8 +4,8 @@
   "status": "passed_with_manual_review_required",
   "pdf": {
     "path": "output/pdf/ai-agent-book-2026.pdf",
-    "sha256": "e5eba5b8deccd063be819f778f1375203b4edaaad6b95bda03032fc9ed92e2d4",
-    "bytes": 11336293,
+    "sha256": "4157300878b67b725f7d56f23c54f99576ba5aabbd57040ac75f706d39e44536",
+    "bytes": 11336768,
     "pages": 454,
     "media_boxes": {
       "594.96x841.92": 454
@@ -24,8 +24,8 @@
   },
   "epub": {
     "path": "output/epub/ai-agent-book-2026.epub",
-    "sha256": "56958509fd90a3a5aa955165ee426e7067ddd6d483dd6434286f67af3e90ec4a",
-    "bytes": 13443707,
+    "sha256": "eb2106e1b3db35dad7d2788b953086f2ac6f077d90eb240bbfac57a0b11bfa8e",
+    "bytes": 13443806,
     "archive_entries_by_suffix": {
       ".css": 1,
       ".ncx": 1,
@@ -88,7 +88,7 @@
         "generator": "scripts/build_diagrams.py",
         "rights_basis": "original repository content rendered by the declared build tool",
         "external_content": false,
-        "computed_sha256": "fe4a4a5d403b6abf5402af7baee61741e28bd5bef895bd0046f56eab5ef1d2a2",
+        "computed_sha256": "ca9aeb867e0d75c1d4b68efeb39cb3f013241e49ef67124a5990f225c06f367b",
         "bytes": 276973
       },
       {

@@ -1,3 +1,6 @@
+import hashlib
+import json
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -15,13 +18,20 @@ NO_FINDINGS = {"p0": 0, "p1": 0, "p2": 1, "p3": 0}
 ROOT = Path(__file__).parents[1]
 
 
-def _base(evidence_type: str, record_id: str) -> dict[str, Any]:
+def _base(
+    evidence_type: str,
+    record_id: str,
+    *,
+    source_commit: str,
+    manifest_hash: str,
+) -> dict[str, Any]:
     return {
         "schema_version": 1,
         "evidence_type": evidence_type,
         "record_id": record_id,
         "checked_at": "2026-08-08",
-        "source_commit": COMMIT,
+        "source_commit": source_commit,
+        "candidate_manifest_sha256": manifest_hash,
     }
 
 
@@ -32,8 +42,13 @@ def _write(directory: Path, name: str, document: dict[str, Any]) -> None:
     )
 
 
-def _valid_review(role: str) -> dict[str, Any]:
-    document = _base("independent_review", f"review-{role.replace('_', '-')}")
+def _valid_review(role: str, *, source_commit: str, manifest_hash: str) -> dict[str, Any]:
+    document = _base(
+        "independent_review",
+        f"review-{role.replace('_', '-')}",
+        source_commit=source_commit,
+        manifest_hash=manifest_hash,
+    )
     document.update(
         {
             "role": role,
@@ -49,12 +64,43 @@ def _valid_review(role: str) -> dict[str, Any]:
     return document
 
 
-def _write_valid_evidence_set(directory: Path) -> None:
-    directory.mkdir()
-    for role in ("agent_engineer", "python_engineer", "chinese_editor"):
-        _write(directory, f"review-{role}.yml", _valid_review(role))
+def _write_candidate_manifest(directory: Path, source_commit: str) -> str:
+    manifest = {
+        "schema_version": 1,
+        "version": "candidate",
+        "source_commit": source_commit,
+        "artifacts": [
+            {"role": role, "file": f"{role}.bin", "bytes": 1, "sha256": "c" * 64}
+            for role in ("book_pdf", "book_epub", "training_pptx", "release_notes")
+        ],
+    }
+    payload = json.dumps(manifest, ensure_ascii=False, indent=2).encode() + b"\n"
+    candidate = directory.parent / "candidate"
+    candidate.mkdir()
+    (candidate / "release-manifest.json").write_bytes(payload)
+    return hashlib.sha256(payload).hexdigest()
 
-    learner = _base("learner_trial", "learner-trial-001")
+
+def _write_valid_evidence_set(directory: Path, *, source_commit: str = COMMIT) -> None:
+    directory.mkdir(parents=True)
+    manifest_hash = _write_candidate_manifest(directory, source_commit)
+    for role in ("agent_engineer", "python_engineer", "chinese_editor"):
+        _write(
+            directory,
+            f"review-{role}.yml",
+            _valid_review(
+                role,
+                source_commit=source_commit,
+                manifest_hash=manifest_hash,
+            ),
+        )
+
+    learner = _base(
+        "learner_trial",
+        "learner-trial-001",
+        source_commit=source_commit,
+        manifest_hash=manifest_hash,
+    )
     learner.update(
         {
             "participants": 3,
@@ -66,7 +112,12 @@ def _write_valid_evidence_set(directory: Path) -> None:
     )
     _write(directory, "learner.yml", learner)
 
-    pilot = _base("enterprise_pilot", "enterprise-pilot-001")
+    pilot = _base(
+        "enterprise_pilot",
+        "enterprise-pilot-001",
+        source_commit=source_commit,
+        manifest_hash=manifest_hash,
+    )
     pilot.update(
         {
             "participants": 8,
@@ -80,7 +131,12 @@ def _write_valid_evidence_set(directory: Path) -> None:
     )
     _write(directory, "enterprise.yml", pilot)
 
-    device = _base("device_print_qa", "device-print-qa-001")
+    device = _base(
+        "device_print_qa",
+        "device-print-qa-001",
+        source_commit=source_commit,
+        manifest_hash=manifest_hash,
+    )
     device.update(
         {
             "devices": [
@@ -106,7 +162,12 @@ def _write_valid_evidence_set(directory: Path) -> None:
     )
     _write(directory, "device.yml", device)
 
-    rights = _base("rights_review", "rights-review-001")
+    rights = _base(
+        "rights_review",
+        "rights-review-001",
+        source_commit=source_commit,
+        manifest_hash=manifest_hash,
+    )
     rights.update(
         {
             "reviewer_id": "anonymous-rights-reviewer",
@@ -140,6 +201,62 @@ def test_external_evidence_must_target_the_release_commit(tmp_path: Path) -> Non
 
     assert result["valid"] is False
     assert any("different commit" in issue for issue in result["issues"])
+
+    manifest = evidence.parent / "candidate/release-manifest.json"
+    manifest.write_text("{}\n", encoding="utf-8")
+    tampered = validate_directory(evidence)
+    assert tampered["valid"] is False
+    assert any("manifest hash mismatch" in issue for issue in tampered["issues"])
+
+
+def test_release_lineage_allows_evidence_only_and_rejects_reviewed_content_changes(
+    tmp_path: Path,
+) -> None:
+    repository = tmp_path / "repository"
+    repository.mkdir()
+    subprocess.run(["git", "init", "-q"], cwd=repository, check=True)
+    subprocess.run(["git", "config", "user.name", "Test"], cwd=repository, check=True)
+    subprocess.run(
+        ["git", "config", "user.email", "test@example.invalid"],
+        cwd=repository,
+        check=True,
+    )
+    (repository / "README.md").write_text("candidate\n", encoding="utf-8")
+    subprocess.run(["git", "add", "README.md"], cwd=repository, check=True)
+    subprocess.run(["git", "commit", "-qm", "candidate"], cwd=repository, check=True)
+    source_commit = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=repository, text=True
+    ).strip()
+
+    evidence = repository / "external-validation/evidence"
+    _write_valid_evidence_set(evidence, source_commit=source_commit)
+    subprocess.run(["git", "add", "external-validation"], cwd=repository, check=True)
+    subprocess.run(["git", "commit", "-qm", "evidence"], cwd=repository, check=True)
+    evidence_commit = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=repository, text=True
+    ).strip()
+
+    accepted = validate_directory(
+        evidence,
+        release_commit=evidence_commit,
+        repository=repository,
+    )
+    assert accepted["valid"] is True
+
+    (repository / "reviewed-content.md").write_text("changed after review\n", encoding="utf-8")
+    subprocess.run(["git", "add", "reviewed-content.md"], cwd=repository, check=True)
+    subprocess.run(["git", "commit", "-qm", "forbidden"], cwd=repository, check=True)
+    forbidden_commit = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=repository, text=True
+    ).strip()
+
+    rejected = validate_directory(
+        evidence,
+        release_commit=forbidden_commit,
+        repository=repository,
+    )
+    assert rejected["valid"] is False
+    assert any("reviewed content" in issue for issue in rejected["issues"])
 
 
 def test_threshold_failure_is_not_accepted(tmp_path: Path) -> None:

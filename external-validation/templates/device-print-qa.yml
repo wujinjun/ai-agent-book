@@ -3,6 +3,7 @@ evidence_type: device_print_qa
 record_id: device-print-qa-001
 checked_at: 2026-08-08
 source_commit: "0000000000000000000000000000000000000000"
+candidate_manifest_sha256: "0000000000000000000000000000000000000000000000000000000000000000"
 devices:
   - category: ios_phone
     os_and_reader: replace-with-observed-version

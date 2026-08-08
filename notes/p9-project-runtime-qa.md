@@ -21,7 +21,7 @@
 
 ## 干净 Python 环境
 
-在 `/tmp` 创建全新 Python 3.12.13 虚拟环境，安装 `.[dev,docs,publish]` 后执行完整测试、HTML、PDF、EPUB 和出版审计。增加培训课件字体、发行资产、外部证据 commit 一致性与最终标签门禁后的最终套件为 254 项并全部通过，三种出版格式构建与审计通过。该验证不复用项目内 `.venv` 的 site-packages；十项目 CLI 也使用该环境再次运行。
+在 `/tmp` 创建全新 Python 3.12.13 虚拟环境，安装 `.[dev,docs,publish]` 后执行完整测试、HTML、PDF、EPUB 和出版审计。增加培训课件字体、发行资产、候选清单、祖先关系与最终化差异门禁后的最终套件为 255 项并全部通过，三种出版格式构建与审计通过。该验证不复用项目内 `.venv` 的 site-packages；十项目 CLI 也使用该环境再次运行。
 
 此外重新运行 11 个独立示例的隔离编排。每个示例在独立 Python 3.12 venv 中安装自己的 `pyproject.toml`，依次执行离线入口、直接测试、Ruff 和 mypy；Framework Comparison 还重新执行两个框架 Driver 的 strict mypy 与五轮隔离证据生成。报告 `tmp/p2-example-verification.json` 的 `passed` 为 `true`；该报告属于可再生临时证据，不提交虚拟环境。
 
@@ -39,7 +39,7 @@
 
 ## 最终发布门禁烟测
 
-发布工作流原先允许版本标签沿用 `--allow-partial`，七份外部证据为空时仍可能进入 Release；该路径已改为失败关闭。标签任务现在要求完整证据、七份记录的 `source_commit` 与 `GITHUB_SHA` 一致，并要求 P9 状态矩阵通过 `--require-complete`。使用当前空证据目录实测，两条命令分别因缺少七类记录和状态仍为 `in_progress_external_evidence_required` 退出非零，证明未完成候选不会被当作最终版发布。
+发布工作流原先允许版本标签沿用 `--allow-partial`，七份外部证据为空时仍可能进入 Release；该路径已改为失败关闭。进一步复审发现，要求证据中的 `source_commit` 等于包含证据本身的 `GITHUB_SHA` 会形成不可执行的 Git 哈希自引用。最终契约现改为：七份记录引用同一冻结候选 commit 和清单哈希；候选必须是标签祖先；候选之后只允许证据、冻结清单与少量状态文件变化，正文、项目、测试或构建代码变化会拒绝发布。P9 状态矩阵仍必须通过 `--require-complete`。
 
 发布包烟测同时验证版本化 PDF、EPUB、培训 PPTX、发行说明、候选清单、SHA-256 和离线 HTML。第一次实测发现 HTML 下载目录可夹带上一轮 PDF/EPUB；打包器现于临时目录强制覆盖本轮文件，回归测试与压缩包内字节哈希均证明嵌套下载和根级产物一致。
 

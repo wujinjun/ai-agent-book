@@ -2825,10 +2825,10 @@
     "semantic_id": "p9-final-acceptance-gates",
     "title": "P9 最终验收门禁",
     "alt": "仓库内技术出版培训证据完成后，还必须经过独立外审、真实试学试讲、实体设备印刷和最终发布，才能关闭 P9",
-    "diagram_id": "final-acceptance-1120abaa443c",
-    "source": "%% id: p9-final-acceptance-gates\n%% title: P9 最终验收门禁\n%% alt: 仓库内技术出版培训证据完成后，还必须经过独立外审、真实试学试讲、实体设备印刷和最终发布，才能关闭 P9\nflowchart LR\n    Repo[\"仓库内证据<br/>38章 / 10项目 / 254测试\"] --> Internal[\"三类维护者角色复审\"]\n    Internal --> External{外部门禁}\n    External --> Review[独立技术与中文外审]\n    External --> Trial[真实试学与企业试讲]\n    External --> Device[实体设备、印刷与权利核查]\n    Review --> Feedback[关闭 P0/P1 反馈]\n    Trial --> Feedback\n    Device --> Feedback\n    Feedback --> Score{五类目标均达标}\n    Score -->|是| Release[合并 main 并发布最终 Release]\n    Score -->|否| Improve[修订并重新验收]\n    Improve --> External\n",
-    "source_asset": "source/final-acceptance-1120abaa443c.mmd",
-    "svg_path": "svg/final-acceptance-1120abaa443c.svg",
-    "png_path": "png/final-acceptance-1120abaa443c.png"
+    "diagram_id": "final-acceptance-d525bfde57cd",
+    "source": "%% id: p9-final-acceptance-gates\n%% title: P9 最终验收门禁\n%% alt: 仓库内技术出版培训证据完成后，还必须经过独立外审、真实试学试讲、实体设备印刷和最终发布，才能关闭 P9\nflowchart LR\n    Repo[\"仓库内证据<br/>38章 / 10项目 / 255测试\"] --> Internal[\"三类维护者角色复审\"]\n    Internal --> External{外部门禁}\n    External --> Review[独立技术与中文外审]\n    External --> Trial[真实试学与企业试讲]\n    External --> Device[实体设备、印刷与权利核查]\n    Review --> Feedback[关闭 P0/P1 反馈]\n    Trial --> Feedback\n    Device --> Feedback\n    Feedback --> Score{五类目标均达标}\n    Score -->|是| Release[合并 main 并发布最终 Release]\n    Score -->|否| Improve[修订并重新验收]\n    Improve --> External\n",
+    "source_asset": "source/final-acceptance-d525bfde57cd.mmd",
+    "svg_path": "svg/final-acceptance-d525bfde57cd.svg",
+    "png_path": "png/final-acceptance-d525bfde57cd.png"
   }
 ]

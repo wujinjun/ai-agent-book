@@ -3,6 +3,7 @@ evidence_type: enterprise_pilot
 record_id: enterprise-pilot-001
 checked_at: 2026-08-08
 source_commit: "0000000000000000000000000000000000000000"
+candidate_manifest_sha256: "0000000000000000000000000000000000000000000000000000000000000000"
 participants: 6
 duration_minutes: 240
 environment_success_rate: 0

@@ -14,6 +14,7 @@ def test_release_package_contains_site_editions_notes_and_valid_checksums(
     (tmp_path / "output/epub").mkdir(parents=True)
     (tmp_path / "output/html/downloads").mkdir(parents=True)
     (tmp_path / "training/slides").mkdir(parents=True)
+    (tmp_path / "external-validation/candidate").mkdir(parents=True)
     (tmp_path / "output/html/index.html").write_text("<h1>book</h1>", encoding="utf-8")
     (tmp_path / "output/pdf/ai-agent-book-2026.pdf").write_bytes(b"pdf")
     (tmp_path / "output/epub/ai-agent-book-2026.epub").write_bytes(b"epub")
@@ -26,6 +27,12 @@ def test_release_package_contains_site_editions_notes_and_valid_checksums(
     )
 
     source_commit = "1" * 40
+    candidate_source_commit = "2" * 40
+    candidate_manifest = tmp_path / "external-validation/candidate/release-manifest.json"
+    candidate_manifest.write_text(
+        json.dumps({"source_commit": candidate_source_commit}) + "\n",
+        encoding="utf-8",
+    )
     outputs = package_release(
         tmp_path,
         "v1.2.3",
@@ -50,6 +57,10 @@ def test_release_package_contains_site_editions_notes_and_valid_checksums(
 
     release = json.loads(release_manifest.read_text(encoding="utf-8"))
     assert release["source_commit"] == source_commit
+    assert release["reviewed_candidate"] == {
+        "source_commit": candidate_source_commit,
+        "manifest_sha256": hashlib.sha256(candidate_manifest.read_bytes()).hexdigest(),
+    }
     assert {item["role"] for item in release["artifacts"]} == {
         "book_pdf",
         "book_epub",

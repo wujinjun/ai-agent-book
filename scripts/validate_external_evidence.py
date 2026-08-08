@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
+import subprocess
 from datetime import date
 from pathlib import Path
 from typing import Annotated, Literal, TypedDict
@@ -15,6 +17,19 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_EVIDENCE_DIR = ROOT / "external-validation/evidence"
+DEFAULT_CANDIDATE_MANIFEST = ROOT / "external-validation/candidate/release-manifest.json"
+FINALIZATION_ALLOWED_FILES = {
+    "CHANGELOG.md",
+    "FINAL_ACCEPTANCE.md",
+    "PROJECT_STATUS.md",
+    "README.md",
+    "notes/ACTIVE_GOAL.md",
+    "notes/p9-acceptance.yml",
+}
+FINALIZATION_ALLOWED_PREFIXES = (
+    "external-validation/candidate/",
+    "external-validation/evidence/",
+)
 REQUIRED_REVIEW_ROLES = {"agent_engineer", "python_engineer", "chinese_editor"}
 REQUIRED_DEVICE_CATEGORIES = {"ios_phone", "ios_tablet", "android_phone"}
 REQUIRED_DEVICE_CHECKS = {"navigation", "diagram", "code", "table"}
@@ -37,6 +52,7 @@ class EvidenceBase(BaseModel):
     record_id: Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]{2,63}$")]
     checked_at: date
     source_commit: Annotated[str, Field(pattern=r"^[0-9a-f]{40}$")]
+    candidate_manifest_sha256: Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
 
 
 class FindingCounts(BaseModel):
@@ -137,6 +153,7 @@ class ValidationSummary(TypedDict):
     counts: dict[str, int]
     review_roles: list[str]
     source_commits: list[str]
+    candidate_manifest_sha256: list[str]
     issues: list[str]
 
 
@@ -159,6 +176,8 @@ def validate_record(record: Evidence) -> list[str]:
     issues: list[str] = []
     if set(record.source_commit) == {"0"}:
         issues.append("source_commit placeholder must be replaced")
+    if set(record.candidate_manifest_sha256) == {"0"}:
+        issues.append("candidate_manifest_sha256 placeholder must be replaced")
     if record.checked_at > date.today():
         issues.append("checked_at cannot be in the future")
     if not _no_open_high_findings(record):
@@ -216,11 +235,118 @@ def validate_record(record: Evidence) -> list[str]:
     return issues
 
 
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as source:
+        for block in iter(lambda: source.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def validate_candidate_manifest(
+    path: Path,
+    *,
+    source_commits: set[str],
+    expected_hashes: set[str],
+) -> list[str]:
+    if not source_commits and not expected_hashes:
+        return []
+    if not path.is_file():
+        return [f"candidate manifest missing: {path}"]
+
+    issues: list[str] = []
+    actual_hash = sha256(path)
+    if expected_hashes != {actual_hash}:
+        issues.append(
+            "candidate manifest hash mismatch: "
+            f"records={sorted(expected_hashes)}, actual={actual_hash}"
+        )
+    try:
+        document = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return [*issues, f"candidate manifest cannot be read: {exc}"]
+    if not isinstance(document, dict):
+        return [*issues, "candidate manifest must be a JSON object"]
+    if document.get("source_commit") not in source_commits:
+        issues.append(
+            "candidate manifest source_commit does not match evidence: "
+            f"{document.get('source_commit')!r}"
+        )
+    artifacts = document.get("artifacts")
+    if not isinstance(artifacts, list):
+        return [*issues, "candidate manifest artifacts must be a list"]
+    roles = {
+        role
+        for item in artifacts
+        if isinstance(item, dict) and isinstance((role := item.get("role")), str)
+    }
+    required_roles = {"book_pdf", "book_epub", "training_pptx", "release_notes"}
+    missing_roles = required_roles - roles
+    if missing_roles:
+        issues.append(f"candidate manifest missing artifact roles: {sorted(missing_roles)}")
+    return issues
+
+
+def _allowed_finalization_path(path: str) -> bool:
+    return path in FINALIZATION_ALLOWED_FILES or path.startswith(
+        FINALIZATION_ALLOWED_PREFIXES
+    )
+
+
+def validate_release_lineage(
+    *,
+    repository: Path,
+    source_commits: set[str],
+    release_commit: str,
+) -> list[str]:
+    if re.fullmatch(r"[0-9a-f]{40}", release_commit) is None:
+        return ["release commit must be a 40-character lowercase Git SHA"]
+    if len(source_commits) != 1:
+        return ["release lineage requires exactly one reviewed source commit"]
+    source_commit = next(iter(source_commits))
+    if source_commit == release_commit:
+        return ["release commit must follow the reviewed candidate commit"]
+
+    ancestor = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", source_commit, release_commit],
+        cwd=repository,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if ancestor.returncode != 0:
+        return [
+            "reviewed source commit is not an ancestor of the release commit: "
+            f"{source_commit} -> {release_commit}"
+        ]
+
+    changed = subprocess.run(
+        ["git", "diff", "--name-only", source_commit, release_commit, "--"],
+        cwd=repository,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if changed.returncode != 0:
+        return [f"cannot inspect finalization delta: {changed.stderr.strip()}"]
+    forbidden = sorted(
+        path
+        for path in changed.stdout.splitlines()
+        if path and not _allowed_finalization_path(path)
+    )
+    if forbidden:
+        return [f"finalization delta changes reviewed content: {forbidden}"]
+    return []
+
+
 def validate_directory(
     directory: Path,
     *,
     require_all: bool = True,
     expected_source_commit: str | None = None,
+    release_commit: str | None = None,
+    repository: Path = ROOT,
+    candidate_manifest: Path | None = None,
 ) -> ValidationSummary:
     records: list[Evidence] = []
     issues: list[str] = []
@@ -244,6 +370,7 @@ def validate_directory(
     ]
     record_ids = [record.record_id for record in records]
     source_commits = {record.source_commit for record in records}
+    candidate_manifest_hashes = {record.candidate_manifest_sha256 for record in records}
     if expected_source_commit is not None:
         if re.fullmatch(r"[0-9a-f]{40}", expected_source_commit) is None:
             issues.append("expected source commit must be a 40-character lowercase Git SHA")
@@ -265,9 +392,28 @@ def validate_directory(
             issues.append("exactly three independent_review records are required")
         if records and len(source_commits) != 1:
             issues.append("all external evidence must target the same source commit")
+        if records and len(candidate_manifest_hashes) != 1:
+            issues.append("all external evidence must target the same candidate manifest")
         for required in ("learner_trial", "enterprise_pilot", "device_print_qa", "rights_review"):
             if counts.get(required, 0) != 1:
                 issues.append(f"exactly one {required} record is required")
+
+    manifest_path = candidate_manifest or directory.parent / "candidate/release-manifest.json"
+    issues.extend(
+        validate_candidate_manifest(
+            manifest_path,
+            source_commits=source_commits,
+            expected_hashes=candidate_manifest_hashes,
+        )
+    )
+    if release_commit is not None:
+        issues.extend(
+            validate_release_lineage(
+                repository=repository,
+                source_commits=source_commits,
+                release_commit=release_commit,
+            )
+        )
 
     return {
         "valid": not issues,
@@ -275,6 +421,7 @@ def validate_directory(
         "counts": counts,
         "review_roles": sorted(review_roles),
         "source_commits": sorted(source_commits),
+        "candidate_manifest_sha256": sorted(candidate_manifest_hashes),
         "issues": issues,
     }
 
@@ -284,12 +431,16 @@ def main() -> int:
     parser.add_argument("evidence_dir", nargs="?", type=Path, default=DEFAULT_EVIDENCE_DIR)
     parser.add_argument("--allow-partial", action="store_true")
     parser.add_argument("--expected-source-commit")
+    parser.add_argument("--release-commit")
+    parser.add_argument("--candidate-manifest", type=Path)
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
     result = validate_directory(
         args.evidence_dir,
         require_all=not args.allow_partial,
         expected_source_commit=args.expected_source_commit,
+        release_commit=args.release_commit,
+        candidate_manifest=args.candidate_manifest,
     )
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))

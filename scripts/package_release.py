@@ -46,6 +46,25 @@ def artifact_record(path: Path, role: str) -> dict[str, Any]:
     }
 
 
+def reviewed_candidate_record(root: Path) -> dict[str, str] | None:
+    path = root / "external-validation/candidate/release-manifest.json"
+    if not path.is_file():
+        return None
+    try:
+        document = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RuntimeError(f"candidate release manifest cannot be read: {exc}") from exc
+    if not isinstance(document, dict):
+        raise RuntimeError("candidate release manifest must be a JSON object")
+    source_commit = document.get("source_commit")
+    if not isinstance(source_commit, str) or re.fullmatch(r"[0-9a-f]{40}", source_commit) is None:
+        raise RuntimeError("candidate release manifest has an invalid source_commit")
+    return {
+        "source_commit": source_commit,
+        "manifest_sha256": sha256(path),
+    }
+
+
 def release_notes(changelog: str, version: str) -> str:
     normalized = version.removeprefix("v")
     heading = f"## v{normalized}"
@@ -109,6 +128,7 @@ def package_release(
                 "schema_version": 1,
                 "version": version,
                 "source_commit": commit,
+                "reviewed_candidate": reviewed_candidate_record(root),
                 "artifacts": [
                     artifact_record(pdf_output, "book_pdf"),
                     artifact_record(epub_output, "book_epub"),

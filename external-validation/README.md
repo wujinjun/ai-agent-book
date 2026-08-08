@@ -35,40 +35,50 @@ flowchart LR
 | 实体设备与印刷 | 1 | iPhone、iPad、Android 实机和印刷样张通过 | [设备与印刷协议](device-print-protocol.md) |
 | 商业权利核查 | 1 | 独立专业核查、八类权利范围完整、无开放条件 | [权利核查协议](rights-review-protocol.md) |
 
-每份记录必须引用其核验的 40 位 Git commit。最终标签的发布门禁会把七份记录的 `source_commit` 与标签所指向的 `GITHUB_SHA` 比较；证据来自其他提交时，Release 会拒绝创建。Reviewer 的姓名、公司邮箱、电话、签字件和法律意见正文保存在受控系统；仓库只提交匿名 `reviewer_id`、不含个人信息的汇总指标和私有原件引用或哈希。
+每份记录必须引用同一个已冻结候选的 40 位 Git commit 和同一份候选清单 SHA-256。证据随后才写入仓库，因此不能要求 `source_commit` 等于包含证据文件的标签 commit；那会形成 Git 哈希自引用。最终门禁改为验证候选是标签的祖先，并拒绝候选之后对教材正文、项目、测试或构建代码的任何修改。Reviewer 的姓名、公司邮箱、电话、签字件和法律意见正文保存在受控系统；仓库只提交匿名 `reviewer_id`、不含个人信息的汇总指标和私有原件引用或哈希。
 
 ## 使用方法
 
-1. 从 [`templates/`](templates/) 复制对应 YAML 到 `evidence/`，改名为不含姓名的稳定记录 ID。
-2. 完成活动后填写汇总值，所有 P0/P1 问题关闭并在私有原件中保留复验记录。
-3. 执行局部检查：
+1. 固定并推送候选 commit。构建发布包，把候选清单复制到固定路径并计算哈希：
+
+   ```bash
+   candidate_commit="$(git rev-parse HEAD)"
+   .venv/bin/python scripts/package_release.py --version p9-candidate
+   cp output/release/RELEASE_MANIFEST-p9-candidate.json \
+     external-validation/candidate/release-manifest.json
+   candidate_manifest_sha256="$(shasum -a 256 \
+     external-validation/candidate/release-manifest.json | awk '{print $1}')"
+   ```
+
+2. 从 [`templates/`](templates/) 复制对应 YAML 到 `evidence/`，改名为不含姓名的稳定记录 ID；七份记录都填写上述 `candidate_commit` 和 `candidate_manifest_sha256`。
+3. 完成活动后填写汇总值，所有 P0/P1 问题关闭并在私有原件中保留复验记录。若修复正文、代码或构建工具，必须重新冻结候选、重新打包并重新取得受影响证据。
+4. 执行局部检查：
 
    ```bash
    .venv/bin/python scripts/validate_external_evidence.py external-validation/evidence --allow-partial
    ```
 
-4. 七份证据齐全后，对固定候选 commit 执行最终检查：
+5. 七份证据齐全后，对固定候选执行最终检查：
 
    ```bash
-   candidate_commit="$(git rev-parse HEAD)"
    .venv/bin/python scripts/validate_external_evidence.py \
      external-validation/evidence \
      --expected-source-commit "$candidate_commit"
    ```
 
-5. 构建发布候选并检查 `RELEASE_MANIFEST-<版本>.json`。该清单固定候选 commit，并记录 PDF、EPUB、培训 PPTX 和发行说明的文件名、大小与 SHA-256：
+6. 核对候选包的文件校验和：
 
    ```bash
-   .venv/bin/python scripts/package_release.py --version v2026.x.y
-   python -m json.tool output/release/RELEASE_MANIFEST-v2026.x.y.json
-   cd output/release && shasum -a 256 -c SHA256SUMS-v2026.x.y.txt
+   python -m json.tool output/release/RELEASE_MANIFEST-p9-candidate.json
+   cd output/release && shasum -a 256 -c SHA256SUMS-p9-candidate.txt
    ```
 
-6. 验证器通过并不自动关闭 P9。维护者还必须核对私有原件、更新 `notes/p9-acceptance.yml`、重新计算五类目标分，并验证 main 与最终 GitHub Release。版本标签工作流还会强制执行完整证据校验和 `audit_final_acceptance.py --require-complete`；普通分支仍允许保留部分证据。
+7. 验证器通过并不自动关闭 P9。维护者核对私有原件后，只能提交证据、冻结清单和规定的最终状态文件，再更新 `notes/p9-acceptance.yml` 与五类得分。版本标签工作流会验证候选祖先关系、最终化差异白名单、完整证据和 `audit_final_acceptance.py --require-complete`；普通分支仍允许保留部分证据。
 
 ## 证据边界
 
 - `private_source_reference` 或 `private_opinion_reference` 只保存受控系统编号、不可逆哈希或访问受限的档案引用，不提交原始身份信息。
 - 自动验证器检查结构和阈值，不判断外部记录是否伪造。维护者必须比对原件、活动日期、目标 commit 和问题关闭证据。
+- 候选到最终标签之间允许修改的路径由验证器固定；若出现章节、项目、测试、依赖或构建代码变化，必须产生新候选并重新执行相应外部验收。
 - 同一人不得同时充当仓库维护者角色复审和对应独立外审；利益冲突声明必须留档。
 - 失败记录可以保留在私有工作区用于改进，但只有关闭 P0/P1 并复验通过的最终汇总进入仓库。

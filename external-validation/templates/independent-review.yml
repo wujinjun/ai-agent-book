@@ -4,6 +4,7 @@ evidence_type: independent_review
 record_id: review-agent-001
 checked_at: 2026-08-08
 source_commit: "0000000000000000000000000000000000000000"
+candidate_manifest_sha256: "0000000000000000000000000000000000000000000000000000000000000000"
 role: agent_engineer # agent_engineer | python_engineer | chinese_editor
 reviewer_id: anonymous-reviewer-001
 independent: false
