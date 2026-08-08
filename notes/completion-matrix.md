@@ -1,6 +1,6 @@
 # 教材完成矩阵
 
-状态审计日期：2026-08-07。该日期只表示仓库交付审计，不表示所有外部 API 在当天重新核对。
+状态审计日期：2026-08-08。该日期只表示仓库交付审计，不表示所有外部 API 在当天重新核对。
 
 ## 状态词汇
 
@@ -95,3 +95,14 @@
 | 项目10 | `production_reference` | 多租户 API、PostgreSQL/SQLite、Redis 恢复队列、Verifier/RBAC、Agent/Tool/MCP/RAG、Trace/Eval/指标、重试、DLQ、取消和一致性备份 | 真实 OIDC/JWKS、RLS、独立 Worker、管理前端与灾备演练 | P4—P9 |
 
 项目 4、8、10 已达到离线 `production_reference`，但没有项目标记为 `externally_validated`。外部状态必须有真实账号、远程系统或设备验收证据，不能仅根据 README 描述升级。
+
+## 企业培训交付矩阵
+
+| 交付物 | 状态 | 验收证据 | 后续边界 |
+|---|---|---|---|
+| 讲师与学员手册 | `repository_verified` | 课前、课中、课后节奏；12 个实验；提交与失败证据契约 | 真实班级试讲在 P9 |
+| 学习路线与评分 | `repository_verified` | 8/12/24 周路线、周任务、时间、输出、检查标准和双层 Rubric | 根据试学数据校准难度 |
+| 题库与案例 | `repository_verified` | 38 章题目、100 分综合考试、参考答案、五类企业案例 | 外部技术审阅在 P9 |
+| 工作坊 | `repository_verified` | 架构评审、威胁建模、成本估算的输入、流程与产出 | 企业场景试讲在 P9 |
+| 离线培训包 | `offline_verified` | 四组稳定 Fixture、内容哈希、Pydantic 校验与确定性清单 | 在线 Provider 仅作可选扩展 |
+| 培训幻灯片 | `visual_verified` | 16 页 PPTX、逐页渲染、溢出检查、讲师备注与来源块 | 投影设备实测在 P9 |

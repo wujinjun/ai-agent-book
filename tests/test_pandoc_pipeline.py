@@ -12,7 +12,9 @@ def test_composed_book_has_ordered_chapters_projects_and_no_raw_mermaid(
     output = compose_book(ROOT, tmp_path / "book.md")
     text = output.read_text(encoding="utf-8")
 
-    assert text.index("什么是大语言模型") < text.index("技术选型")
+    assert text.index("# 第1章 第1节：什么是大语言模型？") < text.index(
+        "# 第38章：技术选型指南"
+    )
     assert text.index("项目1：最小 AI Assistant") < text.index("项目10：企业级 Agent 平台")
     assert "```mermaid" not in text
     assert text.count("# 项目") >= 10

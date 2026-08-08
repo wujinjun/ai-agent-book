@@ -8,7 +8,7 @@
 
 - 38 章正文、7 篇导读、首页、学习指南、术语表、参考资料、索引与示例索引；
 - 10 个项目 README、项目入口、共享服务契约与项目专项恢复实现；
-- 227 张 Mermaid 源图及其 SVG、2x PNG 和内容哈希清单；
+- 235 张 Mermaid 源图及其 SVG、2x PNG 和内容哈希清单；
 - MkDocs HTML、Pandoc PDF、EPUB3 三条出版链路；
 - Python 3.12 根级测试、Ruff、mypy、Compose 配置与密钥模式扫描。
 

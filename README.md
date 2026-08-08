@@ -2,7 +2,7 @@
 
 这是一套面向软件工程师的中文技术教材工程。它不把 Agent 等同于某个框架，也不把能调用一次模型的脚本包装成生产系统；全书从 LLM 的生成机制出发，依次讨论结构化输出、工具调用、MCP、RAG、Memory、工作流、多 Agent，以及测试、部署、可观测性和安全治理。
 
-> 当前公开版本为 **v2026.8.0 / 多格式出版预览版**。第 1—38 章、11 个独立示例、十个项目与 HTML/PDF/EPUB 出版管线均已完成本轮复审；项目 4、8、10 达到离线 `production_reference`。真实生产环境联调、培训材料和商业出版编辑仍按质量路线图推进。详见 [`PROJECT_STATUS.md`](PROJECT_STATUS.md)、[`notes/completion-matrix.md`](notes/completion-matrix.md) 与 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
+> 当前公开版本为 **v2026.8.0 / 多格式出版预览版**。第 1—38 章、11 个独立示例、十个项目与 HTML/PDF/EPUB 出版管线均已完成本轮复审；项目 4、8、10 达到离线 `production_reference`。仓库版企业培训材料已完成，真实生产环境联调、正式班级试讲和商业出版编辑仍按质量路线图推进。详见 [`PROJECT_STATUS.md`](PROJECT_STATUS.md)、[`notes/completion-matrix.md`](notes/completion-matrix.md) 与 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
 
 ## 下载已发布版本
 
@@ -46,6 +46,8 @@
 - 想设计复杂工作流：继续学习第 10、20、22、27、32、36—38 章，再完成项目 8—10。
 
 完整的 8 周、12 周和 24 周安排见[学习指南](docs/learning-guide.md)。
+
+讲师可从[企业培训入口](docs/training/index.md)获取讲师手册、12 个离线核心实验、题库、综合考试、评分标准、企业案例、工作坊与配套幻灯片。核心实验不要求付费账号或真实 API Key。
 
 ## 8 周与 12 周计划概览
 

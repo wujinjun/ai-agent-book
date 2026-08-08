@@ -1,0 +1,37 @@
+schema_version: 1
+updated: 2026-08-08
+acceptance:
+  instructor_can_deliver_from_repository: true
+  core_labs_run_without_paid_accounts: true
+  routes_have_tasks_outputs_and_checks: true
+  question_bank_covers_all_chapters: true
+  enterprise_cases: [customer_service, knowledge_base, engineering, office, compliance]
+  workshops: [architecture_review, threat_modeling, cost_estimation]
+materials:
+  - id: instructor-guide
+    path: docs/training/instructor-guide.md
+    status: complete
+  - id: student-lab-manual
+    path: docs/training/student-lab-manual.md
+    status: complete
+  - id: assessment-rubric
+    path: docs/training/assessment-rubric.md
+    status: complete
+  - id: question-bank
+    path: docs/training/question-bank.md
+    status: complete
+  - id: enterprise-cases
+    path: docs/training/enterprise-cases.md
+    status: complete
+  - id: workshops
+    path: docs/training/workshops.md
+    status: complete
+  - id: offline-training-pack
+    path: docs/training/offline-training-pack.md
+    status: complete
+  - id: common-mistakes
+    path: docs/training/common-mistakes.md
+    status: complete
+  - id: slides
+    path: training/slides/ai-agent-engineering-training.pptx
+    status: complete
