@@ -463,16 +463,20 @@ def audit_dependencies(pyproject: Path) -> tuple[list[dict[str, Any]], list[str]
             if located.is_file():
                 license_files.append({"path": str(file), "sha256": sha256(located)})
         license_value = metadata.get("License")
+        license_expression = metadata.get("License-Expression")
         records.append(
             {
                 "name": metadata.get("Name", name),
                 "version": package.version,
                 "license_metadata": license_value,
+                "license_expression": license_expression,
                 "license_classifiers": classifiers,
                 "license_files": license_files,
             }
         )
-        signal = " ".join([license_value or "", *classifiers]).lower()
+        signal = " ".join(
+            [license_expression or "", license_value or "", *classifiers]
+        ).lower()
         if not signal:
             manual.append(f"Dependency {name} has no concise license signal in package metadata.")
         if "affero" in signal or "agpl" in signal:

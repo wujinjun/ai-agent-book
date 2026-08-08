@@ -17,7 +17,7 @@
 
 审阅者还应核查最终发布包的 SHA-256 与目标 commit，避免对旧版材料出具结论。私有法律意见、合同和个人身份信息不得提交仓库；只记录受控档案编号或不可逆哈希。
 
-先运行 `python scripts/audit_distribution_assets.py` 并阅读 `notes/distribution-asset-audit.json`。报告中的硬失败必须为 0；人工复核清单中的 OFL 通知、EPUB/PPTX 字体替换、依赖条款和印厂页面规范必须逐项形成结论，不能因为自动预检通过而跳过。
+先运行 `python scripts/audit_distribution_assets.py` 并阅读 `notes/distribution-asset-audit.json`。依赖清单同时保留传统 `License`、SPDX `License-Expression`、Classifier 和随包许可证文件哈希；报告中的硬失败必须为 0。人工复核清单中的 OFL 通知、EPUB/PPTX 字体替换、依赖条款和印厂页面规范仍须逐项形成结论，不能因为自动预检通过而跳过。
 
 ## 通过标准
 

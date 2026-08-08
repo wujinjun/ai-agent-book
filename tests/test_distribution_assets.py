@@ -1,7 +1,12 @@
 import zipfile
 from pathlib import Path
 
-from scripts.audit_distribution_assets import audit_epub, audit_pptx, audit_source_assets
+from scripts.audit_distribution_assets import (
+    audit_dependencies,
+    audit_epub,
+    audit_pptx,
+    audit_source_assets,
+)
 
 ROOT = Path(__file__).parents[1]
 
@@ -15,6 +20,15 @@ def test_distribution_fonts_have_fixed_checksums_licenses_and_print_css_links() 
     assert {font["license"] for font in fonts} == {"SIL-OFL-1.1"}
     assert all(font["sha256"] == font["computed_sha256"] for font in fonts)
     assert all((ROOT / font["license_file"]).is_file() for font in fonts)
+
+    dependencies, hard_issues, manual = audit_dependencies(ROOT / "pyproject.toml")
+    assert hard_issues == []
+    records = {record["name"].lower(): record for record in dependencies}
+    assert records["langgraph"]["license_expression"] == "MIT"
+    assert records["psycopg"]["license_expression"] == "LGPL-3.0-only"
+    assert records["pytest-asyncio"]["license_expression"] == "Apache-2.0"
+    for package in ("langgraph", "psycopg", "pytest-asyncio"):
+        assert not any(f"Dependency {package} has no concise" in item for item in manual)
 
 
 def test_epub_runtime_resource_audit_distinguishes_links_from_dependencies(
