@@ -84,7 +84,9 @@ def test_release_package_contains_site_editions_notes_and_valid_checksums(
         assert f"{expected}  {path.name}" in manifest
 
 
-def test_local_release_candidate_rejects_a_dirty_git_worktree(tmp_path: Path) -> None:
+def test_local_release_candidate_rejects_a_dirty_git_worktree(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     (tmp_path / "output/html").mkdir(parents=True)
     (tmp_path / "output/pdf").mkdir(parents=True)
     (tmp_path / "output/epub").mkdir(parents=True)
@@ -110,10 +112,17 @@ def test_local_release_candidate_rejects_a_dirty_git_worktree(tmp_path: Path) ->
         check=True,
     )
     subprocess.run(["git", "commit", "-qm", "candidate"], cwd=tmp_path, check=True)
+    repository_head = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=tmp_path, text=True
+    ).strip()
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+    monkeypatch.setenv("GITHUB_SHA", "f" * 40)
 
     clean_release = tmp_path / "output/release-clean"
     package_release(tmp_path, "clean", clean_release)
     release_manifest = next(clean_release.glob("RELEASE_MANIFEST-*.json"))
+    release_document = json.loads(release_manifest.read_text(encoding="utf-8"))
+    assert release_document["source_commit"] == repository_head
     kit, archive = prepare_kit(
         tmp_path,
         release_manifest,

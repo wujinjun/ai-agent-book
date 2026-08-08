@@ -27,11 +27,15 @@ def sha256(path: Path) -> str:
 
 
 def resolve_source_commit(root: Path, override: str | None = None) -> str:
-    candidate = override or os.environ.get("GITHUB_SHA", "")
-    if not candidate:
-        candidate = subprocess.check_output(
-            ["git", "rev-parse", "HEAD"], cwd=root, text=True
-        ).strip()
+    if override is not None:
+        candidate = override
+    else:
+        try:
+            candidate = subprocess.check_output(
+                ["git", "rev-parse", "HEAD"], cwd=root, text=True
+            ).strip()
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            candidate = os.environ.get("GITHUB_SHA", "")
     if re.fullmatch(r"[0-9a-f]{40}", candidate) is None:
         raise RuntimeError(f"invalid source commit: {candidate!r}")
     return candidate
@@ -125,7 +129,10 @@ def package_release(
         if not required.exists():
             raise RuntimeError(f"release input missing: {required}")
 
-    if require_clean and source_commit is None and not os.environ.get("GITHUB_ACTIONS"):
+    is_ci_checkout = root.resolve() == ROOT.resolve() and bool(
+        os.environ.get("GITHUB_ACTIONS")
+    )
+    if require_clean and source_commit is None and not is_ci_checkout:
         ensure_clean_worktree(root)
 
     safe_version = version.replace("/", "-")

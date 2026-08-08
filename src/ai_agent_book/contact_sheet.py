@@ -18,9 +18,16 @@ CARD = "#FFFFFF"
 INK = "#172033"
 MUTED = "#5C6472"
 ACCENT = "#246B68"
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 def _font(size: int, *, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+    bundled = PROJECT_ROOT / "assets/fonts/noto-sans-sc" / (
+        "NotoSansSC-Bold.otf" if bold else "NotoSansSC-Regular.otf"
+    )
+    if bundled.is_file():
+        return ImageFont.truetype(str(bundled), size=size)
+
     candidates = (
         (Path("/System/Library/Fonts/Hiragino Sans GB.ttc"), 0),
         (Path("/System/Library/Fonts/STHeiti Light.ttc"), 1),

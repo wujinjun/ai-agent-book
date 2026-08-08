@@ -4,7 +4,7 @@
   "status": "passed_with_manual_review_required",
   "pdf": {
     "path": "output/pdf/ai-agent-book-2026.pdf",
-    "sha256": "aefb32a515d4292ebcf55ac0b0f078b7d487eef7815b47300db5de916ac58b0f",
+    "sha256": "27c7ef515ea21d037b23bddccb053f02dc59d2f1fad5342fe5f514f051132557",
     "bytes": 11337048,
     "pages": 454,
     "media_boxes": {
@@ -24,8 +24,8 @@
   },
   "epub": {
     "path": "output/epub/ai-agent-book-2026.epub",
-    "sha256": "31de5806f70815eb6cdd8cb6bd259a7b96c2566109940462a61a88754251a24d",
-    "bytes": 13443800,
+    "sha256": "b70708b586a970e1e858e27a4f8d08de89be97ecef9974cc7f0002b4596dcd99",
+    "bytes": 13443798,
     "archive_entries_by_suffix": {
       ".css": 1,
       ".ncx": 1,
@@ -341,6 +341,23 @@
       ]
     },
     {
+      "name": "lxml",
+      "version": "6.1.1",
+      "license_metadata": "BSD-3-Clause",
+      "license_expression": null,
+      "license_classifiers": [],
+      "license_files": [
+        {
+          "path": "lxml-6.1.1.dist-info/licenses/LICENSE.txt",
+          "sha256": "8fc2b568133516e46845d2147917adeee1648e70ae9ab5ed6c5417afef4ce855"
+        },
+        {
+          "path": "lxml-6.1.1.dist-info/licenses/LICENSES.txt",
+          "sha256": "41d49dd406aa0e1548a6d5f21a30d6bf638b3cd96eb7289dd348d83ed2e40392"
+        }
+      ]
+    },
+    {
       "name": "mkdocs-material",
       "version": "9.6.14",
       "license_metadata": null,
@@ -627,7 +644,7 @@
     }
   ],
   "dependency_closure_license_inventory": {
-    "pyproject_sha256": "407bd3c992184e382774b3434535429a311407506e77f6534b44f3b9d8883a47",
+    "pyproject_sha256": "7acaa57c6ea68ba120397522b9f8b58d0e505614360bdecca63f2e5821906d9d",
     "environment": {
       "implementation_name": "cpython",
       "platform_machine": "arm64",
@@ -639,6 +656,7 @@
       "fastapi",
       "httpx",
       "langgraph",
+      "lxml",
       "mkdocs-material",
       "mypy",
       "packaging",
@@ -1104,6 +1122,24 @@
         "license_expression": null,
         "license_classifiers": [],
         "license_files": [],
+        "selected_extras": []
+      },
+      {
+        "name": "lxml",
+        "version": "6.1.1",
+        "license_metadata": "BSD-3-Clause",
+        "license_expression": null,
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "lxml-6.1.1.dist-info/licenses/LICENSE.txt",
+            "sha256": "8fc2b568133516e46845d2147917adeee1648e70ae9ab5ed6c5417afef4ce855"
+          },
+          {
+            "path": "lxml-6.1.1.dist-info/licenses/LICENSES.txt",
+            "sha256": "41d49dd406aa0e1548a6d5f21a30d6bf638b3cd96eb7289dd348d83ed2e40392"
+          }
+        ],
         "selected_extras": []
       },
       {
