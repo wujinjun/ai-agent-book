@@ -39,19 +39,21 @@ flowchart LR
 
 ## 使用方法
 
-1. 提交并推送全部候选内容，确认工作区干净。构建发布包，把候选清单复制到固定路径并计算哈希；本地打包器发现任何未提交或未跟踪文件时会拒绝运行：
+1. 提交并推送全部候选内容，确认工作区干净。构建发布包和外部验收执行包；两个工具都会拒绝未提交或未跟踪文件，执行包还会再次核对候选 commit、文件大小和 SHA-256：
 
    ```bash
    test -z "$(git status --porcelain)"
    candidate_commit="$(git rev-parse HEAD)"
-   .venv/bin/python scripts/package_release.py --version p9-candidate
-   cp output/release/RELEASE_MANIFEST-p9-candidate.json \
-     external-validation/candidate/release-manifest.json
-   candidate_manifest_sha256="$(shasum -a 256 \
-     external-validation/candidate/release-manifest.json | awk '{print $1}')"
+   .venv/bin/python scripts/package_release.py \
+     --version p9-candidate \
+     --destination output/release-p9-candidate
+   .venv/bin/python scripts/prepare_external_validation_kit.py \
+     output/release-p9-candidate/RELEASE_MANIFEST-p9-candidate.json
    ```
 
-2. 从 [`templates/`](templates/) 复制对应 YAML 到 `evidence/`，改名为不含姓名的稳定记录 ID；七份记录都填写上述 `candidate_commit` 和 `candidate_manifest_sha256`。
+   分发 `output/external-validation-kit.zip`。其中包含可直接打开的 HTML 完整包、PDF、EPUB、培训 PPTX、发行说明、五份执行协议、候选清单、校验文件、执行包文件清单，以及七份已绑定 commit/清单哈希但仍默认失败的 YAML。
+
+2. 审阅者在执行包内填写记录并交回匿名 YAML。维护者核对私有原件后，把执行包的 `candidate/release-manifest.json` 复制到仓库同名目录，并把七份 YAML 放入 `evidence/`；不要提交整套产物或任何身份信息。
 3. 完成活动后填写汇总值，所有 P0/P1 问题关闭并在私有原件中保留复验记录。若修复正文、代码或构建工具，必须重新冻结候选、重新打包并重新取得受影响证据。
 4. 执行局部检查：
 
@@ -69,11 +71,12 @@ flowchart LR
      --expected-source-commit "$candidate_commit"
    ```
 
-6. 核对候选包的文件校验和：
+6. 核对候选包和执行包的文件校验和：
 
    ```bash
-   python -m json.tool output/release/RELEASE_MANIFEST-p9-candidate.json
-   cd output/release && shasum -a 256 -c SHA256SUMS-p9-candidate.txt
+   python -m json.tool \
+     output/release-p9-candidate/RELEASE_MANIFEST-p9-candidate.json
+   cd output/release-p9-candidate && shasum -a 256 -c SHA256SUMS-p9-candidate.txt
    ```
 
 7. 验证器通过并不自动关闭 P9。维护者核对私有原件后，只能提交证据、冻结清单和规定的最终状态文件，再更新 `notes/p9-acceptance.yml` 与五类得分。版本标签工作流会验证候选祖先关系、最终化差异白名单、完整证据和 `audit_final_acceptance.py --require-complete`；普通分支仍允许保留部分证据。

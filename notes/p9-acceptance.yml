@@ -11,7 +11,7 @@ repository_scope:
   fresh_environment: passed
   tests: 256
   ruff: passed
-  mypy_targets: 48
+  mypy_targets: 49
   diagrams: 236
   reference_links: {ok: 105, restricted: 8, verified_separately: 0, failed: 0}
   html: passed

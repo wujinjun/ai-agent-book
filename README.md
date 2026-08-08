@@ -166,10 +166,14 @@ PYTHONPATH=src python scripts/audit_publication.py all output
 发布候选使用下列命令打包：
 
 ```bash
-python scripts/package_release.py --version v2026.x.y
+python scripts/package_release.py \
+  --version v2026.x.y \
+  --destination output/release-v2026.x.y
+python scripts/prepare_external_validation_kit.py \
+  output/release-v2026.x.y/RELEASE_MANIFEST-v2026.x.y.json
 ```
 
-打包器会生成版本化 HTML/PDF/EPUB、企业培训 PPTX、发行说明、`RELEASE_MANIFEST` 和 `SHA256SUMS`；本地工作区不干净时默认拒绝打包。候选清单把冻结候选 commit 与三种主要发行文件的大小、SHA-256 绑定，方便独立审阅者确认对象。证据提交晚于候选，最终标签因此验证候选祖先关系和受控最终化差异，而不是要求证据自引用标签 SHA；正文、项目或构建代码在外审后发生变化时必须重新验收。
+打包器会生成版本化 HTML/PDF/EPUB、企业培训 PPTX、发行说明、`RELEASE_MANIFEST` 和 `SHA256SUMS`；本地工作区不干净时默认拒绝打包。第二条命令再次核对候选 commit、PDF/EPUB/PPTX/发行说明以及 HTML 完整包的大小与 SHA-256，然后生成含协议、产物和七份预绑定模板的 `output/external-validation-kit.zip`。模板保持默认失败状态，不能替代真实活动。证据提交晚于候选，最终标签因此验证候选祖先关系和受控最终化差异，而不是要求证据自引用标签 SHA；正文、项目或构建代码在外审后发生变化时必须重新验收。
 
 ## 贡献与版本说明
 

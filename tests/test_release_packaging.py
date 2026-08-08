@@ -5,8 +5,11 @@ import zipfile
 from pathlib import Path
 
 import pytest
+import yaml
 
 from scripts.package_release import package_release
+from scripts.prepare_external_validation_kit import prepare_kit
+from scripts.validate_external_evidence import validate_directory
 
 
 def test_release_package_contains_site_editions_notes_and_valid_checksums(
@@ -108,7 +111,52 @@ def test_local_release_candidate_rejects_a_dirty_git_worktree(tmp_path: Path) ->
     )
     subprocess.run(["git", "commit", "-qm", "candidate"], cwd=tmp_path, check=True)
 
-    package_release(tmp_path, "clean", tmp_path / "output/release-clean")
+    clean_release = tmp_path / "output/release-clean"
+    package_release(tmp_path, "clean", clean_release)
+    release_manifest = next(clean_release.glob("RELEASE_MANIFEST-*.json"))
+    kit, archive = prepare_kit(
+        tmp_path,
+        release_manifest,
+        tmp_path / "output/external-validation-kit",
+    )
+    first_archive_hash = hashlib.sha256(archive.read_bytes()).hexdigest()
+    assert len(list((kit / "evidence").glob("*.yml"))) == 7
+    assert len(list((kit / "artifacts").glob("ai-agent-book-output-*.zip"))) == 1
+    assert len(list((kit / "artifacts").iterdir())) == 1
+    assert len(list((kit / "candidate").glob("SHA256SUMS-*.txt"))) == 1
+    for evidence_path in (kit / "evidence").glob("*.yml"):
+        evidence = yaml.safe_load(evidence_path.read_text(encoding="utf-8"))
+        assert (
+            evidence["source_commit"]
+            == subprocess.check_output(
+                ["git", "rev-parse", "HEAD"], cwd=tmp_path, text=True
+            ).strip()
+        )
+        assert set(evidence["candidate_manifest_sha256"]) != {"0"}
+    validation = validate_directory(
+        kit / "evidence",
+        candidate_manifest=kit / "candidate/release-manifest.json",
+    )
+    assert validation["valid"] is False
+    assert validation["complete"] is False
+    _, rebuilt_archive = prepare_kit(
+        tmp_path,
+        release_manifest,
+        tmp_path / "output/external-validation-kit",
+    )
+    assert hashlib.sha256(rebuilt_archive.read_bytes()).hexdigest() == first_archive_hash
+
+    released_pdf = next(clean_release.glob("*.pdf"))
+    original_pdf = released_pdf.read_bytes()
+    released_pdf.write_bytes(b"tampered")
+    with pytest.raises(RuntimeError, match="artifact .* mismatch"):
+        prepare_kit(
+            tmp_path,
+            release_manifest,
+            tmp_path / "output/external-validation-kit",
+        )
+    released_pdf.write_bytes(original_pdf)
+
     changelog.write_text("# changed after candidate\n", encoding="utf-8")
 
     with pytest.raises(RuntimeError, match="clean Git worktree"):
