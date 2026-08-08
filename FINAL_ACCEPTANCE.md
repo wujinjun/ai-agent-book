@@ -18,11 +18,11 @@
 
 - 38 章内部逐章复审；正文无空章或未处理 TODO，236 张图和代码围栏通过门禁。
 - 十个项目当前源码 CLI 全部运行；十个 Python 3.12 Linux 服务镜像全部构建并通过 Readiness。
-- 全新 Python 3.12.13 虚拟环境安装完整开发、文档和出版依赖，245 项测试通过。
+- 全新 Python 3.12.13 虚拟环境安装完整开发、文档和出版依赖，249 项测试通过。
 - Ruff、mypy strict、内部/外部链接、113 条参考资料、密钥、隐私和仓库卫生审计通过。
 - HTML、PDF、EPUB 从同一原稿重建并通过出版审计；候选发布包和 SHA-256 清单可生成。
 - Agent 工程、Python 工程和中文编辑三个维护者角色复审完成，且明确不冒充独立外审。
 
 ## 未完成门禁
 
-所有缺口的负责人、原因和复查日期记录在 [`notes/p9-acceptance.yml`](notes/p9-acceptance.yml)，真人试学与试讲执行方法见 [`training/p9-trial-protocol.md`](training/p9-trial-protocol.md)。在外部证据完成前，不合并为最终正式版本，也不把当前候选描述为商业出版终稿。
+所有缺口的负责人、原因和复查日期记录在 [`notes/p9-acceptance.yml`](notes/p9-acceptance.yml)。独立审阅、真人试学/试讲、实体设备/印刷和商业权利核查已经整理为可直接执行的 [`external-validation/`](external-validation/) 外部验收包，并由 `scripts/validate_external_evidence.py` 校验匿名汇总和通过阈值。在七份真实证据完成前，不合并为最终正式版本，也不把当前候选描述为商业出版终稿。

@@ -35,6 +35,7 @@ jobs:
           .venv/bin/python scripts/check_secrets.py
           .venv/bin/python scripts/audit_privacy.py
           .venv/bin/python scripts/audit_final_acceptance.py
+          .venv/bin/python scripts/validate_external_evidence.py external-validation/evidence --allow-partial
       - name: Lint and type-check
         run: |
           .venv/bin/ruff check .

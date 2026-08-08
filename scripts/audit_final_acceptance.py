@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -11,6 +12,14 @@ from typing import Any
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.validate_external_evidence import (  # noqa: E402
+    DEFAULT_EVIDENCE_DIR,
+    validate_directory,
+)
+
 MATRIX = ROOT / "notes/p9-acceptance.yml"
 REQUIRED_GAP_FIELDS = {"id", "owner", "reason", "next_review"}
 REQUIRED_EVIDENCE = {
@@ -27,6 +36,7 @@ REQUIRED_EVIDENCE = {
     "epub",
     "secret_scan",
     "privacy_scan",
+    "external_evidence_intake",
 }
 
 
@@ -72,6 +82,8 @@ def validate_matrix(document: dict[str, Any]) -> list[str]:
         for name, score in score_items.items():
             if score["current"] < score["target"]:
                 issues.append(f"complete status has score below target: {name}")
+        external = validate_directory(DEFAULT_EVIDENCE_DIR)
+        issues.extend(f"external evidence: {issue}" for issue in external["issues"])
     return issues
 
 

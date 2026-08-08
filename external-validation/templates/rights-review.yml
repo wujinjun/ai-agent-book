@@ -1,0 +1,12 @@
+schema_version: 1
+evidence_type: rights_review
+record_id: rights-review-001
+checked_at: 2026-08-08
+source_commit: "0000000000000000000000000000000000000000"
+reviewer_id: anonymous-rights-reviewer-001
+independent: false
+professional_capacity: false
+categories_reviewed: []
+decision: not_approved
+open_findings: {p0: 0, p1: 0, p2: 0, p3: 0}
+private_opinion_reference: "controlled-record-id-or-sha256"

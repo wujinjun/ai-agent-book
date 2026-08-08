@@ -16,6 +16,7 @@ def test_complete_status_rejects_open_gaps_and_below_target_scores() -> None:
     issues = validate_matrix(matrix)
     assert "complete status cannot contain open gaps" in issues
     assert any("score below target" in issue for issue in issues)
+    assert any("external evidence" in issue for issue in issues)
 
 
 def test_every_gap_has_accountability_and_review_date() -> None:

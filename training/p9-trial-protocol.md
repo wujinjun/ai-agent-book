@@ -29,3 +29,5 @@
 | 复验 | 修复提交、复验参与者和结果 |
 
 原始反馈只保留匿名编号和必要技术信息；自由文本发布前执行隐私审查。试学完成后汇总到 P9 接受矩阵，不提交含个人身份的信息。
+
+完成活动后分别从 `external-validation/templates/learner-trial.yml` 和 `external-validation/templates/enterprise-pilot.yml` 复制汇总模板。局部证据使用 `scripts/validate_external_evidence.py external-validation/evidence --allow-partial` 检查；只有七类外部记录全部满足门槛，完整验证命令才会通过。

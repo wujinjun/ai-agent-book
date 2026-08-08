@@ -1,0 +1,12 @@
+schema_version: 1
+evidence_type: enterprise_pilot
+record_id: enterprise-pilot-001
+checked_at: 2026-08-08
+source_commit: "0000000000000000000000000000000000000000"
+participants: 6
+duration_minutes: 240
+environment_success_rate: 0
+core_lab_completion_rate: 0
+average_gain_percentage_points: 0
+repository_only_delivery: false
+open_findings: {p0: 0, p1: 0, p2: 0, p3: 0}
