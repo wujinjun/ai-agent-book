@@ -10,6 +10,7 @@
 - P8/P9：启用 [GitHub Pages 在线阅读预览](https://wujinjun.github.io/ai-agent-book/)，并实测首页、PDF 与 EPUB 下载入口；站点仍明确标记为候选预览。
 - P9：按维护者范围决定完成仓库内验收；七类真人或专业外部活动改为明确排除且未通过，版本标签改为验证 `complete_repository_scope`，避免把范围缩减伪装成外部背书。
 - 发布 454 页 PDF、EPUB3、离线 HTML、企业培训 PPTX、发行清单与 SHA-256；本版本声明范围为仓库验证，不包含七类外部背书。
+- 修复 Release job 在未 checkout 仓库时缺少 `GH_REPO` 的问题；v2026.8.1 首次附件已从同一通过门禁的 Actions 产物恢复发布。
 
 ## v2026.8.0 - 2026-08-08
 
