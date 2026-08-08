@@ -103,14 +103,12 @@ jobs:
           python-version: "3.12"
           cache: pip
 
-      - name: Require complete P9 evidence for a version tag
+      - name: Require repository-scope P9 completion for a version tag
         run: |
           python -m venv .venv
           .venv/bin/pip install -e .
-          .venv/bin/python scripts/validate_external_evidence.py \
-            external-validation/evidence \
-            --release-commit "$GITHUB_SHA"
-          .venv/bin/python scripts/audit_final_acceptance.py --require-complete
+          .venv/bin/python scripts/audit_final_acceptance.py \
+            --require-repository-complete
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')

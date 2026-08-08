@@ -24,8 +24,9 @@ def test_publish_workflow_deploys_pages_and_versioned_downloads() -> None:
     assert 'gh release create "$GITHUB_REF_NAME"' in source
     assert "final-gate:" in source
     assert "needs: [build, final-gate]" in source
-    assert '--release-commit "$GITHUB_SHA"' in source
-    assert "audit_final_acceptance.py --require-complete" in source
+    assert '--release-commit "$GITHUB_SHA"' not in source
+    assert "audit_final_acceptance.py" in source
+    assert "--require-repository-complete" in source
 
 
 def test_homepage_links_published_offline_editions() -> None:

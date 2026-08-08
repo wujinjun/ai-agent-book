@@ -7,7 +7,7 @@
 
 这是一套面向软件工程师的中文技术教材工程。它不把 Agent 等同于某个框架，也不把能调用一次模型的脚本包装成生产系统；全书从 LLM 的生成机制出发，依次讨论结构化输出、工具调用、MCP、RAG、Memory、工作流、多 Agent，以及测试、部署、可观测性和安全治理。
 
-> 当前公开正式版本为 **v2026.8.0 / 多格式出版预览版**。第 1—38 章、11 个独立示例、十个项目与 HTML/PDF/EPUB 出版管线均已完成本轮复审；项目 4、8、10 达到离线 `production_reference`。P9 仓库内验收已经取得当前源码、Python 3.12、十项目容器和 256 项测试证据，但独立外审、真实试学/试讲、实体设备/印刷与最终 Release 尚未完成。外部参与者可下载只用于验收的 [`p9-candidate-e5ffef0` 预发布执行包](https://github.com/wujinjun/ai-agent-book/releases/tag/p9-candidate-e5ffef0)，在 [Issue #1](https://github.com/wujinjun/ai-agent-book/issues/1) 认领角色、在 [Draft PR #2](https://github.com/wujinjun/ai-agent-book/pull/2) 逐行审阅，并按照 [`external-validation/`](external-validation/) 操作；完整状态见 [`FINAL_ACCEPTANCE.md`](FINAL_ACCEPTANCE.md) 与 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
+> 第 1—38 章、11 个独立示例、十个项目与 HTML/PDF/EPUB 出版管线已经完成仓库范围验收；项目 4、8、10 达到离线 `production_reference`，Python 3.12、十项目容器和 257 项测试证据齐全。P9 当前状态为 `complete_repository_scope`。独立外审、真人试学/试讲、实体设备/印刷与专业权利意见已按维护者决定排除出本次范围，并明确记录为“未验证”，不冒充通过。当前公开正式版仍为 **v2026.8.0**，新仓库范围版本正在发布流程中；完整边界见 [`FINAL_ACCEPTANCE.md`](FINAL_ACCEPTANCE.md) 与 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
 
 ![教材 HTML 首页：三栏导航、学习地图与离线下载入口](docs/assets/readme-home.png)
 
@@ -174,7 +174,7 @@ python scripts/prepare_external_validation_kit.py \
   output/release-v2026.x.y/RELEASE_MANIFEST-v2026.x.y.json
 ```
 
-打包器会生成版本化 HTML/PDF/EPUB、企业培训 PPTX、发行说明、`RELEASE_MANIFEST` 和 `SHA256SUMS`；本地工作区不干净时默认拒绝打包。第二条命令再次核对候选 commit、PDF/EPUB/PPTX/发行说明以及 HTML 完整包的大小与 SHA-256，然后生成含协议、产物和七份预绑定模板的 `output/external-validation-kit.zip`。模板保持默认失败状态，不能替代真实活动。证据提交晚于候选，最终标签因此验证候选祖先关系和受控最终化差异，而不是要求证据自引用标签 SHA；正文、项目或构建代码在外审后发生变化时必须重新验收。
+打包器会生成版本化 HTML/PDF/EPUB、企业培训 PPTX、发行说明、`RELEASE_MANIFEST` 和 `SHA256SUMS`；本地工作区不干净时默认拒绝打包。第二条命令可生成包含协议、产物和七份预绑定模板的可选外部验收包。模板保持默认失败状态，不能替代真实活动。版本标签要求仓库范围矩阵达到 `complete_repository_scope`；它只证明自动化与维护者可验证范围，不代表七类外部活动通过。
 
 ## 贡献与版本说明
 

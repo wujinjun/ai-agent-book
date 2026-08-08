@@ -1,12 +1,12 @@
 # P9 外部验收执行包
 
-本目录把 P9 尚未完成的真人门禁转换为可执行、可追溯、可复验的证据流程。它不包含虚构的通过记录；`evidence/` 在真实活动完成前只保留说明文件。
+本目录保存可选的真人追加验证流程。维护者已将这些活动排除出当前仓库范围完成目标；它们没有通过，`evidence/` 仍只保留说明文件。未来若重新纳入完整商业验收，可继续使用本流程。
 
 当前冻结候选为 [`p9-candidate-e5ffef0`](https://github.com/wujinjun/ai-agent-book/releases/tag/p9-candidate-e5ffef0)，对应 commit `e5ffef07df1a9ecc50ffc4db31594ac9bbc7946c`。Release 附件 `external-validation-kit-e5ffef0.zip` 的 SHA-256 为 `70fd973b95aaf6b147b2a9e075655358d6541d02079f82e82a7abb48f84d9ee2`。它是预发布验收材料，不表示任何外部活动已经通过；旧候选 `034ac18` 已因 Linux CI 暴露的依赖、字体和 Git 环境隔离缺陷而被替代。
 
 参与者可在 [P9 外部验收跟踪 Issue #1](https://github.com/wujinjun/ai-agent-book/issues/1) 认领角色和报告进度。Issue 只用于公开协调；姓名、联系方式、签字件、原始测评数据、合同和法律意见仍须保存在受控渠道。
 
-技术与中文编辑审阅者可在 [Draft PR #2](https://github.com/wujinjun/ai-agent-book/pull/2) 对具体行提出意见。PR 在七份外部证据齐全前不得转为 Ready 或合并；若意见导致受保护内容变化，则当前候选失效并重新冻结。
+技术与中文编辑仍可在 [PR #2](https://github.com/wujinjun/ai-agent-book/pull/2) 对具体行提出意见。仓库范围发布不等待七份记录；任何未来外部结论只能在真实活动和原件核对后追加。
 
 ```mermaid
 flowchart LR
@@ -85,12 +85,12 @@ flowchart LR
    cd output/release-p9-candidate && shasum -a 256 -c SHA256SUMS-p9-candidate.txt
    ```
 
-7. 验证器通过并不自动关闭 P9。维护者核对私有原件后，只能提交证据、冻结清单和规定的最终状态文件，再更新 `notes/p9-acceptance.yml` 与五类得分。版本标签工作流会验证候选祖先关系、最终化差异白名单、完整证据和 `audit_final_acceptance.py --require-complete`；普通分支仍允许保留部分证据。
+7. 验证器通过只表示可选外部证据达到其自身阈值，不改变已经发布的仓库范围结论。若未来要声明完整外部验收，仍需核对私有原件并把状态升级为 `complete`；当前版本标签只要求 `audit_final_acceptance.py --require-repository-complete`。
 
 ## 证据边界
 
 - `private_source_reference` 或 `private_opinion_reference` 只保存受控系统编号、不可逆哈希或访问受限的档案引用，不提交原始身份信息。
 - 自动验证器检查结构和阈值，不判断外部记录是否伪造。维护者必须比对原件、活动日期、目标 commit 和问题关闭证据。
-- 候选到最终标签之间允许修改的路径由验证器固定；若出现章节、项目、测试、依赖或构建代码变化，必须产生新候选并重新执行相应外部验收。
+- 若未来重新启用完整外部验收，正文、项目、测试、依赖或构建代码变化后必须重新冻结外部候选并重新执行受影响活动。
 - 同一人不得同时充当仓库维护者角色复审和对应独立外审；利益冲突声明必须留档。
 - 失败记录可以保留在私有工作区用于改进，但只有关闭 P0/P1 并复验通过的最终汇总进入仓库。

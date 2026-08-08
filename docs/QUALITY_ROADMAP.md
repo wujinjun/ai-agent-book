@@ -152,7 +152,7 @@
 - [x] Release 打包器生成版本化 HTML/PDF/EPUB、企业培训 PPTX、变更摘要、候选 commit/产物清单与 SHA-256，并由发布工作流上传。
 - [x] `.gitignore` 与仓库卫生门禁禁止提交缓存、临时目录和 `output/`；本地候选打包及校验通过，正式附件由 P9 发布。
 
-验收：P8 仓库内范围通过，证据见 `notes/p8-github-acceptance.yml` 与 `notes/quickstart-qa.md`。全新 Python 3.12 虚拟环境在本机缓存条件下约 28 秒完成安装、离线 Tool Loop、5 项测试和 HTML 构建；15 分钟预算保留充足余量。GitHub Pages 公网地址当前未启用或未就绪，P9 发布前必须验证，README 不发布失效链接。
+验收：P8 仓库内范围通过，证据见 `notes/p8-github-acceptance.yml` 与 `notes/quickstart-qa.md`。全新 Python 3.12 虚拟环境在本机缓存条件下约 28 秒完成安装、离线 Tool Loop、5 项测试和 HTML 构建；15 分钟预算保留充足余量。GitHub Pages 公网首页、PDF 和 EPUB 下载入口已经实测可用。
 
 ## P9：最终验收
 
@@ -160,11 +160,11 @@
 - [x] 从全新 Python 3.12 环境运行十项目命令、完整测试和出版命令；独立示例另有 P2 隔离环境证据。
 - [x] 在 Python 3.12 重建十项目容器、测试、HTML、PDF 和 EPUB，并实际执行全部服务健康检查。
 - [x] 执行内部链接、113 条外部链接、密钥、隐私和仓库卫生扫描，未处理失败为 0。
-- [x] 完成 Agent 工程师、Python 工程师和中文编辑三类维护者角色审阅；三类独立外审仍未完成。
-- [ ] 完成真实学员试学和企业培训试讲。
-- [ ] 关闭高优先级反馈，更新最终完成矩阵。
-- [ ] 发布正式版本 Release。
+- [x] 完成 Agent 工程师、Python 工程师和中文编辑三类维护者角色审阅。
+- [x] 关闭仓库范围高优先级反馈，更新最终完成矩阵。
+- [x] 将独立外审、真实试学/试讲、实体设备/印刷和专业权利意见逐项记录为范围排除且未通过。
+- [ ] 发布仓库范围正式版本 Release。
 
-仓库内证据见 `notes/p9-acceptance.yml`、`notes/p9-project-runtime-qa.md` 和 `FINAL_ACCEPTANCE.md`。八项高优先级问题已经关闭，包括标签绕过证据、发布包嵌套旧版下载、Git SHA 自引用和脏工作区候选；256 项测试通过。版本标签强制校验完整证据、候选清单、祖先关系、最终化差异和完成矩阵。五类目标仍未全部达到，因此 P9 不得标记完成。
+仓库内证据见 `notes/p9-acceptance.yml`、`notes/p9-project-runtime-qa.md` 和 `FINAL_ACCEPTANCE.md`。八项高优先级问题已经关闭，包括标签绕过、发布包嵌套旧版下载、Git SHA 自引用和脏工作区候选；257 项测试通过。P9 状态为 `complete_repository_scope`，版本标签强制校验仓库范围目标以及七类 `excluded_not_passed` 边界。
 
-外审角色、试验阈值、设备/印刷、权利核查、匿名模板和命令见 `external-validation/`。执行包不替代真实参与者与受控原件；P9 仅在五类目标全部达标，且所有缺口都有负责人、原因和复查日期后关闭。
+外审角色、试验阈值、设备/印刷、权利核查、匿名模板和命令继续保留在 `external-validation/`，作为未来可选的完整商业验收扩展。执行包不替代真实参与者与受控原件，当前 `0/7` 不能描述为通过。

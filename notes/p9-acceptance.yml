@@ -1,6 +1,11 @@
 version: 1
 checked_at: 2026-08-08
-status: in_progress_external_evidence_required
+status: complete_repository_scope
+scope_decision:
+  decided_at: 2026-08-08
+  authority: repository_owner
+  external_validation: excluded
+  reason: independent reviews, human trials, physical device/print QA and professional rights review are outside the requested repository-only completion scope
 repository_scope:
   chapters_reviewed: 38
   project_clis_run: 10
@@ -9,7 +14,7 @@ repository_scope:
   isolated_examples_verified: 11
   python: 3.12.13
   fresh_environment: passed
-  tests: 256
+  tests: 257
   ruff: passed
   mypy_targets: 49
   diagrams: 236
@@ -18,12 +23,12 @@ repository_scope:
   pdf:
     status: passed
     pages: 454
-    bytes: 11337048
-    sha256: 27c7ef515ea21d037b23bddccb053f02dc59d2f1fad5342fe5f514f051132557
+    bytes: 11337880
+    sha256: 5156be475a00d84bd264dce96ea54054b584aad162cda4a0d692609a05a31aba
   epub:
     status: passed
-    bytes: 13443798
-    sha256: b70708b586a970e1e858e27a4f8d08de89be97ecef9974cc7f0002b4596dcd99
+    bytes: 13443807
+    sha256: 89a0e716bf1ce7412eb2d407daef28e5621c6fa1a4ab23efd5fdd76d96272436
   training_pptx:
     status: passed_repository_scope
     slides: 16
@@ -67,13 +72,12 @@ repository_scope:
     epub_download_http: 200
     boundary: public_preview_not_final_release
   final_release_gate:
-    status: enforced_fail_closed
-    requires_complete_external_evidence: true
-    requires_candidate_ancestry: true
-    finalization_delta_allowlist: true
-    requires_candidate_manifest_hash: true
+    status: repository_scope_ready
+    requires_complete_external_evidence: false
+    external_evidence_disposition: excluded_not_passed
+    requires_repository_scope_matrix: true
     requires_clean_candidate_worktree: true
-    requires_complete_score_matrix: true
+    requires_repository_score_matrix: true
     html_downloads_match_root_artifacts: true
     release_manifest_roles: [book_pdf, book_epub, training_pptx, release_notes]
 internal_role_reviews:
@@ -81,42 +85,32 @@ internal_role_reviews:
   python_engineer: notes/p9-python-engineering-review.md
   chinese_editor: notes/p9-editorial-review.md
 scores:
-  kind: evidence_weighted_internal_estimate
-  personal_system_learning: {current: 90, target: 95}
-  enterprise_training: {current: 85, target: 90}
-  github_showcase: {current: 93, target: 95}
-  commercial_publication: {current: 82, target: 90}
-  ten_production_templates: {current: 80, target: 80}
-open_gaps:
+  kind: repository_verified_readiness_with_separate_full_targets
+  personal_system_learning: {current: 90, repository_target: 90, full_target: 95}
+  enterprise_training: {current: 85, repository_target: 85, full_target: 90}
+  github_showcase: {current: 93, repository_target: 93, full_target: 95}
+  commercial_publication: {current: 82, repository_target: 82, full_target: 90}
+  ten_production_templates: {current: 80, repository_target: 80, full_target: 80}
+open_gaps: []
+excluded_external_gates:
   - id: independent-agent-review
-    owner: independent Agent engineer
-    reason: execution packet is ready, but maintainer role review cannot provide independent technical validation
-    next_review: 2026-08-22
+    status: excluded_not_passed
+    reason: requires an independent Agent engineer
   - id: independent-python-review
-    owner: independent Python engineer
-    reason: execution packet is ready, but concurrency, migration and load paths require a second reviewer
-    next_review: 2026-08-22
+    status: excluded_not_passed
+    reason: requires an independent Python engineer
   - id: independent-chinese-edit
-    owner: professional Chinese technical editor
-    reason: execution packet is ready, but repository automation and maintainer edit do not equal independent publication editing
-    next_review: 2026-08-22
+    status: excluded_not_passed
+    reason: requires an independent Chinese technical editor
   - id: learner-trial
-    owner: learner trial coordinator
-    reason: protocol and evidence template are ready; at least three real target readers are still required
-    next_review: 2026-08-22
+    status: excluded_not_passed
+    reason: requires at least three real target readers
   - id: enterprise-pilot
-    owner: enterprise trainer
-    reason: protocol and evidence template are ready; a real 6-12 person class and pre/post assessment are still required
-    next_review: 2026-08-22
+    status: excluded_not_passed
+    reason: requires a real 6-12 person training cohort
   - id: physical-device-and-print
-    owner: publisher and maintainer
-    reason: protocol and evidence template are ready; physical iOS/Android readers and a print proof remain external
-    next_review: 2026-08-22
+    status: excluded_not_passed
+    reason: requires physical iOS and Android devices plus a print proof
   - id: legal-and-rights-opinion
-    owner: publisher legal reviewer
-    reason: rights checklist and evidence template are ready; they do not replace an independent legal opinion
-    next_review: 2026-08-22
-  - id: final-main-and-release
-    owner: repository maintainer
-    reason: P9 candidate e5ffef0 is published as a prerelease, but public v2026.8.0 remains the earlier 400-page version until all external evidence passes
-    next_review: 2026-08-22
+    status: excluded_not_passed
+    reason: requires an independent professional rights review

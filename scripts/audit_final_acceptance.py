@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the P9 evidence matrix without turning open external gates into success."""
+"""Validate full or explicitly repository-scoped P9 completion claims."""
 
 from __future__ import annotations
 
@@ -22,6 +22,16 @@ from scripts.validate_external_evidence import (  # noqa: E402
 
 MATRIX = ROOT / "notes/p9-acceptance.yml"
 REQUIRED_GAP_FIELDS = {"id", "owner", "reason", "next_review"}
+REQUIRED_EXCLUSION_FIELDS = {"id", "reason", "status"}
+REQUIRED_EXTERNAL_EXCLUSIONS = {
+    "independent-agent-review",
+    "independent-python-review",
+    "independent-chinese-edit",
+    "learner-trial",
+    "enterprise-pilot",
+    "physical-device-and-print",
+    "legal-and-rights-opinion",
+}
 REQUIRED_EVIDENCE = {
     "chapters_reviewed",
     "project_clis_run",
@@ -62,8 +72,14 @@ def validate_matrix(document: dict[str, Any]) -> list[str]:
     if len(score_items) != 5:
         issues.append("exactly five target scores are required")
     for name, score in score_items.items():
-        if not isinstance(score, dict) or not {"current", "target"} <= set(score):
-            issues.append(f"score {name} must contain current and target")
+        if not isinstance(score, dict) or not {
+            "current",
+            "repository_target",
+            "full_target",
+        } <= set(score):
+            issues.append(
+                f"score {name} must contain current, repository_target and full_target"
+            )
 
     gaps = document.get("open_gaps", [])
     for index, gap in enumerate(gaps):
@@ -79,11 +95,43 @@ def validate_matrix(document: dict[str, Any]) -> list[str]:
             if not str(gap[field]).strip():
                 issues.append(f"gap {gap['id']} has empty {field}")
 
-    if document.get("status") == "complete":
+    status = document.get("status")
+    if status == "complete_repository_scope":
+        if gaps:
+            issues.append("repository-scope completion cannot contain open gaps")
+        decision = document.get("scope_decision")
+        if not isinstance(decision, dict) or decision.get("external_validation") != "excluded":
+            issues.append("repository-scope completion requires an explicit exclusion decision")
+        exclusions = document.get("excluded_external_gates", [])
+        exclusion_ids: set[str] = set()
+        for index, exclusion in enumerate(exclusions):
+            if not isinstance(exclusion, dict):
+                issues.append(f"external exclusion {index} must be a mapping")
+                continue
+            missing = REQUIRED_EXCLUSION_FIELDS - set(exclusion)
+            if missing:
+                issues.append(f"external exclusion {index} missing fields: {sorted(missing)}")
+                continue
+            exclusion_ids.add(str(exclusion["id"]))
+            if exclusion["status"] != "excluded_not_passed":
+                issues.append(
+                    f"external exclusion {exclusion['id']} must be excluded_not_passed"
+                )
+            if not str(exclusion["reason"]).strip():
+                issues.append(f"external exclusion {exclusion['id']} has empty reason")
+        if exclusion_ids != REQUIRED_EXTERNAL_EXCLUSIONS:
+            issues.append(
+                "repository-scope completion must list exactly the seven external exclusions"
+            )
+        for name, score in score_items.items():
+            if score["current"] < score["repository_target"]:
+                issues.append(f"repository-scope score below target: {name}")
+
+    if status == "complete":
         if gaps:
             issues.append("complete status cannot contain open gaps")
         for name, score in score_items.items():
-            if score["current"] < score["target"]:
+            if score["current"] < score["full_target"]:
                 issues.append(f"complete status has score below target: {name}")
         external = validate_directory(DEFAULT_EVIDENCE_DIR)
         issues.extend(f"external evidence: {issue}" for issue in external["issues"])
@@ -93,11 +141,19 @@ def validate_matrix(document: dict[str, Any]) -> list[str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--require-complete", action="store_true")
+    parser.add_argument("--require-repository-complete", action="store_true")
     args = parser.parse_args()
     document = load_matrix()
     issues = validate_matrix(document)
     if args.require_complete and document.get("status") != "complete":
         issues.append(f"P9 status is {document.get('status')}, not complete")
+    if (
+        args.require_repository_complete
+        and document.get("status") != "complete_repository_scope"
+    ):
+        issues.append(
+            f"P9 status is {document.get('status')}, not complete_repository_scope"
+        )
     for issue in issues:
         print(issue)
     if issues:

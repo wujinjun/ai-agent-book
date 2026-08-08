@@ -4,8 +4,8 @@
   "status": "passed_with_manual_review_required",
   "pdf": {
     "path": "output/pdf/ai-agent-book-2026.pdf",
-    "sha256": "27c7ef515ea21d037b23bddccb053f02dc59d2f1fad5342fe5f514f051132557",
-    "bytes": 11337048,
+    "sha256": "5156be475a00d84bd264dce96ea54054b584aad162cda4a0d692609a05a31aba",
+    "bytes": 11337880,
     "pages": 454,
     "media_boxes": {
       "594.96x841.92": 454
@@ -24,8 +24,8 @@
   },
   "epub": {
     "path": "output/epub/ai-agent-book-2026.epub",
-    "sha256": "b70708b586a970e1e858e27a4f8d08de89be97ecef9974cc7f0002b4596dcd99",
-    "bytes": 13443798,
+    "sha256": "89a0e716bf1ce7412eb2d407daef28e5621c6fa1a4ab23efd5fdd76d96272436",
+    "bytes": 13443807,
     "archive_entries_by_suffix": {
       ".css": 1,
       ".ncx": 1,
