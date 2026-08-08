@@ -51,8 +51,8 @@ repository_scope:
     checked_at: 2026-08-08
     url: https://wujinjun.github.io/ai-agent-book/
     source_commit: e5ffef07df1a9ecc50ffc4db31594ac9bbc7946c
-    pages_commit: 4b0143f15b9a362075241be239215deef438b115
-    pages_tree: a2ac9d8be6d07cd92d506916a32140a3bb332b70
+    pages_commit: 603211853597b61044895d3119e00766939fa6d3
+    pages_tree: 5674232ff27335b8c488d141d76e1b1d72995757
     homepage_http: 200
     pdf_download_http: 200
     epub_download_http: 200
