@@ -23,7 +23,7 @@
 - 十个项目均已达到 `service_template`；项目 4、8、10 另达到离线 `production_reference`。真实第三方账号、云基础设施和生产流量验证仍属于外部验收边界。
 - P5—P8 的培训、引用、图形版式和 GitHub 展示仓库内范围已经完成；当前 P9 候选为 236 张图、454 页固定字体 PDF 和 EPUB3。
 - P9 已完成当前源码十项目 CLI/容器运行、全新 Python 3.12 环境、257 项测试、三格式出版、培训课件字体、发行资产/外链/密钥/隐私审计、仓库范围标签门禁和三类维护者角色复审。
-- 公开 [GitHub Release v2026.8.0](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.0) 仍对应较早的 400 页候选；P7—P9 最新工作仍在 `feature/full-book-visual-review`，不能描述为最终正式版。
+- P0—P9 仓库范围成果已经合并到 `main`；[GitHub Release v2026.8.1](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.1) 提供完整出版附件。
 - P9 仓库范围已完成；外部活动保留为可选追加验证，当前记录为 `0/7`、`complete=False`。
 
 只有仓库范围要求均有当前仓库、测试、构建产物和远端发布状态证明时，才可以宣布本次目标完成；公告必须同时说明七类外部活动未验证。
