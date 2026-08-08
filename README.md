@@ -1,8 +1,34 @@
 # AI Agent 从零到实战：原理、工程与项目（2026版）
 
+[![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](COMPATIBILITY.md)
+[![教材许可](https://img.shields.io/badge/教材-CC%20BY--NC--SA%204.0-5A67D8)](LICENSE)
+[![代码许可](https://img.shields.io/badge/代码-MIT-2F855A)](LICENSE-CODE)
+[![质量路线](https://img.shields.io/badge/质量路线-P0%E2%80%94P9-805AD5)](docs/QUALITY_ROADMAP.md)
+
 这是一套面向软件工程师的中文技术教材工程。它不把 Agent 等同于某个框架，也不把能调用一次模型的脚本包装成生产系统；全书从 LLM 的生成机制出发，依次讨论结构化输出、工具调用、MCP、RAG、Memory、工作流、多 Agent，以及测试、部署、可观测性和安全治理。
 
 > 当前公开版本为 **v2026.8.0 / 多格式出版预览版**。第 1—38 章、11 个独立示例、十个项目与 HTML/PDF/EPUB 出版管线均已完成本轮复审；项目 4、8、10 达到离线 `production_reference`。仓库版企业培训材料已完成，真实生产环境联调、正式班级试讲和商业出版编辑仍按质量路线图推进。详见 [`PROJECT_STATUS.md`](PROJECT_STATUS.md)、[`notes/completion-matrix.md`](notes/completion-matrix.md) 与 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
+
+![教材 HTML 首页：三栏导航、学习地图与离线下载入口](docs/assets/readme-home.png)
+
+## 15 分钟 Quick Start
+
+下面的路径不需要 API Key，也不会访问模型供应商。它先运行一个完整 Tool Loop，再构建本地可阅读网站。
+
+```bash
+git clone https://github.com/wujinjun/ai-agent-book.git
+cd ai-agent-book
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e '.[dev,docs]'
+
+python -m examples.tool_runtime.main
+python -m pytest tests/test_tool_runtime.py -q
+python scripts/build_html.py
+python -m http.server 8000 --directory output/html
+```
+
+终端应先输出 `最终回答：20 + 22 = 42`，测试应通过。随后打开 `http://127.0.0.1:8000` 即可阅读教材；按 `Ctrl+C` 停止服务。遇到 Python、操作系统或依赖问题时，先查看 [`COMPATIBILITY.md`](COMPATIBILITY.md)；完整开发安装再参考下文。
 
 ## 下载已发布版本
 
@@ -12,6 +38,8 @@
 - [SHA256 校验值](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.0/SHA256SUMS-v2026.8.0.txt)
 
 发行说明与全部附件见 [GitHub Release v2026.8.0](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.0)。
+
+当前公开站点尚未承诺稳定 URL；可直接下载完整出版包中的 `html/`，或按 Quick Start 本地打开。仓库中的 P7 候选版已扩展到 447 页，只有完成 P9 并发布新 Release 后才会替代上述 400 页公开版。
 
 ## 适合与不适合的读者
 
@@ -54,6 +82,23 @@
 ## 8 周与 12 周计划概览
 
 8 周路线以每周 8—10 小时完成两个可展示项目为目标；12 周路线增加 MCP、RAG、LangGraph、评估与部署，最终完成一个带引用、权限与追踪的工程项目。每周检查标准和产出在学习指南中列出。
+
+## 十个项目展示
+
+| 项目 | 主要能力 | 当前成熟度 | 入口 |
+|---:|---|---|---|
+| 1 | 流式对话、历史、Token、错误处理 | `service_template` | [最小 AI Assistant](projects/01-minimal-assistant/README.md) |
+| 2 | 多工具、参数校验、重试、人工审批 | `service_template` | [天气 Tool Agent](projects/02-weather-tool-agent/README.md) |
+| 3 | MCP Client/Server、文件/系统/数据库工具 | `service_template` | [MCP 本地 Agent](projects/03-mcp-local-agent/README.md) |
+| 4 | 多格式摄取、pgvector、版本化发布、RAG 评估 | `production_reference`（离线） | [企业知识库](projects/04-knowledge-agent/README.md) |
+| 5 | Diff、静态规则、LLM Review、风险与报告 | `service_template` | [代码 Review Agent](projects/05-code-review-agent/README.md) |
+| 6 | 邮件、日历、办公发布、审批与审计 | `service_template` | [自动办公 Agent](projects/06-office-agent/README.md) |
+| 7 | 行情、新闻、指标、事实/推断与引用 | `service_template` | [股票研究 Agent](projects/07-stock-research-agent/README.md) |
+| 8 | LangGraph、Checkpoint、重试、Reviewer、HITL | `production_reference`（离线） | [研究工作流](projects/08-research-workflow/README.md) |
+| 9 | 产品/规划/编码/测试/评审共享状态 | `service_template` | [Multi-Agent 开发团队](projects/09-multi-agent-dev-team/README.md) |
+| 10 | 多租户、RBAC、队列、MCP/RAG、Trace/Eval、DLQ | `production_reference`（离线） | [企业级 Agent 平台](projects/10-enterprise-platform/README.md) |
+
+这里的 `production_reference` 表示可离线验证的生产参考实现，不表示已经在真实供应商、流量、灾备或企业身份系统中完成外部认证。具体缺口在 [`PROJECT_STATUS.md`](PROJECT_STATUS.md) 中逐项说明。
 
 ## 安装环境
 
@@ -120,4 +165,8 @@ PYTHONPATH=src python scripts/audit_publication.py all output
 
 ## 贡献与版本说明
 
-贡献规则见 [`CONTRIBUTING.md`](CONTRIBUTING.md)，版本变化见 [`CHANGELOG.md`](CHANGELOG.md)，版本敏感接口见 [`notes/version-check.md`](notes/version-check.md)。教材内容采用 CC BY-NC-SA 4.0，软件代码采用 MIT License；付费出版或课程需要单独书面许可，详见 [`LICENSE`](LICENSE) 与 [`COMMERCIAL_LICENSE.md`](COMMERCIAL_LICENSE.md)。2026 版表示教材维护目标年份，不表示所有外部 API 在全年保持不变；每个敏感章节必须记录独立核对日期。
+贡献规则见 [`CONTRIBUTING.md`](CONTRIBUTING.md)，兼容策略见 [`COMPATIBILITY.md`](COMPATIBILITY.md)，安全报告见 [`SECURITY.md`](SECURITY.md)，行为准则见 [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md)。版本变化见 [`CHANGELOG.md`](CHANGELOG.md)，版本敏感接口见 [`notes/version-check.md`](notes/version-check.md)。教材内容采用 CC BY-NC-SA 4.0，软件代码采用 MIT License；付费出版或课程需要单独书面许可，详见 [`LICENSE`](LICENSE) 与 [`COMMERCIAL_LICENSE.md`](COMMERCIAL_LICENSE.md)。2026 版表示教材维护目标年份，不表示所有外部 API 在全年保持不变；每个敏感章节必须记录独立核对日期。
+
+## 质量门禁
+
+仓库在 Python 3.12 下执行 Ruff、mypy、根级与十项目测试、MkDocs 严格构建、图示台账、内部链接、EPUB XHTML/片段、PDF 图片、引用、密钥和仓库卫生检查。通过自动门禁只证明可重复构建与已覆盖契约，不替代真实 Provider 联调、实体设备、出版社终审或安全审计。

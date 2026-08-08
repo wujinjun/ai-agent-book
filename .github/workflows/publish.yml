@@ -47,12 +47,17 @@ jobs:
           .venv/bin/python scripts/build_html.py
           .venv/bin/python scripts/build_pandoc.py all
           PYTHONPATH=src .venv/bin/python scripts/audit_publication.py all output
+          .venv/bin/python scripts/audit_repository_hygiene.py
+          .venv/bin/python scripts/check_secrets.py
 
       - name: Add offline editions to the reading site
         run: |
           mkdir -p output/html/downloads
           cp output/pdf/ai-agent-book-2026.pdf output/html/downloads/
           cp output/epub/ai-agent-book-2026.epub output/html/downloads/
+
+      - name: Package versioned release assets and checksums
+        run: .venv/bin/python scripts/package_release.py --version "$GITHUB_REF_NAME"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -99,13 +104,12 @@ jobs:
         run: |
           if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
             gh release upload "$GITHUB_REF_NAME" \
-              publication/pdf/ai-agent-book-2026.pdf \
-              publication/epub/ai-agent-book-2026.epub \
+              publication/release/* \
               --clobber
           else
+            notes_file="publication/release/RELEASE_NOTES-$GITHUB_REF_NAME.md"
             gh release create "$GITHUB_REF_NAME" \
-              publication/pdf/ai-agent-book-2026.pdf \
-              publication/epub/ai-agent-book-2026.epub \
+              publication/release/* \
               --title "AI Agent 从零到实战（2026版）$GITHUB_REF_NAME" \
-              --generate-notes
+              --notes-file "$notes_file"
           fi

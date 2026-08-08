@@ -17,6 +17,10 @@ def test_publish_workflow_deploys_pages_and_versioned_downloads() -> None:
     assert "output/html/downloads" in source
     assert "ai-agent-book-2026.pdf" in source
     assert "ai-agent-book-2026.epub" in source
+    assert "scripts/package_release.py" in source
+    assert "SHA256SUMS" not in source  # 文件名由打包脚本统一生成，避免工作流漂移
+    assert "publication/release/*" in source
+    assert '--notes-file "$notes_file"' in source
     assert 'gh release create "$GITHUB_REF_NAME"' in source
 
 

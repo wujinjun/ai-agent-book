@@ -144,15 +144,15 @@
 
 ## P8：GitHub 开源展示
 
-- [ ] 重写 README 的定位、状态、Quick Start 和路线图。
-- [ ] 增加 HTML、PDF、EPUB、Release、截图和十项目展示入口。
-- [ ] 增加 Issue、PR、安全报告和维护模板。
-- [ ] 增加兼容策略、贡献指南和行为准则。
-- [ ] 增加测试、断链、出版和密钥扫描门禁。
-- [ ] 为 Release 增加校验和与变更摘要。
-- [ ] 清理缓存和临时文件，生成产物继续通过 Release 发布。
+- [x] 重写 README 的定位、状态、15 分钟 Quick Start 和路线图入口。
+- [x] 增加 HTML、PDF、EPUB、Release、网站截图和十项目展示入口；未把当前 404 的 Pages 地址宣传为在线站点。
+- [x] 增加三类 Issue、PR、安全报告、支持策略与 CODEOWNERS 模板。
+- [x] 增加 Python/系统/框架兼容策略，扩展贡献指南并建立社区行为准则。
+- [x] 增加测试、内部链接、出版、图示、密钥扫描和仓库卫生门禁。
+- [x] Release 打包器生成版本化 HTML/PDF/EPUB、变更摘要与 SHA-256 清单，并由发布工作流上传。
+- [x] `.gitignore` 与仓库卫生门禁禁止提交缓存、临时目录和 `output/`；本地候选打包及校验通过，正式附件由 P9 发布。
 
-验收：新读者可以在 15 分钟内完成安装、运行一个示例并打开教材网站。
+验收：P8 仓库内范围通过，证据见 `notes/p8-github-acceptance.yml` 与 `notes/quickstart-qa.md`。全新 Python 3.12 虚拟环境在本机缓存条件下约 28 秒完成安装、离线 Tool Loop、5 项测试和 HTML 构建；15 分钟预算保留充足余量。GitHub Pages 公网地址当前未启用或未就绪，P9 发布前必须验证，README 不发布失效链接。
 
 ## P9：最终验收
 

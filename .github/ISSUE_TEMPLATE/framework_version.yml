@@ -1,0 +1,31 @@
+name: 框架/API 版本核查
+description: 报告上游 API、SDK、协议或弃用变化。
+title: "[版本核查] "
+labels: [dependencies, documentation]
+body:
+  - type: input
+    id: component
+    attributes: {label: 框架、SDK 或规范}
+    validations: {required: true}
+  - type: input
+    id: versions
+    attributes:
+      label: 当前版本与建议版本
+      placeholder: pydantic-ai 2.25.0 → x.y.z
+    validations: {required: true}
+  - type: textarea
+    id: source
+    attributes:
+      label: 官方来源与核对日期
+      description: 提供发行说明、迁移指南、规范或官方仓库链接。
+    validations: {required: true}
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 最小实测
+      description: 给出隔离环境安装、运行命令、实际输出与失败路径。
+    validations: {required: true}
+  - type: textarea
+    id: impact
+    attributes: {label: 对章节、示例和项目的影响}
+    validations: {required: true}

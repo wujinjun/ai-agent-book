@@ -1,0 +1,32 @@
+name: 教材勘误
+description: 报告事实、术语、代码段、链接、图表或排版问题。
+title: "[勘误] "
+labels: [documentation]
+body:
+  - type: input
+    id: location
+    attributes:
+      label: 位置
+      placeholder: 文件、章节标题、图号或页码
+    validations: {required: true}
+  - type: textarea
+    id: original
+    attributes: {label: 当前内容与问题}
+    validations: {required: true}
+  - type: textarea
+    id: correction
+    attributes: {label: 建议修改}
+    validations: {required: true}
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 证据
+      description: 优先提供论文、规范、官方文档或官方仓库，并给出核对日期。
+    validations: {required: true}
+  - type: checkboxes
+    id: rights
+    attributes:
+      label: 权利与隐私
+      options:
+        - label: 内容已脱敏，且我没有粘贴大段受版权保护原文。
+          required: true

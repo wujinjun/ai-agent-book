@@ -1,0 +1,41 @@
+version: 1
+checked_at: 2026-08-08
+status: passed_repository_scope
+readme:
+  positioning_and_status: passed
+  quick_start: passed
+  html_pdf_epub_release_links: passed
+  screenshot: docs/assets/readme-home.png
+  screenshot_generator: scripts/capture_html.mjs
+  ten_project_showcase: passed
+quick_start:
+  python: 3.12.13
+  clean_venv: true
+  paid_account_required: false
+  observed_seconds_with_warm_cache: 28
+  tool_loop_output: "最终回答：20 + 22 = 42"
+  focused_tests: 5
+  html_build: passed
+community:
+  issue_templates: 3
+  pull_request_template: true
+  security_policy: true
+  compatibility_policy: true
+  code_of_conduct: true
+  support_policy: true
+quality_gates:
+  python_tests: true
+  ruff_and_mypy: true
+  publication_and_links: true
+  visual_ledger: true
+  secret_scan: true
+  repository_hygiene: true
+release:
+  deterministic_archive: true
+  release_notes: true
+  sha256_manifest: true
+  local_candidate_validation: passed
+external_p9_checks:
+  - enable_or_verify_github_pages_public_url
+  - merge_feature_branch_to_main
+  - publish_final_release_assets
