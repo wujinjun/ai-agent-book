@@ -26,6 +26,7 @@ EMAIL = re.compile(
     r"(?P<value>[A-Za-z0-9._%+-]+@(?P<domain>[A-Za-z0-9.-]+\.[A-Za-z]{2,}))"
 )
 CN_PHONE = re.compile(r"(?<!\d)(?P<value>1[3-9]\d{9})(?!\d)")
+HEX_DIGEST = re.compile(r"(?<![0-9A-Fa-f])[0-9A-Fa-f]{32,}(?![0-9A-Fa-f])")
 
 PLACEHOLDER_USERS = {"alice", "example", "user"}
 PLACEHOLDER_DOMAINS = {"example.test", "example.invalid", "users.noreply.github.com"}
@@ -55,7 +56,8 @@ def scan_text(path: Path, text: str) -> list[PrivacyFinding]:
                 findings.append(
                     PrivacyFinding(path, line_number, "email address", match.group("value"))
                 )
-        for match in CN_PHONE.finditer(line):
+        phone_scan_line = HEX_DIGEST.sub("", line)
+        for match in CN_PHONE.finditer(phone_scan_line):
             findings.append(PrivacyFinding(path, line_number, "phone number", match.group("value")))
     return findings
 

@@ -23,7 +23,10 @@ def test_privacy_scanner_detects_personal_data() -> None:
 def test_privacy_scanner_allows_documented_placeholders() -> None:
     assert not scan_text(
         Path("sample.md"),
-        "使用 alice@example.test 和 /Users/alice/private 作为教材占位值。",
+        (
+            "使用 alice@example.test 和 /Users/alice/private 作为教材占位值；"
+            "SHA-256 7ba4eb6d10b32b2d11dce13821340351cdbbb30ba8ccc67841db2ffd86e79aca。"
+        ),
     )
 
 

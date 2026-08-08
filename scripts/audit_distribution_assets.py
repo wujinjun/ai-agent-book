@@ -12,13 +12,16 @@ import tomllib
 import zipfile
 from collections import Counter
 from datetime import date
-from importlib.metadata import PackageNotFoundError, distribution
+from importlib.metadata import Distribution, PackageNotFoundError, distribution
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 from xml.etree import ElementTree
 
 import yaml
+from packaging.markers import default_environment
+from packaging.requirements import InvalidRequirement, Requirement
+from packaging.utils import canonicalize_name
 from pypdf import PdfReader
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -319,8 +322,7 @@ def audit_pptx(path: Path) -> tuple[dict[str, Any], list[str], list[str]]:
     unapproved_explicit_typefaces = sorted(explicit_run_typefaces - {"Noto Sans SC"})
     if unapproved_explicit_typefaces:
         hard_issues.append(
-            "PPTX visible text uses unapproved explicit typefaces: "
-            f"{unapproved_explicit_typefaces}"
+            f"PPTX visible text uses unapproved explicit typefaces: {unapproved_explicit_typefaces}"
         )
     manual = [
         (
@@ -426,18 +428,136 @@ def audit_source_assets(path: Path) -> tuple[dict[str, Any], list[str], list[str
     )
 
 
-def audit_dependencies(pyproject: Path) -> tuple[list[dict[str, Any]], list[str], list[str]]:
+def _project_requirements(pyproject: Path) -> list[Requirement]:
     document = tomllib.loads(pyproject.read_text(encoding="utf-8"))
     project = document["project"]
-    requirements = list(project.get("dependencies", []))
+    declarations = list(project.get("dependencies", []))
     for values in project.get("optional-dependencies", {}).values():
-        requirements.extend(values)
-    names: set[str] = set()
-    for requirement in requirements:
-        match = re.match(r"[A-Za-z0-9_.-]+", requirement)
-        if match is None:
-            raise ValueError(f"invalid dependency declaration: {requirement}")
-        names.add(match.group(0))
+        declarations.extend(values)
+    requirements: list[Requirement] = []
+    for declaration in declarations:
+        try:
+            requirements.append(Requirement(declaration))
+        except InvalidRequirement as exc:
+            raise ValueError(f"invalid dependency declaration: {declaration}") from exc
+    return requirements
+
+
+def _dependency_record(package: Distribution, requested_name: str) -> dict[str, Any]:
+    metadata = package.metadata
+    classifiers = [
+        value.split("License ::", 1)[1].strip()
+        for value in metadata.get_all("Classifier", [])
+        if "License ::" in value
+    ]
+    license_files: list[dict[str, str]] = []
+    for file in package.files or []:
+        if "license" not in str(file).lower() and "copying" not in str(file).lower():
+            continue
+        located = Path(str(package.locate_file(file)))
+        if located.is_file():
+            license_files.append({"path": str(file), "sha256": sha256(located)})
+    return {
+        "name": metadata.get("Name", requested_name),
+        "version": package.version,
+        "license_metadata": metadata.get("License"),
+        "license_expression": metadata.get("License-Expression"),
+        "license_classifiers": classifiers,
+        "license_files": license_files,
+    }
+
+
+def _requirement_is_active(requirement: Requirement, extras: set[str]) -> bool:
+    if requirement.marker is None:
+        return True
+    environment = {key: str(value) for key, value in default_environment().items()}
+    return any(
+        requirement.marker.evaluate({**environment, "extra": extra}) for extra in {"", *extras}
+    )
+
+
+def audit_dependency_closure(pyproject: Path) -> tuple[dict[str, Any], list[str]]:
+    roots = _project_requirements(pyproject)
+    selected_extras: dict[str, set[str]] = {}
+    queue: list[str] = []
+    for requirement in roots:
+        root_name = str(canonicalize_name(requirement.name))
+        selected_extras.setdefault(root_name, set()).update(requirement.extras)
+        queue.append(root_name)
+
+    processed: dict[str, frozenset[str]] = {}
+    edges: set[tuple[str, str]] = set()
+    issues: list[str] = []
+    while queue:
+        current_name = queue.pop(0)
+        extras = selected_extras[current_name]
+        snapshot = frozenset(extras)
+        if processed.get(current_name) == snapshot:
+            continue
+        processed[current_name] = snapshot
+        try:
+            package = distribution(current_name)
+        except PackageNotFoundError:
+            issues.append(f"dependency closure package is not installed: {current_name}")
+            continue
+        for declaration in package.requires or []:
+            try:
+                requirement = Requirement(declaration)
+            except InvalidRequirement:
+                issues.append(f"invalid Requires-Dist for {current_name}: {declaration}")
+                continue
+            if not _requirement_is_active(requirement, extras):
+                continue
+            child = str(canonicalize_name(requirement.name))
+            edges.add((current_name, child))
+            previous = set(selected_extras.get(child, set()))
+            selected_extras.setdefault(child, set()).update(requirement.extras)
+            if child not in processed or previous != selected_extras[child]:
+                queue.append(child)
+
+    records: list[dict[str, Any]] = []
+    missing_license_signal: list[str] = []
+    for name in sorted(processed):
+        try:
+            record = _dependency_record(distribution(name), name)
+        except PackageNotFoundError:
+            continue
+        record["selected_extras"] = sorted(selected_extras[name])
+        records.append(record)
+        signal = " ".join(
+            [
+                str(record["license_expression"] or ""),
+                str(record["license_metadata"] or ""),
+                *record["license_classifiers"],
+            ]
+        ).strip()
+        if not signal:
+            missing_license_signal.append(str(record["name"]))
+    return (
+        {
+            "pyproject_sha256": sha256(pyproject),
+            "environment": {
+                key: str(value)
+                for key, value in default_environment().items()
+                if key
+                in {
+                    "implementation_name",
+                    "platform_machine",
+                    "python_full_version",
+                    "sys_platform",
+                }
+            },
+            "roots": sorted({str(canonicalize_name(requirement.name)) for requirement in roots}),
+            "packages": records,
+            "edges": [{"from": parent, "to": child} for parent, child in sorted(edges)],
+            "missing_concise_license_signal": sorted(missing_license_signal),
+        },
+        sorted(set(issues)),
+    )
+
+
+def audit_dependencies(pyproject: Path) -> tuple[list[dict[str, Any]], list[str], list[str]]:
+    names = {canonicalize_name(item.name) for item in _project_requirements(pyproject)}
     records: list[dict[str, Any]] = []
     hard_issues: list[str] = []
     manual: list[str] = []
@@ -449,34 +569,12 @@ def audit_dependencies(pyproject: Path) -> tuple[list[dict[str, Any]], list[str]
                 f"declared dependency is not installed for license inventory: {name}"
             )
             continue
-        metadata = package.metadata
-        classifiers = [
-            value.split("License ::", 1)[1].strip()
-            for value in metadata.get_all("Classifier", [])
-            if "License ::" in value
-        ]
-        license_files: list[dict[str, str]] = []
-        for file in package.files or []:
-            if "license" not in str(file).lower() and "copying" not in str(file).lower():
-                continue
-            located = Path(str(package.locate_file(file)))
-            if located.is_file():
-                license_files.append({"path": str(file), "sha256": sha256(located)})
-        license_value = metadata.get("License")
-        license_expression = metadata.get("License-Expression")
-        records.append(
-            {
-                "name": metadata.get("Name", name),
-                "version": package.version,
-                "license_metadata": license_value,
-                "license_expression": license_expression,
-                "license_classifiers": classifiers,
-                "license_files": license_files,
-            }
-        )
-        signal = " ".join(
-            [license_expression or "", license_value or "", *classifiers]
-        ).lower()
+        record = _dependency_record(package, name)
+        records.append(record)
+        license_value = record["license_metadata"]
+        license_expression = record["license_expression"]
+        classifiers = record["license_classifiers"]
+        signal = " ".join([license_expression or "", license_value or "", *classifiers]).lower()
         if not signal:
             manual.append(f"Dependency {name} has no concise license signal in package metadata.")
         if "affero" in signal or "agpl" in signal:
@@ -512,7 +610,9 @@ def build_report(
         hard_issues.extend(section_issues)
         manual.extend(section_manual)
     dependencies, dependency_issues, dependency_manual = audit_dependencies(ROOT / "pyproject.toml")
+    dependency_closure, closure_issues = audit_dependency_closure(ROOT / "pyproject.toml")
     hard_issues.extend(dependency_issues)
+    hard_issues.extend(closure_issues)
     manual.extend(dependency_manual)
     return {
         "schema_version": 1,
@@ -520,6 +620,7 @@ def build_report(
         "status": "failed" if hard_issues else "passed_with_manual_review_required",
         **sections,
         "direct_dependency_license_inventory": dependencies,
+        "dependency_closure_license_inventory": dependency_closure,
         "hard_issues": sorted(set(hard_issues)),
         "manual_review_required": sorted(set(manual)),
     }

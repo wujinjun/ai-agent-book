@@ -3,6 +3,7 @@ from pathlib import Path
 
 from scripts.audit_distribution_assets import (
     audit_dependencies,
+    audit_dependency_closure,
     audit_epub,
     audit_pptx,
     audit_source_assets,
@@ -29,6 +30,17 @@ def test_distribution_fonts_have_fixed_checksums_licenses_and_print_css_links() 
     assert records["pytest-asyncio"]["license_expression"] == "Apache-2.0"
     for package in ("langgraph", "psycopg", "pytest-asyncio"):
         assert not any(f"Dependency {package} has no concise" in item for item in manual)
+
+    closure, closure_issues = audit_dependency_closure(ROOT / "pyproject.toml")
+    assert closure_issues == []
+    closure_names = {record["name"].lower() for record in closure["packages"]}
+    assert {"langgraph", "psycopg", "psycopg-binary", "packaging"} <= closure_names
+    assert {"from": "psycopg", "to": "psycopg-binary"} in closure["edges"]
+    assert "binary" in next(
+        record["selected_extras"]
+        for record in closure["packages"]
+        if record["name"].lower() == "psycopg"
+    )
 
 
 def test_epub_runtime_resource_audit_distinguishes_links_from_dependencies(
@@ -66,9 +78,7 @@ def test_print_css_does_not_fall_back_to_untracked_system_fonts() -> None:
 
 
 def test_training_pptx_visible_text_uses_bundled_ofl_font() -> None:
-    report, hard_issues, _ = audit_pptx(
-        ROOT / "training/slides/ai-agent-engineering-training.pptx"
-    )
+    report, hard_issues, _ = audit_pptx(ROOT / "training/slides/ai-agent-engineering-training.pptx")
 
     assert hard_issues == []
     assert report["slides"] == 16

@@ -27,7 +27,7 @@ EPUB 不嵌入字体，以避免显著增加文件体积，并允许阅读器采
 - 开源内容、代码和商业版的许可边界已拆分，见 `LICENSE`、`LICENSE-CODE` 和 `COMMERCIAL_LICENSE.md`。
 - 外部贡献进入商业版前需要接受 CLA 或另行授权。
 - 当前未发现 Markdown 中直接嵌入的远程第三方图片；外链只作为引用或文档入口。
-- PDF 的固定 OFL 字体、EPUB/PPTX 远程运行资源、源图片来源、页面盒和直接依赖许可元数据均已进入自动发行预检；依赖扫描同时读取 Core Metadata 的 `License-Expression`（SPDX）字段，避免把已有机器可读许可误报为“无许可信号”。当前硬失败为 0，剩余人工复核项保留在报告中。
+- PDF 的固定 OFL 字体、EPUB/PPTX 远程运行资源、源图片来源和页面盒均已进入自动发行预检。依赖扫描从项目的直接依赖及已选 Extra 出发解析完整传递闭包，记录依赖边、版本、Core Metadata `License-Expression`（SPDX）字段和随包许可证文件哈希，避免把已有机器可读许可误报为“无许可信号”。当前硬失败为 0，剩余人工复核项保留在报告中。
 - 当前核查不是法律意见。商业合同、封面、ISBN 版 PDF/EPUB、字体和营销素材仍需出版社或法律顾问作最终核验。
 
 P9 的独立商业权利核查使用 `external-validation/rights-review-protocol.md` 和对应 YAML 模板。仓库只保存匿名结论、目标 commit 和受控原件引用；法律意见正文及审阅者身份保存在私有档案。
