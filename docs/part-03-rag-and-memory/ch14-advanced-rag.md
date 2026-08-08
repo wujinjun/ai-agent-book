@@ -273,3 +273,14 @@ Graph RAG 将实体、关系、社区或事件图与文本证据结合，适合�
 3. Graph RAG 不适合关系简单、主要按段落检索、缺乏可靠实体消歧或更新频繁但无图治理能力的语料。向量或混合检索若已满足指标，引入图只会增加构建、版本和调试成本。
 4. Reranker 判断 query-document 相关性并改善候选顺序；生成 Judge 评价最终主张是否正确或忠于证据。二者输入、失败位置和评价目标不同，不能用 Judge 掩盖初检漏召回。
 5. 发布高级策略需要预先定义净收益阈值，例如 Recall 或任务成功提升，同时 P95、成本、安全和拒答准确率不越界。统计不稳定或只改善单个演示查询时，保留基线并继续收集样本。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [gao2022hyde：Precise Zero-Shot Dense Retrieval without Relevance Labels](../references.md#ref-gao2022hyde)
+- [asai2023selfrag：Self-RAG: Learning to Retrieve, Generate, and Critique](../references.md#ref-asai2023selfrag)
+- [yan2024crag：Corrective Retrieval Augmented Generation](../references.md#ref-yan2024crag)
+- [edge2024graphrag：From Local to Global: A Graph RAG Approach](../references.md#ref-edge2024graphrag)
+- [sarthi2024raptor：RAPTOR: Recursive Abstractive Processing for Tree-Organized Retrieval](../references.md#ref-sarthi2024raptor)
+<!-- chapter-citations:end -->

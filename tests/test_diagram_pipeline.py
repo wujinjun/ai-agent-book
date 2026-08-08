@@ -21,7 +21,17 @@ def test_diagram_ids_are_stable_and_markdown_is_replaced() -> None:
     assert '<source type="image/svg+xml"' in rendered
     assert ".png" in rendered
     assert "Runtime 图 1" in rendered
+    assert '<span class="figure-number">图 RUNTIME-1</span>' in rendered
     assert 'alt="Runtime 图 1"' in rendered
+
+
+def test_chapter_and_project_figures_have_stable_scoped_numbers() -> None:
+    source = "# Demo\n\n```mermaid\nflowchart LR\nA --> B\n```"
+    chapter = extract_diagrams(Path("docs/part/ch08-tool-calling.md"), source)
+    project = extract_diagrams(Path("projects/10-enterprise-platform/README.md"), source)
+
+    assert "图 8-1" in replace_mermaid(source, chapter, Path("assets/diagrams"))
+    assert "图 P10-1" in replace_mermaid(source, project, Path("assets/diagrams"))
 
 
 def test_source_normalization_keeps_ids_stable() -> None:

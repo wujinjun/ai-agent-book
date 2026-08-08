@@ -1,0 +1,804 @@
+{
+  "schema_version": 1,
+  "checked": "2026-08-08",
+  "total": 113,
+  "counts": {
+    "ok": 105,
+    "restricted": 8,
+    "verified_separately": 0,
+    "failed": 0
+  },
+  "results": [
+    {
+      "id": "vaswani2017",
+      "url": "https://arxiv.org/abs/1706.03762",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/1706.03762"
+    },
+    {
+      "id": "brown2020",
+      "url": "https://arxiv.org/abs/2005.14165",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2005.14165"
+    },
+    {
+      "id": "ouyang2022",
+      "url": "https://arxiv.org/abs/2203.02155",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2203.02155"
+    },
+    {
+      "id": "bender2021",
+      "url": "https://doi.org/10.1145/3442188.3445922",
+      "state": "restricted",
+      "status_code": 403,
+      "final_url": "https://dl.acm.org/doi/10.1145/3442188.3445922"
+    },
+    {
+      "id": "bommasani2021",
+      "url": "https://arxiv.org/abs/2108.07258",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2108.07258"
+    },
+    {
+      "id": "devlin2018",
+      "url": "https://arxiv.org/abs/1810.04805",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/1810.04805"
+    },
+    {
+      "id": "radford2019",
+      "url": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"
+    },
+    {
+      "id": "kaplan2020",
+      "url": "https://arxiv.org/abs/2001.08361",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2001.08361"
+    },
+    {
+      "id": "hoffmann2022",
+      "url": "https://arxiv.org/abs/2203.15556",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2203.15556"
+    },
+    {
+      "id": "touvron2023",
+      "url": "https://arxiv.org/abs/2307.09288",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2307.09288"
+    },
+    {
+      "id": "wei2022",
+      "url": "https://arxiv.org/abs/2201.11903",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2201.11903"
+    },
+    {
+      "id": "kojima2022",
+      "url": "https://arxiv.org/abs/2205.11916",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2205.11916"
+    },
+    {
+      "id": "holtzman2020",
+      "url": "https://arxiv.org/abs/1904.09751",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/1904.09751"
+    },
+    {
+      "id": "sennrich2016",
+      "url": "https://arxiv.org/abs/1508.07909",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/1508.07909"
+    },
+    {
+      "id": "kudo2018",
+      "url": "https://aclanthology.org/D18-2012/",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://aclanthology.org/D18-2012/"
+    },
+    {
+      "id": "mikolov2013",
+      "url": "https://arxiv.org/abs/1301.3781",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/1301.3781"
+    },
+    {
+      "id": "reimers2019",
+      "url": "https://arxiv.org/abs/1908.10084",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/1908.10084"
+    },
+    {
+      "id": "johnson2017",
+      "url": "https://arxiv.org/abs/1702.08734",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/1702.08734"
+    },
+    {
+      "id": "malkov2018",
+      "url": "https://arxiv.org/abs/1603.09320",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/1603.09320"
+    },
+    {
+      "id": "robertson2009",
+      "url": "https://doi.org/10.1561/1500000019",
+      "state": "restricted",
+      "status_code": 403,
+      "final_url": "https://www.emerald.com/ftinr/article/4/1-2/1/1326508/The-Probabilistic-Relevance-Framework-BM25-and"
+    },
+    {
+      "id": "yao2022",
+      "url": "https://arxiv.org/abs/2210.03629",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2210.03629"
+    },
+    {
+      "id": "schick2023",
+      "url": "https://arxiv.org/abs/2302.04761",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2302.04761"
+    },
+    {
+      "id": "karpas2022",
+      "url": "https://arxiv.org/abs/2205.00445",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2205.00445"
+    },
+    {
+      "id": "shinn2023",
+      "url": "https://arxiv.org/abs/2303.11366",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2303.11366"
+    },
+    {
+      "id": "wang2023plan",
+      "url": "https://arxiv.org/abs/2305.04091",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2305.04091"
+    },
+    {
+      "id": "yao2023tot",
+      "url": "https://arxiv.org/abs/2305.10601",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2305.10601"
+    },
+    {
+      "id": "madaan2023",
+      "url": "https://arxiv.org/abs/2303.17651",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2303.17651"
+    },
+    {
+      "id": "jsonschema2020",
+      "url": "https://json-schema.org/draft/2020-12",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://json-schema.org/draft/2020-12"
+    },
+    {
+      "id": "pydantic-models",
+      "url": "https://docs.pydantic.dev/latest/concepts/models/",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://pydantic.dev/docs/validation/latest/concepts/models/"
+    },
+    {
+      "id": "openai-quickstart",
+      "url": "https://platform.openai.com/docs/quickstart/make-your-first-api-request",
+      "state": "restricted",
+      "status_code": 403,
+      "final_url": "https://platform.openai.com/docs/quickstart/make-your-first-api-request"
+    },
+    {
+      "id": "openai-evals",
+      "url": "https://platform.openai.com/docs/api-reference/evals",
+      "state": "restricted",
+      "status_code": 403,
+      "final_url": "https://platform.openai.com/docs/api-reference/evals"
+    },
+    {
+      "id": "openai-compat",
+      "url": "https://platform.openai.com/docs/api-reference/backward-compatibility",
+      "state": "restricted",
+      "status_code": 403,
+      "final_url": "https://platform.openai.com/docs/api-reference/backward-compatibility"
+    },
+    {
+      "id": "openai-data-controls",
+      "url": "https://platform.openai.com/docs/models/default-usage-policies-by-endpoint",
+      "state": "restricted",
+      "status_code": 403,
+      "final_url": "https://platform.openai.com/docs/models/default-usage-policies-by-endpoint"
+    },
+    {
+      "id": "rfc8259",
+      "url": "https://www.rfc-editor.org/rfc/rfc8259",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://www.rfc-editor.org/info/rfc8259/"
+    },
+    {
+      "id": "jsonrpc20",
+      "url": "https://www.jsonrpc.org/specification",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://www.jsonrpc.org/specification"
+    },
+    {
+      "id": "patil2023gorilla",
+      "url": "https://arxiv.org/abs/2305.15334",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2305.15334"
+    },
+    {
+      "id": "qin2023toolllm",
+      "url": "https://arxiv.org/abs/2307.16789",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2307.16789"
+    },
+    {
+      "id": "ruan2023toolbench",
+      "url": "https://arxiv.org/abs/2304.08354",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2304.08354"
+    },
+    {
+      "id": "mcp-architecture",
+      "url": "https://modelcontextprotocol.io/docs/learn/architecture",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture"
+    },
+    {
+      "id": "mcp-spec-2025-11-25",
+      "url": "https://modelcontextprotocol.io/specification/2025-11-25",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://modelcontextprotocol.io/specification/2025-11-25"
+    },
+    {
+      "id": "mcp-auth",
+      "url": "https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization"
+    },
+    {
+      "id": "mcp-changelog",
+      "url": "https://modelcontextprotocol.io/specification/2025-11-25/changelog",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://modelcontextprotocol.io/specification/2025-11-25/changelog"
+    },
+    {
+      "id": "mcp-python-sdk",
+      "url": "https://github.com/modelcontextprotocol/python-sdk",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://github.com/modelcontextprotocol/python-sdk"
+    },
+    {
+      "id": "lewis2020",
+      "url": "https://arxiv.org/abs/2005.11401",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2005.11401"
+    },
+    {
+      "id": "karpukhin2020",
+      "url": "https://arxiv.org/abs/2004.04906",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2004.04906"
+    },
+    {
+      "id": "khattab2020",
+      "url": "https://arxiv.org/abs/2004.12832",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2004.12832"
+    },
+    {
+      "id": "gao2022hyde",
+      "url": "https://arxiv.org/abs/2212.10496",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2212.10496"
+    },
+    {
+      "id": "es2023ragas",
+      "url": "https://arxiv.org/abs/2309.15217",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2309.15217"
+    },
+    {
+      "id": "asai2023selfrag",
+      "url": "https://arxiv.org/abs/2310.11511",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2310.11511"
+    },
+    {
+      "id": "yan2024crag",
+      "url": "https://arxiv.org/abs/2401.15884",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2401.15884"
+    },
+    {
+      "id": "edge2024graphrag",
+      "url": "https://arxiv.org/abs/2404.16130",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2404.16130"
+    },
+    {
+      "id": "sarthi2024raptor",
+      "url": "https://arxiv.org/abs/2401.18059",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2401.18059"
+    },
+    {
+      "id": "liu2023lostmiddle",
+      "url": "https://arxiv.org/abs/2307.03172",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2307.03172"
+    },
+    {
+      "id": "borgeaud2022retro",
+      "url": "https://arxiv.org/abs/2112.04426",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2112.04426"
+    },
+    {
+      "id": "park2023generativeagents",
+      "url": "https://arxiv.org/abs/2304.03442",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2304.03442"
+    },
+    {
+      "id": "packer2023memgpt",
+      "url": "https://arxiv.org/abs/2310.08560",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2310.08560"
+    },
+    {
+      "id": "faiss-wiki",
+      "url": "https://github.com/facebookresearch/faiss/wiki",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://github.com/facebookresearch/faiss/wiki"
+    },
+    {
+      "id": "pgvector",
+      "url": "https://github.com/pgvector/pgvector",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://github.com/pgvector/pgvector"
+    },
+    {
+      "id": "milvus-docs",
+      "url": "https://milvus.io/docs",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://milvus.io/docs"
+    },
+    {
+      "id": "openai-agents-guide",
+      "url": "https://platform.openai.com/docs/guides/agents",
+      "state": "restricted",
+      "status_code": 403,
+      "final_url": "https://platform.openai.com/docs/guides/agents"
+    },
+    {
+      "id": "pydanticai-docs",
+      "url": "https://ai.pydantic.dev/",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://pydantic.dev/docs/ai/overview/"
+    },
+    {
+      "id": "pydanticai-tools",
+      "url": "https://ai.pydantic.dev/tools/",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://pydantic.dev/docs/ai/tools-toolsets/tools/"
+    },
+    {
+      "id": "pydanticai-testing",
+      "url": "https://ai.pydantic.dev/testing/",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://pydantic.dev/docs/ai/guides/testing/"
+    },
+    {
+      "id": "langgraph-overview",
+      "url": "https://docs.langchain.com/oss/python/langgraph/overview",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    {
+      "id": "langgraph-persistence",
+      "url": "https://docs.langchain.com/oss/python/langgraph/persistence",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://docs.langchain.com/oss/python/langgraph/persistence"
+    },
+    {
+      "id": "langgraph-time-travel",
+      "url": "https://docs.langchain.com/oss/python/langgraph/use-time-travel",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://docs.langchain.com/oss/python/langgraph/use-time-travel"
+    },
+    {
+      "id": "langgraph-streaming",
+      "url": "https://docs.langchain.com/oss/python/langgraph/event-streaming",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://docs.langchain.com/oss/python/langgraph/event-streaming"
+    },
+    {
+      "id": "langchain-docs",
+      "url": "https://docs.langchain.com/oss/python/langchain/overview",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://docs.langchain.com/oss/python/langchain/overview"
+    },
+    {
+      "id": "llamaindex-docs",
+      "url": "https://docs.llamaindex.ai/",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://developers.llamaindex.ai/python/framework/"
+    },
+    {
+      "id": "crewai-docs",
+      "url": "https://docs.crewai.com/",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://docs.crewai.com/"
+    },
+    {
+      "id": "autogen-docs",
+      "url": "https://microsoft.github.io/autogen/stable/",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://microsoft.github.io/autogen/stable/"
+    },
+    {
+      "id": "autogen-teams",
+      "url": "https://microsoft.github.io/autogen/stable/user-guide/agentchat-user-guide/tutorial/teams.html",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://microsoft.github.io/autogen/stable/user-guide/agentchat-user-guide/tutorial/teams.html"
+    },
+    {
+      "id": "semantic-kernel-docs",
+      "url": "https://learn.microsoft.com/semantic-kernel/overview/",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://learn.microsoft.com/en-us/semantic-kernel/overview/"
+    },
+    {
+      "id": "fastapi-docs",
+      "url": "https://fastapi.tiangolo.com/",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://fastapi.tiangolo.com/"
+    },
+    {
+      "id": "python312-docs",
+      "url": "https://docs.python.org/3.12/",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://docs.python.org/3.12/"
+    },
+    {
+      "id": "pep621",
+      "url": "https://peps.python.org/pep-0621/",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://peps.python.org/pep-0621/"
+    },
+    {
+      "id": "python-asyncio",
+      "url": "https://docs.python.org/3.12/library/asyncio.html",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://docs.python.org/3.12/library/asyncio.html"
+    },
+    {
+      "id": "httpx-docs",
+      "url": "https://www.python-httpx.org/",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://www.python-httpx.org/"
+    },
+    {
+      "id": "pytest-docs",
+      "url": "https://docs.pytest.org/en/stable/",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://docs.pytest.org/en/stable/"
+    },
+    {
+      "id": "ruff-docs",
+      "url": "https://docs.astral.sh/ruff/",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://docs.astral.sh/ruff/"
+    },
+    {
+      "id": "postgresql-docs",
+      "url": "https://www.postgresql.org/docs/",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://www.postgresql.org/docs/"
+    },
+    {
+      "id": "redis-docs",
+      "url": "https://redis.io/docs/latest/",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://redis.io/docs/latest/"
+    },
+    {
+      "id": "dockerfile-docs",
+      "url": "https://docs.docker.com/reference/dockerfile/",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://docs.docker.com/reference/dockerfile/"
+    },
+    {
+      "id": "compose-spec",
+      "url": "https://docs.docker.com/compose/compose-file/",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://docs.docker.com/reference/compose-file/"
+    },
+    {
+      "id": "celery-docs",
+      "url": "https://docs.celeryq.dev/en/stable/",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://docs.celeryq.dev/en/stable/"
+    },
+    {
+      "id": "dramatiq-docs",
+      "url": "https://dramatiq.io/",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://dramatiq.io/"
+    },
+    {
+      "id": "otel-spec",
+      "url": "https://opentelemetry.io/docs/specs/otel/",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://opentelemetry.io/docs/specs/otel/"
+    },
+    {
+      "id": "w3c-trace-context",
+      "url": "https://www.w3.org/TR/trace-context/",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://www.w3.org/TR/trace-context/"
+    },
+    {
+      "id": "owasp-llm-top10",
+      "url": "https://owasp.org/www-project-top-10-for-large-language-model-applications/",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
+    },
+    {
+      "id": "owasp-agentic-top10",
+      "url": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"
+    },
+    {
+      "id": "owasp-api-top10",
+      "url": "https://owasp.org/API-Security/editions/2023/en/0x11-t10/",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://owasp.org/API-Security/editions/2023/en/0x11-t10/"
+    },
+    {
+      "id": "nist-ai-rmf",
+      "url": "https://doi.org/10.6028/NIST.AI.100-1",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf"
+    },
+    {
+      "id": "nist-genai-profile",
+      "url": "https://doi.org/10.6028/NIST.AI.600-1",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf"
+    },
+    {
+      "id": "mitre-atlas",
+      "url": "https://atlas.mitre.org/",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://atlas.mitre.org/"
+    },
+    {
+      "id": "rfc9110",
+      "url": "https://www.rfc-editor.org/rfc/rfc9110",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://www.rfc-editor.org/info/rfc9110/"
+    },
+    {
+      "id": "rfc9457",
+      "url": "https://www.rfc-editor.org/rfc/rfc9457",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://www.rfc-editor.org/info/rfc9457/"
+    },
+    {
+      "id": "html-sse",
+      "url": "https://html.spec.whatwg.org/multipage/server-sent-events.html",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://html.spec.whatwg.org/multipage/server-sent-events.html"
+    },
+    {
+      "id": "rfc6455",
+      "url": "https://www.rfc-editor.org/rfc/rfc6455",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://www.rfc-editor.org/info/rfc6455/"
+    },
+    {
+      "id": "kubernetes-docs",
+      "url": "https://kubernetes.io/docs/home/",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://kubernetes.io/docs/home/"
+    },
+    {
+      "id": "twelve-factor",
+      "url": "https://12factor.net/",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://12factor.net/"
+    },
+    {
+      "id": "slsa",
+      "url": "https://slsa.dev/spec/",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://slsa.dev/spec/latest"
+    },
+    {
+      "id": "wu2023autogen",
+      "url": "https://arxiv.org/abs/2308.08155",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2308.08155"
+    },
+    {
+      "id": "liu2023agentbench",
+      "url": "https://arxiv.org/abs/2308.03688",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2308.03688"
+    },
+    {
+      "id": "zhou2023webarena",
+      "url": "https://arxiv.org/abs/2307.13854",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2307.13854"
+    },
+    {
+      "id": "xie2024osworld",
+      "url": "https://arxiv.org/abs/2404.07972",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2404.07972"
+    },
+    {
+      "id": "jimenez2024swebench",
+      "url": "https://arxiv.org/abs/2310.06770",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2310.06770"
+    },
+    {
+      "id": "radford2021clip",
+      "url": "https://arxiv.org/abs/2103.00020",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2103.00020"
+    },
+    {
+      "id": "radford2022whisper",
+      "url": "https://arxiv.org/abs/2212.04356",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2212.04356"
+    },
+    {
+      "id": "alayrac2022flamingo",
+      "url": "https://arxiv.org/abs/2204.14198",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://arxiv.org/abs/2204.14198"
+    },
+    {
+      "id": "iso25010",
+      "url": "https://www.iso.org/standard/78176.html",
+      "state": "restricted",
+      "status_code": 403,
+      "final_url": "https://www.iso.org/standard/78176.html"
+    },
+    {
+      "id": "spdx-spec",
+      "url": "https://spdx.github.io/spdx-spec/",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://spdx.github.io/spdx-spec/"
+    },
+    {
+      "id": "cc-by-nc-sa",
+      "url": "https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode",
+      "state": "ok",
+      "status_code": 206,
+      "final_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode"
+    },
+    {
+      "id": "mit-license",
+      "url": "https://opensource.org/license/mit",
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://opensource.org/license/mit"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "source": "projects/10-enterprise-platform",
+  "execution": "offline-real-runtime",
+  "tenant": "trace-demo",
+  "run_id": "84819c77…",
+  "trace_id": "0cb199141216…",
+  "status": "succeeded",
+  "output": "根据租户知识库：员工申请年假时，应在工作流中提交并等待主管审批。 [来源：leave-policy-v3]",
+  "events": [
+    {
+      "sequence": 1,
+      "event": "run.queued",
+      "details": {
+        "user_id": "admin"
+      }
+    },
+    {
+      "sequence": 2,
+      "event": "run.started",
+      "details": {}
+    },
+    {
+      "sequence": 3,
+      "event": "run.succeeded",
+      "details": {
+        "rag": "True"
+      }
+    }
+  ]
+}

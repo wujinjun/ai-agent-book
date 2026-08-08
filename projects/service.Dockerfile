@@ -2,7 +2,7 @@ FROM python:3.12-slim AS runtime
 
 ARG PROJECT_SLUG
 WORKDIR /app
-COPY pyproject.toml README.md ./
+COPY pyproject.toml README.md LICENSE-CODE ./
 COPY src ./src
 COPY projects/${PROJECT_SLUG}/api.py ./api.py
 RUN pip install --no-cache-dir .

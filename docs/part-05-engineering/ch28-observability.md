@@ -112,6 +112,12 @@ flowchart LR
 
 队列消息只传播 trace context 与 run ID，不携带敏感正文。每个 Adapter 记录稳定属性，后端平台可替换而不修改业务语义。
 
+### 一次真实离线 Trace 的阅读方法
+
+![项目 10 离线运行生成的 Trace 界面截图](../assets/trace-sample.png)
+
+图 28-5 不是观测平台的概念稿，而是运行项目 10 的 SQLite 离线实现后，由 `scripts/build_trace_screenshot.py` 将实际 `TraceRecord` 记录渲染成的界面截图。随机 Run ID 与 Trace ID 仅保留前缀，教材仓库没有写入真实用户数据或生产 Prompt；可复核的规范化事件保存在 `notes/trace-sample.json`。这条短链展示 `run.queued`、`run.started` 和 `run.succeeded` 的顺序，适合验证租户隔离、队列恢复和最终结果。真实生产系统还应把模型、检索、工具与审批拆成子 Span，并记录可靠时钟下的耗时，不能从这三个事件推断供应商延迟。
+
 ### Prompt、Tool 与 Retrieval Trace
 
 Prompt Trace 记录模板版本、变量来源、Token 数和内容哈希；仅在受控环境保存脱敏正文。Tool Trace 记录候选、Policy 判定、参数摘要、执行、重试与结果。Retrieval Trace 保存过滤、候选 ID、各阶段分数和进入上下文的片段 ID。
@@ -132,3 +138,12 @@ Prompt Trace 记录模板版本、变量来源、Token 数和内容哈希；仅�
 
 常见误区：只装一个平台就可观测、平均延迟代表体验、Trace 可以替代审计、先全量采集以后再脱敏。测试日志字段、Trace parent、敏感信息扫描、Usage/Cost 计算和 exporter 故障；观测后端不可用时业务应降级而非停止核心任务。
 总结：可观测性必须能解释质量、成本和失败路径，同时尊重隐私。练习：为 Tool Loop 加 span、P95 和敏感字段测试。面试：Trace 和 Audit Log 区别？Token 成本如何与任务成功关联？为什么 Metrics 不应带 run_id？延伸阅读：OpenTelemetry、所选观测平台和隐私日志规范。代码目录：项目10。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [otel-spec：OpenTelemetry Specification](../references.md#ref-otel-spec)
+- [w3c-trace-context：Trace Context](../references.md#ref-w3c-trace-context)
+- [openai-data-controls：Data Controls in the OpenAI Platform](../references.md#ref-openai-data-controls)
+<!-- chapter-citations:end -->

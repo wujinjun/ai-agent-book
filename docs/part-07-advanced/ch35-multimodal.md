@@ -140,3 +140,12 @@ query  -> permission -> multimodal retrieve -> rerank
 
 媒体可能含人脸、声音、位置和文档 PII，需要同意、用途、加密、保留和删除。下载/解析在 Sandbox，防恶意文件与解压炸弹。常见误区是“模型能看图就不需 OCR”、随机抽帧代表视频、OCR 文字等于原始事实。
 总结：多模态 Agent 的核心是保留位置、时间、置信和来源。练习：为带表格和图片的 PDF 设计双通道检索并画出 Citation。面试：多模态 RAG 的引用如何定位？OCR 与 Vision 如何分工？视频抽帧如何评估？延伸阅读：OCR、ASR、Vision、视频理解和多模态检索资料。代码目录：项目4。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [radford2021clip：Learning Transferable Visual Models From Natural Language Supervision](../references.md#ref-radford2021clip)
+- [radford2022whisper：Robust Speech Recognition via Large-Scale Weak Supervision](../references.md#ref-radford2022whisper)
+- [alayrac2022flamingo：Flamingo: a Visual Language Model for Few-Shot Learning](../references.md#ref-alayrac2022flamingo)
+<!-- chapter-citations:end -->

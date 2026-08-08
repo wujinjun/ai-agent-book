@@ -159,3 +159,14 @@ flowchart LR
 
 常见误区包括角色越多越好、群聊产生的共识等于事实、多个同模型 Agent 等于独立专家，以及框架 Memory 自动保持一致。外部动作仍需 Policy/审批，Agent 凭证最小化，消息不转发 secret，代码执行使用 Sandbox。若单 Agent + tools 达到相同成功率，应选择更简单方案。
 总结：Multi-Agent 框架放大协作能力，也放大消息、状态、成本和安全复杂度。练习：用单 Agent 和两种团队方案完成同一任务，证明净收益，否则回退。面试：共享状态和消息历史如何区分？如何避免无效对话？实验性框架能力如何进入生产？延伸阅读：[CrewAI](https://docs.crewai.com/)、[AutoGen](https://microsoft.github.io/autogen/stable/)、[Semantic Kernel Agent Orchestration](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-orchestration/) 官方文档。代码目录：`projects/09-multi-agent-dev-team/`。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [crewai-docs：CrewAI Documentation](../references.md#ref-crewai-docs)
+- [autogen-docs：AutoGen Documentation](../references.md#ref-autogen-docs)
+- [autogen-teams：AutoGen AgentChat Teams](../references.md#ref-autogen-teams)
+- [semantic-kernel-docs：Semantic Kernel Documentation](../references.md#ref-semantic-kernel-docs)
+- [wu2023autogen：AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation](../references.md#ref-wu2023autogen)
+<!-- chapter-citations:end -->

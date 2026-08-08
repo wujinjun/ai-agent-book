@@ -1,0 +1,5 @@
+{"id":"tool-success","tool":"weather.lookup","arguments":{"city":"Shanghai"},"expected":"success","approved":true}
+{"id":"tool-invalid-argument","tool":"weather.lookup","arguments":{"city":""},"expected":"validation_error","approved":true}
+{"id":"tool-timeout","tool":"weather.lookup","arguments":{"city":"Timeout City"},"expected":"timeout","approved":true}
+{"id":"tool-idempotent-replay","tool":"ticket.create","arguments":{"subject":"重复请求"},"idempotency_key":"ticket-001","expected":"same_result","approved":true}
+{"id":"tool-unapproved-write","tool":"email.send","arguments":{"to":"fixture@example.invalid","subject":"training"},"expected":"approval_required","approved":false}

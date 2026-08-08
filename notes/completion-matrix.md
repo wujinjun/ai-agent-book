@@ -1,6 +1,6 @@
 # 教材完成矩阵
 
-状态审计日期：2026-08-07。该日期只表示仓库交付审计，不表示所有外部 API 在当天重新核对。
+状态审计日期：2026-08-08。该日期只表示仓库交付审计，不表示所有外部 API 在当天重新核对。
 
 ## 状态词汇
 
@@ -40,7 +40,7 @@
 
 | 章节 | 正文 | 代码 | 版本 | 出版 | 主要缺口 | 目标阶段 |
 |---|---|---|---|---|---|---|
-| 第1章 | `publishable_draft` | `inline_only` | `stable_concepts` | `pdf_epub_verified` | 独立技术编辑、引用链接 | P6 |
+| 第1章 | `publishable_draft` | `inline_only` | `stable_concepts` | `pdf_epub_verified` | P9 独立技术与中文审稿 | P9 |
 | 第2章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 目标模型 Tokenizer 在线对照 | P3—P4 |
 | 第3章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 与训练框架 Attention 对照 | P4 |
 | 第4章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 真实模型参数对照实验 | P4 |
@@ -95,3 +95,26 @@
 | 项目10 | `production_reference` | 多租户 API、PostgreSQL/SQLite、Redis 恢复队列、Verifier/RBAC、Agent/Tool/MCP/RAG、Trace/Eval/指标、重试、DLQ、取消和一致性备份 | 真实 OIDC/JWKS、RLS、独立 Worker、管理前端与灾备演练 | P4—P9 |
 
 项目 4、8、10 已达到离线 `production_reference`，但没有项目标记为 `externally_validated`。外部状态必须有真实账号、远程系统或设备验收证据，不能仅根据 README 描述升级。
+
+P9 于 2026-08-08 从当前源码重建十个 Python 3.12 Linux 服务镜像，并逐个执行 Readiness；项目 10 同时启动 pgvector PostgreSQL 与 Redis。该结果关闭了“容器仅静态配置验证”的缺口，但不改变上述外部供应商和生产环境边界。运行证据见 `notes/p9-project-runtime-qa.md`。
+
+## 企业培训交付矩阵
+
+| 交付物 | 状态 | 验收证据 | 后续边界 |
+|---|---|---|---|
+| 讲师与学员手册 | `repository_verified` | 课前、课中、课后节奏；12 个实验；提交与失败证据契约 | 真实班级试讲在 P9 |
+| 学习路线与评分 | `repository_verified` | 8/12/24 周路线、周任务、时间、输出、检查标准和双层 Rubric | 根据试学数据校准难度 |
+| 题库与案例 | `repository_verified` | 38 章题目、100 分综合考试、参考答案、五类企业案例 | 外部技术审阅在 P9 |
+| 工作坊 | `repository_verified` | 架构评审、威胁建模、成本估算的输入、流程与产出 | 企业场景试讲在 P9 |
+| 离线培训包 | `offline_verified` | 四组稳定 Fixture、内容哈希、Pydantic 校验与确定性清单 | 在线 Provider 仅作可选扩展 |
+| 培训幻灯片 | `visual_verified` | 16 页 PPTX、逐页渲染、溢出检查、讲师备注与来源块 | 投影设备实测在 P9 |
+
+## 引用与出版编辑矩阵
+
+| 维度 | 状态 | 验收证据 | 后续边界 |
+|---|---|---|---|
+| 正式资料 | `repository_verified` | 113 条论文、标准、官方文档和官方仓库资料 | 版本敏感页面持续复核 |
+| 章节引用 | `repository_verified` | 38 章、163 处生成引用、每章至少 3 条 | 逐句引文由独立审稿人抽检 |
+| 外链 | `network_checked` | 113/113 有解释结果，0 个未处理失败 | 发行前重新运行网络核查 |
+| 中文与技术编辑 | `maintainer_reviewed` | 编辑规范、自动审计和 P6 复审记录 | `editor_reviewed` 仍要求 P9 独立审稿 |
+| 权利与许可 | `boundary_documented` | 内容 CC BY-NC-SA、代码 MIT、商业许可说明、CLA、素材清单 | 商业合同与法律意见在 P9 |

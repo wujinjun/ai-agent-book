@@ -348,3 +348,14 @@ flowchart TD
 3. “P0301”“第一缸检测到失火”“发动机抖动但没有该故障码”可形成一组对照查询。第一项通常偏向稀疏，第二项适合稠密，第三项需要语义召回后再验证事实条件。结论必须来自实际排名与 Recall/MRR，而不是凭直觉宣布某一路获胜。
 4. Reranker 放在初检后，是因为对全库运行较昂贵的成对相关性模型成本过高；初检用高召回快速缩小候选，重排再优化前列精度。若初检漏掉相关文档，Reranker 无法恢复，因此两层必须分别评价。
 5. 权限过滤应尽量下推到检索存储层，并在所有缓存、融合与重排路径保持租户条件。生成模型的“请勿泄漏”不是访问控制。测试要证明不可见文档既不会返回，也不会出现在可访问的 Trace 中。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [mikolov2013：Efficient Estimation of Word Representations in Vector Space](../references.md#ref-mikolov2013)
+- [reimers2019：Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](../references.md#ref-reimers2019)
+- [johnson2017：Billion-scale Similarity Search with GPUs](../references.md#ref-johnson2017)
+- [malkov2018：Efficient and Robust Approximate Nearest Neighbor Search Using HNSW](../references.md#ref-malkov2018)
+- [robertson2009：The Probabilistic Relevance Framework: BM25 and Beyond](../references.md#ref-robertson2009)
+<!-- chapter-citations:end -->

@@ -145,3 +145,12 @@ Schema 演进要考虑生产者和消费者不同步。新增可选字段通常�
 Structured Output 把概率文本接到类型边界，但不提供真实性。练习：实现发票抽取模型、三类失败测试与有限重试；面试问题：JSON mode 与 JSON Schema 有什么差异？何时允许部分解析？延伸阅读：JSON Schema 规范与 Pydantic 当前文档。
 
 本章代码目录为 [`examples/structured_extractor/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/structured_extractor)，使用 Pydantic 2.11.7 提供严格 Schema、Provider 端口、确定性 Fake、最多三次的有限修复、敏感输入门禁和不泄漏内部 ValidationError 的稳定公共错误。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [jsonschema2020：JSON Schema Draft 2020-12](../references.md#ref-jsonschema2020)
+- [rfc8259：The JavaScript Object Notation Data Interchange Format](../references.md#ref-rfc8259)
+- [pydantic-models：Pydantic Models](../references.md#ref-pydantic-models)
+<!-- chapter-citations:end -->

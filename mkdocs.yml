@@ -48,8 +48,21 @@ plugins:
   - search
 nav:
   - 首页: index.md
+  - 版权与使用说明: copyright.md
+  - 版本与发行信息: edition.md
   - 前言: preface.md
   - 学习指南: learning-guide.md
+  - 企业培训版:
+      - 培训入口: training/index.md
+      - 讲师手册: training/instructor-guide.md
+      - 学员实验手册: training/student-lab-manual.md
+      - 评分标准: training/assessment-rubric.md
+      - 章节题库与考试: training/question-bank.md
+      - 企业案例: training/enterprise-cases.md
+      - 工作坊: training/workshops.md
+      - 离线培训包: training/offline-training-pack.md
+      - 常见学员错误: training/common-mistakes.md
+      - 幻灯片说明: training/slides.md
   - 第一篇 LLM 与 AI Agent 基础:
       - 导读: part-01-foundations/index.md
       - 第1章 什么是大语言模型: part-01-foundations/ch01-what-is-llm.md
@@ -106,4 +119,5 @@ nav:
   - 术语表: glossary.md
   - 参考资料: references.md
   - 质量路线图: QUALITY_ROADMAP.md
+  - 最终验收状态: final-acceptance.md
   - 项目状态: project-status.md

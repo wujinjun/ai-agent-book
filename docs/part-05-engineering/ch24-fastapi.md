@@ -144,3 +144,14 @@ ASGITransport/TestClient 测路由，无需启动端口；Fake Service 验证 HT
 
 常见误区：用 WebSocket 表示“高级”、把长任务放 BackgroundTasks、只做路由鉴权、信任 MIME、返回内部异常。安全上设置 CORS allowlist、HTTPS、安全 header、请求大小、超时、限流和审计；OpenAPI 文档不应暴露内部管理接口给未授权网络。
 总结：Agent API 的核心是任务状态与事件协议，不只是一个聊天端点。练习：实现可取消、可断线恢复的 SSE 任务。面试：SSE 与 WebSocket 如何选？BackgroundTasks 何时不可靠？认证与对象授权如何分层？延伸阅读：FastAPI、Starlette、OAuth/OIDC 和 SSE 规范。代码目录：`projects/10-enterprise-platform/`。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [fastapi-docs：FastAPI Documentation](../references.md#ref-fastapi-docs)
+- [rfc9110：HTTP Semantics](../references.md#ref-rfc9110)
+- [rfc9457：Problem Details for HTTP APIs](../references.md#ref-rfc9457)
+- [html-sse：Server-Sent Events](../references.md#ref-html-sse)
+- [rfc6455：The WebSocket Protocol](../references.md#ref-rfc6455)
+<!-- chapter-citations:end -->

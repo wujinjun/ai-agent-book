@@ -140,45 +140,4 @@ glossary:
     aliases: [工作流]
     definition: 由显式节点、状态与转移规则约束的执行过程。
 
-references:
-  - id: vaswani2017
-    authors: Vaswani, A. et al.
-    title: Attention Is All You Need
-    publication: NeurIPS
-    year: 2017
-  - id: brown2020
-    authors: Brown, T. et al.
-    title: Language Models are Few-Shot Learners
-    publication: NeurIPS
-    year: 2020
-  - id: ouyang2022
-    authors: Ouyang, L. et al.
-    title: Training Language Models to Follow Instructions with Human Feedback
-    publication: NeurIPS
-    year: 2022
-  - id: bender2021
-    authors: Bender, E. M. et al.
-    title: On the Dangers of Stochastic Parrots
-    publication: FAccT
-    year: 2021
-  - id: bommasani2021
-    authors: Bommasani, R. et al.
-    title: On the Opportunities and Risks of Foundation Models
-    publication: Stanford CRFM
-    year: 2021
-  - id: lewis2020
-    authors: Lewis, P. et al.
-    title: Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks
-    publication: NeurIPS
-    year: 2020
-  - id: yao2022
-    authors: Yao, S. et al.
-    title: "ReAct: Synergizing Reasoning and Acting in Language Models"
-    publication: ICLR
-    year: 2023
-  - id: owasp-llm-top10
-    authors: OWASP Foundation
-    title: OWASP Top 10 for Large Language Model Applications
-    publication: OWASP GenAI Security Project
-    year: 2025
-    note: 版本敏感，引用前须核对当前正式版本。
+references_file: notes/references.yml

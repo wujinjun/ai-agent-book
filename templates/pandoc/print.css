@@ -1,3 +1,33 @@
+@font-face {
+  font-family: "Book Noto Sans SC";
+  src: url("../../assets/fonts/noto-sans-sc/NotoSansSC-Regular.otf") format("opentype");
+  font-style: normal;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Book Noto Sans SC";
+  src: url("../../assets/fonts/noto-sans-sc/NotoSansSC-Bold.otf") format("opentype");
+  font-style: normal;
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Book Source Code Pro";
+  src: url("../../assets/fonts/source-code-pro/SourceCodePro-Regular.otf") format("opentype");
+  font-style: normal;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Book Source Code Pro";
+  src: url("../../assets/fonts/source-code-pro/SourceCodePro-Bold.otf") format("opentype");
+  font-style: normal;
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Book Source Code Pro";
+  src: url("../../assets/fonts/source-code-pro/SourceCodePro-It.otf") format("opentype");
+  font-style: italic;
+  font-weight: 400;
+}
 @page {
   size: A4;
   margin: 20mm 18mm 22mm;
@@ -8,7 +38,7 @@ body {
   max-width: none;
   margin: 0;
   color: #182534;
-  font-family: "Hiragino Sans GB", "PingFang SC", "STHeiti", sans-serif;
+  font-family: "Book Noto Sans SC", sans-serif;
   line-height: 1.72;
 }
 h1, h2, h3 { color: #172433; line-height: 1.28; break-after: avoid-page; }
@@ -39,17 +69,21 @@ nav#TOC li { margin: 0.18em 0; break-inside: avoid; }
 nav#TOC a { color: #34495e; }
 section.level1 { break-before: page; }
 pre {
+  break-inside: avoid-page;
   padding: 8pt;
   border: 0.5pt solid #dce3ea;
   border-radius: 5pt;
   background: #f6f8fa;
-  font-family: Menlo, Monaco, monospace;
+  font-family: "Book Source Code Pro", "Book Noto Sans SC", monospace;
   font-size: 8pt;
   line-height: 1.45;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
-code { font-family: Menlo, Monaco, monospace; font-size: 0.92em; }
+code {
+  font-family: "Book Source Code Pro", "Book Noto Sans SC", monospace;
+  font-size: 0.92em;
+}
 table { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
 thead { display: table-header-group; }
 tr { break-inside: avoid-page; }
@@ -58,6 +92,7 @@ th { background: #edf2f6; }
 figure, .book-diagram { width: 100%; margin: 12pt auto; text-align: center; break-inside: avoid-page; }
 figure img, .book-diagram img { display: block; max-width: 100%; max-height: 210mm; margin: auto; }
 figcaption { margin-top: 5pt; color: #627184; font-size: 8pt; }
+.figure-number { color: #263b50; font-weight: 700; }
 .page-break { break-before: page; }
 @media print {
   a[href^="http"]::after { content: ""; }

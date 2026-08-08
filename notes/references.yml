@@ -1,0 +1,742 @@
+# 论文、标准、官方文档与官方仓库。版本敏感页面以 checked 字段记录核对日期。
+
+# LLM、Tokenizer、生成与表示
+- id: vaswani2017
+  authors: "Vaswani, A. et al."
+  title: "Attention Is All You Need"
+  publication: "NeurIPS"
+  year: 2017
+  url: "https://arxiv.org/abs/1706.03762"
+- id: brown2020
+  authors: "Brown, T. et al."
+  title: "Language Models are Few-Shot Learners"
+  publication: "NeurIPS"
+  year: 2020
+  url: "https://arxiv.org/abs/2005.14165"
+- id: ouyang2022
+  authors: "Ouyang, L. et al."
+  title: "Training Language Models to Follow Instructions with Human Feedback"
+  publication: "NeurIPS"
+  year: 2022
+  url: "https://arxiv.org/abs/2203.02155"
+- id: bender2021
+  authors: "Bender, E. M. et al."
+  title: "On the Dangers of Stochastic Parrots"
+  publication: "ACM FAccT"
+  year: 2021
+  url: "https://doi.org/10.1145/3442188.3445922"
+- id: bommasani2021
+  authors: "Bommasani, R. et al."
+  title: "On the Opportunities and Risks of Foundation Models"
+  publication: "Stanford CRFM"
+  year: 2021
+  url: "https://arxiv.org/abs/2108.07258"
+- id: devlin2018
+  authors: "Devlin, J. et al."
+  title: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding"
+  publication: "NAACL"
+  year: 2019
+  url: "https://arxiv.org/abs/1810.04805"
+- id: radford2019
+  authors: "Radford, A. et al."
+  title: "Language Models are Unsupervised Multitask Learners"
+  publication: "OpenAI Technical Report"
+  year: 2019
+  url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"
+- id: kaplan2020
+  authors: "Kaplan, J. et al."
+  title: "Scaling Laws for Neural Language Models"
+  publication: "arXiv"
+  year: 2020
+  url: "https://arxiv.org/abs/2001.08361"
+- id: hoffmann2022
+  authors: "Hoffmann, J. et al."
+  title: "Training Compute-Optimal Large Language Models"
+  publication: "NeurIPS"
+  year: 2022
+  url: "https://arxiv.org/abs/2203.15556"
+- id: touvron2023
+  authors: "Touvron, H. et al."
+  title: "Llama 2: Open Foundation and Fine-Tuned Chat Models"
+  publication: "arXiv"
+  year: 2023
+  url: "https://arxiv.org/abs/2307.09288"
+- id: wei2022
+  authors: "Wei, J. et al."
+  title: "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models"
+  publication: "NeurIPS"
+  year: 2022
+  url: "https://arxiv.org/abs/2201.11903"
+- id: kojima2022
+  authors: "Kojima, T. et al."
+  title: "Large Language Models are Zero-Shot Reasoners"
+  publication: "NeurIPS"
+  year: 2022
+  url: "https://arxiv.org/abs/2205.11916"
+- id: holtzman2020
+  authors: "Holtzman, A. et al."
+  title: "The Curious Case of Neural Text Degeneration"
+  publication: "ICLR"
+  year: 2020
+  url: "https://arxiv.org/abs/1904.09751"
+- id: sennrich2016
+  authors: "Sennrich, R. et al."
+  title: "Neural Machine Translation of Rare Words with Subword Units"
+  publication: "ACL"
+  year: 2016
+  url: "https://arxiv.org/abs/1508.07909"
+- id: kudo2018
+  authors: "Kudo, T. and Richardson, J."
+  title: "SentencePiece: A Simple and Language Independent Subword Tokenizer"
+  publication: "EMNLP System Demonstrations"
+  year: 2018
+  url: "https://aclanthology.org/D18-2012/"
+- id: mikolov2013
+  authors: "Mikolov, T. et al."
+  title: "Efficient Estimation of Word Representations in Vector Space"
+  publication: "ICLR Workshop"
+  year: 2013
+  url: "https://arxiv.org/abs/1301.3781"
+- id: reimers2019
+  authors: "Reimers, N. and Gurevych, I."
+  title: "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks"
+  publication: "EMNLP-IJCNLP"
+  year: 2019
+  url: "https://arxiv.org/abs/1908.10084"
+- id: johnson2017
+  authors: "Johnson, J. et al."
+  title: "Billion-scale Similarity Search with GPUs"
+  publication: "IEEE Transactions on Big Data"
+  year: 2019
+  url: "https://arxiv.org/abs/1702.08734"
+- id: malkov2018
+  authors: "Malkov, Y. and Yashunin, D."
+  title: "Efficient and Robust Approximate Nearest Neighbor Search Using HNSW"
+  publication: "IEEE TPAMI"
+  year: 2020
+  url: "https://arxiv.org/abs/1603.09320"
+- id: robertson2009
+  authors: "Robertson, S. and Zaragoza, H."
+  title: "The Probabilistic Relevance Framework: BM25 and Beyond"
+  publication: "Foundations and Trends in Information Retrieval"
+  year: 2009
+  url: "https://doi.org/10.1561/1500000019"
+
+# Prompt、结构化输出、工具与 Agent 机制
+- id: yao2022
+  authors: "Yao, S. et al."
+  title: "ReAct: Synergizing Reasoning and Acting in Language Models"
+  publication: "ICLR"
+  year: 2023
+  url: "https://arxiv.org/abs/2210.03629"
+- id: schick2023
+  authors: "Schick, T. et al."
+  title: "Toolformer: Language Models Can Teach Themselves to Use Tools"
+  publication: "NeurIPS"
+  year: 2023
+  url: "https://arxiv.org/abs/2302.04761"
+- id: karpas2022
+  authors: "Karpas, E. et al."
+  title: "MRKL Systems: A Modular, Neuro-Symbolic Architecture for Tool Use"
+  publication: "arXiv"
+  year: 2022
+  url: "https://arxiv.org/abs/2205.00445"
+- id: shinn2023
+  authors: "Shinn, N. et al."
+  title: "Reflexion: Language Agents with Verbal Reinforcement Learning"
+  publication: "NeurIPS"
+  year: 2023
+  url: "https://arxiv.org/abs/2303.11366"
+- id: wang2023plan
+  authors: "Wang, L. et al."
+  title: "Plan-and-Solve Prompting"
+  publication: "ACL"
+  year: 2023
+  url: "https://arxiv.org/abs/2305.04091"
+- id: yao2023tot
+  authors: "Yao, S. et al."
+  title: "Tree of Thoughts: Deliberate Problem Solving with Large Language Models"
+  publication: "NeurIPS"
+  year: 2023
+  url: "https://arxiv.org/abs/2305.10601"
+- id: madaan2023
+  authors: "Madaan, A. et al."
+  title: "Self-Refine: Iterative Refinement with Self-Feedback"
+  publication: "NeurIPS"
+  year: 2023
+  url: "https://arxiv.org/abs/2303.17651"
+- id: jsonschema2020
+  authors: "JSON Schema Project"
+  title: "JSON Schema Draft 2020-12"
+  publication: "JSON Schema Specification"
+  year: 2020
+  url: "https://json-schema.org/draft/2020-12"
+  checked: "2026-08-08"
+- id: pydantic-models
+  authors: "Pydantic Team"
+  title: "Pydantic Models"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://docs.pydantic.dev/latest/concepts/models/"
+  checked: "2026-08-08"
+- id: openai-quickstart
+  authors: "OpenAI"
+  title: "OpenAI API Developer Quickstart"
+  publication: "Official OpenAI Documentation"
+  year: 2026
+  url: "https://platform.openai.com/docs/quickstart/make-your-first-api-request"
+  checked: "2026-08-08"
+- id: openai-evals
+  authors: "OpenAI"
+  title: "Evals API Reference"
+  publication: "Official OpenAI Documentation"
+  year: 2026
+  url: "https://platform.openai.com/docs/api-reference/evals"
+  checked: "2026-08-08"
+- id: openai-compat
+  authors: "OpenAI"
+  title: "API Backward Compatibility"
+  publication: "Official OpenAI Documentation"
+  year: 2026
+  url: "https://platform.openai.com/docs/api-reference/backward-compatibility"
+  checked: "2026-08-08"
+- id: openai-data-controls
+  authors: "OpenAI"
+  title: "Data Controls in the OpenAI Platform"
+  publication: "Official OpenAI Documentation"
+  year: 2026
+  url: "https://platform.openai.com/docs/models/default-usage-policies-by-endpoint"
+  checked: "2026-08-08"
+- id: rfc8259
+  authors: "Bray, T."
+  title: "The JavaScript Object Notation Data Interchange Format"
+  publication: "IETF RFC 8259"
+  year: 2017
+  url: "https://www.rfc-editor.org/rfc/rfc8259"
+- id: jsonrpc20
+  authors: "JSON-RPC Working Group"
+  title: "JSON-RPC 2.0 Specification"
+  publication: "JSON-RPC Specification"
+  year: 2010
+  url: "https://www.jsonrpc.org/specification"
+- id: patil2023gorilla
+  authors: "Patil, S. et al."
+  title: "Gorilla: Large Language Model Connected with Massive APIs"
+  publication: "arXiv"
+  year: 2023
+  url: "https://arxiv.org/abs/2305.15334"
+- id: qin2023toolllm
+  authors: "Qin, Y. et al."
+  title: "ToolLLM: Facilitating Large Language Models to Master 16000+ APIs"
+  publication: "ICLR"
+  year: 2024
+  url: "https://arxiv.org/abs/2307.16789"
+- id: ruan2023toolbench
+  authors: "Qin, Y. et al."
+  title: "Tool Learning with Foundation Models"
+  publication: "arXiv"
+  year: 2023
+  url: "https://arxiv.org/abs/2304.08354"
+
+# MCP、RAG、Memory 与向量检索
+- id: mcp-architecture
+  authors: "Model Context Protocol"
+  title: "Architecture Overview"
+  publication: "Official MCP Documentation"
+  year: 2026
+  url: "https://modelcontextprotocol.io/docs/learn/architecture"
+  checked: "2026-08-08"
+- id: mcp-spec-2025-11-25
+  authors: "Model Context Protocol"
+  title: "Specification 2025-11-25"
+  publication: "Official MCP Specification"
+  year: 2025
+  url: "https://modelcontextprotocol.io/specification/2025-11-25"
+  checked: "2026-08-08"
+- id: mcp-auth
+  authors: "Model Context Protocol"
+  title: "Authorization"
+  publication: "Official MCP Specification"
+  year: 2025
+  url: "https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization"
+  checked: "2026-08-08"
+- id: mcp-changelog
+  authors: "Model Context Protocol"
+  title: "Specification Key Changes"
+  publication: "Official MCP Specification"
+  year: 2025
+  url: "https://modelcontextprotocol.io/specification/2025-11-25/changelog"
+  checked: "2026-08-08"
+- id: mcp-python-sdk
+  authors: "Model Context Protocol"
+  title: "Python SDK"
+  publication: "Official GitHub Repository"
+  year: 2026
+  url: "https://github.com/modelcontextprotocol/python-sdk"
+  checked: "2026-08-08"
+- id: lewis2020
+  authors: "Lewis, P. et al."
+  title: "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"
+  publication: "NeurIPS"
+  year: 2020
+  url: "https://arxiv.org/abs/2005.11401"
+- id: karpukhin2020
+  authors: "Karpukhin, V. et al."
+  title: "Dense Passage Retrieval for Open-Domain Question Answering"
+  publication: "EMNLP"
+  year: 2020
+  url: "https://arxiv.org/abs/2004.04906"
+- id: khattab2020
+  authors: "Khattab, O. and Zaharia, M."
+  title: "ColBERT: Efficient and Effective Passage Search"
+  publication: "SIGIR"
+  year: 2020
+  url: "https://arxiv.org/abs/2004.12832"
+- id: gao2022hyde
+  authors: "Gao, L. et al."
+  title: "Precise Zero-Shot Dense Retrieval without Relevance Labels"
+  publication: "ACL"
+  year: 2023
+  url: "https://arxiv.org/abs/2212.10496"
+- id: es2023ragas
+  authors: "Es, S. et al."
+  title: "RAGAS: Automated Evaluation of Retrieval Augmented Generation"
+  publication: "EACL System Demonstrations"
+  year: 2024
+  url: "https://arxiv.org/abs/2309.15217"
+- id: asai2023selfrag
+  authors: "Asai, A. et al."
+  title: "Self-RAG: Learning to Retrieve, Generate, and Critique"
+  publication: "ICLR"
+  year: 2024
+  url: "https://arxiv.org/abs/2310.11511"
+- id: yan2024crag
+  authors: "Yan, S. et al."
+  title: "Corrective Retrieval Augmented Generation"
+  publication: "arXiv"
+  year: 2024
+  url: "https://arxiv.org/abs/2401.15884"
+- id: edge2024graphrag
+  authors: "Edge, D. et al."
+  title: "From Local to Global: A Graph RAG Approach"
+  publication: "arXiv"
+  year: 2024
+  url: "https://arxiv.org/abs/2404.16130"
+- id: sarthi2024raptor
+  authors: "Sarthi, P. et al."
+  title: "RAPTOR: Recursive Abstractive Processing for Tree-Organized Retrieval"
+  publication: "ICLR"
+  year: 2024
+  url: "https://arxiv.org/abs/2401.18059"
+- id: liu2023lostmiddle
+  authors: "Liu, N. et al."
+  title: "Lost in the Middle: How Language Models Use Long Contexts"
+  publication: "Transactions of the ACL"
+  year: 2024
+  url: "https://arxiv.org/abs/2307.03172"
+- id: borgeaud2022retro
+  authors: "Borgeaud, S. et al."
+  title: "Improving Language Models by Retrieving from Trillions of Tokens"
+  publication: "ICML"
+  year: 2022
+  url: "https://arxiv.org/abs/2112.04426"
+- id: park2023generativeagents
+  authors: "Park, J. et al."
+  title: "Generative Agents: Interactive Simulacra of Human Behavior"
+  publication: "UIST"
+  year: 2023
+  url: "https://arxiv.org/abs/2304.03442"
+- id: packer2023memgpt
+  authors: "Packer, C. et al."
+  title: "MemGPT: Towards LLMs as Operating Systems"
+  publication: "arXiv"
+  year: 2023
+  url: "https://arxiv.org/abs/2310.08560"
+- id: faiss-wiki
+  authors: "Meta Research"
+  title: "Faiss Documentation"
+  publication: "Official GitHub Wiki"
+  year: 2026
+  url: "https://github.com/facebookresearch/faiss/wiki"
+  checked: "2026-08-08"
+- id: pgvector
+  authors: "pgvector Project"
+  title: "pgvector"
+  publication: "Official GitHub Repository"
+  year: 2026
+  url: "https://github.com/pgvector/pgvector"
+  checked: "2026-08-08"
+- id: milvus-docs
+  authors: "Milvus Project"
+  title: "Milvus Documentation"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://milvus.io/docs"
+  checked: "2026-08-08"
+
+# Agent 框架官方资料
+- id: openai-agents-guide
+  authors: "OpenAI"
+  title: "Build Agents with the OpenAI Platform"
+  publication: "Official OpenAI Documentation"
+  year: 2026
+  url: "https://platform.openai.com/docs/guides/agents"
+  checked: "2026-08-08"
+- id: pydanticai-docs
+  authors: "Pydantic Team"
+  title: "PydanticAI Documentation"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://ai.pydantic.dev/"
+  checked: "2026-08-08"
+- id: pydanticai-tools
+  authors: "Pydantic Team"
+  title: "PydanticAI Function Tools"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://ai.pydantic.dev/tools/"
+  checked: "2026-08-08"
+- id: pydanticai-testing
+  authors: "Pydantic Team"
+  title: "PydanticAI Testing"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://ai.pydantic.dev/testing/"
+  checked: "2026-08-08"
+- id: langgraph-overview
+  authors: "LangChain"
+  title: "LangGraph Overview"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://docs.langchain.com/oss/python/langgraph/overview"
+  checked: "2026-08-08"
+- id: langgraph-persistence
+  authors: "LangChain"
+  title: "LangGraph Persistence"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://docs.langchain.com/oss/python/langgraph/persistence"
+  checked: "2026-08-08"
+- id: langgraph-time-travel
+  authors: "LangChain"
+  title: "LangGraph Time Travel"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://docs.langchain.com/oss/python/langgraph/use-time-travel"
+  checked: "2026-08-08"
+- id: langgraph-streaming
+  authors: "LangChain"
+  title: "LangGraph Event Streaming"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://docs.langchain.com/oss/python/langgraph/event-streaming"
+  checked: "2026-08-08"
+- id: langchain-docs
+  authors: "LangChain"
+  title: "LangChain Python Documentation"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://docs.langchain.com/oss/python/langchain/overview"
+  checked: "2026-08-08"
+- id: llamaindex-docs
+  authors: "LlamaIndex"
+  title: "LlamaIndex Documentation"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://docs.llamaindex.ai/"
+  checked: "2026-08-08"
+- id: crewai-docs
+  authors: "CrewAI"
+  title: "CrewAI Documentation"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://docs.crewai.com/"
+  checked: "2026-08-08"
+- id: autogen-docs
+  authors: "Microsoft"
+  title: "AutoGen Documentation"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://microsoft.github.io/autogen/stable/"
+  checked: "2026-08-08"
+- id: autogen-teams
+  authors: "Microsoft"
+  title: "AutoGen AgentChat Teams"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://microsoft.github.io/autogen/stable/user-guide/agentchat-user-guide/tutorial/teams.html"
+  checked: "2026-08-08"
+- id: semantic-kernel-docs
+  authors: "Microsoft"
+  title: "Semantic Kernel Documentation"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://learn.microsoft.com/semantic-kernel/overview/"
+  checked: "2026-08-08"
+- id: fastapi-docs
+  authors: "FastAPI Project"
+  title: "FastAPI Documentation"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://fastapi.tiangolo.com/"
+  checked: "2026-08-08"
+- id: python312-docs
+  authors: "Python Software Foundation"
+  title: "Python 3.12 Documentation"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://docs.python.org/3.12/"
+  checked: "2026-08-08"
+
+# 工程、协议、可观测性、评估与安全
+- id: pep621
+  authors: "Python Packaging Authority"
+  title: "PEP 621: Storing Project Metadata in pyproject.toml"
+  publication: "Python Enhancement Proposal"
+  year: 2020
+  url: "https://peps.python.org/pep-0621/"
+- id: python-asyncio
+  authors: "Python Software Foundation"
+  title: "asyncio — Asynchronous I/O"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://docs.python.org/3.12/library/asyncio.html"
+  checked: "2026-08-08"
+- id: httpx-docs
+  authors: "Encode"
+  title: "HTTPX Documentation"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://www.python-httpx.org/"
+  checked: "2026-08-08"
+- id: pytest-docs
+  authors: "pytest Project"
+  title: "pytest Documentation"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://docs.pytest.org/en/stable/"
+  checked: "2026-08-08"
+- id: ruff-docs
+  authors: "Astral"
+  title: "Ruff Documentation"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://docs.astral.sh/ruff/"
+  checked: "2026-08-08"
+- id: postgresql-docs
+  authors: "PostgreSQL Global Development Group"
+  title: "PostgreSQL Documentation"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://www.postgresql.org/docs/"
+  checked: "2026-08-08"
+- id: redis-docs
+  authors: "Redis"
+  title: "Redis Documentation"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://redis.io/docs/latest/"
+  checked: "2026-08-08"
+- id: dockerfile-docs
+  authors: "Docker"
+  title: "Dockerfile Reference"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://docs.docker.com/reference/dockerfile/"
+  checked: "2026-08-08"
+- id: compose-spec
+  authors: "Docker"
+  title: "Compose Specification"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://docs.docker.com/compose/compose-file/"
+  checked: "2026-08-08"
+- id: celery-docs
+  authors: "Celery Project"
+  title: "Celery Documentation"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://docs.celeryq.dev/en/stable/"
+  checked: "2026-08-08"
+- id: dramatiq-docs
+  authors: "Dramatiq Project"
+  title: "Dramatiq Documentation"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://dramatiq.io/"
+  checked: "2026-08-08"
+- id: otel-spec
+  authors: "OpenTelemetry"
+  title: "OpenTelemetry Specification"
+  publication: "CNCF Specification"
+  year: 2026
+  url: "https://opentelemetry.io/docs/specs/otel/"
+  checked: "2026-08-08"
+- id: w3c-trace-context
+  authors: "W3C"
+  title: "Trace Context"
+  publication: "W3C Recommendation"
+  year: 2021
+  url: "https://www.w3.org/TR/trace-context/"
+- id: owasp-llm-top10
+  authors: "OWASP Foundation"
+  title: "OWASP Top 10 for LLM Applications 2025"
+  publication: "OWASP GenAI Security Project"
+  year: 2025
+  url: "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
+  checked: "2026-08-08"
+  note: "版本敏感，引用前须核对当前正式版本。"
+- id: owasp-agentic-top10
+  authors: "OWASP Foundation"
+  title: "OWASP Top 10 for Agentic Applications"
+  publication: "OWASP GenAI Security Project"
+  year: 2025
+  url: "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"
+  checked: "2026-08-08"
+- id: owasp-api-top10
+  authors: "OWASP Foundation"
+  title: "OWASP API Security Top 10"
+  publication: "OWASP API Security Project"
+  year: 2023
+  url: "https://owasp.org/API-Security/editions/2023/en/0x11-t10/"
+  checked: "2026-08-08"
+- id: nist-ai-rmf
+  authors: "NIST"
+  title: "Artificial Intelligence Risk Management Framework 1.0"
+  publication: "NIST AI 100-1"
+  year: 2023
+  url: "https://doi.org/10.6028/NIST.AI.100-1"
+- id: nist-genai-profile
+  authors: "NIST"
+  title: "Artificial Intelligence Risk Management Framework: Generative AI Profile"
+  publication: "NIST AI 600-1"
+  year: 2024
+  url: "https://doi.org/10.6028/NIST.AI.600-1"
+- id: mitre-atlas
+  authors: "MITRE"
+  title: "Adversarial Threat Landscape for Artificial-Intelligence Systems"
+  publication: "MITRE ATLAS"
+  year: 2026
+  url: "https://atlas.mitre.org/"
+  checked: "2026-08-08"
+- id: rfc9110
+  authors: "Fielding, R. et al."
+  title: "HTTP Semantics"
+  publication: "IETF RFC 9110"
+  year: 2022
+  url: "https://www.rfc-editor.org/rfc/rfc9110"
+- id: rfc9457
+  authors: "Nottingham, M. et al."
+  title: "Problem Details for HTTP APIs"
+  publication: "IETF RFC 9457"
+  year: 2023
+  url: "https://www.rfc-editor.org/rfc/rfc9457"
+- id: html-sse
+  authors: "WHATWG"
+  title: "Server-Sent Events"
+  publication: "HTML Living Standard"
+  year: 2026
+  url: "https://html.spec.whatwg.org/multipage/server-sent-events.html"
+  checked: "2026-08-08"
+- id: rfc6455
+  authors: "Fette, I. and Melnikov, A."
+  title: "The WebSocket Protocol"
+  publication: "IETF RFC 6455"
+  year: 2011
+  url: "https://www.rfc-editor.org/rfc/rfc6455"
+- id: kubernetes-docs
+  authors: "Kubernetes"
+  title: "Kubernetes Documentation"
+  publication: "Official Documentation"
+  year: 2026
+  url: "https://kubernetes.io/docs/home/"
+  checked: "2026-08-08"
+- id: twelve-factor
+  authors: "Wiggins, A."
+  title: "The Twelve-Factor App"
+  publication: "Twelve-Factor Methodology"
+  year: 2011
+  url: "https://12factor.net/"
+- id: slsa
+  authors: "OpenSSF"
+  title: "Supply-chain Levels for Software Artifacts"
+  publication: "SLSA Specification"
+  year: 2026
+  url: "https://slsa.dev/spec/"
+  checked: "2026-08-08"
+
+# 高级 Agent、Coding、Browser 与多模态
+- id: wu2023autogen
+  authors: "Wu, Q. et al."
+  title: "AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation"
+  publication: "arXiv"
+  year: 2023
+  url: "https://arxiv.org/abs/2308.08155"
+- id: liu2023agentbench
+  authors: "Liu, X. et al."
+  title: "AgentBench: Evaluating LLMs as Agents"
+  publication: "ICLR"
+  year: 2024
+  url: "https://arxiv.org/abs/2308.03688"
+- id: zhou2023webarena
+  authors: "Zhou, S. et al."
+  title: "WebArena: A Realistic Web Environment for Building Autonomous Agents"
+  publication: "ICLR"
+  year: 2024
+  url: "https://arxiv.org/abs/2307.13854"
+- id: xie2024osworld
+  authors: "Xie, T. et al."
+  title: "OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks"
+  publication: "NeurIPS"
+  year: 2024
+  url: "https://arxiv.org/abs/2404.07972"
+- id: jimenez2024swebench
+  authors: "Jimenez, C. et al."
+  title: "SWE-bench: Can Language Models Resolve Real-World GitHub Issues?"
+  publication: "ICLR"
+  year: 2024
+  url: "https://arxiv.org/abs/2310.06770"
+- id: radford2021clip
+  authors: "Radford, A. et al."
+  title: "Learning Transferable Visual Models From Natural Language Supervision"
+  publication: "ICML"
+  year: 2021
+  url: "https://arxiv.org/abs/2103.00020"
+- id: radford2022whisper
+  authors: "Radford, A. et al."
+  title: "Robust Speech Recognition via Large-Scale Weak Supervision"
+  publication: "ICML"
+  year: 2023
+  url: "https://arxiv.org/abs/2212.04356"
+- id: alayrac2022flamingo
+  authors: "Alayrac, J. et al."
+  title: "Flamingo: a Visual Language Model for Few-Shot Learning"
+  publication: "NeurIPS"
+  year: 2022
+  url: "https://arxiv.org/abs/2204.14198"
+- id: iso25010
+  authors: "ISO/IEC"
+  title: "Systems and Software Quality Models"
+  publication: "ISO/IEC 25010"
+  year: 2023
+  url: "https://www.iso.org/standard/78176.html"
+- id: spdx-spec
+  authors: "Linux Foundation"
+  title: "SPDX Specification"
+  publication: "ISO/IEC 5962"
+  year: 2022
+  url: "https://spdx.github.io/spdx-spec/"
+  checked: "2026-08-08"
+- id: cc-by-nc-sa
+  authors: "Creative Commons"
+  title: "Attribution-NonCommercial-ShareAlike 4.0 International"
+  publication: "Creative Commons Legal Code"
+  year: 2013
+  url: "https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode"
+- id: mit-license
+  authors: "Open Source Initiative"
+  title: "The MIT License"
+  publication: "OSI Approved License"
+  year: 2026
+  url: "https://opensource.org/license/mit"
+  checked: "2026-08-08"

@@ -162,3 +162,12 @@ def attend(
 总结：Transformer 用 Attention 建立位置间的内容相关连接，以并行性和可扩展性推动了 LLM。练习：手算三个 Token 的归一化权重；为完整实验加入因果掩码；比较“扩大上下文”和“使用检索”的成本与时效。面试问题：KV Cache 优化了什么、不能优化什么？Encoder-only 与 Decoder-only 分别适合哪些任务？为什么注意力图不等于因果解释？
 
 延伸阅读：Vaswani et al., *Attention Is All You Need*；Dao et al., *FlashAttention*。本章代码目录为 [`examples/attention_demo/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/attention_demo)，已用 Python 3.12 与 NumPy 2.5.1 验证张量形状、稳定 Softmax、因果 Mask、多头变形，并生成 SVG/PNG 热力图。图中的权重只用于机制教学，不构成因果解释。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [vaswani2017：Attention Is All You Need](../references.md#ref-vaswani2017)
+- [devlin2018：BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](../references.md#ref-devlin2018)
+- [kaplan2020：Scaling Laws for Neural Language Models](../references.md#ref-kaplan2020)
+<!-- chapter-citations:end -->

@@ -12,6 +12,102 @@
     "png_path": "png/index-07bb5ed6a0fb.png"
   },
   {
+    "source_path": "docs/training/index.md",
+    "index": 1,
+    "semantic_id": "index-diagram-1",
+    "title": "企业培训版入口 图 1",
+    "alt": "企业培训版入口 图 1",
+    "diagram_id": "index-e8770fecc3e2",
+    "source": "flowchart LR\n    A[课前诊断] --> B[概念讲授]\n    B --> C[受控演示]\n    C --> D[学员实验]\n    D --> E[证据提交]\n    E --> F[Rubric 评分]\n    F --> G{达到门槛?}\n    G -- 否 --> H[针对性补练]\n    H --> D\n    G -- 是 --> I[综合项目与复盘]\n",
+    "source_asset": "source/index-e8770fecc3e2.mmd",
+    "svg_path": "svg/index-e8770fecc3e2.svg",
+    "png_path": "png/index-e8770fecc3e2.png"
+  },
+  {
+    "source_path": "docs/training/instructor-guide.md",
+    "index": 1,
+    "semantic_id": "instructor-guide-diagram-1",
+    "title": "讲师手册 图 1",
+    "alt": "讲师手册 图 1",
+    "diagram_id": "instructor-guide-2f34c6906f86",
+    "source": "flowchart TD\n    A[课程需求] --> B[学员诊断]\n    B --> C[环境预检]\n    C --> D[离线基线]\n    D --> E{允许在线服务?}\n    E -- 否 --> F[Mock 与 Fixture]\n    E -- 是 --> G[预算受限冒烟测试]\n    F --> H[课程运行]\n    G --> H\n    H --> I[证据归档与复盘]\n",
+    "source_asset": "source/instructor-guide-2f34c6906f86.mmd",
+    "svg_path": "svg/instructor-guide-2f34c6906f86.svg",
+    "png_path": "png/instructor-guide-2f34c6906f86.png"
+  },
+  {
+    "source_path": "docs/training/student-lab-manual.md",
+    "index": 1,
+    "semantic_id": "student-lab-manual-diagram-1",
+    "title": "学员实验手册 图 1",
+    "alt": "学员实验手册 图 1",
+    "diagram_id": "student-lab-manual-74365adb5b29",
+    "source": "flowchart LR\n    A[阅读任务卡] --> B[写下假设]\n    B --> C[运行离线基线]\n    C --> D[实现改动]\n    D --> E[成功测试]\n    E --> F[失败注入]\n    F --> G[证据与 ADR]\n    G --> H[同伴复核]\n",
+    "source_asset": "source/student-lab-manual-74365adb5b29.mmd",
+    "svg_path": "svg/student-lab-manual-74365adb5b29.svg",
+    "png_path": "png/student-lab-manual-74365adb5b29.png"
+  },
+  {
+    "source_path": "docs/training/assessment-rubric.md",
+    "index": 1,
+    "semantic_id": "assessment-rubric-diagram-1",
+    "title": "评分标准与通过门槛 图 1",
+    "alt": "评分标准与通过门槛 图 1",
+    "diagram_id": "assessment-rubric-c290b7d785cf",
+    "source": "pie showData\n    title 课程总评构成\n    \"实验\" : 40\n    \"综合项目\" : 40\n    \"概念考试\" : 20\n",
+    "source_asset": "source/assessment-rubric-c290b7d785cf.mmd",
+    "svg_path": "svg/assessment-rubric-c290b7d785cf.svg",
+    "png_path": "png/assessment-rubric-c290b7d785cf.png"
+  },
+  {
+    "source_path": "docs/training/enterprise-cases.md",
+    "index": 1,
+    "semantic_id": "enterprise-cases-diagram-1",
+    "title": "企业案例任务书 图 1",
+    "alt": "企业案例任务书 图 1",
+    "diagram_id": "enterprise-cases-af6496d27181",
+    "source": "flowchart LR\n    U[客户问题] --> G[身份与意图检查]\n    G --> R[RAG 检索]\n    R --> A[生成带引用答复]\n    A --> C{需要账户操作?}\n    C -- 否 --> O[返回答案]\n    C -- 是 --> H[人工客服审批]\n    H --> T[受限工单工具]\n",
+    "source_asset": "source/enterprise-cases-af6496d27181.mmd",
+    "svg_path": "svg/enterprise-cases-af6496d27181.svg",
+    "png_path": "png/enterprise-cases-af6496d27181.png"
+  },
+  {
+    "source_path": "docs/training/workshops.md",
+    "index": 1,
+    "semantic_id": "workshops-diagram-1",
+    "title": "企业工作坊手册 图 1",
+    "alt": "企业工作坊手册 图 1",
+    "diagram_id": "workshops-76e6a9b96398",
+    "source": "flowchart TD\n    A[画数据流与信任边界] --> B[枚举资产与攻击者]\n    B --> C[逐边分析威胁]\n    C --> D[映射预防/检测/恢复控制]\n    D --> E[编写攻击 Fixture]\n    E --> F[分配责任人与复查日期]\n",
+    "source_asset": "source/workshops-76e6a9b96398.mmd",
+    "svg_path": "svg/workshops-76e6a9b96398.svg",
+    "png_path": "png/workshops-76e6a9b96398.png"
+  },
+  {
+    "source_path": "docs/training/offline-training-pack.md",
+    "index": 1,
+    "semantic_id": "offline-training-pack-diagram-1",
+    "title": "离线培训包 图 1",
+    "alt": "离线培训包 图 1",
+    "diagram_id": "offline-training-pack-6f0a6342c7c8",
+    "source": "flowchart LR\n    A[纯函数单元测试] --> B[本地 Mock 协议]\n    B --> C[本地服务集成]\n    C --> D{组织允许在线验证?}\n    D -- 否 --> E[记录外部验证缺口]\n    D -- 是 --> F[预算受限 Provider 冒烟]\n    F --> G[生产前受控验证]\n",
+    "source_asset": "source/offline-training-pack-6f0a6342c7c8.mmd",
+    "svg_path": "svg/offline-training-pack-6f0a6342c7c8.svg",
+    "png_path": "png/offline-training-pack-6f0a6342c7c8.png"
+  },
+  {
+    "source_path": "docs/training/slides.md",
+    "index": 1,
+    "semantic_id": "slides-diagram-1",
+    "title": "培训幻灯片使用说明 图 1",
+    "alt": "培训幻灯片使用说明 图 1",
+    "diagram_id": "slides-bf0dee5f69a2",
+    "source": "flowchart LR\n    S[幻灯片建立共同模型] --> B[教材补足严谨细节]\n    B --> L[实验产生运行证据]\n    L --> R[Rubric 形成反馈]\n    R --> S\n",
+    "source_asset": "source/slides-bf0dee5f69a2.mmd",
+    "svg_path": "svg/slides-bf0dee5f69a2.svg",
+    "png_path": "png/slides-bf0dee5f69a2.png"
+  },
+  {
     "source_path": "docs/part-01-foundations/index.md",
     "index": 1,
     "semantic_id": "foundations-capability-dependencies",
@@ -471,13 +567,13 @@
     "source_path": "docs/part-02-agent-core/ch08-tool-calling.md",
     "index": 5,
     "semantic_id": "approved-idempotent-tool-state-machine",
-    "title": "高风险工具的审批、幂等与状态核实状态机",
-    "alt": "工具提议经过参数校验授权和审批后执行，超时时先核实外部状态，成功或确认未执行后才结束或重试",
-    "diagram_id": "ch08-tool-calling-1edebed1bf06",
-    "source": "%% id: approved-idempotent-tool-state-machine\n%% title: 高风险工具的审批、幂等与状态核实状态机\n%% alt: 工具提议经过参数校验授权和审批后执行，超时时先核实外部状态，成功或确认未执行后才结束或重试\nstateDiagram-v2\n    [*] --> Proposed\n    Proposed --> Rejected: 未知工具 / 参数非法\n    Proposed --> Authorized: Schema 与权限通过\n    Authorized --> AwaitingApproval: 高风险动作\n    Authorized --> Executing: 低风险动作\n    AwaitingApproval --> Executing: 审批令牌匹配\n    AwaitingApproval --> Rejected: 拒绝 / 过期 / 参数变化\n    Executing --> Succeeded: 明确成功\n    Executing --> Failed: 明确业务失败\n    Executing --> Unknown: 超时 / 连接中断\n    Unknown --> Succeeded: 状态核实为已执行\n    Unknown --> Retryable: 状态核实为未执行\n    Unknown --> ManualReview: 无法核实\n    Retryable --> Executing: 相同幂等键且预算允许\n    Succeeded --> [*]\n    Failed --> [*]\n    Rejected --> [*]\n    ManualReview --> [*]\n",
-    "source_asset": "source/ch08-tool-calling-1edebed1bf06.mmd",
-    "svg_path": "svg/ch08-tool-calling-1edebed1bf06.svg",
-    "png_path": "png/ch08-tool-calling-1edebed1bf06.png"
+    "title": "高风险工具的审批、幂等与状态核实流程",
+    "alt": "工具提议先校验参数和权限，高风险动作取得绑定参数的审批后执行，超时时核实外部状态，再决定成功、同键重试或人工复核",
+    "diagram_id": "ch08-tool-calling-49a0bbe9f6cd",
+    "source": "%% id: approved-idempotent-tool-state-machine\n%% title: 高风险工具的审批、幂等与状态核实流程\n%% alt: 工具提议先校验参数和权限，高风险动作取得绑定参数的审批后执行，超时时核实外部状态，再决定成功、同键重试或人工复核\nflowchart TD\n    Proposed[\"工具提议\"] --> Validate{\"Schema 与权限通过？\"}\n    Validate -->|否| Rejected[\"拒绝\"]\n    Validate -->|是| Risk{\"高风险动作？\"}\n    Risk -->|是| Approval{\"审批令牌有效且参数未变？\"}\n    Approval -->|否| Rejected\n    Approval -->|是| Execute[\"携带幂等键执行\"]\n    Risk -->|否| Execute\n    Execute --> Result{\"结果是否明确？\"}\n    Result -->|成功| Succeeded[\"成功\"]\n    Result -->|业务失败| Failed[\"失败\"]\n    Result -->|超时或断连| Verify[\"查询外部状态\"]\n    Verify -->|已执行| Succeeded\n    Verify -->|确认未执行| Retry[\"预算内使用同一幂等键重试\"]\n    Retry --> Execute\n    Verify -->|无法核实| Manual[\"人工复核\"]\n",
+    "source_asset": "source/ch08-tool-calling-49a0bbe9f6cd.mmd",
+    "svg_path": "svg/ch08-tool-calling-49a0bbe9f6cd.svg",
+    "png_path": "png/ch08-tool-calling-49a0bbe9f6cd.png"
   },
   {
     "source_path": "docs/part-02-agent-core/ch08-tool-calling.md",
@@ -2357,11 +2453,11 @@
     "semantic_id": "multi-agent-termination-state-machine",
     "title": "Multi-Agent 终止与死锁状态机",
     "alt": "协作任务在 Ready Running Waiting Reviewed Done Failed 之间转换并由依赖超时预算和验收控制终止",
-    "diagram_id": "ch32-multi-agent-principles-a83286a3eb17",
-    "source": "%% id: multi-agent-termination-state-machine\n%% title: Multi-Agent 终止与死锁状态机\n%% alt: 协作任务在 Ready Running Waiting Reviewed Done Failed 之间转换并由依赖超时预算和验收控制终止\nstateDiagram-v2\n    [*] --> Ready\n    Ready --> Running\n    Running --> Waiting\n    Waiting --> Ready: dependency/approval arrives\n    Running --> Reviewed\n    Reviewed --> Ready: revisions required\n    Reviewed --> Done: accepted\n    Waiting --> Failed: deadlock/timeout\n    Running --> Failed: budget/error\n",
-    "source_asset": "source/ch32-multi-agent-principles-a83286a3eb17.mmd",
-    "svg_path": "svg/ch32-multi-agent-principles-a83286a3eb17.svg",
-    "png_path": "png/ch32-multi-agent-principles-a83286a3eb17.png"
+    "diagram_id": "ch32-multi-agent-principles-8cd486ad2c66",
+    "source": "%% id: multi-agent-termination-state-machine\n%% title: Multi-Agent 终止与死锁状态机\n%% alt: 协作任务在 Ready Running Waiting Reviewed Done Failed 之间转换并由依赖超时预算和验收控制终止\nstateDiagram-v2\n    [*] --> Ready\n    Ready --> Running\n    Running --> Waiting\n    Waiting --> Ready: 依赖就绪\n    Running --> Reviewed\n    Reviewed --> Ready: 需要返工\n    Reviewed --> Done: 验收通过\n    Waiting --> Failed: 死锁或超时\n    Running --> Failed: 预算或错误\n",
+    "source_asset": "source/ch32-multi-agent-principles-8cd486ad2c66.mmd",
+    "svg_path": "svg/ch32-multi-agent-principles-8cd486ad2c66.svg",
+    "png_path": "png/ch32-multi-agent-principles-8cd486ad2c66.png"
   },
   {
     "source_path": "docs/part-07-advanced/ch32-multi-agent-principles.md",
@@ -2722,5 +2818,17 @@
     "source_asset": "source/index-a8d167436656.mmd",
     "svg_path": "svg/index-a8d167436656.svg",
     "png_path": "png/index-a8d167436656.png"
+  },
+  {
+    "source_path": "docs/final-acceptance.md",
+    "index": 1,
+    "semantic_id": "p9-final-acceptance-gates",
+    "title": "P9 最终验收门禁",
+    "alt": "仓库内技术出版培训证据完成后，还必须经过独立外审、真实试学试讲、实体设备印刷和最终发布，才能关闭 P9",
+    "diagram_id": "final-acceptance-8da037091bb8",
+    "source": "%% id: p9-final-acceptance-gates\n%% title: P9 最终验收门禁\n%% alt: 仓库内技术出版培训证据完成后，还必须经过独立外审、真实试学试讲、实体设备印刷和最终发布，才能关闭 P9\nflowchart LR\n    Repo[\"仓库内证据<br/>38章 / 10项目 / 256测试\"] --> Internal[\"三类维护者角色复审\"]\n    Internal --> External{外部门禁}\n    External --> Review[独立技术与中文外审]\n    External --> Trial[真实试学与企业试讲]\n    External --> Device[实体设备、印刷与权利核查]\n    Review --> Feedback[关闭 P0/P1 反馈]\n    Trial --> Feedback\n    Device --> Feedback\n    Feedback --> Score{五类目标均达标}\n    Score -->|是| Release[合并 main 并发布最终 Release]\n    Score -->|否| Improve[修订并重新验收]\n    Improve --> External\n",
+    "source_asset": "source/final-acceptance-8da037091bb8.mmd",
+    "svg_path": "svg/final-acceptance-8da037091bb8.svg",
+    "png_path": "png/final-acceptance-8da037091bb8.png"
   }
 ]

@@ -1,6 +1,6 @@
 FROM python:3.12-slim
 WORKDIR /app
-COPY pyproject.toml README.md ./
+COPY pyproject.toml README.md LICENSE-CODE ./
 COPY src ./src
 COPY projects/02-weather-tool-agent/main.py ./main.py
 RUN pip install --no-cache-dir pydantic==2.11.7

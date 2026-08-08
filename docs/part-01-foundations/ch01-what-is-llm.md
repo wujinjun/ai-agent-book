@@ -279,3 +279,14 @@ print(validated.arguments.city)
 6. Jurafsky, D. & Martin, J. H. *Speech and Language Processing*（在线草稿，阅读时核对版本）。
 
 本节对应代码目录：`examples/tool_runtime/`（在第 8 章扩展为完整 Tool Loop）。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [vaswani2017：Attention Is All You Need](../references.md#ref-vaswani2017)
+- [brown2020：Language Models are Few-Shot Learners](../references.md#ref-brown2020)
+- [ouyang2022：Training Language Models to Follow Instructions with Human Feedback](../references.md#ref-ouyang2022)
+- [bender2021：On the Dangers of Stochastic Parrots](../references.md#ref-bender2021)
+- [bommasani2021：On the Opportunities and Risks of Foundation Models](../references.md#ref-bommasani2021)
+<!-- chapter-citations:end -->

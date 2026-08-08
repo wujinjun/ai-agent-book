@@ -1,0 +1,78 @@
+version: 1
+checked_at: 2026-08-08
+assets:
+  - path: assets/fonts/noto-sans-sc/NotoSansSC-Regular.otf
+    kind: distribution_font
+    origin: notofonts/noto-cjk@f8d157532fbfaeda587e826d4cd5b21a49186f7c
+    source_url: https://raw.githubusercontent.com/notofonts/noto-cjk/f8d157532fbfaeda587e826d4cd5b21a49186f7c/Sans/SubsetOTF/SC/NotoSansSC-Regular.otf
+    sha256: faa6c9df652116dde789d351359f3d7e5d2285a2b2a1f04a2d7244df706d5ea9
+    license: SIL-OFL-1.1
+    license_file: assets/fonts/noto-sans-sc/OFL.txt
+    rights_basis: redistribution and PDF embedding under the bundled SIL Open Font License 1.1
+    external_content: true
+  - path: assets/fonts/noto-sans-sc/NotoSansSC-Bold.otf
+    kind: distribution_font
+    origin: notofonts/noto-cjk@f8d157532fbfaeda587e826d4cd5b21a49186f7c
+    source_url: https://raw.githubusercontent.com/notofonts/noto-cjk/f8d157532fbfaeda587e826d4cd5b21a49186f7c/Sans/SubsetOTF/SC/NotoSansSC-Bold.otf
+    sha256: c6cb5a93abaa9edc8ee7463b7ebb7f42d618d40e6ed2f7a5371c97b0b64767c0
+    license: SIL-OFL-1.1
+    license_file: assets/fonts/noto-sans-sc/OFL.txt
+    rights_basis: redistribution and PDF embedding under the bundled SIL Open Font License 1.1
+    external_content: true
+  - path: assets/fonts/source-code-pro/SourceCodePro-Regular.otf
+    kind: distribution_font
+    origin: adobe-fonts/source-code-pro@803b7e23ec97ae58b6232ea76519a76d428ba268
+    source_url: https://raw.githubusercontent.com/adobe-fonts/source-code-pro/803b7e23ec97ae58b6232ea76519a76d428ba268/OTF/SourceCodePro-Regular.otf
+    sha256: 9f9664e2edf6f045c11e774f9bd0be6993971f2544a39061a5ce478b96b051f8
+    license: SIL-OFL-1.1
+    license_file: assets/fonts/source-code-pro/OFL.md
+    rights_basis: redistribution and PDF embedding under the bundled SIL Open Font License 1.1
+    external_content: true
+  - path: assets/fonts/source-code-pro/SourceCodePro-Bold.otf
+    kind: distribution_font
+    origin: adobe-fonts/source-code-pro@803b7e23ec97ae58b6232ea76519a76d428ba268
+    source_url: https://raw.githubusercontent.com/adobe-fonts/source-code-pro/803b7e23ec97ae58b6232ea76519a76d428ba268/OTF/SourceCodePro-Bold.otf
+    sha256: 6f5a4a46a99ad1b92a8675e98f148272c8d2476fc0eb067247dd5eea6a3ad84c
+    license: SIL-OFL-1.1
+    license_file: assets/fonts/source-code-pro/OFL.md
+    rights_basis: redistribution and PDF embedding under the bundled SIL Open Font License 1.1
+    external_content: true
+  - path: assets/fonts/source-code-pro/SourceCodePro-It.otf
+    kind: distribution_font
+    origin: adobe-fonts/source-code-pro@803b7e23ec97ae58b6232ea76519a76d428ba268
+    source_url: https://raw.githubusercontent.com/adobe-fonts/source-code-pro/803b7e23ec97ae58b6232ea76519a76d428ba268/OTF/SourceCodePro-It.otf
+    sha256: 6989245c8747ecef5d927f412b49e2cef495053434b635f560f20cc81a1433d1
+    license: SIL-OFL-1.1
+    license_file: assets/fonts/source-code-pro/OFL.md
+    rights_basis: redistribution and PDF embedding under the bundled SIL Open Font License 1.1
+    external_content: true
+  - path: assets/diagrams/manifest.json
+    kind: generated_diagram_registry
+    origin: repository Mermaid source blocks
+    generator: scripts/build_diagrams.py
+    rights_basis: original repository content rendered by the declared build tool
+    external_content: false
+  - path: docs/assets/readme-home.png
+    kind: generated_product_screenshot
+    origin: locally built HTML reading site
+    generator: P8 responsive screenshot workflow
+    rights_basis: screenshot of original repository UI and content
+    external_content: false
+  - path: docs/assets/trace-sample.png
+    kind: generated_runtime_screenshot
+    origin: normalized project 10 offline Trace fixture
+    generator: scripts/build_trace_screenshot.py
+    rights_basis: original repository code and synthetic data
+    external_content: false
+  - path: docs/assets/training-deck-preview.png
+    kind: generated_contact_sheet
+    origin: repository training slide deck
+    generator: training slide rendering workflow
+    rights_basis: contact sheet of original repository slides rendered with the bundled SIL-OFL-1.1 Noto Sans SC
+    external_content: false
+  - path: training/slides/ai-agent-engineering-training.pptx
+    kind: generated_training_deck
+    origin: repository training curriculum and diagrams
+    generator: P5 training publication workflow
+    rights_basis: original repository content; visible text uses the bundled SIL-OFL-1.1 Noto Sans SC; device substitution still requires final review
+    external_content: false

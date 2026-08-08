@@ -141,3 +141,13 @@ async def test_submit_requires_approval(browser_agent):
 
 常见误区：坐标稳定、登录即拥有授权、动作返回成功即完成、验证码可以自动处理。调试保存操作前后截图/DOM、选择器、URL 与事件，不保存凭证。页面诱导 Agent 上传文件或粘贴 Secret 时，Policy 拒绝。
 总结：Browser/Computer Use 是观察—动作—再观察的受控闭环。练习：为表单提交设计确认、幂等和布局变化测试。面试：DOM 与视觉定位如何互补？动作后为何必须观察？如何安全使用已有登录 session？延伸阅读：Web Accessibility、Playwright/WebDriver、安全浏览器自动化和 Human-in-the-Loop 资料。代码目录：项目6、8。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [zhou2023webarena：WebArena: A Realistic Web Environment for Building Autonomous Agents](../references.md#ref-zhou2023webarena)
+- [xie2024osworld：OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks](../references.md#ref-xie2024osworld)
+- [rfc9110：HTTP Semantics](../references.md#ref-rfc9110)
+- [owasp-agentic-top10：OWASP Top 10 for Agentic Applications](../references.md#ref-owasp-agentic-top10)
+<!-- chapter-citations:end -->

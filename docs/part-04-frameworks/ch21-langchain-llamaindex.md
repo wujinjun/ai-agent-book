@@ -147,3 +147,13 @@ flowchart LR
 
 权限过滤不能只放在 response synthesizer；Tool 与 Reader 使用最小凭证；Prompt Injection 文档标记为数据。小流程、稳定接口或强性能控制可用原生实现；多集成快速验证可用 LangChain；数据摄取和 RAG 组合复杂时 LlamaIndex 更方便；持久工作流使用 LangGraph。
 总结：框架提供组合与集成，不替代数据质量、权限和评估。练习：为当前 Spike 加入真实 Embedding、Recall@k、P95 与 Citation 完整性并写 ADR。面试：LangChain 与 LangGraph 的职责差别？LlamaIndex 的 Node 为何不应成为领域模型？Query Engine 与 Retriever 有何区别？延伸阅读：[LangChain Agents](https://docs.langchain.com/oss/python/langchain/agents)、Structured Output 与 [LlamaIndex Framework](https://developers.llamaindex.ai/python/framework/) 官方文档。代码目录：`examples/framework_comparison/rag_spike/`。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [langchain-docs：LangChain Python Documentation](../references.md#ref-langchain-docs)
+- [llamaindex-docs：LlamaIndex Documentation](../references.md#ref-llamaindex-docs)
+- [lewis2020：Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](../references.md#ref-lewis2020)
+- [es2023ragas：RAGAS: Automated Evaluation of Retrieval Augmented Generation](../references.md#ref-es2023ragas)
+<!-- chapter-citations:end -->

@@ -1,0 +1,21 @@
+# Copy once per role and replace every placeholder before validation.
+schema_version: 1
+evidence_type: independent_review
+record_id: review-agent-001
+checked_at: 2026-08-08
+source_commit: "0000000000000000000000000000000000000000"
+candidate_manifest_sha256: "0000000000000000000000000000000000000000000000000000000000000000"
+role: agent_engineer # agent_engineer | python_engineer | chinese_editor
+reviewer_id: anonymous-reviewer-001
+independent: false
+conflict_statement_recorded: false
+sampled_artifacts:
+  - README.md
+  - FINAL_ACCEPTANCE.md
+  - docs/part-02-agent-core/ch08-tool-calling.md
+  - docs/part-03-rag-and-memory/ch13-rag-basics.md
+  - projects/04-knowledge-agent
+  - output/pdf/ai-agent-book-2026.pdf
+decision: fail # pass only after P0/P1 closure and reviewer recheck
+open_findings: {p0: 0, p1: 0, p2: 0, p3: 0}
+private_source_reference: "controlled-record-id-or-sha256"

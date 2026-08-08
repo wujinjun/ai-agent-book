@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import yaml
+
 from ai_agent_book.project_catalog import PROJECTS, run_project
 
 ROOT = Path(__file__).parents[1]
@@ -23,6 +25,33 @@ def test_each_project_has_runnable_and_deployable_files() -> None:
         if project.project_id < 10:
             assert 'CMD ["python", "main.py"]' in dockerfile
             assert "ai_agent_book.project_api:app" not in dockerfile
+
+
+def test_docker_builds_include_declared_license_file() -> None:
+    dockerfiles = [ROOT / "projects/service.Dockerfile"]
+    dockerfiles.extend(sorted((ROOT / "projects").glob("[0-9][0-9]-*/Dockerfile")))
+
+    for dockerfile in dockerfiles:
+        content = dockerfile.read_text(encoding="utf-8")
+        assert "COPY pyproject.toml README.md LICENSE-CODE ./" in content, (
+            f"{dockerfile} must copy the license declared by pyproject.toml"
+        )
+
+
+def test_durable_project_services_store_all_state_in_writable_volumes() -> None:
+    compose = yaml.safe_load((ROOT / "projects/docker-compose.yml").read_text(encoding="utf-8"))
+    project_4 = compose["services"]["project-4"]["environment"]
+    project_8 = compose["services"]["project-8"]["environment"]
+
+    assert set(project_4.values()) == {
+        "/app/data/project-4.db",
+        "/app/data/project-4-pipeline.db",
+        "/app/data/imports",
+    }
+    assert set(project_8.values()) == {
+        "/app/data/project-8.db",
+        "/app/data/project-8-research.db",
+    }
 
 
 def test_projects_run_offline_with_structured_results() -> None:

@@ -17,7 +17,16 @@ def test_publish_workflow_deploys_pages_and_versioned_downloads() -> None:
     assert "output/html/downloads" in source
     assert "ai-agent-book-2026.pdf" in source
     assert "ai-agent-book-2026.epub" in source
+    assert "scripts/package_release.py" in source
+    assert "SHA256SUMS" not in source  # 文件名由打包脚本统一生成，避免工作流漂移
+    assert "publication/release/*" in source
+    assert '--notes-file "$notes_file"' in source
     assert 'gh release create "$GITHUB_REF_NAME"' in source
+    assert "final-gate:" in source
+    assert "needs: [build, final-gate]" in source
+    assert '--release-commit "$GITHUB_SHA"' not in source
+    assert "audit_final_acceptance.py" in source
+    assert "--require-repository-complete" in source
 
 
 def test_homepage_links_published_offline_editions() -> None:

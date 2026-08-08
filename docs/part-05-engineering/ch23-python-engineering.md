@@ -159,3 +159,15 @@ Ruff 负责格式和静态规则，mypy strict 检查类型，pytest 执行行�
 
 常见误区：所有函数都 async、用 Pydantic 替代领域建模、Mock 每个内部方法、在日志打印完整请求。调试先复现环境与依赖版本，检查未关闭客户端、event loop 阻塞和异常链。供应链使用固定源、依赖扫描和最小包，开发工具不进入运行镜像。
 总结：Python 工程质量来自明确边界和可复现工具链。练习：把同步 API 客户端改为复用的异步依赖并写超时/取消测试。面试：协程与线程如何选择？Pydantic 校验在哪个边界？为什么 `dict[str, Any]` 会侵蚀 Agent 可测性？延伸阅读：Python 3.12、Pydantic、httpx、pytest、Ruff 与 mypy 官方文档。代码目录：仓库根 `src/` 与 `tests/`。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [python312-docs：Python 3.12 Documentation](../references.md#ref-python312-docs)
+- [pep621：PEP 621: Storing Project Metadata in pyproject.toml](../references.md#ref-pep621)
+- [python-asyncio：asyncio — Asynchronous I/O](../references.md#ref-python-asyncio)
+- [httpx-docs：HTTPX Documentation](../references.md#ref-httpx-docs)
+- [pytest-docs：pytest Documentation](../references.md#ref-pytest-docs)
+- [ruff-docs：Ruff Documentation](../references.md#ref-ruff-docs)
+<!-- chapter-citations:end -->

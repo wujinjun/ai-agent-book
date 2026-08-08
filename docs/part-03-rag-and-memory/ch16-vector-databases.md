@@ -130,3 +130,14 @@ Metadata Filtering 与 ANN 的执行顺序影响召回。先过滤后 ANN 候选
 
 常见误区是向量库自动完成 RAG、更高维度必然更准、索引参数可照抄、删除原文就等于删除向量。工程实践从精确基线和真实评估集开始，参数变更版本化，升级前后并行测试，并准备回滚。
 总结：向量数据库提供相似性基础设施，不负责文档质量、权限语义和回答正确性。练习：用同一数据比较精确搜索与 HNSW；测试两种过滤选择性；设计一次 Embedding 模型迁移。面试：HNSW 参数如何权衡？为什么 Metadata 过滤会影响性能？共享与独立租户索引如何选择？延伸阅读：FAISS、pgvector、Milvus、HNSW 与所选托管服务的官方文档。代码目录：`projects/04-knowledge-agent/`。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [johnson2017：Billion-scale Similarity Search with GPUs](../references.md#ref-johnson2017)
+- [malkov2018：Efficient and Robust Approximate Nearest Neighbor Search Using HNSW](../references.md#ref-malkov2018)
+- [faiss-wiki：Faiss Documentation](../references.md#ref-faiss-wiki)
+- [pgvector：pgvector](../references.md#ref-pgvector)
+- [milvus-docs：Milvus Documentation](../references.md#ref-milvus-docs)
+<!-- chapter-citations:end -->

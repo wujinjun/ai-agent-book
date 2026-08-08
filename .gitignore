@@ -1,5 +1,6 @@
 .env
 .venv/
+.venvs/
 .venv
 node_modules/
 node_modules
@@ -20,5 +21,6 @@ book.pdf
 book.epub
 .venv-py39/
 output/
+release-assets/
 tmp/
 tmp/pdfs/

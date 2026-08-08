@@ -317,3 +317,15 @@ Audit Log 记录主体、动作、资源、Policy、批准、时间、结果和 
 3. 防间接注入导致外泄要把内容标为不可信、最小化模型可见数据、隔离 Secret、限制工具与 egress、对写动作审批绑定、对返回和日志脱敏，并用恶意 Fixture 验证每层。
 4. Sandbox 至少限制用户、文件挂载、网络、CPU、内存、时间、进程数和 syscall，禁止宿主 socket 与长期 Secret；输出 Artifact 经过扫描和大小限制。还要记录共享内核等残余风险。
 5. SSRF 测试覆盖 loopback、private、link-local、IPv6、整数/混合编码 IP、DNS rebinding、重定向后越界、代理环境和云 metadata。域名 allowlist 与解析后 IP 校验缺一不可。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [owasp-llm-top10：OWASP Top 10 for LLM Applications 2025](../references.md#ref-owasp-llm-top10)
+- [owasp-agentic-top10：OWASP Top 10 for Agentic Applications](../references.md#ref-owasp-agentic-top10)
+- [owasp-api-top10：OWASP API Security Top 10](../references.md#ref-owasp-api-top10)
+- [nist-ai-rmf：Artificial Intelligence Risk Management Framework 1.0](../references.md#ref-nist-ai-rmf)
+- [nist-genai-profile：Artificial Intelligence Risk Management Framework: Generative AI Profile](../references.md#ref-nist-genai-profile)
+- [mitre-atlas：Adversarial Threat Landscape for Artificial-Intelligence Systems](../references.md#ref-mitre-atlas)
+<!-- chapter-citations:end -->

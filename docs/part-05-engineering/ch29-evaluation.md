@@ -313,3 +313,13 @@ A/B 预先定义主指标、护栏、样本量和停止条件。用户体验实�
 3. Judge 校准使用人工双标注与裁决集，计算一致率、precision、recall 和混淆矩阵，并检查位置、长度、风格与模型同源偏差。校准不佳时不能作为唯一门禁。
 4. Faithfulness 判断回答是否受给定证据支持；事实正确性判断主张是否符合真实世界或权威数据。错误证据可以产生忠于证据但事实错误的答案，因此两者必须分开。
 5. 回归阈值在运行前记录，对关键安全项使用零容忍或明确硬门禁，对随机指标比较区间和分层差异。候选失败时报告哪条阈值触发，而不是人工挑选有利结果。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [openai-evals：Evals API Reference](../references.md#ref-openai-evals)
+- [es2023ragas：RAGAS: Automated Evaluation of Retrieval Augmented Generation](../references.md#ref-es2023ragas)
+- [liu2023agentbench：AgentBench: Evaluating LLMs as Agents](../references.md#ref-liu2023agentbench)
+- [nist-ai-rmf：Artificial Intelligence Risk Management Framework 1.0](../references.md#ref-nist-ai-rmf)
+<!-- chapter-citations:end -->

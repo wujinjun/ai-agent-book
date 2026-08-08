@@ -313,3 +313,13 @@ Agent Runtime 把不确定决策限制在可观察状态机内。练习：为 To
 3. 必须持久化目标、状态版本、当前节点、结构化事实、已完成动作 ID、未决副作用、剩余预算、审批引用、错误分类和产物引用。模型客户端、数据库连接和临时协程不属于可恢复状态。
 4. 无进展不能只比较回答文本是否相同。可以规范化“工具名 + 参数 + 相关状态摘要”，并检查连续步骤是否新增证据、完成子目标或改变验收结果。达到阈值后停止、重规划或交给人工。
 5. 恢复测试先运行到安全 Checkpoint，再模拟进程终止并创建新的 Runtime 实例。断言其加载相同版本，已确认动作不会重放，未确认写操作先做状态核实，并最终产生与不中断路径一致的可验证结果。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [yao2022：ReAct: Synergizing Reasoning and Acting in Language Models](../references.md#ref-yao2022)
+- [karpas2022：MRKL Systems: A Modular, Neuro-Symbolic Architecture for Tool Use](../references.md#ref-karpas2022)
+- [shinn2023：Reflexion: Language Agents with Verbal Reinforcement Learning](../references.md#ref-shinn2023)
+- [otel-spec：OpenTelemetry Specification](../references.md#ref-otel-spec)
+<!-- chapter-citations:end -->

@@ -1,0 +1,28 @@
+schema_version: 1
+evidence_type: device_print_qa
+record_id: device-print-qa-001
+checked_at: 2026-08-08
+source_commit: "0000000000000000000000000000000000000000"
+candidate_manifest_sha256: "0000000000000000000000000000000000000000000000000000000000000000"
+devices:
+  - category: ios_phone
+    os_and_reader: replace-with-observed-version
+    checks_passed: []
+    result: fail
+  - category: ios_tablet
+    os_and_reader: replace-with-observed-version
+    checks_passed: []
+    result: fail
+  - category: android_phone
+    os_and_reader: replace-with-observed-version
+    checks_passed: []
+    result: fail
+print_proof:
+  vendor_or_device: replace-with-print-source
+  binding_and_paper: replace-with-binding-and-paper
+  margins_passed: false
+  grayscale_passed: false
+  diagrams_passed: false
+  code_passed: false
+  result: fail
+open_findings: {p0: 0, p1: 0, p2: 0, p3: 0}

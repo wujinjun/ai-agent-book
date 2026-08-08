@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import posixpath
 import re
 import shutil
 import subprocess
@@ -20,6 +21,12 @@ from ai_agent_book.book_manifest import load_publication_entries  # noqa: E402
 from ai_agent_book.diagram_pipeline import extract_diagrams, replace_mermaid  # noqa: E402
 
 BOOK_NAME = "ai-agent-book-2026"
+REPOSITORY_BLOB_URL = "https://github.com/wujinjun/ai-agent-book/blob/main"
+MARKDOWN_LINK_PATTERN = re.compile(
+    r"(?P<prefix>!?\[[^\]]*\]\()"
+    r"(?P<target><[^>]+>|[^)\s]+)"
+    r"(?P<suffix>(?:\s+[\"'][^\"']*[\"'])?\))"
+)
 CHROME_CANDIDATES = (
     Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
     Path("/Applications/Chromium.app/Contents/MacOS/Chromium"),
@@ -27,6 +34,96 @@ CHROME_CANDIDATES = (
     Path("/usr/bin/google-chrome-stable"),
     Path("/usr/bin/chromium"),
 )
+
+
+def _document_id(path: Path) -> str:
+    """Return a stable, EPUB-safe anchor for one source document."""
+
+    parts = list(path.with_suffix("").parts)
+    if parts and parts[0] == "docs":
+        parts = parts[1:]
+    if parts and parts[-1].lower() == "readme":
+        parts = parts[:-1]
+    slug = "-".join(parts).lower()
+    slug = re.sub(r"[^a-z0-9]+", "-", slug).strip("-")
+    return f"doc-{slug or 'book'}"
+
+
+def _resolve_local_target(source_path: Path, target: str) -> tuple[Path, str]:
+    """Resolve a Markdown target against its original source document."""
+
+    path_text, separator, fragment = target.partition("#")
+    if path_text.startswith("/"):
+        candidate = path_text.lstrip("/")
+    else:
+        candidate = (source_path.parent / path_text).as_posix()
+    normalized = Path(posixpath.normpath(candidate))
+    return normalized, fragment if separator else ""
+
+
+def rewrite_publication_links(
+    markdown: str,
+    *,
+    source_path: Path,
+    document_ids: dict[Path, str],
+    root: Path,
+) -> str:
+    """Rewrite repository-relative links for a single-file Pandoc source.
+
+    Pandoc receives all chapters as one composed Markdown file, so links that
+    were relative to their original chapter otherwise point at non-existent
+    ``.md`` files in EPUB readers. Publication documents use stable anchors;
+    other repository files link to GitHub; local images use root-relative paths
+    so Pandoc can embed them.
+    """
+
+    def replace(match: re.Match[str]) -> str:
+        raw_target = match.group("target")
+        bracketed = raw_target.startswith("<") and raw_target.endswith(">")
+        target = raw_target[1:-1] if bracketed else raw_target
+        if target.startswith(("#", "http://", "https://", "mailto:", "data:")):
+            return match.group(0)
+
+        local_path, fragment = _resolve_local_target(source_path, target)
+        is_image = match.group("prefix").startswith("!")
+        if is_image:
+            if not (root / local_path).is_file():
+                raise RuntimeError(f"出版图片不存在：{source_path.as_posix()} -> {target}")
+            rewritten = local_path.as_posix()
+        elif local_path in document_ids:
+            rewritten = f"#{fragment}" if fragment else f"#{document_ids[local_path]}"
+        elif (root / local_path).exists():
+            rewritten = f"{REPOSITORY_BLOB_URL}/{local_path.as_posix()}"
+            if fragment:
+                rewritten += f"#{fragment}"
+        else:
+            raise RuntimeError(f"出版链接目标不存在：{source_path.as_posix()} -> {target}")
+
+        if bracketed:
+            rewritten = f"<{rewritten}>"
+        return f"{match.group('prefix')}{rewritten}{match.group('suffix')}"
+
+    return MARKDOWN_LINK_PATTERN.sub(replace, markdown)
+
+
+def add_document_anchor(markdown: str, document_id: str) -> str:
+    """Place a stable raw-HTML anchor inside the first level-one section.
+
+    Pandoc's GFM reader deliberately does not support heading attributes. An
+    explicit span keeps the visible heading and generated table of contents
+    clean, while surviving EPUB chapter splitting inside the same section.
+    """
+
+    rendered, replacements = re.subn(
+        r"^# (?P<title>.+?)\s*$",
+        rf'# \g<title>\n\n<span id="{document_id}"></span>',
+        markdown,
+        count=1,
+        flags=re.MULTILINE,
+    )
+    if replacements != 1:
+        raise RuntimeError(f"出版文档缺少一级标题：{document_id}")
+    return rendered
 
 
 def convert_mkdocs_admonitions(markdown: str) -> str:
@@ -52,9 +149,7 @@ def convert_mkdocs_admonitions(markdown: str) -> str:
             not lines[index].strip() or lines[index].startswith(("    ", "\t"))
         ):
             body = (
-                lines[index][4:]
-                if lines[index].startswith("    ")
-                else lines[index].lstrip("\t")
+                lines[index][4:] if lines[index].startswith("    ") else lines[index].lstrip("\t")
             )
             rendered.append(f"> {body}" if body else ">")
             index += 1
@@ -65,11 +160,24 @@ def compose_book(root: Path, output: Path) -> Path:
     """Compose front matter, 38 chapters, ten projects, and back matter."""
 
     sections: list[str] = []
-    for entry in load_publication_entries(root / "mkdocs.yml"):
-        if entry.path in {Path("docs/index.md"), Path("docs/project-status.md")}:
-            continue
+    entries = [
+        entry
+        for entry in load_publication_entries(root / "mkdocs.yml")
+        if entry.path not in {Path("docs/index.md"), Path("docs/project-status.md")}
+    ]
+    document_ids = {entry.path: _document_id(entry.path) for entry in entries}
+    if len(set(document_ids.values())) != len(document_ids):
+        raise RuntimeError("出版文档锚点发生冲突")
+    for entry in entries:
         markdown = (root / entry.path).read_text(encoding="utf-8")
         markdown = convert_mkdocs_admonitions(markdown)
+        markdown = rewrite_publication_links(
+            markdown,
+            source_path=entry.path,
+            document_ids=document_ids,
+            root=root,
+        )
+        markdown = add_document_anchor(markdown, document_ids[entry.path])
         diagrams = extract_diagrams(entry.path, markdown)
         sections.append(replace_mermaid(markdown, diagrams, Path("assets/diagrams")))
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -124,18 +232,56 @@ def build_epub(pandoc: str, source: Path) -> Path:
 
 
 def inject_epub_svg_fallbacks(epub_path: Path, root: Path) -> Path:
-    """Embed SVG sources that Pandoc leaves as raw picture references."""
+    """Repair split-document links and embed SVG publication sources.
+
+    Pandoc accepts one composed Markdown source, then splits EPUB output into
+    multiple XHTML documents. Fragment-only links therefore need to be
+    redirected to the XHTML file that owns the target ID. The same pass embeds
+    the original SVG beside Pandoc's PNG fallback for capable readers.
+    """
 
     source_pattern = re.compile(r'srcset="assets/diagrams/svg/(?P<name>[^"/]+\.svg)"')
     with zipfile.ZipFile(epub_path) as archive:
         infos = archive.infolist()
         content = {info.filename: archive.read(info.filename) for info in infos}
 
+    ids_by_document: dict[str, set[str]] = {}
+    locations_by_id: dict[str, str] = {}
+    duplicate_ids: set[str] = set()
+    for name, payload in content.items():
+        if not name.endswith(".xhtml"):
+            continue
+        document_ids = set(re.findall(r'\bid=["\'](?P<id>[^"\']+)["\']', payload.decode("utf-8")))
+        ids_by_document[name] = document_ids
+        for document_id in document_ids:
+            if document_id in locations_by_id:
+                duplicate_ids.add(document_id)
+            else:
+                locations_by_id[document_id] = name
+    for document_id in duplicate_ids:
+        locations_by_id.pop(document_id, None)
+
     svg_names: set[str] = set()
     for name, payload in list(content.items()):
-        if not name.startswith("EPUB/text/") or not name.endswith(".xhtml"):
+        if not name.endswith(".xhtml"):
             continue
         text = payload.decode("utf-8")
+
+        def replace_fragment_link(match: re.Match[str], current_name: str = name) -> str:
+            fragment = match.group("fragment")
+            if fragment in ids_by_document.get(current_name, set()):
+                return match.group(0)
+            target_name = locations_by_id.get(fragment)
+            if target_name is None:
+                return match.group(0)
+            relative = posixpath.relpath(target_name, posixpath.dirname(current_name))
+            return f'href="{relative}#{fragment}"'
+
+        text = re.sub(
+            r'href="#(?P<fragment>[^"#]+)"',
+            replace_fragment_link,
+            text,
+        )
 
         def replace_source(match: re.Match[str]) -> str:
             svg_name = match.group("name")
@@ -160,8 +306,7 @@ def inject_epub_svg_fallbacks(epub_path: Path, root: Path) -> Path:
         content[f"EPUB/media/{svg_name}"] = source.read_bytes()
         item_id = "svg_" + re.sub(r"[^a-zA-Z0-9]+", "_", svg_name)
         items.append(
-            f'    <item id="{item_id}" href="media/{svg_name}" '
-            'media-type="image/svg+xml" />'
+            f'    <item id="{item_id}" href="media/{svg_name}" media-type="image/svg+xml" />'
         )
     if items:
         opf = opf.replace("</manifest>", "\n".join(items) + "\n  </manifest>", 1)

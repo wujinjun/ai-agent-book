@@ -119,12 +119,12 @@ stateDiagram-v2
     [*] --> Ready
     Ready --> Running
     Running --> Waiting
-    Waiting --> Ready: dependency/approval arrives
+    Waiting --> Ready: 依赖就绪
     Running --> Reviewed
-    Reviewed --> Ready: revisions required
-    Reviewed --> Done: accepted
-    Waiting --> Failed: deadlock/timeout
-    Running --> Failed: budget/error
+    Reviewed --> Ready: 需要返工
+    Reviewed --> Done: 验收通过
+    Waiting --> Failed: 死锁或超时
+    Running --> Failed: 预算或错误
 ```
 
 无进展可通过 Artifact 版本、证据数量和动作去重确定性判断。模型声称“完成”只能触发评审，不能直接终止系统。
@@ -155,3 +155,13 @@ flowchart TD
 
 反模式包括角色数量按组织架构复制、自由群聊、所有 Agent 共享管理员工具、用自然语言投票替代规则、无限 Reviewer 循环、每个角色重复读全部上下文。安全上每个 Agent 最小权限，handoff 不升级 scope，消息/Memory 按租户隔离，秘密使用引用而不是正文转发。
 总结：Multi-Agent 是显式协调系统，不是角色扮演。练习：证明 Reviewer 拆分相对单 Agent 的净收益，并注入环依赖测试 deadlock。面试：如何检测死锁和无进展？Blackboard 与群聊有何不同？多个同模型 Agent 是否独立？延伸阅读：分布式系统、Actor、Blackboard、Agent orchestration 与协作评估资料。代码目录：项目9。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [wu2023autogen：AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation](../references.md#ref-wu2023autogen)
+- [autogen-teams：AutoGen AgentChat Teams](../references.md#ref-autogen-teams)
+- [liu2023agentbench：AgentBench: Evaluating LLMs as Agents](../references.md#ref-liu2023agentbench)
+- [yao2022：ReAct: Synergizing Reasoning and Acting in Language Models](../references.md#ref-yao2022)
+<!-- chapter-citations:end -->

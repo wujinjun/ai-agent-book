@@ -86,6 +86,40 @@ def parse_mermaid_metadata(source: str) -> dict[str, str]:
     return metadata
 
 
+def figure_label(diagram: DiagramRecord) -> str:
+    """Return a stable human-facing figure number for one publication source."""
+
+    source = Path(diagram.source_path)
+    chapter = re.match(r"ch(?P<number>\d+)", source.stem)
+    if chapter:
+        return f"图 {int(chapter.group('number'))}-{diagram.index}"
+    project = re.search(r"projects/(?P<number>\d+)-", source.as_posix())
+    if project:
+        return f"图 P{int(project.group('number'))}-{diagram.index}"
+    part = re.search(r"part-(?P<number>\d+)-", source.as_posix())
+    if part and source.stem == "index":
+        return f"图 D{int(part.group('number'))}-{diagram.index}"
+    training_scopes = {
+        "index": "T0",
+        "instructor-guide": "T1",
+        "student-lab-manual": "T2",
+        "assessment-rubric": "T3",
+        "enterprise-cases": "T4",
+        "workshops": "T5",
+        "offline-training-pack": "T6",
+        "slides": "T7",
+    }
+    if source.parent.as_posix() == "docs/training":
+        scope = training_scopes.get(source.stem, source.stem.upper())
+        return f"图 {scope}-{diagram.index}"
+    if source.as_posix() == "docs/index.md":
+        return f"图 G-{diagram.index}"
+    if source.as_posix() == "docs/examples/index.md":
+        return f"图 E-{diagram.index}"
+    scope = re.sub(r"[^A-Za-z0-9]+", "-", source.stem).strip("-").upper()
+    return f"图 {scope}-{diagram.index}"
+
+
 def replace_mermaid(markdown: str, diagrams: list[DiagramRecord], asset_root: Path) -> str:
     """Replace Mermaid fences with EPUB-safe SVG/PNG picture elements."""
 
@@ -93,6 +127,7 @@ def replace_mermaid(markdown: str, diagrams: list[DiagramRecord], asset_root: Pa
 
     def replacement(_: re.Match[str]) -> str:
         diagram = next(iterator)
+        label = figure_label(diagram)
         svg = (asset_root / diagram.svg_path).as_posix()
         png = (asset_root / diagram.png_path).as_posix()
         return (
@@ -101,7 +136,8 @@ def replace_mermaid(markdown: str, diagrams: list[DiagramRecord], asset_root: Pa
             f'<source type="image/svg+xml" srcset="{svg}">\n'
             f'<img src="{png}" alt="{html.escape(diagram.alt, quote=True)}" loading="lazy">\n'
             "</picture>\n"
-            f"<figcaption>{html.escape(diagram.title)}</figcaption>\n"
+            f'<figcaption><span class="figure-number">{label}</span>：'
+            f"{html.escape(diagram.title)}</figcaption>\n"
             "</figure>"
         )
 

@@ -130,3 +130,13 @@ Checkpoint 保存目标、已读文件、计划、完成步骤、测试证据、
 
 项目5以 Diff 为输入，静态规则先发现明确问题，LLM 只审查语义风险，结果用 Pydantic 分类并附行号。项目9增加 Planner/Coder/Reviewer/Tester，但共享状态和终止由 Runtime。评估用真实修复任务，指标是补丁正确率、测试通过、无回归、无越权、时间与成本。
 总结：Coding Agent 的价值来自闭环证据，而不只是生成速度。练习：实现搜索—失败测试—补丁—回归—Review 闭环。面试：如何保护脏工作树？怎样证明修复覆盖原始缺陷？何时使用 worktree？延伸阅读：Git、pytest、语言服务器、Sandbox 与安全供应链资料。代码目录：项目5、9。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [jimenez2024swebench：SWE-bench: Can Language Models Resolve Real-World GitHub Issues?](../references.md#ref-jimenez2024swebench)
+- [slsa：Supply-chain Levels for Software Artifacts](../references.md#ref-slsa)
+- [owasp-agentic-top10：OWASP Top 10 for Agentic Applications](../references.md#ref-owasp-agentic-top10)
+- [mitre-atlas：Adversarial Threat Landscape for Artificial-Intelligence Systems](../references.md#ref-mitre-atlas)
+<!-- chapter-citations:end -->

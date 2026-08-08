@@ -1,0 +1,10 @@
+{
+  "currency": "variable",
+  "checked_date": "2026-08-08",
+  "note": "价格由授课时填写；Fixture 只保存流量和 Token 假设。",
+  "scenarios": [
+    {"id": "low", "requests_per_month": 10000, "input_tokens": 1200, "output_tokens": 300, "retry_rate": 0.02, "cache_hit_rate": 0.35},
+    {"id": "medium", "requests_per_month": 200000, "input_tokens": 2400, "output_tokens": 500, "retry_rate": 0.05, "cache_hit_rate": 0.25},
+    {"id": "high", "requests_per_month": 2000000, "input_tokens": 5000, "output_tokens": 800, "retry_rate": 0.10, "cache_hit_rate": 0.10}
+  ]
+}

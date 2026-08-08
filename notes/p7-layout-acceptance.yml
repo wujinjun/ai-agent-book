@@ -1,0 +1,52 @@
+version: 1
+checked_at: 2026-08-08
+status: passed_repository_scope
+diagram_review:
+  manifest_count: 236
+  contact_sheet_pages: 12
+  semantic_ledger: notes/visual-review.yml
+  checks:
+    unique_id: passed
+    title_and_alt: passed
+    explanation_after_figure: passed
+    scoped_figure_number: passed
+    grayscale_semantics_not_color_only: passed
+  real_trace_evidence:
+    image: docs/assets/trace-sample.png
+    data: notes/trace-sample.json
+    generator: scripts/build_trace_screenshot.py
+html:
+  artifact: output/html
+  viewports:
+    - {width: 1440, height: 900, overflow: 0, result: passed}
+    - {width: 768, height: 1024, overflow: 0, result: passed}
+    - {width: 390, height: 844, overflow: 0, result: passed}
+pdf:
+  artifact: output/pdf/ai-agent-book-2026.pdf
+  pages: 454
+  sha256: aefb32a515d4292ebcf55ac0b0f078b7d487eef7815b47300db5de916ac58b0f
+  automated_audit: passed
+  distribution_asset_audit: passed_with_manual_review_required
+  embedded_or_outlined_font_resources: 1073
+  unapproved_system_fonts: 0
+  manual_render_spot_check: passed
+epub:
+  artifact: output/epub/ai-agent-book-2026.epub
+  sha256: 31de5806f70815eb6cdd8cb6bd259a7b96c2566109940462a61a88754251a24d
+  automated_audit: passed
+  apple_books_macos: passed
+  calibre_9_13_engine: passed
+  mobile_390px_emulation: passed
+training_pptx:
+  artifact: training/slides/ai-agent-engineering-training.pptx
+  slides: 16
+  visible_textboxes: 105
+  explicit_visible_run_typefaces: [Noto Sans SC]
+  sha256: cfc281aa33ee40752da69cad9b434ed6f8a21832be83d9cc9b1753af1e1ea644
+  template_fidelity: passed
+  overflow_test: passed
+  libreoffice_full_render: passed
+external_p9_checks:
+  - physical_ios_android_readers
+  - commercial_print_proof
+  - publisher_font_and_prepress_review

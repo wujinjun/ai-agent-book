@@ -153,3 +153,12 @@ def sample(logits: dict[str, float], temperature: float, seed: int) -> str:
 总结：生成是反复计算分布、选择 Token 和检查终止的过程。练习：为代码生成、营销创意和发票抽取分别设计参数与指标；扩展采样器加入 Top-p；解释流式 JSON 为什么难以完整校验。面试问题：Temperature 与 Top-p 分别改变什么？为什么长度结束必须视为潜在失败？结构化输出保证了什么、没有保证什么？
 
 延伸阅读：Holtzman et al., *The Curious Case of Neural Text Degeneration*；目标供应商当前的解码、流式与结构化输出官方文档。本章代码目录为 [`examples/sampling_lab/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/sampling_lab)，包含固定 Logit Provider、Temperature/top-k/top-p、带种子采样、停止条件测试，以及可重复生成的 CSV/Markdown 经验频率报告；它不冒充真实 LLM 评测。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [holtzman2020：The Curious Case of Neural Text Degeneration](../references.md#ref-holtzman2020)
+- [brown2020：Language Models are Few-Shot Learners](../references.md#ref-brown2020)
+- [openai-compat：API Backward Compatibility](../references.md#ref-openai-compat)
+<!-- chapter-citations:end -->

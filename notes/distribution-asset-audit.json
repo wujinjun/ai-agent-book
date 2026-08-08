@@ -1,0 +1,2626 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-08-08",
+  "status": "passed_with_manual_review_required",
+  "pdf": {
+    "path": "output/pdf/ai-agent-book-2026.pdf",
+    "sha256": "5156be475a00d84bd264dce96ea54054b584aad162cda4a0d692609a05a31aba",
+    "bytes": 11337880,
+    "pages": 454,
+    "media_boxes": {
+      "594.96x841.92": 454
+    },
+    "cropbox_differs_from_mediabox_pages": 0,
+    "font_resources": 1073,
+    "font_types": {
+      "/Type3": 1073
+    },
+    "named_font_subsets": {
+      "type3-outline": 1073
+    },
+    "non_embedded_fonts": [],
+    "unapproved_system_fonts": [],
+    "raster_image_xobjects": 2
+  },
+  "epub": {
+    "path": "output/epub/ai-agent-book-2026.epub",
+    "sha256": "89a0e716bf1ce7412eb2d407daef28e5621c6fa1a4ab23efd5fdd76d96272436",
+    "bytes": 13443807,
+    "archive_entries_by_suffix": {
+      ".css": 1,
+      ".ncx": 1,
+      ".opf": 1,
+      ".png": 237,
+      ".svg": 235,
+      ".xhtml": 77,
+      ".xml": 2,
+      "no_suffix": 1
+    },
+    "embedded_fonts": [],
+    "css_font_families": [
+      "\"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", sans-serif",
+      "Menlo, Monaco, Consolas, monospace"
+    ],
+    "external_runtime_resources": [],
+    "external_hyperlinks": 163
+  },
+  "pptx": {
+    "path": "training/slides/ai-agent-engineering-training.pptx",
+    "sha256": "cfc281aa33ee40752da69cad9b434ed6f8a21832be83d9cc9b1753af1e1ea644",
+    "bytes": 60416,
+    "slides": 16,
+    "typefaces": [
+      "+mj-lt",
+      "+mn-lt",
+      "Calibri",
+      "Calibri Light",
+      "Helvetica Neue",
+      "Noto Sans SC"
+    ],
+    "explicit_visible_run_typefaces": [
+      "Noto Sans SC"
+    ],
+    "slide_default_typefaces": [
+      "Helvetica Neue",
+      "Noto Sans SC"
+    ],
+    "theme_typefaces": [
+      "Calibri",
+      "Calibri Light"
+    ],
+    "unapproved_explicit_typefaces": [],
+    "embedded_fonts": [],
+    "external_runtime_resources": [],
+    "external_hyperlinks": 0
+  },
+  "source_assets": {
+    "registry": "notes/asset-provenance.yml",
+    "referenced_non_diagram_assets": [
+      "docs/assets/readme-home.png",
+      "docs/assets/trace-sample.png",
+      "docs/assets/training-deck-preview.png"
+    ],
+    "assets": [
+      {
+        "path": "assets/diagrams/manifest.json",
+        "kind": "generated_diagram_registry",
+        "origin": "repository Mermaid source blocks",
+        "generator": "scripts/build_diagrams.py",
+        "rights_basis": "original repository content rendered by the declared build tool",
+        "external_content": false,
+        "computed_sha256": "2d4f482af5914a3ddc46825cbddf0ddaeba1e7840a194d3040ea525842dec93d",
+        "bytes": 276973
+      },
+      {
+        "path": "assets/fonts/noto-sans-sc/NotoSansSC-Bold.otf",
+        "kind": "distribution_font",
+        "origin": "notofonts/noto-cjk@f8d157532fbfaeda587e826d4cd5b21a49186f7c",
+        "source_url": "https://raw.githubusercontent.com/notofonts/noto-cjk/f8d157532fbfaeda587e826d4cd5b21a49186f7c/Sans/SubsetOTF/SC/NotoSansSC-Bold.otf",
+        "sha256": "c6cb5a93abaa9edc8ee7463b7ebb7f42d618d40e6ed2f7a5371c97b0b64767c0",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/noto-sans-sc/OFL.txt",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "c6cb5a93abaa9edc8ee7463b7ebb7f42d618d40e6ed2f7a5371c97b0b64767c0",
+        "bytes": 8543168
+      },
+      {
+        "path": "assets/fonts/noto-sans-sc/NotoSansSC-Regular.otf",
+        "kind": "distribution_font",
+        "origin": "notofonts/noto-cjk@f8d157532fbfaeda587e826d4cd5b21a49186f7c",
+        "source_url": "https://raw.githubusercontent.com/notofonts/noto-cjk/f8d157532fbfaeda587e826d4cd5b21a49186f7c/Sans/SubsetOTF/SC/NotoSansSC-Regular.otf",
+        "sha256": "faa6c9df652116dde789d351359f3d7e5d2285a2b2a1f04a2d7244df706d5ea9",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/noto-sans-sc/OFL.txt",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "faa6c9df652116dde789d351359f3d7e5d2285a2b2a1f04a2d7244df706d5ea9",
+        "bytes": 8331336
+      },
+      {
+        "path": "assets/fonts/source-code-pro/SourceCodePro-Bold.otf",
+        "kind": "distribution_font",
+        "origin": "adobe-fonts/source-code-pro@803b7e23ec97ae58b6232ea76519a76d428ba268",
+        "source_url": "https://raw.githubusercontent.com/adobe-fonts/source-code-pro/803b7e23ec97ae58b6232ea76519a76d428ba268/OTF/SourceCodePro-Bold.otf",
+        "sha256": "6f5a4a46a99ad1b92a8675e98f148272c8d2476fc0eb067247dd5eea6a3ad84c",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/source-code-pro/OFL.md",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "6f5a4a46a99ad1b92a8675e98f148272c8d2476fc0eb067247dd5eea6a3ad84c",
+        "bytes": 134020
+      },
+      {
+        "path": "assets/fonts/source-code-pro/SourceCodePro-It.otf",
+        "kind": "distribution_font",
+        "origin": "adobe-fonts/source-code-pro@803b7e23ec97ae58b6232ea76519a76d428ba268",
+        "source_url": "https://raw.githubusercontent.com/adobe-fonts/source-code-pro/803b7e23ec97ae58b6232ea76519a76d428ba268/OTF/SourceCodePro-It.otf",
+        "sha256": "6989245c8747ecef5d927f412b49e2cef495053434b635f560f20cc81a1433d1",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/source-code-pro/OFL.md",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "6989245c8747ecef5d927f412b49e2cef495053434b635f560f20cc81a1433d1",
+        "bytes": 107752
+      },
+      {
+        "path": "assets/fonts/source-code-pro/SourceCodePro-Regular.otf",
+        "kind": "distribution_font",
+        "origin": "adobe-fonts/source-code-pro@803b7e23ec97ae58b6232ea76519a76d428ba268",
+        "source_url": "https://raw.githubusercontent.com/adobe-fonts/source-code-pro/803b7e23ec97ae58b6232ea76519a76d428ba268/OTF/SourceCodePro-Regular.otf",
+        "sha256": "9f9664e2edf6f045c11e774f9bd0be6993971f2544a39061a5ce478b96b051f8",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/source-code-pro/OFL.md",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "9f9664e2edf6f045c11e774f9bd0be6993971f2544a39061a5ce478b96b051f8",
+        "bytes": 131128
+      },
+      {
+        "path": "docs/assets/readme-home.png",
+        "kind": "generated_product_screenshot",
+        "origin": "locally built HTML reading site",
+        "generator": "P8 responsive screenshot workflow",
+        "rights_basis": "screenshot of original repository UI and content",
+        "external_content": false,
+        "computed_sha256": "ffe7cf1387d329457aedf2d678a730c7b167025ecda71e75faf4eea1e7cf2572",
+        "bytes": 159235,
+        "pixels": {
+          "width": 1440,
+          "height": 900
+        }
+      },
+      {
+        "path": "docs/assets/trace-sample.png",
+        "kind": "generated_runtime_screenshot",
+        "origin": "normalized project 10 offline Trace fixture",
+        "generator": "scripts/build_trace_screenshot.py",
+        "rights_basis": "original repository code and synthetic data",
+        "external_content": false,
+        "computed_sha256": "5e2a300f30c5f513e952539d6fc2220fb5da33f89e5e678bf33ed16bfeb0348a",
+        "bytes": 169149,
+        "pixels": {
+          "width": 1600,
+          "height": 800
+        }
+      },
+      {
+        "path": "docs/assets/training-deck-preview.png",
+        "kind": "generated_contact_sheet",
+        "origin": "repository training slide deck",
+        "generator": "training slide rendering workflow",
+        "rights_basis": "contact sheet of original repository slides rendered with the bundled SIL-OFL-1.1 Noto Sans SC",
+        "external_content": false,
+        "computed_sha256": "2c0a1ec58d4d4d97542cf9ee6b9a07506b94836ecc44eac2ae2b8bd23118514a",
+        "bytes": 352182,
+        "pixels": {
+          "width": 2096,
+          "height": 1036
+        }
+      },
+      {
+        "path": "training/slides/ai-agent-engineering-training.pptx",
+        "kind": "generated_training_deck",
+        "origin": "repository training curriculum and diagrams",
+        "generator": "P5 training publication workflow",
+        "rights_basis": "original repository content; visible text uses the bundled SIL-OFL-1.1 Noto Sans SC; device substitution still requires final review",
+        "external_content": false,
+        "computed_sha256": "cfc281aa33ee40752da69cad9b434ed6f8a21832be83d9cc9b1753af1e1ea644",
+        "bytes": 60416
+      }
+    ],
+    "distribution_fonts": [
+      {
+        "path": "assets/fonts/noto-sans-sc/NotoSansSC-Bold.otf",
+        "kind": "distribution_font",
+        "origin": "notofonts/noto-cjk@f8d157532fbfaeda587e826d4cd5b21a49186f7c",
+        "source_url": "https://raw.githubusercontent.com/notofonts/noto-cjk/f8d157532fbfaeda587e826d4cd5b21a49186f7c/Sans/SubsetOTF/SC/NotoSansSC-Bold.otf",
+        "sha256": "c6cb5a93abaa9edc8ee7463b7ebb7f42d618d40e6ed2f7a5371c97b0b64767c0",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/noto-sans-sc/OFL.txt",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "c6cb5a93abaa9edc8ee7463b7ebb7f42d618d40e6ed2f7a5371c97b0b64767c0",
+        "bytes": 8543168
+      },
+      {
+        "path": "assets/fonts/noto-sans-sc/NotoSansSC-Regular.otf",
+        "kind": "distribution_font",
+        "origin": "notofonts/noto-cjk@f8d157532fbfaeda587e826d4cd5b21a49186f7c",
+        "source_url": "https://raw.githubusercontent.com/notofonts/noto-cjk/f8d157532fbfaeda587e826d4cd5b21a49186f7c/Sans/SubsetOTF/SC/NotoSansSC-Regular.otf",
+        "sha256": "faa6c9df652116dde789d351359f3d7e5d2285a2b2a1f04a2d7244df706d5ea9",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/noto-sans-sc/OFL.txt",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "faa6c9df652116dde789d351359f3d7e5d2285a2b2a1f04a2d7244df706d5ea9",
+        "bytes": 8331336
+      },
+      {
+        "path": "assets/fonts/source-code-pro/SourceCodePro-Bold.otf",
+        "kind": "distribution_font",
+        "origin": "adobe-fonts/source-code-pro@803b7e23ec97ae58b6232ea76519a76d428ba268",
+        "source_url": "https://raw.githubusercontent.com/adobe-fonts/source-code-pro/803b7e23ec97ae58b6232ea76519a76d428ba268/OTF/SourceCodePro-Bold.otf",
+        "sha256": "6f5a4a46a99ad1b92a8675e98f148272c8d2476fc0eb067247dd5eea6a3ad84c",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/source-code-pro/OFL.md",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "6f5a4a46a99ad1b92a8675e98f148272c8d2476fc0eb067247dd5eea6a3ad84c",
+        "bytes": 134020
+      },
+      {
+        "path": "assets/fonts/source-code-pro/SourceCodePro-It.otf",
+        "kind": "distribution_font",
+        "origin": "adobe-fonts/source-code-pro@803b7e23ec97ae58b6232ea76519a76d428ba268",
+        "source_url": "https://raw.githubusercontent.com/adobe-fonts/source-code-pro/803b7e23ec97ae58b6232ea76519a76d428ba268/OTF/SourceCodePro-It.otf",
+        "sha256": "6989245c8747ecef5d927f412b49e2cef495053434b635f560f20cc81a1433d1",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/source-code-pro/OFL.md",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "6989245c8747ecef5d927f412b49e2cef495053434b635f560f20cc81a1433d1",
+        "bytes": 107752
+      },
+      {
+        "path": "assets/fonts/source-code-pro/SourceCodePro-Regular.otf",
+        "kind": "distribution_font",
+        "origin": "adobe-fonts/source-code-pro@803b7e23ec97ae58b6232ea76519a76d428ba268",
+        "source_url": "https://raw.githubusercontent.com/adobe-fonts/source-code-pro/803b7e23ec97ae58b6232ea76519a76d428ba268/OTF/SourceCodePro-Regular.otf",
+        "sha256": "9f9664e2edf6f045c11e774f9bd0be6993971f2544a39061a5ce478b96b051f8",
+        "license": "SIL-OFL-1.1",
+        "license_file": "assets/fonts/source-code-pro/OFL.md",
+        "rights_basis": "redistribution and PDF embedding under the bundled SIL Open Font License 1.1",
+        "external_content": true,
+        "computed_sha256": "9f9664e2edf6f045c11e774f9bd0be6993971f2544a39061a5ce478b96b051f8",
+        "bytes": 131128
+      }
+    ]
+  },
+  "direct_dependency_license_inventory": [
+    {
+      "name": "beautifulsoup4",
+      "version": "4.15.0",
+      "license_metadata": "MIT License",
+      "license_expression": null,
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "beautifulsoup4-4.15.0.dist-info/licenses/AUTHORS",
+          "sha256": "b989238918e1fdac1e46717cb405b63e92497a272413af0d989c1df6c8abcb6f"
+        },
+        {
+          "path": "beautifulsoup4-4.15.0.dist-info/licenses/LICENSE",
+          "sha256": "55b4d8d4b1e5bc86d10efac91b74c87bcb77526b0f5b9edaf8b9cd2adc7397b2"
+        }
+      ]
+    },
+    {
+      "name": "fastapi",
+      "version": "0.116.1",
+      "license_metadata": null,
+      "license_expression": null,
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "fastapi-0.116.1.dist-info/licenses/LICENSE",
+          "sha256": "4ec89ffc81485b97fec584b2d4a961032eeffe834453894fd9c1274906cc744e"
+        }
+      ]
+    },
+    {
+      "name": "httpx",
+      "version": "0.28.1",
+      "license_metadata": "BSD-3-Clause",
+      "license_expression": null,
+      "license_classifiers": [
+        "OSI Approved :: BSD License"
+      ],
+      "license_files": [
+        {
+          "path": "httpx-0.28.1.dist-info/licenses/LICENSE.md",
+          "sha256": "4ec59d544f12b5f539a3a716fd321ac58ccd8030b465221f2c880200cdf28d8d"
+        }
+      ]
+    },
+    {
+      "name": "langgraph",
+      "version": "1.2.9",
+      "license_metadata": null,
+      "license_expression": "MIT",
+      "license_classifiers": [],
+      "license_files": [
+        {
+          "path": "langgraph-1.2.9.dist-info/licenses/LICENSE",
+          "sha256": "d9bb52f2e3540d60ff50d8f0f5b6ba649b7fd346948c4c3d086c8afb120763c7"
+        }
+      ]
+    },
+    {
+      "name": "lxml",
+      "version": "6.1.1",
+      "license_metadata": "BSD-3-Clause",
+      "license_expression": null,
+      "license_classifiers": [],
+      "license_files": [
+        {
+          "path": "lxml-6.1.1.dist-info/licenses/LICENSE.txt",
+          "sha256": "8fc2b568133516e46845d2147917adeee1648e70ae9ab5ed6c5417afef4ce855"
+        },
+        {
+          "path": "lxml-6.1.1.dist-info/licenses/LICENSES.txt",
+          "sha256": "41d49dd406aa0e1548a6d5f21a30d6bf638b3cd96eb7289dd348d83ed2e40392"
+        }
+      ]
+    },
+    {
+      "name": "mkdocs-material",
+      "version": "9.6.14",
+      "license_metadata": null,
+      "license_expression": "MIT",
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "material/templates/.icons/fontawesome/LICENSE.txt",
+          "sha256": "9b914eae88817d63b576eab5aafde7068c7a1abae125d7cdfb034f1da43a9afc"
+        },
+        {
+          "path": "material/templates/.icons/material/LICENSE",
+          "sha256": "3bae6305bcaa6d10219b999f65c342034c2d40b1c0e8567fa08605e73ccba829"
+        },
+        {
+          "path": "material/templates/.icons/material/license.svg",
+          "sha256": "596532cf9c5e7bd94c4a87e21cbbe0477f6749e809eda008f490df7f78e11129"
+        },
+        {
+          "path": "material/templates/.icons/octicons/LICENSE",
+          "sha256": "3d8b9d9254e7aa7517ed5abc8df3a4bc230081a613e8e872fb6558e8759c9040"
+        },
+        {
+          "path": "material/templates/.icons/simple/LICENSE.md",
+          "sha256": "9046848b63a5c92bff14e4accca80bd987e0623b74adf9226ce5198d312b79d5"
+        },
+        {
+          "path": "material/templates/.icons/simple/unlicense.svg",
+          "sha256": "a1218634aa5ba8ab11cd14fa23d3e31eb12ae74ae2cd4cc814a5ca51c72870ee"
+        },
+        {
+          "path": "mkdocs_material-9.6.14.dist-info/licenses/LICENSE",
+          "sha256": "e1150f26b4c0f872627b39fda49ae3bd850304f2f7f3171ae0531c1f8f4dd078"
+        }
+      ]
+    },
+    {
+      "name": "mypy",
+      "version": "1.16.1",
+      "license_metadata": "MIT",
+      "license_expression": null,
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "mypy-1.16.1.dist-info/licenses/LICENSE",
+          "sha256": "de341f6e031d021aab9eb27bdf713cc6fb844dee832ef3bcd4688bff5517220b"
+        },
+        {
+          "path": "mypy/typeshed/LICENSE",
+          "sha256": "295f8538c94ae5c3043301cf7cff1c852dab6a786a8ddee471e061b40d5ecabe"
+        }
+      ]
+    },
+    {
+      "name": "packaging",
+      "version": "26.2",
+      "license_metadata": null,
+      "license_expression": "Apache-2.0 OR BSD-2-Clause",
+      "license_classifiers": [],
+      "license_files": [
+        {
+          "path": "packaging-26.2.dist-info/licenses/LICENSE",
+          "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+        },
+        {
+          "path": "packaging-26.2.dist-info/licenses/LICENSE.APACHE",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        },
+        {
+          "path": "packaging-26.2.dist-info/licenses/LICENSE.BSD",
+          "sha256": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5"
+        },
+        {
+          "path": "packaging/licenses/__init__.py",
+          "sha256": "fc9c745d1883ff9f296a5b169f22eb2ee879f59a4608f20f5cb29d668f4e26f4"
+        },
+        {
+          "path": "packaging/licenses/__pycache__/__init__.cpython-312.pyc",
+          "sha256": "ff16ff3342a0929de114284e1c6de0ee450cbbe7c92770aafc94d3c85be28a33"
+        },
+        {
+          "path": "packaging/licenses/__pycache__/_spdx.cpython-312.pyc",
+          "sha256": "35a1516af9f1c80e2c6aa2d34bbc3d7c99c3fdb137f07f11cc3f02a3e066a888"
+        },
+        {
+          "path": "packaging/licenses/_spdx.py",
+          "sha256": "596ec35e2ca0ebcba9fd8343ff0a51625af548786257815f24b41f7e08613314"
+        }
+      ]
+    },
+    {
+      "name": "pdfplumber",
+      "version": "0.11.7",
+      "license_metadata": null,
+      "license_expression": null,
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "pdfplumber-0.11.7.dist-info/licenses/LICENSE.txt",
+          "sha256": "0d48994da4d1321e395b5e64a724ed4dec63fb96b88ac5b88fc014771e690821"
+        }
+      ]
+    },
+    {
+      "name": "psycopg",
+      "version": "3.3.4",
+      "license_metadata": null,
+      "license_expression": "LGPL-3.0-only",
+      "license_classifiers": [],
+      "license_files": [
+        {
+          "path": "psycopg-3.3.4.dist-info/licenses/LICENSE.txt",
+          "sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118"
+        }
+      ]
+    },
+    {
+      "name": "pydantic",
+      "version": "2.11.7",
+      "license_metadata": null,
+      "license_expression": "MIT",
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "pydantic-2.11.7.dist-info/licenses/LICENSE",
+          "sha256": "a9e186f3ca16b5eef84318e7a701721351a00cb7b8ae3a4394b67b49e3529ef3"
+        }
+      ]
+    },
+    {
+      "name": "pypdf",
+      "version": "5.7.0",
+      "license_metadata": null,
+      "license_expression": null,
+      "license_classifiers": [
+        "OSI Approved :: BSD License"
+      ],
+      "license_files": [
+        {
+          "path": "pypdf-5.7.0.dist-info/licenses/LICENSE",
+          "sha256": "a97ac230e5f33ef10a5367a850eb01f91f1a0b064e34742c7794d2294557f524"
+        }
+      ]
+    },
+    {
+      "name": "pytest",
+      "version": "8.4.1",
+      "license_metadata": "MIT",
+      "license_expression": null,
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "pytest-8.4.1.dist-info/licenses/AUTHORS",
+          "sha256": "79a5fc74739290f009cf3d0bf57ff20688f1cad9b84a24c77c4e2dec752f12fc"
+        },
+        {
+          "path": "pytest-8.4.1.dist-info/licenses/LICENSE",
+          "sha256": "ca836a5f9ecca3b2f350230faa20a48fb8b145653b5568d784862df864706b9b"
+        }
+      ]
+    },
+    {
+      "name": "pytest-asyncio",
+      "version": "1.0.0",
+      "license_metadata": null,
+      "license_expression": "Apache-2.0",
+      "license_classifiers": [],
+      "license_files": [
+        {
+          "path": "pytest_asyncio-1.0.0.dist-info/licenses/LICENSE",
+          "sha256": "a8ad31b1c3f40dca5a84119351b8fa8ddc868edd77fad8a8ebf6d8f2d16fa4ae"
+        }
+      ]
+    },
+    {
+      "name": "PyYAML",
+      "version": "6.0.2",
+      "license_metadata": "MIT",
+      "license_expression": null,
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "PyYAML-6.0.2.dist-info/LICENSE",
+          "sha256": "8d3928f9dc4490fd635707cb88eb26bd764102a7282954307d3e5167a577e8a4"
+        }
+      ]
+    },
+    {
+      "name": "redis",
+      "version": "8.0.1",
+      "license_metadata": null,
+      "license_expression": "MIT",
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "redis-8.0.1.dist-info/licenses/LICENSE",
+          "sha256": "a57b250a5bf03d7afe55b74063313f2adb7b00d546c0ab149a89398333fe3cc8"
+        }
+      ]
+    },
+    {
+      "name": "reportlab",
+      "version": "4.4.2",
+      "license_metadata": "BSD license (see license.txt for details), Copyright (c) 2000-2025, ReportLab Inc.",
+      "license_expression": null,
+      "license_classifiers": [
+        "OSI Approved :: BSD License"
+      ],
+      "license_files": [
+        {
+          "path": "reportlab-4.4.2.dist-info/licenses/LICENSE",
+          "sha256": "ef831761646313921375fc2cb888e8eeaf7da213d0b92852c10c42f3a0b4d138"
+        },
+        {
+          "path": "reportlab/fonts/DarkGarden-copying-gpl.txt",
+          "sha256": "1b2a567f289f66a143c56353e7b3d4fa5862514a5e3c5cfdf8b02ee5e5aaa953"
+        },
+        {
+          "path": "reportlab/fonts/DarkGarden-copying.txt",
+          "sha256": "3cd1020510efa7f6b3166a5a2740f92bd664a695ea179e0bda442e74cd0ef3a4"
+        },
+        {
+          "path": "reportlab/fonts/bitstream-vera-license.txt",
+          "sha256": "3361d054759a2fc686a2c058be82deaf9c2e6fe549be9004d7935a6c1736315d"
+        }
+      ]
+    },
+    {
+      "name": "ruff",
+      "version": "0.12.2",
+      "license_metadata": "MIT",
+      "license_expression": null,
+      "license_classifiers": [
+        "OSI Approved :: MIT License"
+      ],
+      "license_files": [
+        {
+          "path": "ruff-0.12.2.dist-info/licenses/LICENSE",
+          "sha256": "3209c0b7fb7257c05b16433728c1e974bac40000fef171b8e9e89f095623c954"
+        }
+      ]
+    },
+    {
+      "name": "SQLAlchemy",
+      "version": "2.0.51",
+      "license_metadata": "MIT",
+      "license_expression": null,
+      "license_classifiers": [],
+      "license_files": [
+        {
+          "path": "sqlalchemy-2.0.51.dist-info/licenses/LICENSE",
+          "sha256": "e862bb5b904fb5513c3e14288d7a25a12eb0ecc7847a0a965d310e9a955e7cb9"
+        }
+      ]
+    },
+    {
+      "name": "uvicorn",
+      "version": "0.35.0",
+      "license_metadata": null,
+      "license_expression": "BSD-3-Clause",
+      "license_classifiers": [
+        "OSI Approved :: BSD License"
+      ],
+      "license_files": [
+        {
+          "path": "uvicorn-0.35.0.dist-info/licenses/LICENSE.md",
+          "sha256": "efe1acf3e62fb99c288b0ec73e5a773b7268ef4320fe757ea994214e4b63c371"
+        }
+      ]
+    }
+  ],
+  "dependency_closure_license_inventory": {
+    "pyproject_sha256": "7acaa57c6ea68ba120397522b9f8b58d0e505614360bdecca63f2e5821906d9d",
+    "environment": {
+      "implementation_name": "cpython",
+      "platform_machine": "arm64",
+      "python_full_version": "3.12.13",
+      "sys_platform": "darwin"
+    },
+    "roots": [
+      "beautifulsoup4",
+      "fastapi",
+      "httpx",
+      "langgraph",
+      "lxml",
+      "mkdocs-material",
+      "mypy",
+      "packaging",
+      "pdfplumber",
+      "psycopg",
+      "pydantic",
+      "pypdf",
+      "pytest",
+      "pytest-asyncio",
+      "pyyaml",
+      "redis",
+      "reportlab",
+      "ruff",
+      "sqlalchemy",
+      "uvicorn"
+    ],
+    "packages": [
+      {
+        "name": "annotated-types",
+        "version": "0.7.0",
+        "license_metadata": null,
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "annotated_types-0.7.0.dist-info/licenses/LICENSE",
+            "sha256": "fe1049884b1a0d9342901e88e07f32925d24b3121d9972b6a6805fb9824b095d"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "anyio",
+        "version": "4.14.1",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "anyio-4.14.1.dist-info/licenses/LICENSE",
+            "sha256": "5361ac9dc58f2ef5fd2e9b09c68297c17f04950909bbc8023bdb82eacf22c2b0"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "babel",
+        "version": "2.18.0",
+        "license_metadata": "BSD-3-Clause",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: BSD License"
+        ],
+        "license_files": [
+          {
+            "path": "babel-2.18.0.dist-info/licenses/LICENSE",
+            "sha256": "86bad5758c7859ba06251f8f12eee885eca31369923dfb2b87a7c13c3634d870"
+          },
+          {
+            "path": "babel/locale-data/LICENSE.unicode",
+            "sha256": "b4c0ae8ef04f7059f96ce5bbe0467f9fe6f6d81bbe13517701dfeb961fb4d0b6"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "backrefs",
+        "version": "5.9",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "backrefs-5.9.dist-info/licenses/LICENSE.md",
+            "sha256": "f413c1ee6bf254651e026b6070016137135bfca2a428e608c18d37e5b57a4e0b"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "beautifulsoup4",
+        "version": "4.15.0",
+        "license_metadata": "MIT License",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "beautifulsoup4-4.15.0.dist-info/licenses/AUTHORS",
+            "sha256": "b989238918e1fdac1e46717cb405b63e92497a272413af0d989c1df6c8abcb6f"
+          },
+          {
+            "path": "beautifulsoup4-4.15.0.dist-info/licenses/LICENSE",
+            "sha256": "55b4d8d4b1e5bc86d10efac91b74c87bcb77526b0f5b9edaf8b9cd2adc7397b2"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "certifi",
+        "version": "2026.6.17",
+        "license_metadata": "MPL-2.0",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)"
+        ],
+        "license_files": [
+          {
+            "path": "certifi-2026.6.17.dist-info/licenses/LICENSE",
+            "sha256": "e93716da6b9c0d5a4a1df60fe695b370f0695603d21f6f83f053e42cfc10caf7"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "cffi",
+        "version": "2.1.0",
+        "license_metadata": null,
+        "license_expression": "MIT-0",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "cffi-2.1.0.dist-info/licenses/LICENSE",
+            "sha256": "5ba24ddc57067f9249add644c3afc41a5d6dc37e23433ef759d95df370b0af63"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "charset-normalizer",
+        "version": "3.4.9",
+        "license_metadata": "MIT",
+        "license_expression": null,
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "charset_normalizer-3.4.9.dist-info/licenses/LICENSE",
+            "sha256": "6d0d41bfe170ac6c7dc248c9a63e254d0fb45a60d50a8257d0af92c6e249b887"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "click",
+        "version": "8.4.2",
+        "license_metadata": null,
+        "license_expression": "BSD-3-Clause",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "click-8.4.2.dist-info/licenses/LICENSE.txt",
+            "sha256": "9a8ad106a394e853bfe21f42f4e72d592819a22805d991b5f3275029292b658d"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "colorama",
+        "version": "0.4.6",
+        "license_metadata": null,
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: BSD License"
+        ],
+        "license_files": [
+          {
+            "path": "colorama-0.4.6.dist-info/licenses/LICENSE.txt",
+            "sha256": "cac35c02686e5d04a5a7140bfb3b36e73aed496656e891102e428886d7930318"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "cryptography",
+        "version": "49.0.0",
+        "license_metadata": null,
+        "license_expression": "Apache-2.0 OR BSD-3-Clause",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "cryptography-49.0.0.dist-info/licenses/LICENSE",
+            "sha256": "3e0c7c091a948b82533ba98fd7cbb40432d6f1a9acbf85f5922d2f99a93ae6bb"
+          },
+          {
+            "path": "cryptography-49.0.0.dist-info/licenses/LICENSE.APACHE",
+            "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe"
+          },
+          {
+            "path": "cryptography-49.0.0.dist-info/licenses/LICENSE.BSD",
+            "sha256": "602c4c7482de6479dd2e9793cda275e5e63d773dacd1eca689232ab7008fb4fb"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "distro",
+        "version": "1.9.0",
+        "license_metadata": "Apache License, Version 2.0",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: Apache Software License"
+        ],
+        "license_files": [
+          {
+            "path": "distro-1.9.0.dist-info/LICENSE",
+            "sha256": "cb5e8e7e5f4a3988e1063c142c60dc2df75605f4c46515e776e3aca6df976e14"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "fastapi",
+        "version": "0.116.1",
+        "license_metadata": null,
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "fastapi-0.116.1.dist-info/licenses/LICENSE",
+            "sha256": "4ec89ffc81485b97fec584b2d4a961032eeffe834453894fd9c1274906cc744e"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "ghp-import",
+        "version": "2.1.0",
+        "license_metadata": "Apache Software License",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: Apache Software License"
+        ],
+        "license_files": [
+          {
+            "path": "ghp_import-2.1.0.dist-info/LICENSE",
+            "sha256": "0bc8ffb45f26edd1cd0de4f50425ae2cb46c58c6d8ac113984d4120be355afa9"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "h11",
+        "version": "0.16.0",
+        "license_metadata": "MIT",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "h11-0.16.0.dist-info/licenses/LICENSE.txt",
+            "sha256": "37db5bb85926db28a427a25867f10b1232003aea1be69ccb851138adb8e6f361"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "httpcore",
+        "version": "1.0.9",
+        "license_metadata": null,
+        "license_expression": "BSD-3-Clause",
+        "license_classifiers": [
+          "OSI Approved :: BSD License"
+        ],
+        "license_files": [
+          {
+            "path": "httpcore-1.0.9.dist-info/licenses/LICENSE.md",
+            "sha256": "fdcb59154c74cbaba16a11242f7740bea9f23d6feb5547917d8c5f94a80392a5"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "httpx",
+        "version": "0.28.1",
+        "license_metadata": "BSD-3-Clause",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: BSD License"
+        ],
+        "license_files": [
+          {
+            "path": "httpx-0.28.1.dist-info/licenses/LICENSE.md",
+            "sha256": "4ec59d544f12b5f539a3a716fd321ac58ccd8030b465221f2c880200cdf28d8d"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "idna",
+        "version": "3.18",
+        "license_metadata": null,
+        "license_expression": "BSD-3-Clause",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "idna-3.18.dist-info/licenses/LICENSE.md",
+            "sha256": "1a9a4f0e3d479a27240ddd59a9137a66ab4a0f9dfdc8ca6188cc0bfd85187f04"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "iniconfig",
+        "version": "2.3.0",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "iniconfig-2.3.0.dist-info/licenses/LICENSE",
+            "sha256": "3409fa91f7ace557894632676656e32264fe5ef7581535725dc9a23774551bd4"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "Jinja2",
+        "version": "3.1.6",
+        "license_metadata": null,
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: BSD License"
+        ],
+        "license_files": [
+          {
+            "path": "jinja2-3.1.6.dist-info/licenses/LICENSE.txt",
+            "sha256": "3b49dcee4105eb37bac10faf1be260408fe85d252b8e9df2e0979fc1e094437b"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "jsonpatch",
+        "version": "1.33",
+        "license_metadata": "Modified BSD License",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: BSD License"
+        ],
+        "license_files": [
+          {
+            "path": "jsonpatch-1.33.dist-info/LICENSE",
+            "sha256": "4393eb6733fa1e367f41769b382f4f1be7bf0daeb1e243ed92b3f5d8bafd236f"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "jsonpointer",
+        "version": "3.1.1",
+        "license_metadata": "Modified BSD License",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: BSD License"
+        ],
+        "license_files": [
+          {
+            "path": "jsonpointer-3.1.1.dist-info/licenses/AUTHORS",
+            "sha256": "4d58319d0f59c87bef5b07b3fe4db0f19c2d7d5545b034c6bf7b57c89bbef57f"
+          },
+          {
+            "path": "jsonpointer-3.1.1.dist-info/licenses/LICENSE.txt",
+            "sha256": "d8b24f15d472885f788a2d6e985850f264627b86012a17bb242c83f310d907e5"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "langchain-core",
+        "version": "1.4.9",
+        "license_metadata": "MIT",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [],
+        "selected_extras": []
+      },
+      {
+        "name": "langchain-protocol",
+        "version": "0.0.18",
+        "license_metadata": "MIT",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "langchain_protocol-0.0.18.dist-info/licenses/LICENSE",
+            "sha256": "893e6e30275896912c21c77f9f7c112aba85fd985d05b26a29424cf7e511d177"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "langgraph",
+        "version": "1.2.9",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "langgraph-1.2.9.dist-info/licenses/LICENSE",
+            "sha256": "d9bb52f2e3540d60ff50d8f0f5b6ba649b7fd346948c4c3d086c8afb120763c7"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "langgraph-checkpoint",
+        "version": "4.1.1",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "langgraph_checkpoint-4.1.1.dist-info/licenses/LICENSE",
+            "sha256": "d9bb52f2e3540d60ff50d8f0f5b6ba649b7fd346948c4c3d086c8afb120763c7"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "langgraph-prebuilt",
+        "version": "1.1.0",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "langgraph_prebuilt-1.1.0.dist-info/licenses/LICENSE",
+            "sha256": "d9bb52f2e3540d60ff50d8f0f5b6ba649b7fd346948c4c3d086c8afb120763c7"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "langgraph-sdk",
+        "version": "0.4.2",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "langgraph_sdk-0.4.2.dist-info/licenses/LICENSE",
+            "sha256": "d9bb52f2e3540d60ff50d8f0f5b6ba649b7fd346948c4c3d086c8afb120763c7"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "langsmith",
+        "version": "0.10.2",
+        "license_metadata": "MIT",
+        "license_expression": null,
+        "license_classifiers": [],
+        "license_files": [],
+        "selected_extras": []
+      },
+      {
+        "name": "lxml",
+        "version": "6.1.1",
+        "license_metadata": "BSD-3-Clause",
+        "license_expression": null,
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "lxml-6.1.1.dist-info/licenses/LICENSE.txt",
+            "sha256": "8fc2b568133516e46845d2147917adeee1648e70ae9ab5ed6c5417afef4ce855"
+          },
+          {
+            "path": "lxml-6.1.1.dist-info/licenses/LICENSES.txt",
+            "sha256": "41d49dd406aa0e1548a6d5f21a30d6bf638b3cd96eb7289dd348d83ed2e40392"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "Markdown",
+        "version": "3.10.2",
+        "license_metadata": null,
+        "license_expression": "BSD-3-Clause",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "markdown-3.10.2.dist-info/licenses/LICENSE.md",
+            "sha256": "7ba4eb6d10b32b2d11dce13821340351cdbbb30ba8ccc67841db2ffd86e79aca"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "MarkupSafe",
+        "version": "3.0.3",
+        "license_metadata": null,
+        "license_expression": "BSD-3-Clause",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "markupsafe-3.0.3.dist-info/licenses/LICENSE.txt",
+            "sha256": "489a8e1108509ed98a37bb983e11e0f7e1d31f0bd8f99a79c8448e7ff37d07ea"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "mergedeep",
+        "version": "1.3.4",
+        "license_metadata": "UNKNOWN",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "mergedeep-1.3.4.dist-info/LICENSE",
+            "sha256": "11592bd9d56693c987da849c075d636690916d01a47ca234a14bbcf0fe176b37"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "mkdocs",
+        "version": "1.6.1",
+        "license_metadata": null,
+        "license_expression": "BSD-2-Clause",
+        "license_classifiers": [
+          "OSI Approved :: BSD License"
+        ],
+        "license_files": [
+          {
+            "path": "mkdocs-1.6.1.dist-info/licenses/LICENSE",
+            "sha256": "26041bd625fc39411dc4b32748216236931c904adb90c2b3e0ba697090a5d54e"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "mkdocs-get-deps",
+        "version": "0.2.2",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "mkdocs_get_deps-0.2.2.dist-info/licenses/LICENSE.md",
+            "sha256": "e5024bae9b4ecadda35184e20282a81cb25164620d2ffb0261e6da3249aab7b2"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "mkdocs-material",
+        "version": "9.6.14",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "material/templates/.icons/fontawesome/LICENSE.txt",
+            "sha256": "9b914eae88817d63b576eab5aafde7068c7a1abae125d7cdfb034f1da43a9afc"
+          },
+          {
+            "path": "material/templates/.icons/material/LICENSE",
+            "sha256": "3bae6305bcaa6d10219b999f65c342034c2d40b1c0e8567fa08605e73ccba829"
+          },
+          {
+            "path": "material/templates/.icons/material/license.svg",
+            "sha256": "596532cf9c5e7bd94c4a87e21cbbe0477f6749e809eda008f490df7f78e11129"
+          },
+          {
+            "path": "material/templates/.icons/octicons/LICENSE",
+            "sha256": "3d8b9d9254e7aa7517ed5abc8df3a4bc230081a613e8e872fb6558e8759c9040"
+          },
+          {
+            "path": "material/templates/.icons/simple/LICENSE.md",
+            "sha256": "9046848b63a5c92bff14e4accca80bd987e0623b74adf9226ce5198d312b79d5"
+          },
+          {
+            "path": "material/templates/.icons/simple/unlicense.svg",
+            "sha256": "a1218634aa5ba8ab11cd14fa23d3e31eb12ae74ae2cd4cc814a5ca51c72870ee"
+          },
+          {
+            "path": "mkdocs_material-9.6.14.dist-info/licenses/LICENSE",
+            "sha256": "e1150f26b4c0f872627b39fda49ae3bd850304f2f7f3171ae0531c1f8f4dd078"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "mkdocs-material-extensions",
+        "version": "1.3.1",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "mkdocs_material_extensions-1.3.1.dist-info/licenses/LICENSE.md",
+            "sha256": "b3cc149031d83ec272ace499e62217c5066e0200a5560d818d90cdc7bc05403c"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "mypy",
+        "version": "1.16.1",
+        "license_metadata": "MIT",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "mypy-1.16.1.dist-info/licenses/LICENSE",
+            "sha256": "de341f6e031d021aab9eb27bdf713cc6fb844dee832ef3bcd4688bff5517220b"
+          },
+          {
+            "path": "mypy/typeshed/LICENSE",
+            "sha256": "295f8538c94ae5c3043301cf7cff1c852dab6a786a8ddee471e061b40d5ecabe"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "mypy_extensions",
+        "version": "1.1.0",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "mypy_extensions-1.1.0.dist-info/licenses/LICENSE",
+            "sha256": "a50450da1d53cd777b80ced77c58ff96abe0ccd879706bd142c3ec20e245f0b4"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "orjson",
+        "version": "3.11.9",
+        "license_metadata": null,
+        "license_expression": "MPL-2.0 AND (Apache-2.0 OR MIT)",
+        "license_classifiers": [
+          "OSI Approved :: Apache Software License",
+          "OSI Approved :: MIT License",
+          "OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)"
+        ],
+        "license_files": [
+          {
+            "path": "orjson-3.11.9.dist-info/licenses/LICENSE-APACHE",
+            "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+          },
+          {
+            "path": "orjson-3.11.9.dist-info/licenses/LICENSE-MIT",
+            "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+          },
+          {
+            "path": "orjson-3.11.9.dist-info/licenses/LICENSE-MPL-2.0",
+            "sha256": "66a3107d5ad6a058aab753eaac2047ccb2ed0e39465dd0fe5844da3e300d5172"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "ormsgpack",
+        "version": "1.12.2",
+        "license_metadata": null,
+        "license_expression": "Apache-2.0 OR MIT",
+        "license_classifiers": [
+          "OSI Approved :: Apache Software License",
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "ormsgpack-1.12.2.dist-info/licenses/LICENSE-APACHE",
+            "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+          },
+          {
+            "path": "ormsgpack-1.12.2.dist-info/licenses/LICENSE-MIT",
+            "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "packaging",
+        "version": "26.2",
+        "license_metadata": null,
+        "license_expression": "Apache-2.0 OR BSD-2-Clause",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "packaging-26.2.dist-info/licenses/LICENSE",
+            "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+          },
+          {
+            "path": "packaging-26.2.dist-info/licenses/LICENSE.APACHE",
+            "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+          },
+          {
+            "path": "packaging-26.2.dist-info/licenses/LICENSE.BSD",
+            "sha256": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5"
+          },
+          {
+            "path": "packaging/licenses/__init__.py",
+            "sha256": "fc9c745d1883ff9f296a5b169f22eb2ee879f59a4608f20f5cb29d668f4e26f4"
+          },
+          {
+            "path": "packaging/licenses/__pycache__/__init__.cpython-312.pyc",
+            "sha256": "ff16ff3342a0929de114284e1c6de0ee450cbbe7c92770aafc94d3c85be28a33"
+          },
+          {
+            "path": "packaging/licenses/__pycache__/_spdx.cpython-312.pyc",
+            "sha256": "35a1516af9f1c80e2c6aa2d34bbc3d7c99c3fdb137f07f11cc3f02a3e066a888"
+          },
+          {
+            "path": "packaging/licenses/_spdx.py",
+            "sha256": "596ec35e2ca0ebcba9fd8343ff0a51625af548786257815f24b41f7e08613314"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "paginate",
+        "version": "0.5.7",
+        "license_metadata": "MIT",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "paginate-0.5.7.dist-info/LICENSE",
+            "sha256": "352e5b276922f2e362931bbed2dcd2e94331a45b6a41a1b465a8300addcc1553"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "pathspec",
+        "version": "1.1.1",
+        "license_metadata": null,
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)"
+        ],
+        "license_files": [
+          {
+            "path": "pathspec-1.1.1.dist-info/licenses/LICENSE",
+            "sha256": "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "pdfminer.six",
+        "version": "20250506",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "pdfminer_six-20250506.dist-info/licenses/LICENSE",
+            "sha256": "f01e5d699a33766b5caf4a5099f2856aba4f3f75ea1df05dc0572b34b4bea8f2"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "pdfplumber",
+        "version": "0.11.7",
+        "license_metadata": null,
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "pdfplumber-0.11.7.dist-info/licenses/LICENSE.txt",
+            "sha256": "0d48994da4d1321e395b5e64a724ed4dec63fb96b88ac5b88fc014771e690821"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "pillow",
+        "version": "12.3.0",
+        "license_metadata": null,
+        "license_expression": "MIT-CMU",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "pillow-12.3.0.dist-info/licenses/LICENSE",
+            "sha256": "dda12a98c1979cf3d94df1cff45d27a4cb3f04a60c76f76902ac54cac03ec0ce"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "platformdirs",
+        "version": "4.10.0",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "platformdirs-4.10.0.dist-info/licenses/LICENSE",
+            "sha256": "29e0fd62e929850e86eb28c3fdccf0cefdf4fa94879011cffb3d0d4bed6d4db6"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "pluggy",
+        "version": "1.6.0",
+        "license_metadata": "MIT",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "pluggy-1.6.0.dist-info/licenses/LICENSE",
+            "sha256": "d6b65e6c213a5d0b577911d34d6e5949b9f59d76c238c5071a2f3fc16cfb2606"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "psycopg",
+        "version": "3.3.4",
+        "license_metadata": null,
+        "license_expression": "LGPL-3.0-only",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "psycopg-3.3.4.dist-info/licenses/LICENSE.txt",
+            "sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118"
+          }
+        ],
+        "selected_extras": [
+          "binary"
+        ]
+      },
+      {
+        "name": "psycopg-binary",
+        "version": "3.3.4",
+        "license_metadata": null,
+        "license_expression": "LGPL-3.0-only",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "psycopg_binary-3.3.4.dist-info/licenses/LICENSE.txt",
+            "sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "pycparser",
+        "version": "3.0",
+        "license_metadata": null,
+        "license_expression": "BSD-3-Clause",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "pycparser-3.0.dist-info/licenses/LICENSE",
+            "sha256": "0c846399369ea76ddd7b5c44fe6d16497415fcf015f5cbb508c24bf98b81c5b1"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "pydantic",
+        "version": "2.11.7",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "pydantic-2.11.7.dist-info/licenses/LICENSE",
+            "sha256": "a9e186f3ca16b5eef84318e7a701721351a00cb7b8ae3a4394b67b49e3529ef3"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "pydantic_core",
+        "version": "2.33.2",
+        "license_metadata": "MIT",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "pydantic_core-2.33.2.dist-info/licenses/LICENSE",
+            "sha256": "2afdd30d54b4d62b6f488a6bcc1546e84ec5061f13f4209c03d012348783795a"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "Pygments",
+        "version": "2.20.0",
+        "license_metadata": null,
+        "license_expression": "BSD-2-Clause",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "pygments-2.20.0.dist-info/licenses/AUTHORS",
+            "sha256": "0db603a5f4499f690c4425477ff664c166da325d3acc3b5a8d4de3db072443d0"
+          },
+          {
+            "path": "pygments-2.20.0.dist-info/licenses/LICENSE",
+            "sha256": "a9d66f1d526df02e29dce73436d34e56e8632f46c275bbdffc70569e882f9f17"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "pymdown-extensions",
+        "version": "10.21.3",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "pymdown_extensions-10.21.3.dist-info/licenses/LICENSE.md",
+            "sha256": "e6645f914fbae5bc557419fcafbeab9e375897e8274c54e2b177953e9354f93e"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "pypdf",
+        "version": "5.7.0",
+        "license_metadata": null,
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: BSD License"
+        ],
+        "license_files": [
+          {
+            "path": "pypdf-5.7.0.dist-info/licenses/LICENSE",
+            "sha256": "a97ac230e5f33ef10a5367a850eb01f91f1a0b064e34742c7794d2294557f524"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "pypdfium2",
+        "version": "5.11.0",
+        "license_metadata": "BSD-3-Clause, Apache-2.0, dependency licenses",
+        "license_expression": null,
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "pypdfium2-5.11.0.dist-info/licenses/LICENSES/Apache-2.0.txt",
+            "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+          },
+          {
+            "path": "pypdfium2-5.11.0.dist-info/licenses/LICENSES/BSD-3-Clause.txt",
+            "sha256": "a6d11f0694c0137e9b02924b9d33a159f6c72f220fa4655bb2e1ea3654377d39"
+          },
+          {
+            "path": "pypdfium2-5.11.0.dist-info/licenses/LICENSES/CC-BY-4.0.txt",
+            "sha256": "419896aea50c15d6e40c5b4baf4bd346f78223b9a354c7357ad00262afdc08ec"
+          },
+          {
+            "path": "pypdfium2-5.11.0.dist-info/licenses/data/darwin_arm64/BUILD_LICENSES/abseil.txt",
+            "sha256": "c79a7fea0e3cac04cd43f20e7b648e5a0ff8fa5344e644b0ee09ca1162b62747"
+          },
+          {
+            "path": "pypdfium2-5.11.0.dist-info/licenses/data/darwin_arm64/BUILD_LICENSES/agg23.txt",
+            "sha256": "c110d3ea2ad77467ce0dcff7d3337e6c8be8049a5103f4b9bd5fd911a77972e5"
+          },
+          {
+            "path": "pypdfium2-5.11.0.dist-info/licenses/data/darwin_arm64/BUILD_LICENSES/fast_float.txt",
+            "sha256": "e562f3f974ced7e69dd1db77b820b36bcf8f30377f1aa105723fba449c53c4e6"
+          },
+          {
+            "path": "pypdfium2-5.11.0.dist-info/licenses/data/darwin_arm64/BUILD_LICENSES/freetype.txt",
+            "sha256": "f4b133e25df1f86ad3ffea453aa0e613f0474f34778dbbb3e437e7b2724937d8"
+          },
+          {
+            "path": "pypdfium2-5.11.0.dist-info/licenses/data/darwin_arm64/BUILD_LICENSES/icu.txt",
+            "sha256": "e55522d81edc687a341a4411e0776e54ca654e90147f354a90458aaced4116af"
+          },
+          {
+            "path": "pypdfium2-5.11.0.dist-info/licenses/data/darwin_arm64/BUILD_LICENSES/lcms.txt",
+            "sha256": "7312b68c5b25e9bf2b828706fb4e29588f22705112f411fd42e1f7d84c3d139a"
+          },
+          {
+            "path": "pypdfium2-5.11.0.dist-info/licenses/data/darwin_arm64/BUILD_LICENSES/libjpeg_turbo.ijg",
+            "sha256": "75815e3bf6484201a3c3d17a1bbf10f2e8e3237f84df10a2357ea896db2a81d6"
+          },
+          {
+            "path": "pypdfium2-5.11.0.dist-info/licenses/data/darwin_arm64/BUILD_LICENSES/libjpeg_turbo.md",
+            "sha256": "96f5b328adbb78eeaaec6980d73fd558cb1e4d62560ed615646bc3cf5e532430"
+          },
+          {
+            "path": "pypdfium2-5.11.0.dist-info/licenses/data/darwin_arm64/BUILD_LICENSES/libopenjpeg.txt",
+            "sha256": "c5ab0890a737c2dfa7ba675036554f6d17741d98629b0c2a145354d00617e6b2"
+          },
+          {
+            "path": "pypdfium2-5.11.0.dist-info/licenses/data/darwin_arm64/BUILD_LICENSES/libpng.txt",
+            "sha256": "bdb0a645ea18c60507d0368379b1ac5474b92255fcc2d115e07486a7672ba526"
+          },
+          {
+            "path": "pypdfium2-5.11.0.dist-info/licenses/data/darwin_arm64/BUILD_LICENSES/libtiff.txt",
+            "sha256": "92b72ba97e6c2749c2a94bc0ef646b47080217f1e772a482b33cf5a5f98a6506"
+          },
+          {
+            "path": "pypdfium2-5.11.0.dist-info/licenses/data/darwin_arm64/BUILD_LICENSES/llvm-libc.txt",
+            "sha256": "ebcd9bbf783a73d05c53ba4d586b8d5813dcdf3bbec50265860ccc885e606f47"
+          },
+          {
+            "path": "pypdfium2-5.11.0.dist-info/licenses/data/darwin_arm64/BUILD_LICENSES/pdfium-binaries.txt",
+            "sha256": "ba26c1263131696b86c10496b5066b918a20b7161822a80c274d0080105f6c93"
+          },
+          {
+            "path": "pypdfium2-5.11.0.dist-info/licenses/data/darwin_arm64/BUILD_LICENSES/pdfium.txt",
+            "sha256": "1fe9dea718fbd75cf149adaf4d8a22a4335604d964ddb76d1b45383dec8668c9"
+          },
+          {
+            "path": "pypdfium2-5.11.0.dist-info/licenses/data/darwin_arm64/BUILD_LICENSES/simdutf.txt",
+            "sha256": "fc8dbc04e03ad4efc08a647ffe7f995b811a95bc04c0e85a56d5277c6593fa5f"
+          },
+          {
+            "path": "pypdfium2-5.11.0.dist-info/licenses/data/darwin_arm64/BUILD_LICENSES/zlib.txt",
+            "sha256": "33fd641c9f3b0e0be64bc78fea9e94807674cdd70c48477599226cb8956565fe"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "pytest",
+        "version": "8.4.1",
+        "license_metadata": "MIT",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "pytest-8.4.1.dist-info/licenses/AUTHORS",
+            "sha256": "79a5fc74739290f009cf3d0bf57ff20688f1cad9b84a24c77c4e2dec752f12fc"
+          },
+          {
+            "path": "pytest-8.4.1.dist-info/licenses/LICENSE",
+            "sha256": "ca836a5f9ecca3b2f350230faa20a48fb8b145653b5568d784862df864706b9b"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "pytest-asyncio",
+        "version": "1.0.0",
+        "license_metadata": null,
+        "license_expression": "Apache-2.0",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "pytest_asyncio-1.0.0.dist-info/licenses/LICENSE",
+            "sha256": "a8ad31b1c3f40dca5a84119351b8fa8ddc868edd77fad8a8ebf6d8f2d16fa4ae"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "python-dateutil",
+        "version": "2.9.0.post0",
+        "license_metadata": "Dual License",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: BSD License",
+          "OSI Approved :: Apache Software License"
+        ],
+        "license_files": [
+          {
+            "path": "python_dateutil-2.9.0.post0.dist-info/LICENSE",
+            "sha256": "ba00f51a0d92823b5a1cde27d8b5b9d2321e67ed8da9bc163eff96d5e17e577e"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "PyYAML",
+        "version": "6.0.2",
+        "license_metadata": "MIT",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "PyYAML-6.0.2.dist-info/LICENSE",
+            "sha256": "8d3928f9dc4490fd635707cb88eb26bd764102a7282954307d3e5167a577e8a4"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "pyyaml_env_tag",
+        "version": "1.1",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "pyyaml_env_tag-1.1.dist-info/licenses/LICENSE",
+            "sha256": "75a5994afa284b67e6e66d7f83d2d39e729736511491b3d309ea7a064cbde3ce"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "redis",
+        "version": "8.0.1",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "redis-8.0.1.dist-info/licenses/LICENSE",
+            "sha256": "a57b250a5bf03d7afe55b74063313f2adb7b00d546c0ab149a89398333fe3cc8"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "reportlab",
+        "version": "4.4.2",
+        "license_metadata": "BSD license (see license.txt for details), Copyright (c) 2000-2025, ReportLab Inc.",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: BSD License"
+        ],
+        "license_files": [
+          {
+            "path": "reportlab-4.4.2.dist-info/licenses/LICENSE",
+            "sha256": "ef831761646313921375fc2cb888e8eeaf7da213d0b92852c10c42f3a0b4d138"
+          },
+          {
+            "path": "reportlab/fonts/DarkGarden-copying-gpl.txt",
+            "sha256": "1b2a567f289f66a143c56353e7b3d4fa5862514a5e3c5cfdf8b02ee5e5aaa953"
+          },
+          {
+            "path": "reportlab/fonts/DarkGarden-copying.txt",
+            "sha256": "3cd1020510efa7f6b3166a5a2740f92bd664a695ea179e0bda442e74cd0ef3a4"
+          },
+          {
+            "path": "reportlab/fonts/bitstream-vera-license.txt",
+            "sha256": "3361d054759a2fc686a2c058be82deaf9c2e6fe549be9004d7935a6c1736315d"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "requests",
+        "version": "2.34.2",
+        "license_metadata": "Apache-2.0",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: Apache Software License"
+        ],
+        "license_files": [
+          {
+            "path": "requests-2.34.2.dist-info/licenses/LICENSE",
+            "sha256": "09e8a9bcec8067104652c168685ab0931e7868f9c8284b66f5ae6edae5f1130b"
+          },
+          {
+            "path": "requests-2.34.2.dist-info/licenses/NOTICE",
+            "sha256": "f5110972dedad2b4e9d314518daf3b7d72d6e02e499acd802181de6f74571dcc"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "requests-toolbelt",
+        "version": "1.0.0",
+        "license_metadata": "Apache 2.0",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: Apache Software License"
+        ],
+        "license_files": [
+          {
+            "path": "requests_toolbelt-1.0.0.dist-info/LICENSE",
+            "sha256": "1f8cf8bdacd98ed6d36d0fec0c07f7765acebd6e81205962ab5146023b3c858d"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "ruff",
+        "version": "0.12.2",
+        "license_metadata": "MIT",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "ruff-0.12.2.dist-info/licenses/LICENSE",
+            "sha256": "3209c0b7fb7257c05b16433728c1e974bac40000fef171b8e9e89f095623c954"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "six",
+        "version": "1.17.0",
+        "license_metadata": "MIT",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "six-1.17.0.dist-info/LICENSE",
+            "sha256": "4375ba20e2b9c6c4e7cad2940a628fd90e95cc3d50ee92aae755715d8ba1fbd0"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "sniffio",
+        "version": "1.3.1",
+        "license_metadata": "MIT OR Apache-2.0",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: MIT License",
+          "OSI Approved :: Apache Software License"
+        ],
+        "license_files": [
+          {
+            "path": "sniffio-1.3.1.dist-info/LICENSE",
+            "sha256": "652c878488d1456361e08c3f8607fd7ba59892a14103d15cce4ff93c85b5cc8b"
+          },
+          {
+            "path": "sniffio-1.3.1.dist-info/LICENSE.APACHE2",
+            "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+          },
+          {
+            "path": "sniffio-1.3.1.dist-info/LICENSE.MIT",
+            "sha256": "3e6dae555eb92787fc82d1d48355677f454c7f65aeb38d3f9e72bf9a3daf034b"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "soupsieve",
+        "version": "2.8.4",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [
+          "OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          {
+            "path": "soupsieve-2.8.4.dist-info/licenses/LICENSE.md",
+            "sha256": "76a0acdb98c3a63681e20b6f096699ef8cad5fb35d56eef8387e0fa71d797a9a"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "SQLAlchemy",
+        "version": "2.0.51",
+        "license_metadata": "MIT",
+        "license_expression": null,
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "sqlalchemy-2.0.51.dist-info/licenses/LICENSE",
+            "sha256": "e862bb5b904fb5513c3e14288d7a25a12eb0ecc7847a0a965d310e9a955e7cb9"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "starlette",
+        "version": "0.47.3",
+        "license_metadata": null,
+        "license_expression": "BSD-3-Clause",
+        "license_classifiers": [
+          "OSI Approved :: BSD License"
+        ],
+        "license_files": [
+          {
+            "path": "starlette-0.47.3.dist-info/licenses/LICENSE.md",
+            "sha256": "dcb95677a02240243187e964f941847d19b17821cf99e5afae684fab328c19bf"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "tenacity",
+        "version": "9.1.4",
+        "license_metadata": "Apache 2.0",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: Apache Software License"
+        ],
+        "license_files": [
+          {
+            "path": "tenacity-9.1.4.dist-info/licenses/LICENSE",
+            "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "typing_extensions",
+        "version": "4.16.0",
+        "license_metadata": null,
+        "license_expression": "PSF-2.0",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "typing_extensions-4.16.0.dist-info/licenses/LICENSE",
+            "sha256": "3b2f81fe21d181c499c59a256c8e1968455d6689d269aa85373bfb6af41da3bf"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "typing-inspection",
+        "version": "0.4.2",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "typing_inspection-0.4.2.dist-info/licenses/LICENSE",
+            "sha256": "804b59b25f2c31bd278f9202a19ae49a3945aa2664387e2d0a128c7cacc61ec3"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "urllib3",
+        "version": "2.7.0",
+        "license_metadata": null,
+        "license_expression": "MIT",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "urllib3-2.7.0.dist-info/licenses/LICENSE.txt",
+            "sha256": "130e3a64d5fdd5d096a752694634a7d9df284469de86e5732100268041e3d686"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "uuid_utils",
+        "version": "0.17.0",
+        "license_metadata": null,
+        "license_expression": "BSD-3-Clause",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "uuid_utils-0.17.0.dist-info/licenses/LICENSE.md",
+            "sha256": "0c47f52b4c484bd04c78e7c969542eea31afe644f587f3b8a8ccce86352c6046"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "uvicorn",
+        "version": "0.35.0",
+        "license_metadata": null,
+        "license_expression": "BSD-3-Clause",
+        "license_classifiers": [
+          "OSI Approved :: BSD License"
+        ],
+        "license_files": [
+          {
+            "path": "uvicorn-0.35.0.dist-info/licenses/LICENSE.md",
+            "sha256": "efe1acf3e62fb99c288b0ec73e5a773b7268ef4320fe757ea994214e4b63c371"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "watchdog",
+        "version": "6.0.0",
+        "license_metadata": "Apache-2.0",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: Apache Software License"
+        ],
+        "license_files": [
+          {
+            "path": "watchdog-6.0.0.dist-info/COPYING",
+            "sha256": "39f081828db6f94c70123fa4fb30c1bce3e215a8fdece53a49991fe076a69c08"
+          },
+          {
+            "path": "watchdog-6.0.0.dist-info/LICENSE",
+            "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "websockets",
+        "version": "15.0.1",
+        "license_metadata": "BSD-3-Clause",
+        "license_expression": null,
+        "license_classifiers": [
+          "OSI Approved :: BSD License"
+        ],
+        "license_files": [
+          {
+            "path": "websockets-15.0.1.dist-info/LICENSE",
+            "sha256": "3d6a0c050d8bec52fabad502e45fb25bd02bcadbd70dea34d447b6a0ff4e6da8"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "xxhash",
+        "version": "3.8.1",
+        "license_metadata": "BSD-2-Clause",
+        "license_expression": null,
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "xxhash-3.8.1.dist-info/licenses/LICENSE",
+            "sha256": "b3c620adc9a8812cc0c3c7fc09567fa9a9930d3546de955dfb955b168cf989ac"
+          }
+        ],
+        "selected_extras": []
+      },
+      {
+        "name": "zstandard",
+        "version": "0.25.0",
+        "license_metadata": null,
+        "license_expression": "BSD-3-Clause",
+        "license_classifiers": [],
+        "license_files": [
+          {
+            "path": "zstandard-0.25.0.dist-info/licenses/LICENSE",
+            "sha256": "788fe85e53724a40b299051c4abc9cf74d42b27e7968325b80891c25f79adb4b"
+          }
+        ],
+        "selected_extras": []
+      }
+    ],
+    "edges": [
+      {
+        "from": "anyio",
+        "to": "idna"
+      },
+      {
+        "from": "anyio",
+        "to": "typing-extensions"
+      },
+      {
+        "from": "beautifulsoup4",
+        "to": "soupsieve"
+      },
+      {
+        "from": "beautifulsoup4",
+        "to": "typing-extensions"
+      },
+      {
+        "from": "cffi",
+        "to": "pycparser"
+      },
+      {
+        "from": "cryptography",
+        "to": "cffi"
+      },
+      {
+        "from": "fastapi",
+        "to": "pydantic"
+      },
+      {
+        "from": "fastapi",
+        "to": "starlette"
+      },
+      {
+        "from": "fastapi",
+        "to": "typing-extensions"
+      },
+      {
+        "from": "ghp-import",
+        "to": "python-dateutil"
+      },
+      {
+        "from": "httpcore",
+        "to": "certifi"
+      },
+      {
+        "from": "httpcore",
+        "to": "h11"
+      },
+      {
+        "from": "httpx",
+        "to": "anyio"
+      },
+      {
+        "from": "httpx",
+        "to": "certifi"
+      },
+      {
+        "from": "httpx",
+        "to": "httpcore"
+      },
+      {
+        "from": "httpx",
+        "to": "idna"
+      },
+      {
+        "from": "jinja2",
+        "to": "markupsafe"
+      },
+      {
+        "from": "jsonpatch",
+        "to": "jsonpointer"
+      },
+      {
+        "from": "langchain-core",
+        "to": "jsonpatch"
+      },
+      {
+        "from": "langchain-core",
+        "to": "langchain-protocol"
+      },
+      {
+        "from": "langchain-core",
+        "to": "langsmith"
+      },
+      {
+        "from": "langchain-core",
+        "to": "packaging"
+      },
+      {
+        "from": "langchain-core",
+        "to": "pydantic"
+      },
+      {
+        "from": "langchain-core",
+        "to": "pyyaml"
+      },
+      {
+        "from": "langchain-core",
+        "to": "tenacity"
+      },
+      {
+        "from": "langchain-core",
+        "to": "typing-extensions"
+      },
+      {
+        "from": "langchain-core",
+        "to": "uuid-utils"
+      },
+      {
+        "from": "langchain-protocol",
+        "to": "typing-extensions"
+      },
+      {
+        "from": "langgraph",
+        "to": "langchain-core"
+      },
+      {
+        "from": "langgraph",
+        "to": "langgraph-checkpoint"
+      },
+      {
+        "from": "langgraph",
+        "to": "langgraph-prebuilt"
+      },
+      {
+        "from": "langgraph",
+        "to": "langgraph-sdk"
+      },
+      {
+        "from": "langgraph",
+        "to": "pydantic"
+      },
+      {
+        "from": "langgraph",
+        "to": "xxhash"
+      },
+      {
+        "from": "langgraph-checkpoint",
+        "to": "langchain-core"
+      },
+      {
+        "from": "langgraph-checkpoint",
+        "to": "ormsgpack"
+      },
+      {
+        "from": "langgraph-prebuilt",
+        "to": "langchain-core"
+      },
+      {
+        "from": "langgraph-prebuilt",
+        "to": "langgraph-checkpoint"
+      },
+      {
+        "from": "langgraph-sdk",
+        "to": "httpx"
+      },
+      {
+        "from": "langgraph-sdk",
+        "to": "langchain-core"
+      },
+      {
+        "from": "langgraph-sdk",
+        "to": "langchain-protocol"
+      },
+      {
+        "from": "langgraph-sdk",
+        "to": "orjson"
+      },
+      {
+        "from": "langgraph-sdk",
+        "to": "websockets"
+      },
+      {
+        "from": "langsmith",
+        "to": "anyio"
+      },
+      {
+        "from": "langsmith",
+        "to": "distro"
+      },
+      {
+        "from": "langsmith",
+        "to": "httpx"
+      },
+      {
+        "from": "langsmith",
+        "to": "orjson"
+      },
+      {
+        "from": "langsmith",
+        "to": "packaging"
+      },
+      {
+        "from": "langsmith",
+        "to": "pydantic"
+      },
+      {
+        "from": "langsmith",
+        "to": "requests"
+      },
+      {
+        "from": "langsmith",
+        "to": "requests-toolbelt"
+      },
+      {
+        "from": "langsmith",
+        "to": "sniffio"
+      },
+      {
+        "from": "langsmith",
+        "to": "typing-extensions"
+      },
+      {
+        "from": "langsmith",
+        "to": "uuid-utils"
+      },
+      {
+        "from": "langsmith",
+        "to": "websockets"
+      },
+      {
+        "from": "langsmith",
+        "to": "xxhash"
+      },
+      {
+        "from": "langsmith",
+        "to": "zstandard"
+      },
+      {
+        "from": "mkdocs",
+        "to": "click"
+      },
+      {
+        "from": "mkdocs",
+        "to": "ghp-import"
+      },
+      {
+        "from": "mkdocs",
+        "to": "jinja2"
+      },
+      {
+        "from": "mkdocs",
+        "to": "markdown"
+      },
+      {
+        "from": "mkdocs",
+        "to": "markupsafe"
+      },
+      {
+        "from": "mkdocs",
+        "to": "mergedeep"
+      },
+      {
+        "from": "mkdocs",
+        "to": "mkdocs-get-deps"
+      },
+      {
+        "from": "mkdocs",
+        "to": "packaging"
+      },
+      {
+        "from": "mkdocs",
+        "to": "pathspec"
+      },
+      {
+        "from": "mkdocs",
+        "to": "pyyaml"
+      },
+      {
+        "from": "mkdocs",
+        "to": "pyyaml-env-tag"
+      },
+      {
+        "from": "mkdocs",
+        "to": "watchdog"
+      },
+      {
+        "from": "mkdocs-get-deps",
+        "to": "mergedeep"
+      },
+      {
+        "from": "mkdocs-get-deps",
+        "to": "platformdirs"
+      },
+      {
+        "from": "mkdocs-get-deps",
+        "to": "pyyaml"
+      },
+      {
+        "from": "mkdocs-material",
+        "to": "babel"
+      },
+      {
+        "from": "mkdocs-material",
+        "to": "backrefs"
+      },
+      {
+        "from": "mkdocs-material",
+        "to": "colorama"
+      },
+      {
+        "from": "mkdocs-material",
+        "to": "jinja2"
+      },
+      {
+        "from": "mkdocs-material",
+        "to": "markdown"
+      },
+      {
+        "from": "mkdocs-material",
+        "to": "mkdocs"
+      },
+      {
+        "from": "mkdocs-material",
+        "to": "mkdocs-material-extensions"
+      },
+      {
+        "from": "mkdocs-material",
+        "to": "paginate"
+      },
+      {
+        "from": "mkdocs-material",
+        "to": "pygments"
+      },
+      {
+        "from": "mkdocs-material",
+        "to": "pymdown-extensions"
+      },
+      {
+        "from": "mkdocs-material",
+        "to": "requests"
+      },
+      {
+        "from": "mypy",
+        "to": "mypy-extensions"
+      },
+      {
+        "from": "mypy",
+        "to": "pathspec"
+      },
+      {
+        "from": "mypy",
+        "to": "typing-extensions"
+      },
+      {
+        "from": "pdfminer-six",
+        "to": "charset-normalizer"
+      },
+      {
+        "from": "pdfminer-six",
+        "to": "cryptography"
+      },
+      {
+        "from": "pdfplumber",
+        "to": "pdfminer-six"
+      },
+      {
+        "from": "pdfplumber",
+        "to": "pillow"
+      },
+      {
+        "from": "pdfplumber",
+        "to": "pypdfium2"
+      },
+      {
+        "from": "psycopg",
+        "to": "psycopg-binary"
+      },
+      {
+        "from": "psycopg",
+        "to": "typing-extensions"
+      },
+      {
+        "from": "pydantic",
+        "to": "annotated-types"
+      },
+      {
+        "from": "pydantic",
+        "to": "pydantic-core"
+      },
+      {
+        "from": "pydantic",
+        "to": "typing-extensions"
+      },
+      {
+        "from": "pydantic",
+        "to": "typing-inspection"
+      },
+      {
+        "from": "pydantic-core",
+        "to": "typing-extensions"
+      },
+      {
+        "from": "pymdown-extensions",
+        "to": "markdown"
+      },
+      {
+        "from": "pymdown-extensions",
+        "to": "pyyaml"
+      },
+      {
+        "from": "pytest",
+        "to": "iniconfig"
+      },
+      {
+        "from": "pytest",
+        "to": "packaging"
+      },
+      {
+        "from": "pytest",
+        "to": "pluggy"
+      },
+      {
+        "from": "pytest",
+        "to": "pygments"
+      },
+      {
+        "from": "pytest-asyncio",
+        "to": "pytest"
+      },
+      {
+        "from": "python-dateutil",
+        "to": "six"
+      },
+      {
+        "from": "pyyaml-env-tag",
+        "to": "pyyaml"
+      },
+      {
+        "from": "reportlab",
+        "to": "charset-normalizer"
+      },
+      {
+        "from": "reportlab",
+        "to": "pillow"
+      },
+      {
+        "from": "requests",
+        "to": "certifi"
+      },
+      {
+        "from": "requests",
+        "to": "charset-normalizer"
+      },
+      {
+        "from": "requests",
+        "to": "idna"
+      },
+      {
+        "from": "requests",
+        "to": "urllib3"
+      },
+      {
+        "from": "requests-toolbelt",
+        "to": "requests"
+      },
+      {
+        "from": "sqlalchemy",
+        "to": "typing-extensions"
+      },
+      {
+        "from": "starlette",
+        "to": "anyio"
+      },
+      {
+        "from": "starlette",
+        "to": "typing-extensions"
+      },
+      {
+        "from": "typing-inspection",
+        "to": "typing-extensions"
+      },
+      {
+        "from": "uvicorn",
+        "to": "click"
+      },
+      {
+        "from": "uvicorn",
+        "to": "h11"
+      }
+    ],
+    "missing_concise_license_signal": []
+  },
+  "hard_issues": [],
+  "manual_review_required": [
+    "A professional reviewer must confirm the rights_basis entries against private source records.",
+    "Confirm printer trim, binding margin and bleed requirements; the current text-only PDF uses A4 media/crop boxes without a dedicated bleed workflow.",
+    "Confirm that bundled SIL-OFL-1.1 font notices satisfy the final storefront, printer and commercial distribution terms.",
+    "EPUB embeds no font files and relies on reader system fonts; test final typography on the target storefronts and physical devices.",
+    "Installed metadata is an inventory aid, not a legal compatibility opinion; review direct and transitive dependency terms for the commercial distribution model.",
+    "PPTX visible runs use Noto Sans SC but the deck embeds no font files; install the bundled OFL font or confirm substitution on PowerPoint, Keynote and target projection computers."
+  ]
+}

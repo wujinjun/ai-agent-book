@@ -24,6 +24,9 @@ class ReferenceItem(TypedDict, total=False):
     title: str
     publication: str
     year: int
+    url: str
+    checked: str
+    kind: str
     note: str
 
 
@@ -32,7 +35,13 @@ def generate_supporting_pages(root: Path, destination: Path) -> dict[str, Path]:
 
     metadata = _load_metadata(root / "notes/publication-metadata.yml")
     glossary = cast(list[GlossaryItem], metadata["glossary"])
-    references = cast(list[ReferenceItem], metadata["references"])
+    references_path = root / str(metadata.get("references_file", ""))
+    if not references_path.is_file():
+        raise ValueError("publication metadata must define a valid references_file")
+    references = cast(
+        list[ReferenceItem],
+        yaml.safe_load(references_path.read_text(encoding="utf-8")),
+    )
     _validate_metadata(glossary, references)
 
     destination.mkdir(parents=True, exist_ok=True)
@@ -71,8 +80,11 @@ def _validate_metadata(
         raise ValueError("duplicate glossary term")
     if len(reference_ids) != len(set(reference_ids)):
         raise ValueError("duplicate reference id")
-    if len(glossary) < 30 or len(references) < 8:
+    if len(glossary) < 30 or len(references) < 100:
         raise ValueError("publication metadata is below the minimum coverage")
+    for item in references:
+        if not item.get("url", "").startswith("https://"):
+            raise ValueError(f"reference {item['id']} must use an HTTPS source")
 
 
 def _render_glossary(items: list[GlossaryItem]) -> str:
@@ -103,10 +115,12 @@ def _render_references(items: list[ReferenceItem]) -> str:
     ]
     for index, item in enumerate(items, start=1):
         note = f" {item['note']}" if item.get("note") else ""
+        checked = f" 核对：{item['checked']}。" if item.get("checked") else ""
+        title = f"[{item['title']}]({item['url']})"
         lines.append(
             f"{index}. <span id=\"ref-{item['id']}\"></span>"
-            f"**[{item['id']}]** {item['authors']} *{item['title']}*. "
-            f"{item['publication']}, {item['year']}.{note}"
+            f"**[{item['id']}]** {item['authors']} *{title}*. "
+            f"{item['publication']}, {item['year']}.{checked}{note}"
         )
     return "\n".join(lines) + "\n"
 

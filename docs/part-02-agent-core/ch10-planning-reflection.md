@@ -329,3 +329,13 @@ Self-Critique 与 Executor 共享模型和上下文，容易重复相同盲点�
 3. Reviewer 避免复述 Executor 的方法是使用独立 rubric、原始证据和最小上下文，逐条输出结构化判断；能用代码验证的条目交给代码。使用不同模型可以降低部分相关错误，但不能替代清晰契约和人工抽检。
 4. DAG 校验至少覆盖重复 ID、未知依赖、自环、多节点循环、多个并行根节点和稳定拓扑顺序。运行时还要验证工具 allowlist、节点预算总和、最大节点数与产物 Schema。
 5. 对照实验必须固定任务集、工具、数据快照与总预算，同时报告成功、成本、延迟和重试。不能让带 Reviewer 的方案获得额外无限预算，否则比较无法回答“新增控制阶段是否值得”。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [wang2023plan：Plan-and-Solve Prompting](../references.md#ref-wang2023plan)
+- [yao2023tot：Tree of Thoughts: Deliberate Problem Solving with Large Language Models](../references.md#ref-yao2023tot)
+- [madaan2023：Self-Refine: Iterative Refinement with Self-Feedback](../references.md#ref-madaan2023)
+- [shinn2023：Reflexion: Language Agents with Verbal Reinforcement Learning](../references.md#ref-shinn2023)
+<!-- chapter-citations:end -->

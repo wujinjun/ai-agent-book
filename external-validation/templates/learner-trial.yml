@@ -1,0 +1,11 @@
+schema_version: 1
+evidence_type: learner_trial
+record_id: learner-trial-001
+checked_at: 2026-08-08
+source_commit: "0000000000000000000000000000000000000000"
+candidate_manifest_sha256: "0000000000000000000000000000000000000000000000000000000000000000"
+participants: 3
+opened_html_within_15_min: 0
+project_2_without_operator: 0
+mean_core_exercise_score: 0
+open_findings: {p0: 0, p1: 0, p2: 0, p3: 0}
