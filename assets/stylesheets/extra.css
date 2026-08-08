@@ -331,3 +331,20 @@ body {
     animation-duration: 0.01ms !important;
   }
 }
+
+body::after {
+  content: "P9 候选在线预览 · 非正式商业终稿";
+  position: fixed;
+  right: 0.8rem;
+  bottom: 0.8rem;
+  z-index: 20;
+  max-width: calc(100vw - 1.6rem);
+  padding: 0.45rem 0.7rem;
+  border: 1px solid #d19a32;
+  border-radius: 0.45rem;
+  background: rgba(255, 248, 225, 0.96);
+  color: #5d3a00;
+  font-size: 0.68rem;
+  font-weight: 700;
+  box-shadow: 0 0.2rem 0.7rem rgba(23, 32, 51, 0.16);
+}
