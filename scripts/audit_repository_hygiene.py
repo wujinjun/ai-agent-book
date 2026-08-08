@@ -94,7 +94,7 @@ def audit_repository(root: Path) -> list[str]:
         "## 15 分钟 Quick Start",
         "## 十个项目展示",
         "docs/assets/readme-home.png",
-        "GitHub Release v2026.8.0",
+        "GitHub Release v2026.8.1",
         "## 质量门禁",
     ):
         if marker not in readme:
