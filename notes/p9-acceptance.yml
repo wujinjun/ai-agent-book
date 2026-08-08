@@ -39,7 +39,11 @@ repository_scope:
     report: notes/distribution-asset-audit.json
   secret_scan: passed
   privacy_scan: passed
-  external_evidence_intake: ready
+  external_evidence_intake:
+    status: published_candidate
+    release: https://github.com/wujinjun/ai-agent-book/releases/tag/p9-candidate-034ac18
+    source_commit: 034ac18e2f675aa2b73dcfcf83d23b0717b63656
+    kit_sha256: 227c064f11ee9596be7ef800caf2efe571836b8c1d779335c0255af3008ecc02
   final_release_gate:
     status: enforced_fail_closed
     requires_complete_external_evidence: true
@@ -92,5 +96,5 @@ open_gaps:
     next_review: 2026-08-22
   - id: final-main-and-release
     owner: repository maintainer
-    reason: public v2026.8.0 points to the earlier 400-page candidate; P7-P9 work remains on feature branch
+    reason: P9 candidate 034ac18 is published as a prerelease, but public v2026.8.0 remains the earlier 400-page version until all external evidence passes
     next_review: 2026-08-22

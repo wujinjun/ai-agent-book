@@ -2,6 +2,8 @@
 
 本目录把 P9 尚未完成的真人门禁转换为可执行、可追溯、可复验的证据流程。它不包含虚构的通过记录；`evidence/` 在真实活动完成前只保留说明文件。
 
+当前冻结候选为 [`p9-candidate-034ac18`](https://github.com/wujinjun/ai-agent-book/releases/tag/p9-candidate-034ac18)，对应 commit `034ac18e2f675aa2b73dcfcf83d23b0717b63656`。Release 附件 `external-validation-kit-034ac18.zip` 的 SHA-256 为 `227c064f11ee9596be7ef800caf2efe571836b8c1d779335c0255af3008ecc02`。它是预发布验收材料，不表示任何外部活动已经通过。
+
 ```mermaid
 flowchart LR
     Candidate["固定候选 commit 与出版物"] --> Reviews["三类独立审阅"]
