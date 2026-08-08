@@ -72,7 +72,7 @@ repository_scope:
     epub_download_http: 200
     boundary: public_preview_not_final_release
   final_release_gate:
-    status: repository_scope_ready
+    status: repository_scope_published
     requires_complete_external_evidence: false
     external_evidence_disposition: excluded_not_passed
     requires_repository_scope_matrix: true
@@ -80,6 +80,15 @@ repository_scope:
     requires_repository_score_matrix: true
     html_downloads_match_root_artifacts: true
     release_manifest_roles: [book_pdf, book_epub, training_pptx, release_notes]
+  repository_release:
+    status: published
+    version: v2026.8.1
+    url: https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.1
+    source_commit: f66f48c9cdc4b89b5a6463aa44941c2653d05b69
+    is_prerelease: false
+    assets: 7
+    build_and_final_gate: passed
+    publication_boundary: repository_scope_only
 internal_role_reviews:
   agent_engineer: notes/p9-agent-engineering-review.md
   python_engineer: notes/p9-python-engineering-review.md

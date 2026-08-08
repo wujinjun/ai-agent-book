@@ -22,6 +22,7 @@ def test_publish_workflow_deploys_pages_and_versioned_downloads() -> None:
     assert "publication/release/*" in source
     assert '--notes-file "$notes_file"' in source
     assert 'gh release create "$GITHUB_REF_NAME"' in source
+    assert "GH_REPO: ${{ github.repository }}" in source
     assert "final-gate:" in source
     assert "needs: [build, final-gate]" in source
     assert '--release-commit "$GITHUB_SHA"' not in source
