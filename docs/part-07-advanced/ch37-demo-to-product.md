@@ -170,3 +170,13 @@ class RunView(BaseModel):
 4. 延伸阅读：SRE、Error Budget、渐进式交付、Human-in-the-Loop 设计、AI 风险管理和服务设计。
 
 本章对应代码目录：`projects/04-knowledge-agent/`、`projects/10-enterprise-platform/`。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [iso25010：Systems and Software Quality Models](../references.md#ref-iso25010)
+- [nist-ai-rmf：Artificial Intelligence Risk Management Framework 1.0](../references.md#ref-nist-ai-rmf)
+- [nist-genai-profile：Artificial Intelligence Risk Management Framework: Generative AI Profile](../references.md#ref-nist-genai-profile)
+- [openai-compat：API Backward Compatibility](../references.md#ref-openai-compat)
+<!-- chapter-citations:end -->

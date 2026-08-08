@@ -141,3 +141,12 @@ PII 字段分类、加密和最小保留；日志只写 ID/哈希；Secret 不�
 
 常见误区：Redis 是更快数据库、Checkpoint 等于事务、向量库自动多租户、备份存在就等于能恢复。工程实践从数据分类、明确事实来源、版本和生命周期开始，再做性能优化。
 总结：数据层必须为恢复、权限和审计提供确定证据。练习：设计任务状态表、outbox 和幂等更新，并写跨租户测试。面试：状态、事件和 Checkpoint 有何区别？缓存如何避免跨租户污染？为什么外部模型调用不能放在数据库事务内？延伸阅读：PostgreSQL、Redis、pgvector 与所选迁移工具官方文档。代码目录：项目4、10。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [postgresql-docs：PostgreSQL Documentation](../references.md#ref-postgresql-docs)
+- [redis-docs：Redis Documentation](../references.md#ref-redis-docs)
+- [pgvector：pgvector](../references.md#ref-pgvector)
+<!-- chapter-citations:end -->

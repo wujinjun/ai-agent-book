@@ -144,3 +144,13 @@ def next_delay(attempt: int, base: float = 1.0, cap: float = 60.0) -> float:
 
 常见误区：队列自动保证只执行一次、HTTP 断开就取消任务、超时等于外部动作未完成、DLQ 可永远不看。测试覆盖重复投递、Worker 崩溃、租约恢复、取消、重试上限、审批恢复和外部写幂等。
 总结：队列把长任务从请求中分离，可靠性来自状态、租约、幂等和恢复。练习：设计可恢复研究任务并注入 Worker 崩溃。面试：如何实现幂等消费？取消与超时有何不同？为什么 DLQ replay 有风险？延伸阅读：Celery、RQ、Dramatiq、Redis/RabbitMQ 与分布式任务官方文档。代码目录：项目8、10。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [celery-docs：Celery Documentation](../references.md#ref-celery-docs)
+- [dramatiq-docs：Dramatiq Documentation](../references.md#ref-dramatiq-docs)
+- [redis-docs：Redis Documentation](../references.md#ref-redis-docs)
+- [python-asyncio：asyncio — Asynchronous I/O](../references.md#ref-python-asyncio)
+<!-- chapter-citations:end -->

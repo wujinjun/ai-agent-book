@@ -337,3 +337,13 @@ Memory 错误往往跨越较长时间，必须能从回答反查检索记录、M
 3. 遗忘策略让在线查询立即过滤过期或 tombstone 记录，再异步清理向量、缓存、摘要和备份恢复路径。审计只保留删除事件的最小元数据，不保留被删原值。
 4. 跨租户测试使用相同 `subject_id` 和已知 `memory_id` 攻击所有接口，断言租户 B 无法读取、搜索、更新、删除或导出租户 A 记录，且错误响应不泄漏记录是否存在。
 5. 摘要适合压缩叙事与主题，结构化字段保存订单号、审批状态、金额等精确事实。摘要必须列出来源事件并可重建；审计日志保存动作证据，不能由摘要覆盖。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [park2023generativeagents：Generative Agents: Interactive Simulacra of Human Behavior](../references.md#ref-park2023generativeagents)
+- [packer2023memgpt：MemGPT: Towards LLMs as Operating Systems](../references.md#ref-packer2023memgpt)
+- [liu2023lostmiddle：Lost in the Middle: How Language Models Use Long Contexts](../references.md#ref-liu2023lostmiddle)
+- [borgeaud2022retro：Improving Language Models by Retrieving from Trillions of Tokens](../references.md#ref-borgeaud2022retro)
+<!-- chapter-citations:end -->

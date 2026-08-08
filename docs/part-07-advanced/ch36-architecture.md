@@ -316,3 +316,13 @@ Agent 架构的可维护性来自明确职责、可恢复状态、受控副作�
 3. Model Gateway 在多团队需要统一配额/凭证、独立扩缩与发布，且其故障需要隔离时拆分。若只是一个应用调用两个模型，模块内 Adapter 往往足够。
 4. Workflow Engine 保存长流程节点、定时器、中断和恢复；Queue 负责可靠交付；Runtime 执行一次 Agent 决策循环。三者可以同进程，但状态契约不能混为一个 Job JSON。
 5. 避免分布式单体需要服务拥有自己的数据、接口向后兼容、调用链不过度同步、失败可独立处理并有端到端 Trace。若服务必须同时部署、共享表和互相循环调用，拆分没有获得真正自治。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [iso25010：Systems and Software Quality Models](../references.md#ref-iso25010)
+- [twelve-factor：The Twelve-Factor App](../references.md#ref-twelve-factor)
+- [otel-spec：OpenTelemetry Specification](../references.md#ref-otel-spec)
+- [nist-ai-rmf：Artificial Intelligence Risk Management Framework 1.0](../references.md#ref-nist-ai-rmf)
+<!-- chapter-citations:end -->

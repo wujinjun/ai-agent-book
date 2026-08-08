@@ -40,7 +40,7 @@
 
 | 章节 | 正文 | 代码 | 版本 | 出版 | 主要缺口 | 目标阶段 |
 |---|---|---|---|---|---|---|
-| 第1章 | `publishable_draft` | `inline_only` | `stable_concepts` | `pdf_epub_verified` | 独立技术编辑、引用链接 | P6 |
+| 第1章 | `publishable_draft` | `inline_only` | `stable_concepts` | `pdf_epub_verified` | P9 独立技术与中文审稿 | P9 |
 | 第2章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 目标模型 Tokenizer 在线对照 | P3—P4 |
 | 第3章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 与训练框架 Attention 对照 | P4 |
 | 第4章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 真实模型参数对照实验 | P4 |
@@ -106,3 +106,13 @@
 | 工作坊 | `repository_verified` | 架构评审、威胁建模、成本估算的输入、流程与产出 | 企业场景试讲在 P9 |
 | 离线培训包 | `offline_verified` | 四组稳定 Fixture、内容哈希、Pydantic 校验与确定性清单 | 在线 Provider 仅作可选扩展 |
 | 培训幻灯片 | `visual_verified` | 16 页 PPTX、逐页渲染、溢出检查、讲师备注与来源块 | 投影设备实测在 P9 |
+
+## 引用与出版编辑矩阵
+
+| 维度 | 状态 | 验收证据 | 后续边界 |
+|---|---|---|---|
+| 正式资料 | `repository_verified` | 113 条论文、标准、官方文档和官方仓库资料 | 版本敏感页面持续复核 |
+| 章节引用 | `repository_verified` | 38 章、163 处生成引用、每章至少 3 条 | 逐句引文由独立审稿人抽检 |
+| 外链 | `network_checked` | 113/113 有解释结果，0 个未处理失败 | 发行前重新运行网络核查 |
+| 中文与技术编辑 | `maintainer_reviewed` | 编辑规范、自动审计和 P6 复审记录 | `editor_reviewed` 仍要求 P9 独立审稿 |
+| 权利与许可 | `boundary_documented` | 内容 CC BY-NC-SA、代码 MIT、商业许可说明、CLA、素材清单 | 商业合同与法律意见在 P9 |

@@ -369,3 +369,13 @@ Token 是模型计算单位，上下文是单次调用的工作区，不是持�
 2. 预算器测试至少覆盖零或负预算、固定区恰好占满、固定区超限、单条弹性消息过长、输出保留量大于窗口、近期消息优先、高排序证据优先，以及计数器抛出异常。若接入真实模型，还要比较本地预估和服务端 Usage。
 3. 同义中英文、JSON 和代码必须用同一目标 Tokenizer 实测。不能从字符数直接推出 Token 数，因为词表对常见片段、空格、标点、转义符与不同文字系统的编码不同。报告中应写明模型、Tokenizer 版本和测试日期。
 4. 客户订单号不能只存在生成摘要中，因为摘要可能遗漏字符、合并多个订单或在冲突时选择错误版本。订单号应存入结构化记录，摘要只保存面向会话的说明，并携带记录 ID 以便重新核验。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [sennrich2016：Neural Machine Translation of Rare Words with Subword Units](../references.md#ref-sennrich2016)
+- [kudo2018：SentencePiece: A Simple and Language Independent Subword Tokenizer](../references.md#ref-kudo2018)
+- [liu2023lostmiddle：Lost in the Middle: How Language Models Use Long Contexts](../references.md#ref-liu2023lostmiddle)
+- [openai-compat：API Backward Compatibility](../references.md#ref-openai-compat)
+<!-- chapter-citations:end -->

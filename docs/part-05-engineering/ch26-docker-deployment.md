@@ -164,3 +164,14 @@ CI 执行测试、lint/type、依赖与镜像扫描、SBOM、构建和签名；C
 
 常见误区是使用 `latest`、在镜像写 key、以 root 运行、把数据库端口暴露互联网、只测容器能启动。调试比较架构、DNS、证书、代理缓冲、文件权限和健康日志。安全扫描不替代最小镜像和运行时限制。
 总结：部署是可复现产物、配置、网络、状态与运营的组合。练习：为项目2写非 root 多阶段 Dockerfile、健康检查和 Compose。面试：liveness/readiness 有何区别？为何多阶段构建仍需扫描最终镜像？代理超时与任务取消如何关联？延伸阅读：Docker、Compose、OCI、Nginx 与目标容器平台官方文档。代码目录：各项目 `Dockerfile` 和根 Compose。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [dockerfile-docs：Dockerfile Reference](../references.md#ref-dockerfile-docs)
+- [compose-spec：Compose Specification](../references.md#ref-compose-spec)
+- [kubernetes-docs：Kubernetes Documentation](../references.md#ref-kubernetes-docs)
+- [twelve-factor：The Twelve-Factor App](../references.md#ref-twelve-factor)
+- [slsa：Supply-chain Levels for Software Artifacts](../references.md#ref-slsa)
+<!-- chapter-citations:end -->

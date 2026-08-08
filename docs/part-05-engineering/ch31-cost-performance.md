@@ -141,3 +141,13 @@ GPU 自托管测 tokens/s、time-to-first-token、显存和批次；API 模型�
 
 常见误区：小模型一定便宜、Temperature 0 可缓存所有结果、并行总会更快、压缩只影响质量不影响安全。调试先用 Trace 找最大 span，再优化。费用异常告警按 tenant/run，预算耗尽安全终止，防止攻击者制造无限工具循环。
 总结：优化目标是受质量和安全约束的每个成功任务成本。练习：为研究 Agent 制定预算、模型路由和三级降级并压测。面试：如何计算每个成功任务成本？并行工具何时增加延迟？缓存键为何包含权限版本？延伸阅读：目标模型 Usage/价格文档、OpenTelemetry、缓存和性能测试资料。代码目录：项目8、10。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [kaplan2020：Scaling Laws for Neural Language Models](../references.md#ref-kaplan2020)
+- [hoffmann2022：Training Compute-Optimal Large Language Models](../references.md#ref-hoffmann2022)
+- [twelve-factor：The Twelve-Factor App](../references.md#ref-twelve-factor)
+- [openai-compat：API Backward Compatibility](../references.md#ref-openai-compat)
+<!-- chapter-citations:end -->

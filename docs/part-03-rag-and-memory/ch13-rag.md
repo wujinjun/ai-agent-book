@@ -310,3 +310,13 @@ RAG 不适合回答余额、库存、订单状态等强一致结构化事实，�
 3. 十个查询必须来自真实分布并标注相关文档，三种检索使用相同语料快照、ACL 和 top-k。报告 Recall@k、MRR、P95 延迟与零结果率；Hybrid 只有在净收益满足发布阈值时才采用。
 4. RAG 仍会幻觉，因为证据可能不存在、解析错误、召回遗漏、重排错误、上下文冲突，或模型从正确证据推导出不受支持的主张。引用 ID 校验只能防编造来源，不能替代 Faithfulness。
 5. 余额、库存和订单状态等强一致数据应调用经过授权的业务 API 或 SQL 查询，因为向量索引可能延迟、近似并缺乏事务语义。RAG 更适合非结构化知识与来源解释，两者可以在同一 Agent 中按任务路由。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [lewis2020：Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](../references.md#ref-lewis2020)
+- [karpukhin2020：Dense Passage Retrieval for Open-Domain Question Answering](../references.md#ref-karpukhin2020)
+- [khattab2020：ColBERT: Efficient and Effective Passage Search](../references.md#ref-khattab2020)
+- [liu2023lostmiddle：Lost in the Middle: How Language Models Use Long Contexts](../references.md#ref-liu2023lostmiddle)
+<!-- chapter-citations:end -->

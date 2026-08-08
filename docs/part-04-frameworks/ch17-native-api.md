@@ -303,3 +303,13 @@ Fake Model 接收消息并按脚本返回工具调用或最终输出。测试覆
 3. `ModelGateway` 的代价是需要维护共同能力子集、错误映射、Usage 与流式事件转换；某些供应商特性可能需要扩展接口。收益是业务层与 SDK 解耦、可使用 Fake，并能集中控制重试与密钥。
 4. 证明重试不重复副作用需要业务幂等键、唯一约束、外部操作 ID 或 outbox，以及并发与超时注入测试。仅说 HTTP PUT“通常幂等”不够，必须验证目标服务的实际语义。
 5. 重试归属表应明确每类失败的唯一拥有层、最大尝试、截止时间和预算。关闭其他层的隐式重试，并在 Trace 中用父 attempt ID 验证一次用户请求产生的实际调用数。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [yao2022：ReAct: Synergizing Reasoning and Acting in Language Models](../references.md#ref-yao2022)
+- [jsonschema2020：JSON Schema Draft 2020-12](../references.md#ref-jsonschema2020)
+- [rfc9457：Problem Details for HTTP APIs](../references.md#ref-rfc9457)
+- [otel-spec：OpenTelemetry Specification](../references.md#ref-otel-spec)
+<!-- chapter-citations:end -->

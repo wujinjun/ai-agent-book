@@ -39,6 +39,8 @@
 
 逐章主题见[教材首页](docs/index.md)。
 
+全书维护 113 条论文、标准、官方文档和官方仓库资料，38 章均有可追溯的“本章引用”区块。参考资料由结构化元数据生成，版本敏感页面记录核对日期。
+
 ## 推荐学习路线
 
 - 想快速做出可靠原型：先学第 1、2、4、6—9、17、23—24、29—30 章，再完成项目 1—2。
@@ -118,4 +120,4 @@ PYTHONPATH=src python scripts/audit_publication.py all output
 
 ## 贡献与版本说明
 
-贡献规则见 [`CONTRIBUTING.md`](CONTRIBUTING.md)，版本变化见 [`CHANGELOG.md`](CHANGELOG.md)，版本敏感接口见 [`notes/version-check.md`](notes/version-check.md)。2026 版表示教材维护目标年份，不表示所有外部 API 在全年保持不变；每个敏感章节必须记录独立核对日期。
+贡献规则见 [`CONTRIBUTING.md`](CONTRIBUTING.md)，版本变化见 [`CHANGELOG.md`](CHANGELOG.md)，版本敏感接口见 [`notes/version-check.md`](notes/version-check.md)。教材内容采用 CC BY-NC-SA 4.0，软件代码采用 MIT License；付费出版或课程需要单独书面许可，详见 [`LICENSE`](LICENSE) 与 [`COMMERCIAL_LICENSE.md`](COMMERCIAL_LICENSE.md)。2026 版表示教材维护目标年份，不表示所有外部 API 在全年保持不变；每个敏感章节必须记录独立核对日期。

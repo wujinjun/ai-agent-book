@@ -1,0 +1,17 @@
+# 仅用于记录自动 HTTP 客户端受网络路径限制、但已通过独立网页抓取核实的官方链接。
+dockerfile-docs:
+  checked: "2026-08-08"
+  method: official_page_open
+  final_url: https://docs.docker.com/reference/dockerfile/
+compose-spec:
+  checked: "2026-08-08"
+  method: official_page_open
+  final_url: https://docs.docker.com/reference/compose-file/
+faiss-wiki:
+  checked: "2026-08-08"
+  method: official_page_open
+  final_url: https://github.com/facebookresearch/faiss/wiki
+pgvector:
+  checked: "2026-08-08"
+  method: official_page_open
+  final_url: https://github.com/pgvector/pgvector

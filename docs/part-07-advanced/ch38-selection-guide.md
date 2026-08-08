@@ -316,3 +316,17 @@ def weighted_score(criteria: list[CriterionScore]) -> float:
 3. 降低框架锁定不是追求零依赖，而是让 Tool、RunState、Citation、Policy 和错误分类由业务拥有，框架集中在 Adapter，状态可导出，黄金集能跨实现运行，并预先演练回滚。
 4. 当角色没有不同权限、工具、上下文或独立验收责任时，应拒绝 Multi-Agent；普通函数、Router 或 Reviewer Node 更便宜且易终止。角色数量不是选型加分项。
 5. 社区活跃度在决策当天从官方仓库核对发布频率、维护者响应、支持/弃用政策、安全公告、许可证和路线图，并记录链接与日期。Star 与下载量只能作为背景，不能替代维护承诺。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [openai-agents-guide：Build Agents with the OpenAI Platform](../references.md#ref-openai-agents-guide)
+- [pydanticai-docs：PydanticAI Documentation](../references.md#ref-pydanticai-docs)
+- [langgraph-overview：LangGraph Overview](../references.md#ref-langgraph-overview)
+- [langchain-docs：LangChain Python Documentation](../references.md#ref-langchain-docs)
+- [llamaindex-docs：LlamaIndex Documentation](../references.md#ref-llamaindex-docs)
+- [crewai-docs：CrewAI Documentation](../references.md#ref-crewai-docs)
+- [autogen-docs：AutoGen Documentation](../references.md#ref-autogen-docs)
+- [semantic-kernel-docs：Semantic Kernel Documentation](../references.md#ref-semantic-kernel-docs)
+<!-- chapter-citations:end -->

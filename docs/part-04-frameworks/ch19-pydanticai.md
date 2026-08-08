@@ -164,3 +164,13 @@ FastAPI dependency 构造当前主体与 Repository，路由调用异步 `agent.
 
 常见误区是把类型安全等同于事实安全、把依赖注入当权限系统、让所有验证错误无限反馈模型。调试查看模型消息、工具调用、validation error 与 Usage，并区分框架、供应商和领域错误。安全上依赖最小权限、工具验证主体、输出再鉴权、测试禁止真实模型请求。
 总结：PydanticAI 擅长把类型、依赖、工具和输出放进 Python 工程边界，但复杂持久工作流仍需图或 durable engine。练习：为 FastAPI 工单服务设计依赖类型并用 TestModel 测试。面试：输出校验和业务校验如何分层？何时 PydanticAI 比图工作流更合适？TestModel 与 FunctionModel 如何选择？延伸阅读：[Dependencies](https://pydantic.dev/docs/ai/core-concepts/dependencies/)、[Tools](https://pydantic.dev/docs/ai/tools-toolsets/tools/)、[Output](https://pydantic.dev/docs/ai/core-concepts/output/)与[Testing](https://pydantic.dev/docs/ai/guides/testing/)。本章对应代码目录为 [`examples/pydanticai_service/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/pydanticai_service)，包含固定依赖、离线入口、FastAPI 集成以及成功与失败路径测试。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [pydanticai-docs：PydanticAI Documentation](../references.md#ref-pydanticai-docs)
+- [pydanticai-tools：PydanticAI Function Tools](../references.md#ref-pydanticai-tools)
+- [pydanticai-testing：PydanticAI Testing](../references.md#ref-pydanticai-testing)
+- [pydantic-models：Pydantic Models](../references.md#ref-pydantic-models)
+<!-- chapter-citations:end -->

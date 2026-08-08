@@ -1,6 +1,10 @@
-Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+AI Agent Book dual-license notice
 
 Copyright (c) 2026 AI Agent Book contributors.
 
-本教材文字、图表与教学代码采用 CC BY-NC-SA 4.0 许可。第三方商标与引用材料归各自权利人所有。完整许可文本见 https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode 。
+1. 教材内容：README、docs、notes、assets 中的原创文字与图表，以及 training/slides 中的课程内容，采用 CC BY-NC-SA 4.0。完整条款见 https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode 。
+2. 软件代码：src、examples、projects、scripts、tests 与代码配置采用 MIT License，完整文本见 LICENSE-CODE。
+3. 商业出版：CC BY-NC-SA 不自动授予商业利用权。商业纸书、付费课程或商业再发行必须取得单独书面许可，边界见 COMMERCIAL_LICENSE.md。
+4. 第三方材料：论文、规范、商标、依赖和外部链接不因本仓库许可而重新授权；其权利归原权利人。
 
+文件内单独声明的许可证优先。本说明不是法律意见，正式商业合同应由合格法律顾问复核。

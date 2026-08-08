@@ -132,3 +132,12 @@ Prompt Trace 记录模板版本、变量来源、Token 数和内容哈希；仅�
 
 常见误区：只装一个平台就可观测、平均延迟代表体验、Trace 可以替代审计、先全量采集以后再脱敏。测试日志字段、Trace parent、敏感信息扫描、Usage/Cost 计算和 exporter 故障；观测后端不可用时业务应降级而非停止核心任务。
 总结：可观测性必须能解释质量、成本和失败路径，同时尊重隐私。练习：为 Tool Loop 加 span、P95 和敏感字段测试。面试：Trace 和 Audit Log 区别？Token 成本如何与任务成功关联？为什么 Metrics 不应带 run_id？延伸阅读：OpenTelemetry、所选观测平台和隐私日志规范。代码目录：项目10。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [otel-spec：OpenTelemetry Specification](../references.md#ref-otel-spec)
+- [w3c-trace-context：Trace Context](../references.md#ref-w3c-trace-context)
+- [openai-data-controls：Data Controls in the OpenAI Platform](../references.md#ref-openai-data-controls)
+<!-- chapter-citations:end -->

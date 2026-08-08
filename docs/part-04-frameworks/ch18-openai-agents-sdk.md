@@ -128,3 +128,14 @@ SDK 可以把 MCP Server 能力提供给 Agent。连接初始化、工具缓存�
 
 常见误区包括把 SDK 当成托管业务平台、把 guardrail 当授权、为每个角色创建 Agent，以及默认 Trace 可以记录全部数据。选型时与第17章原生 Runtime 对照：若流程只有一次模型调用和一个工具，引入 SDK 未必带来净收益。
 总结：SDK 用少量原语提供受测运行时，但业务状态、权限与评估仍由应用负责。练习：对照原生 Runtime 写迁移 ADR，并为 handoff 加上下文过滤测试。面试：Agent-as-tool 与 handoff 有何差异？为什么仍需外部权限？Session 与 Memory 如何区分？延伸阅读与官方资料：[Agents SDK](https://openai.github.io/openai-agents-python/)、[Running agents](https://openai.github.io/openai-agents-python/running_agents/)、[Tracing](https://openai.github.io/openai-agents-python/tracing/)、[MCP](https://openai.github.io/openai-agents-python/mcp/)。本章对应代码目录为 [`examples/openai_agents_sdk/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/openai_agents_sdk)，包含离线入口、固定依赖和成功/失败路径测试。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [openai-agents-guide：Build Agents with the OpenAI Platform](../references.md#ref-openai-agents-guide)
+- [openai-quickstart：OpenAI API Developer Quickstart](../references.md#ref-openai-quickstart)
+- [openai-evals：Evals API Reference](../references.md#ref-openai-evals)
+- [openai-data-controls：Data Controls in the OpenAI Platform](../references.md#ref-openai-data-controls)
+- [openai-compat：API Backward Compatibility](../references.md#ref-openai-compat)
+<!-- chapter-citations:end -->

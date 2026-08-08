@@ -320,3 +320,14 @@ Tool Calling 的可靠性来自模型外的执行边界。练习：为现有运�
 3. 把异常全文交给模型可能泄漏 API Key、数据库地址、内部路径、SQL 和用户数据。外部 Observation 应使用稳定错误码与经过筛选的说明，完整堆栈只进入受权限保护且脱敏的日志。
 4. 人工审批必须绑定主体、工具、规范化参数哈希、策略版本和过期时间。审批后任何参数变化都要重新确认；自然语言中的“我批准”不能替代服务端签名令牌。
 5. 对 Tool Loop 的验收至少覆盖成功、未知工具、参数非法、超时、审批拒绝、审批过期、重复幂等键、状态未知、连续无进展和最大步数。测试应使用 Fake 外部系统，并断言真实处理函数的调用次数，而不只断言最终文本。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [yao2022：ReAct: Synergizing Reasoning and Acting in Language Models](../references.md#ref-yao2022)
+- [schick2023：Toolformer: Language Models Can Teach Themselves to Use Tools](../references.md#ref-schick2023)
+- [patil2023gorilla：Gorilla: Large Language Model Connected with Massive APIs](../references.md#ref-patil2023gorilla)
+- [qin2023toolllm：ToolLLM: Facilitating Large Language Models to Master 16000+ APIs](../references.md#ref-qin2023toolllm)
+- [jsonschema2020：JSON Schema Draft 2020-12](../references.md#ref-jsonschema2020)
+<!-- chapter-citations:end -->

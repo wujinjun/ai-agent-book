@@ -16,6 +16,8 @@ def test_generated_supporting_pages_cover_terms_references_and_index(tmp_path: P
     assert "LangGraph" in glossary
     assert "Prompt Injection" in glossary
     assert "vaswani2017" in references
+    assert references.count('<span id="ref-') >= 100
+    assert "https://" in references
     assert references.count("\n1.") == 1
     assert "part-01-foundations/ch01-what-is-llm.md" in index
     assert "part-05-engineering/ch30-security.md" in index

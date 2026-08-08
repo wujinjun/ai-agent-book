@@ -304,3 +304,13 @@ LangGraph 适合状态复杂、需恢复、HITL 或多分支的长流程；简�
 3. Checkpoint 保存图状态快照，不覆盖外部系统事务。邮件已经发送但 Checkpoint 未保存时，恢复会重跑节点；需要 outbox、幂等键、状态核实或补偿流程。
 4. Time Travel 会从选定 Checkpoint 之后重新执行模型、API 与 interrupt，因此可能再次产生动作。它创建 replay 或 fork，不会撤销已经发生的副作用。
 5. `InMemorySaver` 只用于测试；生产 Checkpointer 要验证持久性、并发隔离、Schema 迁移、加密、TTL、备份恢复和租户授权，并明确 `thread_id` 的生命周期。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [langgraph-overview：LangGraph Overview](../references.md#ref-langgraph-overview)
+- [langgraph-persistence：LangGraph Persistence](../references.md#ref-langgraph-persistence)
+- [langgraph-time-travel：LangGraph Time Travel](../references.md#ref-langgraph-time-travel)
+- [langgraph-streaming：LangGraph Event Streaming](../references.md#ref-langgraph-streaming)
+<!-- chapter-citations:end -->

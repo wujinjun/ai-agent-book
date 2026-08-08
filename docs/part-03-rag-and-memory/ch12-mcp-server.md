@@ -333,3 +333,13 @@ Server 不信任 Client 已完成授权，Client 也不信任 Server 返回内�
 3. token 测试覆盖缺失、过期、错误 issuer、错误 audience、scope 不足和跨租户资源；Origin 测试覆盖允许源、恶意源、缺失源的明确策略与本地 DNS rebinding 场景。Gateway 通过后，Server 仍应逐资源授权。
 4. stdout 只能承载协议消息，日志写 stderr；但 stderr 仍需脱敏。集成测试逐行解析 stdout，并确认启动、异常和关闭日志不会混入。
 5. 写工具超时只表示调用方未收到确认，动作可能已经成功。Server 或 Host 必须凭幂等键、outbox 记录或外部操作 ID 做状态核实；无法确认时进入人工处理，不能直接重试。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [mcp-python-sdk：Python SDK](../references.md#ref-mcp-python-sdk)
+- [mcp-spec-2025-11-25：Specification 2025-11-25](../references.md#ref-mcp-spec-2025-11-25)
+- [mcp-auth：Authorization](../references.md#ref-mcp-auth)
+- [rfc9457：Problem Details for HTTP APIs](../references.md#ref-rfc9457)
+<!-- chapter-citations:end -->

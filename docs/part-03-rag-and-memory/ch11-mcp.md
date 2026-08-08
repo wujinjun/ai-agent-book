@@ -287,3 +287,13 @@ MCP 统一连接，不决定业务权限。练习：为文件 Server 写威胁�
 3. REST 接口面向固定服务调用者，例如 `GET /documents/{id}`；MCP Adapter 可以把搜索暴露为 Tool、已知文档暴露为 Resource，并提供模型可理解的 Schema。Adapter 继续调用 REST 的鉴权服务，不复制一套数据库直连权限。
 4. Resource 适合应用选择并装配的可寻址上下文，Tool 适合模型根据任务提出的动作，Prompt 适合用户显式选择的模板。这个控制模型是默认交互语义，不是绝对安全等级。
 5. Streamable HTTP 比 stdio 多出网络身份、Origin、TLS、Gateway、令牌 audience、跨实例路由和限流边界；stdio 则更依赖子进程继承权限、命令配置和 stdout 纯净性。两者都必须在 Server 内重新做资源授权。
+
+## 本章引用
+<!-- chapter-citations:start -->
+以下资料用于支撑本章的核心原理、工程边界与版本敏感说明：
+
+- [mcp-architecture：Architecture Overview](../references.md#ref-mcp-architecture)
+- [mcp-spec-2025-11-25：Specification 2025-11-25](../references.md#ref-mcp-spec-2025-11-25)
+- [mcp-auth：Authorization](../references.md#ref-mcp-auth)
+- [jsonrpc20：JSON-RPC 2.0 Specification](../references.md#ref-jsonrpc20)
+<!-- chapter-citations:end -->
