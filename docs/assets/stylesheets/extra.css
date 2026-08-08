@@ -165,6 +165,14 @@ body {
   font-size: 0.72rem;
 }
 
+/* Material 默认用负边距把表格扩展到正文之外。在 721—960 px 的平板
+   断点上，这会产生约 15 px 的整页横向滚动。保留表格自身的横向滚动，
+   但让外层始终受正文栏宽度约束。 */
+.md-typeset__scrollwrap {
+  max-width: 100%;
+  margin-inline: 0;
+}
+
 .md-typeset table:not([class]) th {
   background: var(--book-surface-strong);
   color: var(--book-ink);
@@ -220,6 +228,12 @@ body {
   margin-top: 0.7rem;
   color: #627184;
   font-size: 0.68rem;
+}
+
+.book-diagram .figure-number {
+  color: var(--book-accent-strong);
+  font-weight: 700;
+  letter-spacing: 0.015em;
 }
 
 .book-lightbox {

@@ -48,6 +48,8 @@ plugins:
   - search
 nav:
   - 首页: index.md
+  - 版权与使用说明: copyright.md
+  - 版本与发行信息: edition.md
   - 前言: preface.md
   - 学习指南: learning-guide.md
   - 企业培训版:

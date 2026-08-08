@@ -1,0 +1,40 @@
+version: 1
+checked_at: 2026-08-08
+status: passed_repository_scope
+diagram_review:
+  manifest_count: 235
+  contact_sheet_pages: 12
+  semantic_ledger: notes/visual-review.yml
+  checks:
+    unique_id: passed
+    title_and_alt: passed
+    explanation_after_figure: passed
+    scoped_figure_number: passed
+    grayscale_semantics_not_color_only: passed
+  real_trace_evidence:
+    image: docs/assets/trace-sample.png
+    data: notes/trace-sample.json
+    generator: scripts/build_trace_screenshot.py
+html:
+  artifact: output/html
+  viewports:
+    - {width: 1440, height: 900, overflow: 0, result: passed}
+    - {width: 768, height: 1024, overflow: 0, result: passed}
+    - {width: 390, height: 844, overflow: 0, result: passed}
+pdf:
+  artifact: output/pdf/ai-agent-book-2026.pdf
+  pages: 447
+  sha256: 7ff00ce66eb7d0bdc394f43156f8ab713dbe84c3fcb12fe9bc11875a01b38f75
+  automated_audit: passed
+  manual_render_spot_check: passed
+epub:
+  artifact: output/epub/ai-agent-book-2026.epub
+  sha256: 93291583bc1587dc2100d4910a3ed35f4dd764746998e695264840c37dfcefd8
+  automated_audit: passed
+  apple_books_macos: passed
+  calibre_9_13_engine: passed
+  mobile_390px_emulation: passed
+external_p9_checks:
+  - physical_ios_android_readers
+  - commercial_print_proof
+  - publisher_font_and_prepress_review

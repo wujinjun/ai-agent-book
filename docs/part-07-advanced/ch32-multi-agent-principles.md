@@ -119,12 +119,12 @@ stateDiagram-v2
     [*] --> Ready
     Ready --> Running
     Running --> Waiting
-    Waiting --> Ready: dependency/approval arrives
+    Waiting --> Ready: 依赖就绪
     Running --> Reviewed
-    Reviewed --> Ready: revisions required
-    Reviewed --> Done: accepted
-    Waiting --> Failed: deadlock/timeout
-    Running --> Failed: budget/error
+    Reviewed --> Ready: 需要返工
+    Reviewed --> Done: 验收通过
+    Waiting --> Failed: 死锁或超时
+    Running --> Failed: 预算或错误
 ```
 
 无进展可通过 Artifact 版本、证据数量和动作去重确定性判断。模型声称“完成”只能触发评审，不能直接终止系统。

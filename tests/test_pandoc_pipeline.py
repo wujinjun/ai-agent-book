@@ -1,3 +1,4 @@
+import zipfile
 from pathlib import Path
 
 import scripts.build_pandoc as pandoc_pipeline
@@ -12,9 +13,7 @@ def test_composed_book_has_ordered_chapters_projects_and_no_raw_mermaid(
     output = compose_book(ROOT, tmp_path / "book.md")
     text = output.read_text(encoding="utf-8")
 
-    assert text.index("# 第1章 第1节：什么是大语言模型？") < text.index(
-        "# 第38章：技术选型指南"
-    )
+    assert text.index("# 第1章 第1节：什么是大语言模型？") < text.index("# 第38章：技术选型指南")
     assert text.index("项目1：最小 AI Assistant") < text.index("项目10：企业级 Agent 平台")
     assert "```mermaid" not in text
     assert text.count("# 项目") >= 10
@@ -26,8 +25,24 @@ def test_composed_book_contains_front_and_back_matter(tmp_path: Path) -> None:
     text = output.read_text(encoding="utf-8")
 
     assert "# 前言" in text
+    assert "# 版权与使用说明" in text
+    assert "# 版本与发行信息" in text
     assert "# 术语表" in text
     assert "# 参考资料" in text
+
+
+def test_composed_book_rewrites_cross_document_links_and_local_images(
+    tmp_path: Path,
+) -> None:
+    output = compose_book(ROOT, tmp_path / "book.md")
+    text = output.read_text(encoding="utf-8")
+
+    assert '<span id="doc-part-01-foundations-ch01-what-is-llm"></span>' in text
+    assert "](ch01-what-is-llm.md)" not in text
+    assert "](../references.md#ref-" not in text
+    assert "](references.md#ref-" not in text
+    assert "](#ref-vaswani2017)" in text
+    assert "docs/assets/training-deck-preview.png" in text
 
 
 def test_composed_book_converts_mkdocs_admonitions_for_pandoc(tmp_path: Path) -> None:
@@ -67,12 +82,10 @@ def test_print_tables_repeat_headers_and_split_only_between_rows() -> None:
     assert "th, td { padding: 3pt;" in css
 
 
-def test_build_print_html_stages_relative_svg_sources(
-    tmp_path: Path, monkeypatch
-) -> None:
+def test_build_print_html_stages_relative_svg_sources(tmp_path: Path, monkeypatch) -> None:
     svg = tmp_path / "assets/diagrams/svg/demo.svg"
     svg.parent.mkdir(parents=True)
-    svg.write_text("<svg xmlns=\"http://www.w3.org/2000/svg\"></svg>", encoding="utf-8")
+    svg.write_text('<svg xmlns="http://www.w3.org/2000/svg"></svg>', encoding="utf-8")
     source = tmp_path / "output/intermediate/book.md"
     source.parent.mkdir(parents=True)
     source.write_text("# Demo", encoding="utf-8")
@@ -94,13 +107,13 @@ def test_build_print_html_stages_relative_svg_sources(
     print_html = pandoc_pipeline.build_print_html("pandoc", source)
 
     assert (
-        print_html.parent / "assets/diagrams/svg/demo.svg"
-    ).read_text(encoding="utf-8").startswith("<svg")
+        (print_html.parent / "assets/diagrams/svg/demo.svg")
+        .read_text(encoding="utf-8")
+        .startswith("<svg")
+    )
 
 
-def test_build_print_html_preserves_manual_chapter_numbering(
-    tmp_path: Path, monkeypatch
-) -> None:
+def test_build_print_html_preserves_manual_chapter_numbering(tmp_path: Path, monkeypatch) -> None:
     (tmp_path / "assets/diagrams/svg").mkdir(parents=True)
     source = tmp_path / "output/intermediate/book.md"
     source.parent.mkdir(parents=True)
@@ -120,6 +133,7 @@ def test_build_print_html_preserves_manual_chapter_numbering(
     pandoc_pipeline.build_print_html("pandoc", source)
 
     assert "--number-sections" not in captured
+    assert "--from=gfm+raw_html" in captured
 
 
 def test_stage_offline_editions_copies_pdf_and_epub_into_site(
@@ -145,3 +159,30 @@ def test_stage_offline_editions_copies_pdf_and_epub_into_site(
     ]
     assert outputs[0].read_bytes() == b"pdf"
     assert outputs[1].read_bytes() == b"epub"
+
+
+def test_epub_postprocess_rewrites_cross_xhtml_fragment_links(tmp_path: Path) -> None:
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as archive:
+        archive.writestr("mimetype", "application/epub+zip")
+        archive.writestr(
+            "EPUB/content.opf",
+            "<package><manifest></manifest></package>",
+        )
+        archive.writestr(
+            "EPUB/text/ch001.xhtml",
+            '<html><body><h1 id="source">源</h1>'
+            '<a href="#target">目标</a><a href="#source">本页</a>'
+            "</body></html>",
+        )
+        archive.writestr(
+            "EPUB/text/ch002.xhtml",
+            '<html><body><h1 id="target">目标</h1></body></html>',
+        )
+
+    pandoc_pipeline.inject_epub_svg_fallbacks(epub, tmp_path)
+
+    with zipfile.ZipFile(epub) as archive:
+        source = archive.read("EPUB/text/ch001.xhtml").decode("utf-8")
+    assert 'href="ch002.xhtml#target"' in source
+    assert 'href="#source"' in source

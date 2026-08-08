@@ -100,7 +100,7 @@ def audit_html(site_dir: Path) -> list[AuditIssue]:
 
 
 def audit_epub(epub_path: Path) -> list[AuditIssue]:
-    """Audit EPUB structure plus SVG/PNG picture resources."""
+    """Audit EPUB structure, resources, links, fragments, and picture fallbacks."""
 
     issues: list[AuditIssue] = []
     with zipfile.ZipFile(epub_path) as archive:
@@ -118,6 +118,8 @@ def audit_epub(epub_path: Path) -> list[AuditIssue]:
         if not opf.findall(".//{*}spine/{*}itemref"):
             issues.append(AuditIssue(epub_path.name, "missing-spine", "EPUB/content.opf"))
 
+        parsed_chapters: dict[str, BeautifulSoup] = {}
+        identifiers: dict[str, set[str]] = {}
         for chapter_name in sorted(name for name in names if name.endswith(".xhtml")):
             chapter_payload = archive.read(chapter_name)
             try:
@@ -128,6 +130,10 @@ def audit_epub(epub_path: Path) -> list[AuditIssue]:
                 )
                 continue
             soup = BeautifulSoup(chapter_payload, "xml")
+            parsed_chapters[chapter_name] = soup
+            identifiers[chapter_name] = {
+                str(element["id"]) for element in soup.find_all(id=True)
+            }
             if soup.select_one("pre.mermaid, code.mermaid, .language-mermaid"):
                 issues.append(AuditIssue(chapter_name, "raw-mermaid", "Mermaid source"))
             for picture in soup.find_all("picture"):
@@ -149,6 +155,45 @@ def audit_epub(epub_path: Path) -> list[AuditIssue]:
                     issues.append(
                         AuditIssue(chapter_name, "missing-alt", str(image.get("src", "")))
                     )
+
+        for chapter_name, soup in parsed_chapters.items():
+            for link in soup.find_all("a", href=True):
+                reference = str(link["href"])
+                parsed = urlsplit(reference)
+                if parsed.scheme or parsed.netloc or reference.startswith(
+                    ("mailto:", "tel:", "data:", "javascript:")
+                ):
+                    continue
+                target_name = posixpath.normpath(
+                    posixpath.join(
+                        posixpath.dirname(chapter_name),
+                        unquote(parsed.path),
+                    )
+                ) if parsed.path else chapter_name
+                if target_name not in names:
+                    issues.append(AuditIssue(chapter_name, "broken-link", reference))
+                    continue
+                if parsed.fragment and parsed.fragment not in identifiers.get(
+                    target_name, set()
+                ):
+                    issues.append(
+                        AuditIssue(chapter_name, "broken-fragment", reference)
+                    )
+
+            for image in soup.find_all("img"):
+                if image.find_parent("picture") is not None:
+                    continue
+                reference = str(image.get("src", ""))
+                parsed = urlsplit(reference)
+                if parsed.scheme or parsed.netloc or reference.startswith("data:"):
+                    continue
+                resolved = posixpath.normpath(
+                    posixpath.join(posixpath.dirname(chapter_name), unquote(parsed.path))
+                )
+                if resolved not in names or resolved not in manifest_paths:
+                    issues.append(AuditIssue(chapter_name, "broken-image", reference))
+                if not image.get("alt"):
+                    issues.append(AuditIssue(chapter_name, "missing-alt", reference))
     return sorted(issues)
 
 

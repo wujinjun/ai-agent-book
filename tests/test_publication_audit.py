@@ -83,6 +83,39 @@ def test_epub_audit_reports_malformed_xhtml(tmp_path: Path) -> None:
     assert "invalid-xhtml" in {issue.code for issue in issues}
 
 
+def test_epub_audit_reports_broken_local_links_and_fragments(tmp_path: Path) -> None:
+    root = tmp_path / "root"
+    svg = root / "assets/diagrams/svg/demo.svg"
+    svg.parent.mkdir(parents=True)
+    svg.write_text("<svg xmlns=\"http://www.w3.org/2000/svg\"></svg>", encoding="utf-8")
+    epub_path = tmp_path / "broken-links.epub"
+    _write_minimal_epub(epub_path)
+    inject_epub_svg_fallbacks(epub_path, root)
+
+    with zipfile.ZipFile(epub_path) as source:
+        content = {item.filename: source.read(item.filename) for item in source.infolist()}
+    chapter = content["EPUB/text/ch001.xhtml"].decode("utf-8")
+    chapter = chapter.replace(
+        "</body>",
+        '<a href="missing.md">缺失文档</a>'
+        '<a href="#missing-anchor">缺失锚点</a></body>',
+    )
+    content["EPUB/text/ch001.xhtml"] = chapter.encode("utf-8")
+    with zipfile.ZipFile(epub_path, "w") as output:
+        for name, payload in content.items():
+            output.writestr(
+                name,
+                payload,
+                compress_type=(
+                    zipfile.ZIP_STORED if name == "mimetype" else zipfile.ZIP_DEFLATED
+                ),
+            )
+
+    issues = audit_epub(epub_path)
+
+    assert {issue.code for issue in issues} == {"broken-fragment", "broken-link"}
+
+
 def test_pdf_audit_checks_page_count_title_and_final_chapter(tmp_path: Path) -> None:
     pdf = tmp_path / "book.pdf"
     registerFont(UnicodeCIDFont("STSong-Light"))

@@ -58,6 +58,7 @@ th { background: #edf2f6; }
 figure, .book-diagram { width: 100%; margin: 12pt auto; text-align: center; break-inside: avoid-page; }
 figure img, .book-diagram img { display: block; max-width: 100%; max-height: 210mm; margin: auto; }
 figcaption { margin-top: 5pt; color: #627184; font-size: 8pt; }
+.figure-number { color: #263b50; font-weight: 700; }
 .page-break { break-before: page; }
 @media print {
   a[href^="http"]::after { content: ""; }

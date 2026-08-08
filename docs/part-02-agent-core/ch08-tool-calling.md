@@ -139,27 +139,24 @@ asyncio.run(main())
 
 ```mermaid
 %% id: approved-idempotent-tool-state-machine
-%% title: 高风险工具的审批、幂等与状态核实状态机
-%% alt: 工具提议经过参数校验授权和审批后执行，超时时先核实外部状态，成功或确认未执行后才结束或重试
-stateDiagram-v2
-    [*] --> Proposed
-    Proposed --> Rejected: 未知工具 / 参数非法
-    Proposed --> Authorized: Schema 与权限通过
-    Authorized --> AwaitingApproval: 高风险动作
-    Authorized --> Executing: 低风险动作
-    AwaitingApproval --> Executing: 审批令牌匹配
-    AwaitingApproval --> Rejected: 拒绝 / 过期 / 参数变化
-    Executing --> Succeeded: 明确成功
-    Executing --> Failed: 明确业务失败
-    Executing --> Unknown: 超时 / 连接中断
-    Unknown --> Succeeded: 状态核实为已执行
-    Unknown --> Retryable: 状态核实为未执行
-    Unknown --> ManualReview: 无法核实
-    Retryable --> Executing: 相同幂等键且预算允许
-    Succeeded --> [*]
-    Failed --> [*]
-    Rejected --> [*]
-    ManualReview --> [*]
+%% title: 高风险工具的审批、幂等与状态核实流程
+%% alt: 工具提议先校验参数和权限，高风险动作取得绑定参数的审批后执行，超时时核实外部状态，再决定成功、同键重试或人工复核
+flowchart TD
+    Proposed["工具提议"] --> Validate{"Schema 与权限通过？"}
+    Validate -->|否| Rejected["拒绝"]
+    Validate -->|是| Risk{"高风险动作？"}
+    Risk -->|是| Approval{"审批令牌有效且参数未变？"}
+    Approval -->|否| Rejected
+    Approval -->|是| Execute["携带幂等键执行"]
+    Risk -->|否| Execute
+    Execute --> Result{"结果是否明确？"}
+    Result -->|成功| Succeeded["成功"]
+    Result -->|业务失败| Failed["失败"]
+    Result -->|超时或断连| Verify["查询外部状态"]
+    Verify -->|已执行| Succeeded
+    Verify -->|确认未执行| Retry["预算内使用同一幂等键重试"]
+    Retry --> Execute
+    Verify -->|无法核实| Manual["人工复核"]
 ```
 
 这张图中的 `Unknown` 是生产系统必须承认的状态。网络超时只说明调用方没有在期限内收到确认，不说明外部系统没有产生副作用。运行时应调用供应商的状态查询接口，或通过 outbox、幂等键和回执表核实；若无法判断，则进入人工复核，不得把状态伪装成“失败”。
