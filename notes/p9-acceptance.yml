@@ -19,11 +19,11 @@ repository_scope:
     status: passed
     pages: 454
     bytes: 11337048
-    sha256: aefb32a515d4292ebcf55ac0b0f078b7d487eef7815b47300db5de916ac58b0f
+    sha256: 27c7ef515ea21d037b23bddccb053f02dc59d2f1fad5342fe5f514f051132557
   epub:
     status: passed
-    bytes: 13443800
-    sha256: 31de5806f70815eb6cdd8cb6bd259a7b96c2566109940462a61a88754251a24d
+    bytes: 13443798
+    sha256: b70708b586a970e1e858e27a4f8d08de89be97ecef9974cc7f0002b4596dcd99
   training_pptx:
     status: passed_repository_scope
     slides: 16
@@ -41,11 +41,11 @@ repository_scope:
   privacy_scan: passed
   external_evidence_intake:
     status: published_candidate
-    release: https://github.com/wujinjun/ai-agent-book/releases/tag/p9-candidate-034ac18
+    release: https://github.com/wujinjun/ai-agent-book/releases/tag/p9-candidate-e5ffef0
     tracking_issue: https://github.com/wujinjun/ai-agent-book/issues/1
     review_pr: https://github.com/wujinjun/ai-agent-book/pull/2
-    source_commit: 034ac18e2f675aa2b73dcfcf83d23b0717b63656
-    kit_sha256: 227c064f11ee9596be7ef800caf2efe571836b8c1d779335c0255af3008ecc02
+    source_commit: e5ffef07df1a9ecc50ffc4db31594ac9bbc7946c
+    kit_sha256: 70fd973b95aaf6b147b2a9e075655358d6541d02079f82e82a7abb48f84d9ee2
   final_release_gate:
     status: enforced_fail_closed
     requires_complete_external_evidence: true
@@ -98,5 +98,5 @@ open_gaps:
     next_review: 2026-08-22
   - id: final-main-and-release
     owner: repository maintainer
-    reason: P9 candidate 034ac18 is published as a prerelease, but public v2026.8.0 remains the earlier 400-page version until all external evidence passes
+    reason: P9 candidate e5ffef0 is published as a prerelease, but public v2026.8.0 remains the earlier 400-page version until all external evidence passes
     next_review: 2026-08-22

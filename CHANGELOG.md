@@ -6,7 +6,7 @@
 - P8：重写 15 分钟 Quick Start 与十项目展示，增加网站截图、兼容/安全/行为政策、Issue/PR 模板、密钥与仓库卫生门禁，以及带变更摘要和 SHA-256 的确定性 Release 打包器。
 - P9：发行预检加入直接与传递依赖许可证闭包；移除未被正式出版入口使用的 EbookLib/旧 EPUB 生成路径，正式 EPUB 统一由 Pandoc EPUB3 管线生成。
 - P9：增加默认失败关闭的外部验收执行包生成器，自动绑定候选 commit、产物校验和及七份匿名证据模板。
-- P9：发布 [`p9-candidate-034ac18`](https://github.com/wujinjun/ai-agent-book/releases/tag/p9-candidate-034ac18) 预发布执行包，供独立外审、试学、试讲和实体设备核验使用；它不替代正式版本。
+- P9：发布 [`p9-candidate-e5ffef0`](https://github.com/wujinjun/ai-agent-book/releases/tag/p9-candidate-e5ffef0) 预发布执行包，供独立外审、试学、试讲和实体设备核验使用；它替代存在 Linux CI 缺陷的 `p9-candidate-034ac18`，但不替代正式版本。
 - 当前候选尚未替代公开 v2026.8.0；正式版本号和附件只在 P9 综合验收后更新。
 
 ## v2026.8.0 - 2026-08-08

@@ -2,7 +2,7 @@
 
 本目录把 P9 尚未完成的真人门禁转换为可执行、可追溯、可复验的证据流程。它不包含虚构的通过记录；`evidence/` 在真实活动完成前只保留说明文件。
 
-当前冻结候选为 [`p9-candidate-034ac18`](https://github.com/wujinjun/ai-agent-book/releases/tag/p9-candidate-034ac18)，对应 commit `034ac18e2f675aa2b73dcfcf83d23b0717b63656`。Release 附件 `external-validation-kit-034ac18.zip` 的 SHA-256 为 `227c064f11ee9596be7ef800caf2efe571836b8c1d779335c0255af3008ecc02`。它是预发布验收材料，不表示任何外部活动已经通过。
+当前冻结候选为 [`p9-candidate-e5ffef0`](https://github.com/wujinjun/ai-agent-book/releases/tag/p9-candidate-e5ffef0)，对应 commit `e5ffef07df1a9ecc50ffc4db31594ac9bbc7946c`。Release 附件 `external-validation-kit-e5ffef0.zip` 的 SHA-256 为 `70fd973b95aaf6b147b2a9e075655358d6541d02079f82e82a7abb48f84d9ee2`。它是预发布验收材料，不表示任何外部活动已经通过；旧候选 `034ac18` 已因 Linux CI 暴露的依赖、字体和 Git 环境隔离缺陷而被替代。
 
 参与者可在 [P9 外部验收跟踪 Issue #1](https://github.com/wujinjun/ai-agent-book/issues/1) 认领角色和报告进度。Issue 只用于公开协调；姓名、联系方式、签字件、原始测评数据、合同和法律意见仍须保存在受控渠道。
 
