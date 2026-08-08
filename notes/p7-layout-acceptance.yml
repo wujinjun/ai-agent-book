@@ -23,8 +23,8 @@ html:
     - {width: 390, height: 844, overflow: 0, result: passed}
 pdf:
   artifact: output/pdf/ai-agent-book-2026.pdf
-  pages: 453
-  sha256: 244e31538a352fc2f35c126ee8bea3dd3b6404e5a5fe0c7e99f6d12b177353d4
+  pages: 454
+  sha256: 5518af06f3288c789329d7f55bcfa0335bfaf28e8277db2226cd44021af65257
   automated_audit: passed
   distribution_asset_audit: passed_with_manual_review_required
   embedded_or_outlined_font_resources: 1073
@@ -32,11 +32,20 @@ pdf:
   manual_render_spot_check: passed
 epub:
   artifact: output/epub/ai-agent-book-2026.epub
-  sha256: 6df92c2a086c4a31d873c1c2d1f39714684e5cd8db6bd56407342a1b87f17982
+  sha256: 890091c4943a054563472197569da9c28d85e23aa332d27f4e521d74cfd89eb0
   automated_audit: passed
   apple_books_macos: passed
   calibre_9_13_engine: passed
   mobile_390px_emulation: passed
+training_pptx:
+  artifact: training/slides/ai-agent-engineering-training.pptx
+  slides: 16
+  visible_textboxes: 105
+  explicit_visible_run_typefaces: [Noto Sans SC]
+  sha256: cfc281aa33ee40752da69cad9b434ed6f8a21832be83d9cc9b1753af1e1ea644
+  template_fidelity: passed
+  overflow_test: passed
+  libreoffice_full_render: passed
 external_p9_checks:
   - physical_ios_android_readers
   - commercial_print_proof

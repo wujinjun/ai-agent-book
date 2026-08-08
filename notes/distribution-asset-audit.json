@@ -4,11 +4,11 @@
   "status": "passed_with_manual_review_required",
   "pdf": {
     "path": "output/pdf/ai-agent-book-2026.pdf",
-    "sha256": "244e31538a352fc2f35c126ee8bea3dd3b6404e5a5fe0c7e99f6d12b177353d4",
-    "bytes": 11331105,
-    "pages": 453,
+    "sha256": "5518af06f3288c789329d7f55bcfa0335bfaf28e8277db2226cd44021af65257",
+    "bytes": 11336809,
+    "pages": 454,
     "media_boxes": {
-      "594.96x841.92": 453
+      "594.96x841.92": 454
     },
     "cropbox_differs_from_mediabox_pages": 0,
     "font_resources": 1073,
@@ -24,8 +24,8 @@
   },
   "epub": {
     "path": "output/epub/ai-agent-book-2026.epub",
-    "sha256": "6df92c2a086c4a31d873c1c2d1f39714684e5cd8db6bd56407342a1b87f17982",
-    "bytes": 13441566,
+    "sha256": "890091c4943a054563472197569da9c28d85e23aa332d27f4e521d74cfd89eb0",
+    "bytes": 13443850,
     "archive_entries_by_suffix": {
       ".css": 1,
       ".ncx": 1,
@@ -46,16 +46,29 @@
   },
   "pptx": {
     "path": "training/slides/ai-agent-engineering-training.pptx",
-    "sha256": "0191f4a6c91f4ee087696d192692788f2ce751630e4efdbf00a1326ffb952fcc",
-    "bytes": 59788,
+    "sha256": "cfc281aa33ee40752da69cad9b434ed6f8a21832be83d9cc9b1753af1e1ea644",
+    "bytes": 60416,
     "slides": 16,
     "typefaces": [
       "+mj-lt",
       "+mn-lt",
       "Calibri",
       "Calibri Light",
-      "Helvetica Neue"
+      "Helvetica Neue",
+      "Noto Sans SC"
     ],
+    "explicit_visible_run_typefaces": [
+      "Noto Sans SC"
+    ],
+    "slide_default_typefaces": [
+      "Helvetica Neue",
+      "Noto Sans SC"
+    ],
+    "theme_typefaces": [
+      "Calibri",
+      "Calibri Light"
+    ],
+    "unapproved_explicit_typefaces": [],
     "embedded_fonts": [],
     "external_runtime_resources": [],
     "external_hyperlinks": 0
@@ -75,7 +88,7 @@
         "generator": "scripts/build_diagrams.py",
         "rights_basis": "original repository content rendered by the declared build tool",
         "external_content": false,
-        "computed_sha256": "dd1b4d10ce8aa47d4c1d7800b83ca140d18363cc7cbae88bd361b7db3482a6e7",
+        "computed_sha256": "8a4eaf3d9256085efcf040b84e9991a39fd3a6f57a9ec8c13f30568e324e0ac9",
         "bytes": 276973
       },
       {
@@ -176,10 +189,10 @@
         "kind": "generated_contact_sheet",
         "origin": "repository training slide deck",
         "generator": "training slide rendering workflow",
-        "rights_basis": "contact sheet of original repository slides",
+        "rights_basis": "contact sheet of original repository slides rendered with the bundled SIL-OFL-1.1 Noto Sans SC",
         "external_content": false,
-        "computed_sha256": "54738c1d668e821d94fd1fcb3728d45c9c84558f435ce1be1bbc93b19ed209a1",
-        "bytes": 349044,
+        "computed_sha256": "2c0a1ec58d4d4d97542cf9ee6b9a07506b94836ecc44eac2ae2b8bd23118514a",
+        "bytes": 352182,
         "pixels": {
           "width": 2096,
           "height": 1036
@@ -190,10 +203,10 @@
         "kind": "generated_training_deck",
         "origin": "repository training curriculum and diagrams",
         "generator": "P5 training publication workflow",
-        "rights_basis": "original repository content; font use requires final distribution review",
+        "rights_basis": "original repository content; visible text uses the bundled SIL-OFL-1.1 Noto Sans SC; device substitution still requires final review",
         "external_content": false,
-        "computed_sha256": "0191f4a6c91f4ee087696d192692788f2ce751630e4efdbf00a1326ffb952fcc",
-        "bytes": 59788
+        "computed_sha256": "cfc281aa33ee40752da69cad9b434ed6f8a21832be83d9cc9b1753af1e1ea644",
+        "bytes": 60416
       }
     ],
     "distribution_fonts": [
@@ -585,6 +598,6 @@
     "Dependency pytest-asyncio has no concise license signal in package metadata.",
     "EPUB embeds no font files and relies on reader system fonts; test final typography on the target storefronts and physical devices.",
     "Installed metadata is an inventory aid, not a legal compatibility opinion; review direct and transitive dependency terms for the commercial distribution model.",
-    "PPTX embeds no font files; confirm Calibri, Calibri Light and Helvetica Neue substitution on delivery computers or replace them with approved fonts."
+    "PPTX visible runs use Noto Sans SC but the deck embeds no font files; install the bundled OFL font or confirm substitution on PowerPoint, Keynote and target projection computers."
   ]
 }

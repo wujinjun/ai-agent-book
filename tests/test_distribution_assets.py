@@ -1,7 +1,7 @@
 import zipfile
 from pathlib import Path
 
-from scripts.audit_distribution_assets import audit_epub, audit_source_assets
+from scripts.audit_distribution_assets import audit_epub, audit_pptx, audit_source_assets
 
 ROOT = Path(__file__).parents[1]
 
@@ -49,3 +49,15 @@ def test_print_css_does_not_fall_back_to_untracked_system_fonts() -> None:
     assert 'font-family: "Book Source Code Pro", "Book Noto Sans SC", monospace' in css
     for forbidden in ("Menlo", "Monaco", "PingFang", "Hiragino"):
         assert forbidden not in css
+
+
+def test_training_pptx_visible_text_uses_bundled_ofl_font() -> None:
+    report, hard_issues, _ = audit_pptx(
+        ROOT / "training/slides/ai-agent-engineering-training.pptx"
+    )
+
+    assert hard_issues == []
+    assert report["slides"] == 16
+    assert report["explicit_visible_run_typefaces"] == ["Noto Sans SC"]
+    assert report["unapproved_explicit_typefaces"] == []
+    assert report["external_runtime_resources"] == []

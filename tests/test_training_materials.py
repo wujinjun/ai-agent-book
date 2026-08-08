@@ -131,3 +131,8 @@ def test_training_deck_has_notes_sources_and_visual_preview() -> None:
         for note in notes:
             xml = archive.read(note).decode("utf-8")
             assert "[Sources]" in xml, note
+
+    delivery = (ROOT / "training/slides/README.md").read_text(encoding="utf-8")
+    assert "Noto Sans SC" in delivery
+    assert "NotoSansSC-Regular.otf" in delivery
+    assert "PowerPoint" in delivery and "Keynote" in delivery

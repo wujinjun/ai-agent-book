@@ -254,6 +254,9 @@ def audit_epub(path: Path) -> tuple[dict[str, Any], list[str], list[str]]:
 
 def audit_pptx(path: Path) -> tuple[dict[str, Any], list[str], list[str]]:
     typefaces: set[str] = set()
+    explicit_run_typefaces: set[str] = set()
+    slide_default_typefaces: set[str] = set()
+    theme_typefaces: set[str] = set()
     embedded_fonts: list[str] = []
     external_hyperlinks = 0
     external_resources: list[str] = []
@@ -279,6 +282,26 @@ def audit_pptx(path: Path) -> tuple[dict[str, Any], list[str], list[str]]:
                     )
                     if typeface:
                         typefaces.add(typeface)
+                    local_name = element.tag.rsplit("}", 1)[-1]
+                    if local_name not in {"rPr", "defRPr", "endParaRPr"}:
+                        continue
+                    nested_typefaces = {
+                        value
+                        for descendant in element.iter()
+                        for key, value in descendant.attrib.items()
+                        if key.endswith("typeface") and value
+                    }
+                    if name.startswith("ppt/slides/") and local_name == "rPr":
+                        explicit_run_typefaces.update(nested_typefaces)
+                    elif name.startswith("ppt/slides/"):
+                        slide_default_typefaces.update(nested_typefaces)
+                if name.startswith("ppt/theme/"):
+                    theme_typefaces.update(
+                        value
+                        for element in root.iter()
+                        for key, value in element.attrib.items()
+                        if key.endswith("typeface") and value
+                    )
             if not name.endswith(".rels"):
                 continue
             root = ElementTree.fromstring(archive.read(name))
@@ -293,10 +316,17 @@ def audit_pptx(path: Path) -> tuple[dict[str, Any], list[str], list[str]]:
                     external_resources.append(f"{name}: {relation_type}={target}")
 
     hard_issues = [f"PPTX has external runtime resources: {item}" for item in external_resources]
+    unapproved_explicit_typefaces = sorted(explicit_run_typefaces - {"Noto Sans SC"})
+    if unapproved_explicit_typefaces:
+        hard_issues.append(
+            "PPTX visible text uses unapproved explicit typefaces: "
+            f"{unapproved_explicit_typefaces}"
+        )
     manual = [
         (
-            "PPTX embeds no font files; confirm Calibri, Calibri Light and Helvetica Neue "
-            "substitution on delivery computers or replace them with approved fonts."
+            "PPTX visible runs use Noto Sans SC but the deck embeds no font files; install "
+            "the bundled OFL font or confirm substitution on PowerPoint, Keynote and target "
+            "projection computers."
         ),
     ]
     return (
@@ -306,6 +336,10 @@ def audit_pptx(path: Path) -> tuple[dict[str, Any], list[str], list[str]]:
             "bytes": path.stat().st_size,
             "slides": slide_count,
             "typefaces": sorted(typefaces),
+            "explicit_visible_run_typefaces": sorted(explicit_run_typefaces),
+            "slide_default_typefaces": sorted(slide_default_typefaces),
+            "theme_typefaces": sorted(theme_typefaces),
+            "unapproved_explicit_typefaces": unapproved_explicit_typefaces,
             "embedded_fonts": sorted(embedded_fonts),
             "external_runtime_resources": external_resources,
             "external_hyperlinks": external_hyperlinks,

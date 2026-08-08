@@ -9,21 +9,28 @@ repository_scope:
   isolated_examples_verified: 11
   python: 3.12.13
   fresh_environment: passed
-  tests: 252
+  tests: 253
   ruff: passed
   mypy_targets: 49
   diagrams: 236
-  reference_links: {ok: 104, restricted: 8, verified_separately: 1, failed: 0}
+  reference_links: {ok: 105, restricted: 8, verified_separately: 0, failed: 0}
   html: passed
   pdf:
     status: passed
-    pages: 453
-    bytes: 11331105
-    sha256: 244e31538a352fc2f35c126ee8bea3dd3b6404e5a5fe0c7e99f6d12b177353d4
+    pages: 454
+    bytes: 11336809
+    sha256: 5518af06f3288c789329d7f55bcfa0335bfaf28e8277db2226cd44021af65257
   epub:
     status: passed
-    bytes: 13441566
-    sha256: 6df92c2a086c4a31d873c1c2d1f39714684e5cd8db6bd56407342a1b87f17982
+    bytes: 13443850
+    sha256: 890091c4943a054563472197569da9c28d85e23aa332d27f4e521d74cfd89eb0
+  training_pptx:
+    status: passed_repository_scope
+    slides: 16
+    visible_textboxes: 105
+    explicit_visible_run_typefaces: [Noto Sans SC]
+    bytes: 60416
+    sha256: cfc281aa33ee40752da69cad9b434ed6f8a21832be83d9cc9b1753af1e1ea644
   publication_audit: passed
   distribution_preflight:
     status: passed_with_manual_review_required

@@ -68,11 +68,11 @@ assets:
     kind: generated_contact_sheet
     origin: repository training slide deck
     generator: training slide rendering workflow
-    rights_basis: contact sheet of original repository slides
+    rights_basis: contact sheet of original repository slides rendered with the bundled SIL-OFL-1.1 Noto Sans SC
     external_content: false
   - path: training/slides/ai-agent-engineering-training.pptx
     kind: generated_training_deck
     origin: repository training curriculum and diagrams
     generator: P5 training publication workflow
-    rights_basis: original repository content; font use requires final distribution review
+    rights_basis: original repository content; visible text uses the bundled SIL-OFL-1.1 Noto Sans SC; device substitution still requires final review
     external_content: false

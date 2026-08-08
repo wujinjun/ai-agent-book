@@ -34,6 +34,7 @@ REQUIRED_EVIDENCE = {
     "html",
     "pdf",
     "epub",
+    "training_pptx",
     "secret_scan",
     "privacy_scan",
     "distribution_preflight",

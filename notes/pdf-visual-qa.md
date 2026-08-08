@@ -4,15 +4,15 @@
 
 文件：`output/pdf/ai-agent-book-2026.pdf`
 
-规格：A4、453 页、11,331,105 字节
+规格：A4、454 页、11,336,809 字节
 
-SHA-256：`244e31538a352fc2f35c126ee8bea3dd3b6404e5a5fe0c7e99f6d12b177353d4`
+SHA-256：`5518af06f3288c789329d7f55bcfa0335bfaf28e8277db2226cd44021af65257`
 
 ## 结论
 
 PDF 由 Pandoc 生成打印 HTML，再由 Chrome Headless 输出。自动出版审计通过；使用 Poppler 将代表页渲染为 PNG 并进行人工抽检后，封面、目录、版权页、版本页、篇章过渡、代码、表格、流程图、状态图、Trace 截图、索引、术语表与参考资料均可阅读。未发现文字或代码越出裁切框、图片缺失、节点标签重叠或整张空白页。
 
-本轮把中文正文固定为 Noto Sans SC、代码固定为 Source Code Pro。发行预检确认 453 页媒体盒均为 A4，1,073 个字体资源均已嵌入或以字形轮廓保存，未发现 Menlo、PingFang、Hiragino 等未批准系统字体；五个源字体文件及 OFL 许可已经过 SHA-256 核对。
+本轮把中文正文固定为 Noto Sans SC、代码固定为 Source Code Pro。发行预检确认 454 页媒体盒均为 A4，1,073 个字体资源均已嵌入或以字形轮廓保存，未发现 Menlo、PingFang、Hiragino 等未批准系统字体；五个源字体文件及 OFL 许可已经过 SHA-256 核对。
 
 ## 抽检范围
 

@@ -3,9 +3,9 @@
   "checked": "2026-08-08",
   "total": 113,
   "counts": {
-    "ok": 104,
+    "ok": 105,
     "restricted": 8,
-    "verified_separately": 1,
+    "verified_separately": 0,
     "failed": 0
   },
   "results": [
@@ -593,13 +593,9 @@
     {
       "id": "compose-spec",
       "url": "https://docs.docker.com/compose/compose-file/",
-      "state": "verified_separately",
-      "error": "ConnectError",
-      "verification": {
-        "checked": "2026-08-08",
-        "method": "official_page_open",
-        "final_url": "https://docs.docker.com/reference/compose-file/"
-      }
+      "state": "ok",
+      "status_code": 200,
+      "final_url": "https://docs.docker.com/reference/compose-file/"
     },
     {
       "id": "celery-docs",
@@ -718,7 +714,7 @@
       "url": "https://slsa.dev/spec/",
       "state": "ok",
       "status_code": 206,
-      "final_url": "https://slsa.dev/spec/v1.2/"
+      "final_url": "https://slsa.dev/spec/latest"
     },
     {
       "id": "wu2023autogen",
