@@ -2,7 +2,16 @@
 
 这是一套面向软件工程师的中文技术教材工程。它不把 Agent 等同于某个框架，也不把能调用一次模型的脚本包装成生产系统；全书从 LLM 的生成机制出发，依次讨论结构化输出、工具调用、MCP、RAG、Memory、工作流、多 Agent，以及测试、部署、可观测性和安全治理。
 
-> 当前版本为 **0.2.0 / 多格式出版预览版**。第 1—38 章、十个教学型项目和新版 HTML/PDF/EPUB 出版管线均已建立，但独立示例、框架实测、生产强化、培训材料和商业出版编辑仍在进行。真实进度见 [`PROJECT_STATUS.md`](PROJECT_STATUS.md)，逐项状态见 [`notes/completion-matrix.md`](notes/completion-matrix.md)，后续路线见 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
+> 当前公开版本为 **v2026.8.0 / 多格式出版预览版**。第 1—38 章、11 个独立示例、十个项目与 HTML/PDF/EPUB 出版管线均已完成本轮复审；项目 4、8、10 达到离线 `production_reference`。真实生产环境联调、培训材料和商业出版编辑仍按质量路线图推进。详见 [`PROJECT_STATUS.md`](PROJECT_STATUS.md)、[`notes/completion-matrix.md`](notes/completion-matrix.md) 与 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
+
+## 下载已发布版本
+
+- [完整出版包（HTML、PDF、EPUB）](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.0/ai-agent-book-output-v2026.8.0.zip)
+- [PDF（400 页 A4 版）](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.0/ai-agent-book-2026-v2026.8.0.pdf)
+- [EPUB3](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.0/ai-agent-book-2026-v2026.8.0.epub)
+- [SHA256 校验值](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.0/SHA256SUMS-v2026.8.0.txt)
+
+发行说明与全部附件见 [GitHub Release v2026.8.0](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.0)。
 
 ## 适合与不适合的读者
 
