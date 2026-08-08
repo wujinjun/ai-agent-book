@@ -7,7 +7,7 @@
 
 这是一套面向软件工程师的中文技术教材工程。它不把 Agent 等同于某个框架，也不把能调用一次模型的脚本包装成生产系统；全书从 LLM 的生成机制出发，依次讨论结构化输出、工具调用、MCP、RAG、Memory、工作流、多 Agent，以及测试、部署、可观测性和安全治理。
 
-> 第 1—38 章、11 个独立示例、十个项目与 HTML/PDF/EPUB 出版管线已经完成仓库范围验收；项目 4、8、10 达到离线 `production_reference`，Python 3.12、十项目容器和 257 项测试证据齐全。P9 当前状态为 `complete_repository_scope`。独立外审、真人试学/试讲、实体设备/印刷与专业权利意见已按维护者决定排除出本次范围，并明确记录为“未验证”，不冒充通过。当前公开正式版仍为 **v2026.8.0**，新仓库范围版本正在发布流程中；完整边界见 [`FINAL_ACCEPTANCE.md`](FINAL_ACCEPTANCE.md) 与 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
+> 第 1—38 章、11 个独立示例、十个项目与 HTML/PDF/EPUB 出版管线已经完成仓库范围验收；项目 4、8、10 达到离线 `production_reference`，Python 3.12、十项目容器和 257 项测试证据齐全。P9 当前状态为 `complete_repository_scope`。独立外审、真人试学/试讲、实体设备/印刷与专业权利意见已按维护者决定排除出本次范围，并明确记录为“未验证”，不冒充通过。当前仓库范围正式版为 **v2026.8.1**；完整边界见 [`FINAL_ACCEPTANCE.md`](FINAL_ACCEPTANCE.md) 与 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
 
 ![教材 HTML 首页：三栏导航、学习地图与离线下载入口](docs/assets/readme-home.png)
 
@@ -33,14 +33,14 @@ python -m http.server 8000 --directory output/html
 ## 下载已发布版本
 
 - [在线阅读预览（当前 P9 候选内容）](https://wujinjun.github.io/ai-agent-book/)
-- [完整出版包（HTML、PDF、EPUB）](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.0/ai-agent-book-output-v2026.8.0.zip)
-- [PDF（400 页 A4 版）](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.0/ai-agent-book-2026-v2026.8.0.pdf)
-- [EPUB3](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.0/ai-agent-book-2026-v2026.8.0.epub)
-- [SHA256 校验值](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.0/SHA256SUMS-v2026.8.0.txt)
+- [完整出版包（HTML、PDF、EPUB）](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.1/ai-agent-book-output-v2026.8.1.zip)
+- [PDF（454 页 A4 版）](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.1/ai-agent-book-2026-v2026.8.1.pdf)
+- [EPUB3](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.1/ai-agent-book-2026-v2026.8.1.epub)
+- [SHA256 校验值](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.1/SHA256SUMS-v2026.8.1.txt)
 
-发行说明与全部附件见 [GitHub Release v2026.8.0](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.0)。
+发行说明与全部附件见 [GitHub Release v2026.8.1](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.1)。
 
-在线阅读站已于 2026-08-08 在 GitHub Pages 实机验证首页、PDF 与 EPUB 下载均返回 HTTP 200。站点展示通过审计的 P9 候选内容，属于在线阅读预览，不是 P9 完成或商业出版终稿。仓库中的当前候选版为 454 页，并使用固定版本的 OFL 中文与代码字体；只有完成 P9 并发布新 Release 后才会替代上述 400 页正式发行版。
+在线阅读站已于 2026-08-08 在 GitHub Pages 实机验证首页、PDF 与 EPUB 下载均返回 HTTP 200。站点展示通过审计的仓库范围正式内容。454 页 PDF 使用固定版本的 OFL 中文与代码字体；本版本不表示七类外部活动通过。
 
 ## 适合与不适合的读者
 

@@ -51,7 +51,7 @@ P9 当前状态为 `complete_repository_scope`。仓库证据分为个人系统�
 - MkDocs HTML 严格构建、断链、缺图、alt、重复 ID 和残留 Mermaid 自动审计已建立。
 - 当前本地候选 PDF 为 454 页 A4、11,337,048 字节；封面、目录、正文、代码、图示和末页已重新栅格化抽检。Noto Sans SC 与 Source Code Pro 固定到上游 commit 并携带 OFL，发行预检确认未批准系统字体和硬失败均为 0。
 - P7 本地候选 EPUB3 为 13,443,800 字节，具备 nav、spine、严格 XHTML、跨文件片段和资源引用检查；Apple Books 实机与 Calibre 9.13.0 解析引擎复验通过，HTML 下载目录同时包含同次构建的 PDF 与 EPUB。
-- GitHub `main` 已包含教材完成提交 `54dc936` 与状态提交 `c21dd9c`，标签 `v2026.8.0` 已推送。公开 [GitHub Release v2026.8.0](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.0) 已发布完整 `output/` 压缩包、400 页 PDF、EPUB3 与 SHA256；公开 API 复核为正式发行、非草稿、非预发布，四个附件尺寸与本地产物一致。
+- GitHub `main` 已合并 P0—P9 仓库范围成果；[GitHub Release v2026.8.1](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.1) 发布完整 HTML 压缩包、454 页 PDF、EPUB3、企业培训 PPTX、发行清单与 SHA-256。
 - P7 的 macOS 实机、Calibre 引擎、390/768/1440px 视口与 12 页图稿联系表复验已完成；实体 iOS/Android、商业印刷样张和出版社终审仍由 P9 跟踪。
 
 ## 尚未完成

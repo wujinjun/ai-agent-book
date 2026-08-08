@@ -1,6 +1,6 @@
 # 变更记录
 
-## 未发布
+## v2026.8.1 - 2026-08-08
 
 - P7：完成 235 张图的作用域图号、联系表复审、真实离线 Trace 截图，以及 447 页 PDF、EPUB 跨 XHTML 链接、Apple Books、Calibre 与三视口验收。
 - P8：重写 15 分钟 Quick Start 与十项目展示，增加网站截图、兼容/安全/行为政策、Issue/PR 模板、密钥与仓库卫生门禁，以及带变更摘要和 SHA-256 的确定性 Release 打包器。
@@ -9,7 +9,7 @@
 - P9：发布 [`p9-candidate-e5ffef0`](https://github.com/wujinjun/ai-agent-book/releases/tag/p9-candidate-e5ffef0) 预发布执行包，供独立外审、试学、试讲和实体设备核验使用；它替代存在 Linux CI 缺陷的 `p9-candidate-034ac18`，但不替代正式版本。
 - P8/P9：启用 [GitHub Pages 在线阅读预览](https://wujinjun.github.io/ai-agent-book/)，并实测首页、PDF 与 EPUB 下载入口；站点仍明确标记为候选预览。
 - P9：按维护者范围决定完成仓库内验收；七类真人或专业外部活动改为明确排除且未通过，版本标签改为验证 `complete_repository_scope`，避免把范围缩减伪装成外部背书。
-- 当前候选尚未替代公开 v2026.8.0；正式版本号和附件只在 P9 综合验收后更新。
+- 发布 454 页 PDF、EPUB3、离线 HTML、企业培训 PPTX、发行清单与 SHA-256；本版本声明范围为仓库验证，不包含七类外部背书。
 
 ## v2026.8.0 - 2026-08-08
 
