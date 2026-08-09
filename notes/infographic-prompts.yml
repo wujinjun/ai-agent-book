@@ -72,3 +72,36 @@ pilots:
     generated_at: 2026-08-09
     source_asset: assets/infographics/source/mcp-protocol-boundary-infographic-base.png
     source_sha256: 7451d34f0b948ee6de9af0ea35dc3977f88bce61a02c05dee055ba2e3bce668e
+  - id: memory-governed-lifecycle-infographic
+    source_path: docs/part-03-rag-and-memory/ch15-memory.md
+    mermaid_id: memory-write-retrieve-governance-loop
+    status: base_selected
+    use_case: infographic-diagram
+    prompt: >-
+      出版级中文 AI Agent 工程教材的无文字 Memory 生命周期信息图底稿，纵向 2:3，适合 A4。自上而下表现对话与工具候选事件、包含未来价值用户同意敏感性来源置信冲突检查的写入门禁、按租户主体隔离的偏好语义事实情景事件 Memory Store、权限时效相关性检索与短期上下文注入、纠错 TTL 删除传播和无原值审计。暖白背景，深蓝青绿暖橙紫色和少量警示红，现代扁平矢量编辑插画，预留中文标签。不要文字、字母、数字、公式、Logo、水印、代码、UI、人物或语义箭头。
+    generated_with: built-in imagegen
+    generated_at: 2026-08-09
+    source_asset: assets/infographics/source/memory-lifecycle-infographic-base.png
+    source_sha256: 48e27f29a5dd5fb6b46bece3bc3bf82a45298d3d4d35e948156c388ceff5d67f
+  - id: langgraph-recoverable-workflow-infographic
+    source_path: docs/part-04-frameworks/ch20-langgraph.md
+    mermaid_id: langgraph-research-state-machine
+    status: base_selected
+    use_case: infographic-diagram
+    prompt: >-
+      出版级中文 AI Agent 工程教材的无文字 LangGraph 可恢复工作流信息图底稿，纵向 2:3，适合 A4。顶部表现 StateSnapshot；中央表现规划、搜索阅读、评审、人工审批、写作和结束节点；侧边表现并行更新 Reducer、Checkpoint 时间线与持久化；下部表现 Interrupt、同一 thread 标识恢复、Retry、Time Travel 和外部副作用幂等边界。暖白背景，深蓝青绿暖橙紫色与少量警示红，现代扁平矢量编辑插画，预留中文标签。不要文字、字母、数字、公式、Logo、水印、代码、UI、人物或决定流程语义的箭头。
+    generated_with: built-in imagegen
+    generated_at: 2026-08-09
+    source_asset: assets/infographics/source/langgraph-recoverable-workflow-infographic-base.png
+    source_sha256: c0a3b9599f0a894fa9661443301d8fa75686f27da93ce52ac8506d66df3a2698
+  - id: agent-observability-evidence-infographic
+    source_path: docs/part-05-engineering/ch28-observability.md
+    mermaid_id: agent-run-observability-tree
+    status: base_selected
+    use_case: infographic-diagram
+    prompt: >-
+      出版级中文 AI Agent 工程教材的无文字 Observability 全景信息图底稿，纵向 2:3，适合 A4。顶部表现 API、队列 Worker、模型、检索、工具、Guardrail、Checkpoint 和审批的 Trace 树；中部将 Logs、Metrics、Traces、Audit 分成职责卡片；下部表现 Token、Cost、首 Token、P95/P99、任务成功、工具错误与告警定位；底部表现字段 allowlist、脱敏、采样、保留期和访问审计。暖白背景，克制的深蓝青绿暖橙紫色，现代扁平矢量编辑插画，预留标签。不要文字、字母、数字、公式、Logo、水印、代码、真实平台 UI、人物或决定因果关系的箭头。
+    generated_with: built-in imagegen
+    generated_at: 2026-08-09
+    source_asset: assets/infographics/source/agent-observability-infographic-base.png
+    source_sha256: b3fd67b9c76c4d64593d48c8b5a372d0dab4636729b37e969ad480dd95301b2a

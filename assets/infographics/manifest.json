@@ -1,5 +1,19 @@
 [
   {
+    "semantic_id": "agent-observability-evidence-infographic",
+    "source_path": "docs/part-05-engineering/ch28-observability.md",
+    "source_asset": "assets/infographics/source/agent-observability-infographic-base.png",
+    "svg_asset": "docs/assets/infographics/svg/agent-observability-evidence-infographic.svg",
+    "png_asset": "docs/assets/infographics/png/agent-observability-evidence-infographic-2x.png",
+    "width": 1024,
+    "height": 1536,
+    "source_sha256": "b3fd67b9c76c4d64593d48c8b5a372d0dab4636729b37e969ad480dd95301b2a",
+    "svg_sha256": "6bf0d5bb45f1bb4d5cf04a7c47dc5d7575b62a97a964211dafcf152cc5a95bde",
+    "png_sha256": "fb954542ed7511aff1cc09634370b80b1e72778bd92921c5ee804a93b96b69a8",
+    "generated_with": "built-in imagegen (visual base) + deterministic SVG/Pillow semantic overlay",
+    "generated_at": "2026-08-09"
+  },
+  {
     "semantic_id": "agent-runtime-control-loop-infographic",
     "source_path": "docs/part-02-agent-core/ch09-agent-runtime.md",
     "source_asset": "assets/infographics/source/agent-runtime-control-loop-infographic-base.png",
@@ -28,6 +42,20 @@
     "generated_at": "2026-08-09"
   },
   {
+    "semantic_id": "langgraph-recoverable-workflow-infographic",
+    "source_path": "docs/part-04-frameworks/ch20-langgraph.md",
+    "source_asset": "assets/infographics/source/langgraph-recoverable-workflow-infographic-base.png",
+    "svg_asset": "docs/assets/infographics/svg/langgraph-recoverable-workflow-infographic.svg",
+    "png_asset": "docs/assets/infographics/png/langgraph-recoverable-workflow-infographic-2x.png",
+    "width": 1024,
+    "height": 1536,
+    "source_sha256": "c0a3b9599f0a894fa9661443301d8fa75686f27da93ce52ac8506d66df3a2698",
+    "svg_sha256": "c69f46ae775d2cf08b2b61445e5038d3790e02d95618f78900e01fb2009f479c",
+    "png_sha256": "8a94cf2944fe71018a6e5681c343862b4ccc3d057187a91ecce6224af3074569",
+    "generated_with": "built-in imagegen (visual base) + deterministic SVG/Pillow semantic overlay",
+    "generated_at": "2026-08-09"
+  },
+  {
     "semantic_id": "llm-product-agent-system-infographic",
     "source_path": "docs/part-01-foundations/ch01-what-is-llm.md",
     "source_asset": "assets/infographics/source/llm-product-agent-system-infographic-base.png",
@@ -52,6 +80,20 @@
     "source_sha256": "7451d34f0b948ee6de9af0ea35dc3977f88bce61a02c05dee055ba2e3bce668e",
     "svg_sha256": "ba55d84298dc62e2939ba9c6b809058648bba17191816a61ba139b13e163efd7",
     "png_sha256": "5b847b7ad5e8d605208acf161f0f48e01cc9d11ba0d70de03130c01692725ddb",
+    "generated_with": "built-in imagegen (visual base) + deterministic SVG/Pillow semantic overlay",
+    "generated_at": "2026-08-09"
+  },
+  {
+    "semantic_id": "memory-governed-lifecycle-infographic",
+    "source_path": "docs/part-03-rag-and-memory/ch15-memory.md",
+    "source_asset": "assets/infographics/source/memory-lifecycle-infographic-base.png",
+    "svg_asset": "docs/assets/infographics/svg/memory-governed-lifecycle-infographic.svg",
+    "png_asset": "docs/assets/infographics/png/memory-governed-lifecycle-infographic-2x.png",
+    "width": 1024,
+    "height": 1536,
+    "source_sha256": "48e27f29a5dd5fb6b46bece3bc3bf82a45298d3d4d35e948156c388ceff5d67f",
+    "svg_sha256": "0d2d015ea1f6bce3668dc03b513e72b9526e716ad2e7992c6e5e29c6ac0125e6",
+    "png_sha256": "ce5f57f74267f37ac2f875ee42a73e1d582d21f214a1b22ff7606f1aef5f09ea",
     "generated_with": "built-in imagegen (visual base) + deterministic SVG/Pillow semantic overlay",
     "generated_at": "2026-08-09"
   },

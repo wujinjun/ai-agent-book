@@ -189,8 +189,8 @@ def build_pilot_one() -> InfographicRecord:
         '<title id="title">从大语言模型到可部署 Agent 系统</title>',
         (
             '<desc id="desc">人工智能包含机器学习与符号方法，机器学习经深度学习和 '
-            'Transformer 发展出大语言模型；对齐模型可进入聊天产品或 Agent Runtime，'
-            'Agent 再连接工具、知识、记忆、工作流、审批、观测、评估、安全与成本治理。</desc>'
+            "Transformer 发展出大语言模型；对齐模型可进入聊天产品或 Agent Runtime，"
+            "Agent 再连接工具、知识、记忆、工作流、审批、观测、评估、安全与成本治理。</desc>"
         ),
         (
             '<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" '
@@ -217,10 +217,10 @@ def build_pilot_one() -> InfographicRecord:
         '<path d="M 958 693 L 958 711 L 852 711 L 852 728"/>',
         '<path d="M 958 693 L 958 711 L 1086 711 L 1086 728"/>',
         '<path d="M 958 693 L 958 711 L 1332 711 L 1332 728"/>',
-        '</g>',
+        "</g>",
         '<g font-family="Noto Sans SC, Source Han Sans SC, sans-serif">',
         *[_svg_text(label) for label in labels],
-        '</g></svg>',
+        "</g></svg>",
     ]
     svg_text = "\n".join(svg_lines) + "\n"
 
@@ -315,7 +315,7 @@ def build_pilot_two() -> InfographicRecord:
         '<title id="title">RAG：从文档摄取到带引用回答</title>',
         (
             '<desc id="desc">离线摄取将原始文档解析、切分、向量化并发布为版本化索引；'
-            '在线查询经过身份权限、混合检索、重排、生成和引用核验；评估结果反馈到数据与检索策略。</desc>'
+            "在线查询经过身份权限、混合检索、重排、生成和引用核验；评估结果反馈到数据与检索策略。</desc>"
         ),
         (
             '<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" '
@@ -337,7 +337,7 @@ def build_pilot_two() -> InfographicRecord:
         *svg_paths,
         '</g><g font-family="Noto Sans SC, Source Han Sans SC, sans-serif">',
         *[_svg_text(label) for label in labels],
-        '</g></svg>',
+        "</g></svg>",
     ]
     svg_text = "\n".join(svg_lines) + "\n"
 
@@ -413,9 +413,9 @@ def build_pilot_three() -> InfographicRecord:
         '<title id="title">企业 Agent 平台参考架构</title>',
         (
             '<desc id="desc">租户用户和客户端经过 API 身份边界进入 Agent Runtime 与工作流；'
-            '运行时组合模型、工具、MCP、RAG、Memory 和规划能力，并依赖队列、Worker、'
-            '数据库、向量索引、缓存与对象存储；Trace、Metrics、Audit、Evaluation、Cost、'
-            'Policy 与 Security 形成治理证据层。</desc>'
+            "运行时组合模型、工具、MCP、RAG、Memory 和规划能力，并依赖队列、Worker、"
+            "数据库、向量索引、缓存与对象存储；Trace、Metrics、Audit、Evaluation、Cost、"
+            "Policy 与 Security 形成治理证据层。</desc>"
         ),
         (
             '<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" '
@@ -433,7 +433,7 @@ def build_pilot_three() -> InfographicRecord:
         *svg_paths,
         '</g><g font-family="Noto Sans SC, Source Han Sans SC, sans-serif">',
         *[_svg_text(label) for label in labels],
-        '</g></svg>',
+        "</g></svg>",
     ]
     svg_text = "\n".join(svg_lines) + "\n"
 
@@ -529,7 +529,7 @@ def _build_portrait_infographic(
         *svg_paths,
         '</g><g font-family="Noto Sans SC, Source Han Sans SC, sans-serif">',
         *[_svg_text(label) for label in labels],
-        '</g></svg>',
+        "</g></svg>",
     ]
     svg_text = "\n".join(svg_lines) + "\n"
 
@@ -697,6 +697,144 @@ def build_mcp_infographic() -> InfographicRecord:
     )
 
 
+def build_memory_infographic() -> InfographicRecord:
+    labels = [
+        Label(512, 27, "Agent Memory：写入、检索与遗忘生命周期", 27, "bold", "#24476B", 2),
+        Label(285, 218, "候选信息：对话与动作事件", 20, "bold", "#24476B", 3),
+        Label(750, 218, "当前任务上下文与历史状态", 20, "bold", "#177B72", 3),
+        Label(512, 292, "长期记忆写入门禁", 23, "bold", "#C8662D", 3),
+        Label(224, 451, "未来价值", 16, "bold", "#C8662D", 3),
+        Label(365, 451, "用户同意", 16, "bold", "#C8662D", 3),
+        Label(510, 451, "敏感性", 16, "bold", "#C8662D", 3),
+        Label(650, 451, "来源置信", 16, "bold", "#C8662D", 3),
+        Label(795, 451, "冲突检查", 16, "bold", "#C8662D", 3),
+        Label(150, 748, "Tenant / Subject\n隔离边界", 17, "bold", "#177B72", 3),
+        Label(350, 620, "用户偏好", 19, "bold", "#24476B", 3),
+        Label(580, 620, "语义事实", 19, "bold", "#177B72", 3),
+        Label(810, 620, "情景事件", 19, "bold", "#7656A5", 3),
+        Label(512, 935, "Memory Store：来源 · 版本 · TTL · 敏感级别", 19, "bold", "#24476B", 3),
+        Label(150, 1105, "权限过滤", 16, "bold", "#7656A5", 3),
+        Label(330, 1105, "时效过滤", 16, "bold", "#7656A5", 3),
+        Label(510, 1105, "相关性排序", 16, "bold", "#7656A5", 3),
+        Label(780, 1105, "注入短期上下文", 17, "bold", "#7656A5", 3),
+        Label(160, 1315, "纠错", 16, "bold", "#B94A48", 3),
+        Label(330, 1315, "TTL 过期", 16, "bold", "#B94A48", 3),
+        Label(510, 1315, "删除传播", 16, "bold", "#B94A48", 3),
+        Label(685, 1315, "恢复后再删除", 16, "bold", "#B94A48", 3),
+        Label(850, 1315, "无原值审计", 16, "bold", "#B94A48", 3),
+        Label(512, 1475, "主记录 · 向量索引 · 缓存 · 派生摘要", 18, "bold", "#24476B", 3),
+    ]
+    arrows = [
+        [(512, 255), (512, 278)],
+        [(512, 553), (512, 560)],
+        [(512, 945), (512, 968)],
+        [(512, 1148), (512, 1174)],
+    ]
+    return _build_portrait_infographic(
+        semantic_id="memory-governed-lifecycle-infographic",
+        title="Agent Memory：写入、检索与遗忘生命周期",
+        description="候选交互信息经过未来价值、用户同意、敏感性、来源和冲突门禁，按租户主体隔离写入偏好、语义事实和情景事件；读取先做权限时效过滤，生命周期支持纠错、过期、删除传播和审计。",
+        source_path="docs/part-03-rag-and-memory/ch15-memory.md",
+        source_name="memory-lifecycle-infographic-base.png",
+        labels=labels,
+        arrows=arrows,
+    )
+
+
+def build_langgraph_infographic() -> InfographicRecord:
+    labels = [
+        Label(512, 27, "LangGraph：显式状态与可恢复工作流", 27, "bold", "#24476B", 2),
+        Label(512, 205, "StateSnapshot：Schema · thread_id · 版本", 21, "bold", "#24476B", 3),
+        Label(108, 680, "并行更新\nReducer 合并", 18, "bold", "#177B72", 3),
+        Label(292, 500, "Plan", 20, "bold", "#24476B", 3),
+        Label(485, 500, "Research", 20, "bold", "#177B72", 3),
+        Label(680, 500, "Review", 20, "bold", "#7656A5", 3),
+        Label(292, 950, "Interrupt\n人工审批", 18, "bold", "#C8662D", 3),
+        Label(485, 950, "Write", 20, "bold", "#177B72", 3),
+        Label(680, 950, "Finish", 20, "bold", "#24476B", 3),
+        Label(900, 500, "Checkpoint\n每个 super-step", 17, "bold", "#7656A5", 3),
+        Label(900, 1030, "持久化与恢复", 17, "bold", "#7656A5", 3),
+        Label(132, 1280, "Interrupt\n暂停", 18, "bold", "#B94A48", 3),
+        Label(385, 1280, "Command(resume)\n同一 thread_id", 17, "bold", "#177B72", 3),
+        Label(635, 1280, "Retry\n有限且计入预算", 17, "bold", "#C8662D", 3),
+        Label(880, 1280, "Time Travel\n形成新分支", 17, "bold", "#7656A5", 3),
+        Label(512, 1480, "外部副作用：幂等键 · Outbox · 状态核对", 19, "bold", "#4E5968", 3),
+    ]
+    arrows = [
+        [(292, 635), (390, 635)],
+        [(485, 635), (585, 635)],
+        [(680, 635), (680, 770), (292, 770), (292, 815)],
+        [(380, 950), (395, 950)],
+        [(575, 950), (590, 950)],
+        [(795, 650), (810, 650)],
+        [(512, 1120), (512, 1140)],
+    ]
+    return _build_portrait_infographic(
+        semantic_id="langgraph-recoverable-workflow-infographic",
+        title="LangGraph：显式状态与可恢复工作流",
+        description=(
+            "LangGraph 用 StateSnapshot、Node、Edge 和 Reducer 表达工作流，每个 super-step "
+            "保存 Checkpoint；Interrupt 暂停交给人工并以同一 thread_id 恢复，Retry 与 "
+            "Time Travel 都可能重执行节点，外部副作用必须幂等。"
+        ),
+        source_path="docs/part-04-frameworks/ch20-langgraph.md",
+        source_name="langgraph-recoverable-workflow-infographic-base.png",
+        labels=labels,
+        arrows=arrows,
+    )
+
+
+def build_observability_infographic() -> InfographicRecord:
+    labels = [
+        Label(512, 27, "Agent Observability：从一次 Run 到治理证据", 27, "bold", "#24476B", 2),
+        Label(195, 112, "API", 16, "bold", "#24476B", 3),
+        Label(340, 112, "Queue / Worker", 16, "bold", "#24476B", 3),
+        Label(488, 112, "Agent Run", 16, "bold", "#24476B", 3),
+        Label(488, 270, "Model Span", 17, "bold", "#24476B", 3),
+        Label(205, 420, "Retrieval", 16, "bold", "#24476B", 3),
+        Label(350, 420, "Tool", 16, "bold", "#24476B", 3),
+        Label(500, 420, "Guardrail", 16, "bold", "#24476B", 3),
+        Label(650, 420, "Checkpoint", 16, "bold", "#24476B", 3),
+        Label(805, 420, "Approval", 16, "bold", "#24476B", 3),
+        Label(140, 735, "Logs\n离散事件与错误", 19, "bold", "#24476B", 3),
+        Label(385, 735, "Metrics\n趋势、SLO 与告警", 19, "bold", "#177B72", 3),
+        Label(635, 735, "Traces\n跨组件因果路径", 19, "bold", "#C8662D", 3),
+        Label(885, 735, "Audit\n主体与受保护动作", 19, "bold", "#7656A5", 3),
+        Label(105, 1190, "Token", 16, "bold", "#C8662D", 3),
+        Label(225, 1190, "Cost", 16, "bold", "#C8662D", 3),
+        Label(350, 1190, "首 Token", 16, "bold", "#C8662D", 3),
+        Label(485, 1190, "P95 / P99", 16, "bold", "#C8662D", 3),
+        Label(615, 1190, "任务成功", 16, "bold", "#C8662D", 3),
+        Label(740, 1190, "Tool 错误", 16, "bold", "#C8662D", 3),
+        Label(900, 1190, "告警 → run_id\n→ 错误定位", 16, "bold", "#B94A48", 3),
+        Label(210, 1450, "字段 allowlist", 16, "bold", "#177B72", 3),
+        Label(365, 1450, "脱敏", 16, "bold", "#177B72", 3),
+        Label(525, 1450, "采样", 16, "bold", "#177B72", 3),
+        Label(685, 1450, "保留期", 16, "bold", "#177B72", 3),
+        Label(850, 1450, "访问审计", 16, "bold", "#177B72", 3),
+    ]
+    arrows = [
+        [(488, 135), (488, 165)],
+        [(488, 250), (488, 295)],
+        [(488, 550), (488, 600)],
+        [(512, 1010), (512, 1035)],
+        [(512, 1250), (512, 1275)],
+    ]
+    return _build_portrait_infographic(
+        semantic_id="agent-observability-evidence-infographic",
+        title="Agent Observability：从一次 Run 到治理证据",
+        description=(
+            "一次 Agent Run 通过跨服务 Trace 连接模型、检索、工具、策略、Checkpoint 与审批；"
+            "Logs、Metrics、Traces 和 Audit 分工记录事件、趋势、因果与授权证据，并在隐私"
+            "治理下支持成本延迟和失败定位。"
+        ),
+        source_path="docs/part-05-engineering/ch28-observability.md",
+        source_name="agent-observability-infographic-base.png",
+        labels=labels,
+        arrows=arrows,
+    )
+
+
 def write_manifest(records: list[InfographicRecord]) -> Path:
     output = ASSET_ROOT / "manifest.json"
     existing: dict[str, dict[str, object]] = {}
@@ -723,7 +861,18 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--pilot",
-        choices=("p01", "p02", "p03", "transformer", "runtime", "mcp", "all"),
+        choices=(
+            "p01",
+            "p02",
+            "p03",
+            "transformer",
+            "runtime",
+            "mcp",
+            "memory",
+            "langgraph",
+            "observability",
+            "all",
+        ),
         default="all",
     )
     args = parser.parse_args()
@@ -740,6 +889,12 @@ def main() -> int:
         records.append(build_agent_runtime_infographic())
     if args.pilot in {"mcp", "all"}:
         records.append(build_mcp_infographic())
+    if args.pilot in {"memory", "all"}:
+        records.append(build_memory_infographic())
+    if args.pilot in {"langgraph", "all"}:
+        records.append(build_langgraph_infographic())
+    if args.pilot in {"observability", "all"}:
+        records.append(build_observability_infographic())
     manifest = write_manifest(records)
     print(f"Built {len(records)} infographic(s); manifest: {manifest}")
     return 0

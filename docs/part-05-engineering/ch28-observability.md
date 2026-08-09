@@ -11,6 +11,14 @@
 
 一次 Agent Run 会跨越模型、工具和评估步骤。主图以 Trace 层级连接这些事件，并为成本和延迟归因提供共同标识。
 
+下面的信息图从一次 Run 的因果树展开：API、队列与 Worker 把 Trace Context 传给模型、检索、工具、策略、Checkpoint 和审批 Span；中部四类记录分别回答“发生了什么”“整体是否异常”“异常沿哪条路径传播”和“谁对受保护资源做了什么”；底部指标与隐私边界共同约束采集和排障。
+
+![Agent Observability 从 API Queue Worker 和 Model Span 到 Retrieval Tool Guardrail Checkpoint Approval，再到 Logs Metrics Traces Audit、成本延迟质量信号与隐私治理的全景](../assets/infographics/png/agent-observability-evidence-infographic-2x.png)
+
+*图 28-A：Agent Observability 从一次 Run 到治理证据。四类记录可以共享关联 ID，但采样、保留期、访问权限和完整性要求不同；Trace 不能替代安全审计。*
+
+图 28-A 的错误定位从告警进入 `run_id`，再沿 Trace 查看具体 Span，而不是先搜索全量 Prompt。正文内容默认不进入普通日志或 Metrics；确需调试时，应使用字段 allowlist、脱敏、受控采样、短保留期和访问审计。
+
 ```mermaid
 %% id: agent-run-observability-tree
 %% title: Agent Run 观测层级

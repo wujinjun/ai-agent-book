@@ -4,11 +4,11 @@
   "status": "passed_with_manual_review_required",
   "pdf": {
     "path": "output/pdf/ai-agent-book-2026.pdf",
-    "sha256": "e707a4c87a2e1267779c004aeec91cd4fa3ff29d979ed7933a0391f18145947b",
-    "bytes": 24264359,
-    "pages": 461,
+    "sha256": "1cacfb464873d8f8914cfb4004e69527cc27760064f54cdd42c4a9b6df14765e",
+    "bytes": 33237419,
+    "pages": 466,
     "media_boxes": {
-      "594.96x841.92": 461
+      "594.96x841.92": 466
     },
     "cropbox_differs_from_mediabox_pages": 0,
     "font_resources": 1073,
@@ -20,17 +20,17 @@
     },
     "non_embedded_fonts": [],
     "unapproved_system_fonts": [],
-    "raster_image_xobjects": 8
+    "raster_image_xobjects": 11
   },
   "epub": {
     "path": "output/epub/ai-agent-book-2026.epub",
-    "sha256": "9a0ddab754471db2bc726da962b3f10cb5cdb20c7a7fb964bf28d7bdaaa51c77",
-    "bytes": 22973043,
+    "sha256": "a69adadc0266346a67cdd356dd7714900e6c92a1ffe854e9b05ef60e4f8632e0",
+    "bytes": 29390362,
     "archive_entries_by_suffix": {
       ".css": 1,
       ".ncx": 1,
       ".opf": 1,
-      ".png": 243,
+      ".png": 246,
       ".svg": 235,
       ".xhtml": 77,
       ".xml": 2,
@@ -76,10 +76,13 @@
   "source_assets": {
     "registry": "notes/asset-provenance.yml",
     "referenced_non_diagram_assets": [
+      "docs/assets/infographics/png/agent-observability-evidence-infographic-2x.png",
       "docs/assets/infographics/png/agent-runtime-control-loop-infographic-2x.png",
       "docs/assets/infographics/png/enterprise-agent-platform-infographic-2x.png",
+      "docs/assets/infographics/png/langgraph-recoverable-workflow-infographic-2x.png",
       "docs/assets/infographics/png/llm-product-agent-system-infographic-2x.png",
       "docs/assets/infographics/png/mcp-protocol-boundary-infographic-2x.png",
+      "docs/assets/infographics/png/memory-governed-lifecycle-infographic-2x.png",
       "docs/assets/infographics/png/rag-evidence-pipeline-infographic-2x.png",
       "docs/assets/infographics/png/transformer-attention-routing-infographic-2x.png",
       "docs/assets/readme-home.png",
@@ -163,6 +166,21 @@
         "bytes": 131128
       },
       {
+        "path": "docs/assets/infographics/png/agent-observability-evidence-infographic-2x.png",
+        "kind": "generated_textbook_infographic",
+        "origin": "repository chapter logic with an AI-generated visual base and deterministic semantic overlay",
+        "generator": "built-in imagegen + scripts/build_infographics.py",
+        "sha256": "fb954542ed7511aff1cc09634370b80b1e72778bd92921c5ee804a93b96b69a8",
+        "rights_basis": "original repository technical content; generated visual base contains no third-party logos or copied artwork",
+        "external_content": false,
+        "computed_sha256": "fb954542ed7511aff1cc09634370b80b1e72778bd92921c5ee804a93b96b69a8",
+        "bytes": 2162764,
+        "pixels": {
+          "width": 1536,
+          "height": 2304
+        }
+      },
+      {
         "path": "docs/assets/infographics/png/agent-runtime-control-loop-infographic-2x.png",
         "kind": "generated_textbook_infographic",
         "origin": "repository chapter logic with an AI-generated visual base and deterministic semantic overlay",
@@ -193,6 +211,21 @@
         }
       },
       {
+        "path": "docs/assets/infographics/png/langgraph-recoverable-workflow-infographic-2x.png",
+        "kind": "generated_textbook_infographic",
+        "origin": "repository chapter logic with an AI-generated visual base and deterministic semantic overlay",
+        "generator": "built-in imagegen + scripts/build_infographics.py",
+        "sha256": "8a94cf2944fe71018a6e5681c343862b4ccc3d057187a91ecce6224af3074569",
+        "rights_basis": "original repository technical content; generated visual base contains no third-party logos or copied artwork",
+        "external_content": false,
+        "computed_sha256": "8a94cf2944fe71018a6e5681c343862b4ccc3d057187a91ecce6224af3074569",
+        "bytes": 1785383,
+        "pixels": {
+          "width": 1536,
+          "height": 2304
+        }
+      },
+      {
         "path": "docs/assets/infographics/png/llm-product-agent-system-infographic-2x.png",
         "kind": "generated_textbook_infographic",
         "origin": "repository chapter logic with an AI-generated visual base and deterministic semantic overlay",
@@ -217,6 +250,21 @@
         "external_content": false,
         "computed_sha256": "5b847b7ad5e8d605208acf161f0f48e01cc9d11ba0d70de03130c01692725ddb",
         "bytes": 1804541,
+        "pixels": {
+          "width": 1536,
+          "height": 2304
+        }
+      },
+      {
+        "path": "docs/assets/infographics/png/memory-governed-lifecycle-infographic-2x.png",
+        "kind": "generated_textbook_infographic",
+        "origin": "repository chapter logic with an AI-generated visual base and deterministic semantic overlay",
+        "generator": "built-in imagegen + scripts/build_infographics.py",
+        "sha256": "ce5f57f74267f37ac2f875ee42a73e1d582d21f214a1b22ff7606f1aef5f09ea",
+        "rights_basis": "original repository technical content; generated visual base contains no third-party logos or copied artwork",
+        "external_content": false,
+        "computed_sha256": "ce5f57f74267f37ac2f875ee42a73e1d582d21f214a1b22ff7606f1aef5f09ea",
+        "bytes": 2467543,
         "pixels": {
           "width": 1536,
           "height": 2304

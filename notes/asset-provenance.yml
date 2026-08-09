@@ -112,6 +112,27 @@ assets:
     sha256: 5b847b7ad5e8d605208acf161f0f48e01cc9d11ba0d70de03130c01692725ddb
     rights_basis: original repository technical content; generated visual base contains no third-party logos or copied artwork
     external_content: false
+  - path: docs/assets/infographics/png/memory-governed-lifecycle-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with an AI-generated visual base and deterministic semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: ce5f57f74267f37ac2f875ee42a73e1d582d21f214a1b22ff7606f1aef5f09ea
+    rights_basis: original repository technical content; generated visual base contains no third-party logos or copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/langgraph-recoverable-workflow-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with an AI-generated visual base and deterministic semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 8a94cf2944fe71018a6e5681c343862b4ccc3d057187a91ecce6224af3074569
+    rights_basis: original repository technical content; generated visual base contains no third-party logos or copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/agent-observability-evidence-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with an AI-generated visual base and deterministic semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: fb954542ed7511aff1cc09634370b80b1e72778bd92921c5ee804a93b96b69a8
+    rights_basis: original repository technical content; generated visual base contains no third-party logos or copied artwork
+    external_content: false
   - path: training/slides/ai-agent-engineering-training.pptx
     kind: generated_training_deck
     origin: repository training curriculum and diagrams

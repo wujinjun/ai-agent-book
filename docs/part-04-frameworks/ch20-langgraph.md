@@ -11,6 +11,14 @@ LangGraph 用 State、Node、Edge 和 Checkpoint 表达可恢复工作流。本�
 
 LangGraph 把工作流表达为显式 State、Node 和 Edge。主图展示研究任务中循环、审批和结束路径。
 
+下面的信息图把图结构、状态一致性与恢复语义组合起来阅读。中央工作流展示 Node 与条件路径，左侧 Reducer 负责并行更新合并，右侧 Checkpoint 保存每个 super-step；下方 Interrupt、恢复、Retry 和 Time Travel 都可能让节点重新执行，因此最底部把幂等键、Outbox 与外部状态核对画成共同边界。
+
+![LangGraph 的 StateSnapshot、Plan Research Review Approval Write Finish 节点、Reducer、Checkpoint、Interrupt 恢复 Retry Time Travel 与外部副作用幂等边界](../assets/infographics/png/langgraph-recoverable-workflow-infographic-2x.png)
+
+*图 20-A：LangGraph 的显式状态与可恢复工作流。图中的 Checkpoint 记录图状态，不是外部系统事务；恢复和时间旅行不会自动撤销邮件、付款或工单。*
+
+阅读图 20-A 时，应区分三个层次：Edge 决定下一节点，Reducer 决定并行更新如何合并，Checkpointer 决定状态如何持久化与恢复。把三者混成一个“框架自动管理状态”的概念，会掩盖并发覆盖、重复副作用和跨租户恢复等生产风险。
+
 ```mermaid
 %% id: langgraph-research-state-machine
 %% title: LangGraph 研究工作流状态机

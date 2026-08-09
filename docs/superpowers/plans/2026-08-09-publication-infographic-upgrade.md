@@ -100,6 +100,9 @@ notes/
 - [x] 完成 A02 第3章 Transformer 与 Attention 信息路由图及三端验收。
 - [x] 完成 A03 第9章 Agent Runtime 控制闭环图及三端验收。
 - [x] 完成 A04 第11章 MCP 协议与信任边界图及三端验收。
+- [x] 完成 A06 第15章 Memory 生命周期图及三端验收。
+- [x] 完成 A07 第20章 LangGraph 工作流图及三端验收。
+- [x] 完成 A08 第28章 Observability 全景图及三端验收。
 - [ ] 批量升级 A 级与 B 级图稿。
 
-截至 2026-08-09，A 级核心信息图已完成 6/12：技术关系、Transformer、Agent Runtime、MCP、RAG 和企业平台参考架构。下一批依次处理 Memory 生命周期、LangGraph 工作流和 Observability 全景。
+截至 2026-08-09，A 级核心信息图已完成 9/12：技术关系、Transformer、Agent Runtime、MCP、RAG、Memory、LangGraph、Observability 和企业平台参考架构。下一批依次处理 Agent 安全与信任边界、Multi-Agent 协作模式和项目 10 部署拓扑。

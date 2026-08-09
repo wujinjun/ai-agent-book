@@ -72,3 +72,33 @@ pilots:
     epub_review: pass
     notes: >-
       首版三个 Server 的能力标签在 A4 列边界处拥挤，已缩短为 Server 名称并重新构建复验。
+  - id: memory-governed-lifecycle-infographic
+    priority: A
+    status: accepted
+    base_generated: true
+    svg_composed: true
+    markdown_integrated: true
+    technical_review: pass
+    html_review: pass
+    pdf_review: pass_page_201
+    epub_review: pass
+  - id: langgraph-recoverable-workflow-infographic
+    priority: A
+    status: accepted
+    base_generated: true
+    svg_composed: true
+    markdown_integrated: true
+    technical_review: pass
+    html_review: pass
+    pdf_review: pass_page_247
+    epub_review: pass
+  - id: agent-observability-evidence-infographic
+    priority: A
+    status: accepted
+    base_generated: true
+    svg_composed: true
+    markdown_integrated: true
+    technical_review: pass
+    html_review: pass
+    pdf_review: pass_page_308
+    epub_review: pass

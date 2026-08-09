@@ -105,3 +105,31 @@ def test_second_batch_infographics_are_integrated_and_high_resolution() -> None:
         assert "<desc" in svg.read_text(encoding="utf-8")
         with Image.open(png) as image:
             assert image.size == (1536, 2304)
+
+
+def test_third_batch_infographics_are_integrated_and_high_resolution() -> None:
+    manifest = json.loads(
+        (ROOT / "assets/infographics/manifest.json").read_text(encoding="utf-8")
+    )
+    expected = {
+        "memory-governed-lifecycle-infographic": (
+            "docs/part-03-rag-and-memory/ch15-memory.md",
+            "图 15-A",
+        ),
+        "langgraph-recoverable-workflow-infographic": (
+            "docs/part-04-frameworks/ch20-langgraph.md",
+            "图 20-A",
+        ),
+        "agent-observability-evidence-infographic": (
+            "docs/part-05-engineering/ch28-observability.md",
+            "图 28-A",
+        ),
+    }
+    records = {item["semantic_id"]: item for item in manifest}
+    for semantic_id, (chapter_path, figure_number) in expected.items():
+        record = records[semantic_id]
+        chapter = (ROOT / chapter_path).read_text(encoding="utf-8")
+        assert f"{semantic_id}-2x.png" in chapter
+        assert figure_number in chapter
+        with Image.open(ROOT / record["png_asset"]) as image:
+            assert image.size == (1536, 2304)
