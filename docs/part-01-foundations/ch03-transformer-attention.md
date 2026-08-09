@@ -8,6 +8,14 @@
 
 前置知识为向量、Softmax 的直觉和第2章 Token 概念；本章核心示例只使用 Python 标准库。
 
+下面的信息图把本章最容易混淆的概念放进一条完整路径：输入表示先投影为 Query、Key 与 Value，相关性分数在因果 Mask 约束下归一化，再按权重读取 Value；多头结果合并后进入残差、归一化与前馈层。图的最后同时标出 Decoder-only 的逐 Token 生成，以免把单层 Attention 和完整生成循环混为一谈。
+
+![Transformer 中输入表示、Query Key Value、相关性与因果掩码、多头合并、前馈残差和逐 Token 解码的完整信息路由](../assets/infographics/png/transformer-attention-routing-infographic-2x.png)
+
+*图 3-A：Transformer 与 Attention 的信息路由。纵向箭头表达主要计算顺序；每个彩色区域是机制分区，不代表真实张量尺寸，也不表示不同注意力头被预先指定了固定语义。*
+
+阅读图 3-A 时，应把“相关性高”理解为当前层对 Value 的读取权重，而不是最终答案的因果解释。因果 Mask 只限制位置可见性，不负责事实校验、安全策略或权限控制；这些边界必须由模型外部系统提供。
+
 ## 从序列递归到 Attention
 
 RNN 把前一步隐藏状态传给后一步，天然表达顺序，但训练难以沿序列充分并行，长距离信息还需要经过许多状态转移。Attention 允许当前位置直接参考其他位置。可以把 Query 理解为“当前位置要找什么”，Key 是“每个位置提供什么匹配线索”，Value 是“匹配后实际取回什么内容”。Query 与 Key 形成相关性权重，权重再对 Value 加权汇总。

@@ -1,5 +1,19 @@
 [
   {
+    "semantic_id": "agent-runtime-control-loop-infographic",
+    "source_path": "docs/part-02-agent-core/ch09-agent-runtime.md",
+    "source_asset": "assets/infographics/source/agent-runtime-control-loop-infographic-base.png",
+    "svg_asset": "docs/assets/infographics/svg/agent-runtime-control-loop-infographic.svg",
+    "png_asset": "docs/assets/infographics/png/agent-runtime-control-loop-infographic-2x.png",
+    "width": 1024,
+    "height": 1536,
+    "source_sha256": "a978bd90345a6bfa46c4fd322aeb53df56ef7f744c6ca147451095d5bbeb9c72",
+    "svg_sha256": "d9b9ce26af3e2f0485a590a6b3729c2c9f8c5c079ce3f1b03f12ed61c09b2c2e",
+    "png_sha256": "70a74c7e0895a337c77b7888f5729e40f2aca9f8f6ec44757ff1aba91ea09ba7",
+    "generated_with": "built-in imagegen (visual base) + deterministic SVG/Pillow semantic overlay",
+    "generated_at": "2026-08-09"
+  },
+  {
     "semantic_id": "enterprise-agent-platform-infographic",
     "source_path": "docs/part-07-advanced/ch36-architecture.md",
     "source_asset": "assets/infographics/source/enterprise-agent-platform-infographic-base-v2.png",
@@ -28,6 +42,20 @@
     "generated_at": "2026-08-09"
   },
   {
+    "semantic_id": "mcp-protocol-boundary-infographic",
+    "source_path": "docs/part-03-rag-and-memory/ch11-mcp.md",
+    "source_asset": "assets/infographics/source/mcp-protocol-boundary-infographic-base.png",
+    "svg_asset": "docs/assets/infographics/svg/mcp-protocol-boundary-infographic.svg",
+    "png_asset": "docs/assets/infographics/png/mcp-protocol-boundary-infographic-2x.png",
+    "width": 1024,
+    "height": 1536,
+    "source_sha256": "7451d34f0b948ee6de9af0ea35dc3977f88bce61a02c05dee055ba2e3bce668e",
+    "svg_sha256": "ba55d84298dc62e2939ba9c6b809058648bba17191816a61ba139b13e163efd7",
+    "png_sha256": "5b847b7ad5e8d605208acf161f0f48e01cc9d11ba0d70de03130c01692725ddb",
+    "generated_with": "built-in imagegen (visual base) + deterministic SVG/Pillow semantic overlay",
+    "generated_at": "2026-08-09"
+  },
+  {
     "semantic_id": "rag-evidence-pipeline-infographic",
     "source_path": "docs/part-03-rag-and-memory/ch13-rag.md",
     "source_asset": "assets/infographics/source/rag-evidence-pipeline-infographic-base.png",
@@ -38,6 +66,20 @@
     "source_sha256": "63109f887a7428e3cf57bd7560ec242136be13c163e7f29b9d8b7afcd5d21424",
     "svg_sha256": "aa40a6c5de2f8b37b9bb5609bcbf35ae258ebe0ecf888e574791b0a5621e50de",
     "png_sha256": "bf69f80c3cad2debaa9dddceecabd5a75204509c29ad99177643d06bfba761f1",
+    "generated_with": "built-in imagegen (visual base) + deterministic SVG/Pillow semantic overlay",
+    "generated_at": "2026-08-09"
+  },
+  {
+    "semantic_id": "transformer-attention-routing-infographic",
+    "source_path": "docs/part-01-foundations/ch03-transformer-attention.md",
+    "source_asset": "assets/infographics/source/transformer-attention-infographic-base.png",
+    "svg_asset": "docs/assets/infographics/svg/transformer-attention-routing-infographic.svg",
+    "png_asset": "docs/assets/infographics/png/transformer-attention-routing-infographic-2x.png",
+    "width": 1024,
+    "height": 1536,
+    "source_sha256": "d37e42032b372daa71e56a6975890a5ded5975b0bb612f38c93ec5ac1e45edc2",
+    "svg_sha256": "405dc8dc209edea1ff373e16123bafeff26c613954ff910f080a0f84329469c8",
+    "png_sha256": "060dce04c38052f5a83f46fc1c84d02d50251c2cf53aaeb7ee9b32a65bfcb1d8",
     "generated_with": "built-in imagegen (visual base) + deterministic SVG/Pillow semantic overlay",
     "generated_at": "2026-08-09"
   }

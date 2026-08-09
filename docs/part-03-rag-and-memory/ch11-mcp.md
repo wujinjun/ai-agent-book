@@ -9,6 +9,14 @@ MCP 用统一协议连接模型应用与上下文能力。本章目标是区分 
 
 MCP 把宿主、协议客户端与能力服务器分层。下图先界定组件职责，随后再展开生命周期、传输和安全边界。
 
+下面的信息图先把协议分层与信任边界放进同一视野。Host 内部的 MCP Client 负责把应用意图转换为协议请求；中间层负责可选能力发现、每请求元数据和传输；Server 暴露 Tool、Resource 与 Prompt，再访问文件、数据库、代码仓库或既有 REST 服务。右侧安全轨道贯穿所有层，强调能力可见不等于主体已经获得业务授权。
+
+![MCP Host 与 Client、能力发现和每请求元数据、stdio 或 HTTP 传输、多个 Server 能力以及文件数据库代码仓库和 REST 服务之间的协议与信任边界](../assets/infographics/png/mcp-protocol-boundary-infographic-2x.png)
+
+*图 11-A：MCP 的协议层、能力层与信任边界。纵向主路径表示调用跨越的层次；右侧轨道表示每次调用都必须经过的主体身份、用户同意、最小权限和审计约束，而不是一次握手后永久生效的授权。*
+
+图中的三个 Server 用于说明一个 Host 可以连接不同能力提供方，不表示生产系统必须拆成三个进程。Tool、Resource 与 Prompt 是协议原语，不是安全等级：即使 Resource 只读，也可能泄露敏感数据；即使 Prompt 只是模板，也不能自动提升为更高优先级指令。
+
 ```mermaid
 %% id: mcp-host-client-server-capabilities
 %% title: MCP Host、Client、Server 与能力原语

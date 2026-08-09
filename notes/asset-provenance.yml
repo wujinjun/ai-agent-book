@@ -91,6 +91,27 @@ assets:
     sha256: ebdda8eca820ac81d7e1bd745a68fe997bb6b1f210818d175b03da92c5e0954b
     rights_basis: original repository technical content; generated visual base contains no third-party logos or copied artwork
     external_content: false
+  - path: docs/assets/infographics/png/transformer-attention-routing-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with an AI-generated visual base and deterministic semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 060dce04c38052f5a83f46fc1c84d02d50251c2cf53aaeb7ee9b32a65bfcb1d8
+    rights_basis: original repository technical content; generated visual base contains no third-party logos or copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/agent-runtime-control-loop-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with an AI-generated visual base and deterministic semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 70a74c7e0895a337c77b7888f5729e40f2aca9f8f6ec44757ff1aba91ea09ba7
+    rights_basis: original repository technical content; generated visual base contains no third-party logos or copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/mcp-protocol-boundary-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with an AI-generated visual base and deterministic semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 5b847b7ad5e8d605208acf161f0f48e01cc9d11ba0d70de03130c01692725ddb
+    rights_basis: original repository technical content; generated visual base contains no third-party logos or copied artwork
+    external_content: false
   - path: training/slides/ai-agent-engineering-training.pptx
     kind: generated_training_deck
     origin: repository training curriculum and diagrams

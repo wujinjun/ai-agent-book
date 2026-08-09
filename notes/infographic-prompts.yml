@@ -39,3 +39,36 @@ pilots:
     generated_at: 2026-08-09
     source_asset: assets/infographics/source/enterprise-agent-platform-infographic-base-v2.png
     source_sha256: 9e6c9556f4c1c212e4805cc670aa27f78b77a7f397ab9131fede2bdff1eb4b55
+  - id: transformer-attention-routing-infographic
+    source_path: docs/part-01-foundations/ch03-transformer-attention.md
+    mermaid_id: qkv-attention-information-routing
+    status: base_selected
+    use_case: infographic-diagram
+    prompt: >-
+      场景与用途：出版级中文 AI 工程教材的无文字 Transformer 与 Attention 原理信息图底稿，面向软件工程师，纵向 2:3 构图，适合 A4 页面。主体与结构：从上到下形成六个清晰的大型分层区域，依次用抽象视觉表现输入 token 与位置信息、同一表示分成 Query/Key/Value 三路、相关性矩阵与掩码、加权聚合、多头并行后合并、残差归一化前馈网络以及逐 token 解码循环。每层用少量几何卡片、向量点阵、矩阵网格、聚合束和堆叠模块表达，中心轴清楚，保留充足负空间供后续中文标签覆盖。视觉风格：暖白纸张背景，深蓝、青绿、暖橙、紫色的克制配色，现代扁平矢量编辑插画，细腻但不花哨，边界和层次在灰度打印中仍可辨认，专业技术出版物质感。严格约束：不要任何文字、字母、数字、公式、Logo、水印、代码、UI 截图、拟真机器人、霓虹科幻效果；不要生成带语义的箭头或连线，最终信息关系将由可编辑 SVG 叠加；不要超过十二个主要视觉对象。
+    generated_with: built-in imagegen
+    generated_at: 2026-08-09
+    source_asset: assets/infographics/source/transformer-attention-infographic-base.png
+    source_sha256: d37e42032b372daa71e56a6975890a5ded5975b0bb612f38c93ec5ac1e45edc2
+  - id: agent-runtime-control-loop-infographic
+    source_path: docs/part-02-agent-core/ch09-agent-runtime.md
+    mermaid_id: agent-observation-action-state-loop
+    status: base_selected
+    use_case: infographic-diagram
+    prompt: >-
+      场景与用途：出版级中文 AI Agent 工程教材的无文字 Agent Runtime 控制循环信息图底稿，面向软件工程师，纵向 2:3 构图，适合 A4 页面。主体与结构：中心是一个清晰的闭环运行时，由五个大型分区表现请求与上下文、模型决策与计划、策略门禁和工具执行、Observation 与状态更新、终止检查与结果；闭环之外配置独立的人工审批闸门、Checkpoint 与失败恢复、预算和超时边界、Trace 与审计轨道。使用抽象卡片、状态胶囊、工具模块、盾牌、检查点、时钟和轨迹节点表达，分区保留充足负空间供后续中文标签覆盖。视觉风格：暖白纸张背景，深蓝、青绿、暖橙、紫色与少量警示红，现代扁平矢量编辑插画，专业克制，卡片层级明确，在灰度打印中仍可辨认。严格约束：不要任何文字、字母、数字、公式、Logo、水印、代码、UI 截图、拟真机器人、霓虹科幻效果；不要生成带语义的箭头或连线，最终控制流由可编辑 SVG 叠加；不要出现人物头像；不要超过十二个主要视觉对象。
+    generated_with: built-in imagegen
+    generated_at: 2026-08-09
+    source_asset: assets/infographics/source/agent-runtime-control-loop-infographic-base.png
+    source_sha256: a978bd90345a6bfa46c4fd322aeb53df56ef7f744c6ca147451095d5bbeb9c72
+  - id: mcp-protocol-boundary-infographic
+    source_path: docs/part-03-rag-and-memory/ch11-mcp.md
+    mermaid_id: mcp-host-client-server-capabilities
+    status: base_selected
+    use_case: infographic-diagram
+    prompt: >-
+      场景与用途：出版级中文 AI Agent 工程教材的无文字 MCP 协议与信任边界信息图底稿，面向软件工程师，纵向 2:3 构图，适合 A4 页面。主体与结构：从上到下形成四个大型层次。顶部表现宿主应用内部包含一个 MCP Client；中部表现会话、能力协商和 stdio/HTTP 传输边界；下部表现多个 MCP Server，每个服务端内部留出三类能力区域，用抽象工具、文档资源和提示模板图标表示；最底部表现文件系统、数据库、代码仓库和外部 REST 服务。画面侧边预留贯穿式安全治理轨道，用盾牌、身份凭证、用户同意、权限范围和审计记录的抽象图标表达。各区留出充足负空间供后续中文标签覆盖。视觉风格：暖白纸张背景，深蓝、青绿、暖橙、紫色与少量警示红，现代扁平矢量编辑插画，卡片与边界清晰，专业克制，在灰度打印中仍能识别层级。严格约束：不要任何文字、字母、数字、公式、Logo、水印、代码、UI 截图、真实云厂商图标、拟真机器人、霓虹科幻效果；不要生成带语义的箭头或连线，最终协议流和边界由可编辑 SVG 叠加；不要超过十二个主要视觉对象。
+    generated_with: built-in imagegen
+    generated_at: 2026-08-09
+    source_asset: assets/infographics/source/mcp-protocol-boundary-infographic-base.png
+    source_sha256: 7451d34f0b948ee6de9af0ea35dc3977f88bce61a02c05dee055ba2e3bce668e

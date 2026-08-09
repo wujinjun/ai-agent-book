@@ -27,6 +27,7 @@ class Label:
     size: int
     weight: str = "regular"
     color: str = "#203449"
+    stroke_width: int = 0
 
 
 @dataclass(frozen=True, slots=True)
@@ -62,9 +63,15 @@ def _svg_text(label: Label) -> str:
         y = start + index * label.size * 1.25
         tspans.append(f'<tspan x="{label.x}" y="{y:.1f}">{html.escape(line)}</tspan>')
     weight = 700 if label.weight == "bold" else 500
+    stroke = ""
+    if label.stroke_width:
+        stroke = (
+            f' stroke="#FFFDF8" stroke-width="{label.stroke_width * 2}" '
+            'paint-order="stroke fill" stroke-linejoin="round"'
+        )
     return (
         f'<text text-anchor="middle" font-size="{label.size}" font-weight="{weight}" '
-        f'fill="{label.color}">{"".join(tspans)}</text>'
+        f'fill="{label.color}"{stroke}>{"".join(tspans)}</text>'
     )
 
 
@@ -477,6 +484,219 @@ def build_pilot_three() -> InfographicRecord:
     )
 
 
+def _build_portrait_infographic(
+    *,
+    semantic_id: str,
+    title: str,
+    description: str,
+    source_path: str,
+    source_name: str,
+    labels: list[Label],
+    arrows: list[list[tuple[int, int]]],
+) -> InfographicRecord:
+    """Compose a generated visual base with deterministic semantic overlays."""
+    source = ASSET_ROOT / f"source/{source_name}"
+    if not source.is_file():
+        raise FileNotFoundError(f"缺少信息图底稿：{source}")
+    image = Image.open(source).convert("RGB")
+    width, height = image.size
+    encoded = base64.b64encode(source.read_bytes()).decode("ascii")
+    svg_paths = []
+    for points in arrows:
+        commands = [f"M {points[0][0]} {points[0][1]}"]
+        commands.extend(f"L {x} {y}" for x, y in points[1:])
+        svg_paths.append(f'<path d="{" ".join(commands)}"/>')
+    svg_lines = [
+        (
+            f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
+            f'viewBox="0 0 {width} {height}" role="img" aria-labelledby="title desc">'
+        ),
+        f'<title id="title">{html.escape(title)}</title>',
+        f'<desc id="desc">{html.escape(description)}</desc>',
+        (
+            '<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" '
+            'refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" '
+            'fill="#486985"/></marker></defs>'
+        ),
+        (
+            f'<image href="data:image/png;base64,{encoded}" x="0" y="0" '
+            f'width="{width}" height="{height}"/>'
+        ),
+        (
+            '<g fill="none" stroke="#486985" stroke-width="4" stroke-linecap="round" '
+            'stroke-linejoin="round" marker-end="url(#arrow)">'
+        ),
+        *svg_paths,
+        '</g><g font-family="Noto Sans SC, Source Han Sans SC, sans-serif">',
+        *[_svg_text(label) for label in labels],
+        '</g></svg>',
+    ]
+    svg_text = "\n".join(svg_lines) + "\n"
+
+    svg_output = PUBLISH_ROOT / f"svg/{semantic_id}.svg"
+    png_output = PUBLISH_ROOT / f"png/{semantic_id}-2x.png"
+    svg_source = ASSET_ROOT / f"svg/{semantic_id}.svg"
+    png_source = ASSET_ROOT / f"png/{semantic_id}-2x.png"
+    for directory in {svg_output.parent, png_output.parent, svg_source.parent, png_source.parent}:
+        directory.mkdir(parents=True, exist_ok=True)
+    svg_output.write_text(svg_text, encoding="utf-8")
+    svg_source.write_text(svg_text, encoding="utf-8")
+
+    draw = ImageDraw.Draw(image)
+    for arrow in arrows:
+        _draw_arrow(draw, arrow)
+    for label in labels:
+        draw.multiline_text(
+            (label.x, label.y),
+            label.text,
+            font=_font(label.size, label.weight),
+            fill=label.color,
+            anchor="mm",
+            align="center",
+            spacing=max(3, label.size // 4),
+            stroke_width=label.stroke_width,
+            stroke_fill="#FFFDF8",
+        )
+    published = image.resize(
+        (width * 3 // 2, height * 3 // 2),
+        resample=Image.Resampling.LANCZOS,
+    )
+    published.save(png_output, optimize=True)
+    published.save(png_source, optimize=True)
+    return InfographicRecord(
+        semantic_id=semantic_id,
+        source_path=source_path,
+        source_asset=source.relative_to(ROOT).as_posix(),
+        svg_asset=svg_output.relative_to(ROOT).as_posix(),
+        png_asset=png_output.relative_to(ROOT).as_posix(),
+        width=width,
+        height=height,
+        source_sha256=_sha256(source),
+        svg_sha256=_sha256(svg_output),
+        png_sha256=_sha256(png_output),
+        generated_with=(
+            "built-in imagegen (visual base) + deterministic SVG/Pillow semantic overlay"
+        ),
+        generated_at="2026-08-09",
+    )
+
+
+def build_transformer_infographic() -> InfographicRecord:
+    labels = [
+        Label(512, 28, "Transformer：Attention 的信息路由", 27, "bold", "#24476B", 2),
+        Label(512, 274, "输入表示：Token Embedding + 位置信息", 21, "bold", "#24476B", 3),
+        Label(195, 465, "Query：要找什么", 19, "bold", "#24476B", 3),
+        Label(512, 465, "Key：匹配线索", 19, "bold", "#177B72", 3),
+        Label(825, 465, "Value：实际内容", 19, "bold", "#C8662D", 3),
+        Label(386, 713, "相关性得分 + Softmax", 19, "bold", "#7656A5", 3),
+        Label(754, 713, "因果 Mask：不能看未来", 19, "bold", "#4E5968", 3),
+        Label(512, 923, "按权重读取 Value，形成上下文表示", 20, "bold", "#7656A5", 3),
+        Label(512, 1174, "多头并行 → Concat → 输出投影", 20, "bold", "#24476B", 3),
+        Label(274, 1420, "残差 · 归一化 · FFN", 19, "bold", "#7656A5", 3),
+        Label(748, 1420, "Decoder-only\n逐 Token 生成", 19, "bold", "#24476B", 3),
+    ]
+    arrows = [
+        [(512, 286), (512, 302)],
+        [(512, 483), (512, 496)],
+        [(512, 735), (512, 750)],
+        [(512, 947), (512, 962)],
+        [(512, 1191), (512, 1208)],
+    ]
+    return _build_portrait_infographic(
+        semantic_id="transformer-attention-routing-infographic",
+        title="Transformer：Attention 的信息路由",
+        description=(
+            "输入表示投影为 Query、Key 和 Value，Query 与 Key 计算相关性并应用因果掩码，"
+            "归一化权重读取 Value；多头结果拼接后进入残差、归一化和前馈网络，"
+            "Decoder-only 模型再逐 Token 解码。"
+        ),
+        source_path="docs/part-01-foundations/ch03-transformer-attention.md",
+        source_name="transformer-attention-infographic-base.png",
+        labels=labels,
+        arrows=arrows,
+    )
+
+
+def build_agent_runtime_infographic() -> InfographicRecord:
+    labels = [
+        Label(512, 29, "Agent Runtime：受控决策与执行闭环", 27, "bold", "#24476B", 2),
+        Label(170, 230, "人工审批\n允许 · 拒绝", 20, "bold", "#24476B", 3),
+        Label(512, 230, "Checkpoint\n状态持久化", 20, "bold", "#177B72", 3),
+        Label(854, 230, "预算与超时\n步数 · Token · 成本", 19, "bold", "#B94A48", 3),
+        Label(500, 520, "请求与上下文", 21, "bold", "#24476B", 3),
+        Label(750, 700, "模型决策\n与计划", 21, "bold", "#177B72", 3),
+        Label(680, 1070, "策略门禁\n与工具执行", 21, "bold", "#C8662D", 3),
+        Label(350, 1070, "Observation\n与状态更新", 21, "bold", "#7656A5", 3),
+        Label(238, 700, "终止检查\n完成 · 暂停 · 失败", 20, "bold", "#B94A48", 3),
+        Label(512, 765, "Agent Runtime\n状态、权限和终止权在模型之外", 22, "bold", "#24476B", 3),
+        Label(512, 1445, "Trace · 事件 · 审计证据", 21, "bold", "#7656A5", 3),
+    ]
+    arrows = [
+        [(170, 396), (330, 452)],
+        [(512, 356), (512, 408)],
+        [(854, 396), (694, 452)],
+        [(625, 530), (690, 575)],
+        [(822, 820), (742, 940)],
+        [(590, 1160), (455, 1160)],
+        [(260, 1020), (190, 880)],
+        [(260, 600), (395, 505)],
+        [(512, 1225), (512, 1320)],
+    ]
+    return _build_portrait_infographic(
+        semantic_id="agent-runtime-control-loop-infographic",
+        title="Agent Runtime：受控决策与执行闭环",
+        description=(
+            "Agent Runtime 在请求上下文、模型决策、策略门禁与工具执行、观察状态更新、"
+            "终止检查之间循环；人工审批、Checkpoint、预算超时和 Trace 审计形成外部控制边界。"
+        ),
+        source_path="docs/part-02-agent-core/ch09-agent-runtime.md",
+        source_name="agent-runtime-control-loop-infographic-base.png",
+        labels=labels,
+        arrows=arrows,
+    )
+
+
+def build_mcp_infographic() -> InfographicRecord:
+    labels = [
+        Label(512, 27, "MCP：协议层、能力层与信任边界", 27, "bold", "#24476B", 2),
+        Label(285, 130, "Host / Agent 应用", 23, "bold", "#24476B", 3),
+        Label(664, 390, "MCP Client", 22, "bold", "#177B72", 3),
+        Label(162, 714, "能力发现\n（可选）", 18, "bold", "#177B72", 3),
+        Label(417, 714, "每请求元数据\n版本 · Client 信息", 18, "bold", "#177B72", 3),
+        Label(670, 714, "stdio / HTTP\n传输边界", 18, "bold", "#177B72", 3),
+        Label(168, 1138, "MCP Server A", 16, "bold", "#7656A5", 3),
+        Label(416, 1138, "MCP Server B", 16, "bold", "#7656A5", 3),
+        Label(666, 1138, "MCP Server C", 16, "bold", "#7656A5", 3),
+        Label(145, 1407, "文件系统", 18, "bold", "#C8662D", 3),
+        Label(330, 1407, "数据库", 18, "bold", "#C8662D", 3),
+        Label(513, 1407, "代码仓库", 18, "bold", "#C8662D", 3),
+        Label(698, 1407, "REST 服务", 18, "bold", "#C8662D", 3),
+        Label(910, 115, "信任边界", 17, "bold", "#4E5968", 3),
+        Label(910, 365, "主体身份", 17, "bold", "#24476B", 3),
+        Label(910, 625, "用户同意", 17, "bold", "#177B72", 3),
+        Label(910, 890, "最小权限", 17, "bold", "#C8662D", 3),
+        Label(910, 1160, "审计记录", 17, "bold", "#B94A48", 3),
+    ]
+    arrows = [
+        [(512, 478), (512, 510)],
+        [(512, 766), (512, 805)],
+        [(512, 1200), (512, 1230)],
+    ]
+    return _build_portrait_infographic(
+        semantic_id="mcp-protocol-boundary-infographic",
+        title="MCP：协议层、能力层与信任边界",
+        description=(
+            "宿主应用中的 MCP Client 通过可选能力发现和每请求元数据，经 stdio 或 HTTP 调用"
+            "多个 MCP Server；Server 暴露 Tool、Resource 与 Prompt，并受主体身份、用户同意、"
+            "最小权限和审计约束后访问文件、数据库、代码仓库与 REST 服务。"
+        ),
+        source_path="docs/part-03-rag-and-memory/ch11-mcp.md",
+        source_name="mcp-protocol-boundary-infographic-base.png",
+        labels=labels,
+        arrows=arrows,
+    )
+
+
 def write_manifest(records: list[InfographicRecord]) -> Path:
     output = ASSET_ROOT / "manifest.json"
     existing: dict[str, dict[str, object]] = {}
@@ -501,7 +721,11 @@ def write_manifest(records: list[InfographicRecord]) -> Path:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--pilot", choices=("p01", "p02", "p03", "all"), default="all")
+    parser.add_argument(
+        "--pilot",
+        choices=("p01", "p02", "p03", "transformer", "runtime", "mcp", "all"),
+        default="all",
+    )
     args = parser.parse_args()
     records: list[InfographicRecord] = []
     if args.pilot in {"p01", "all"}:
@@ -510,6 +734,12 @@ def main() -> int:
         records.append(build_pilot_two())
     if args.pilot in {"p03", "all"}:
         records.append(build_pilot_three())
+    if args.pilot in {"transformer", "all"}:
+        records.append(build_transformer_infographic())
+    if args.pilot in {"runtime", "all"}:
+        records.append(build_agent_runtime_infographic())
+    if args.pilot in {"mcp", "all"}:
+        records.append(build_mcp_infographic())
     manifest = write_manifest(records)
     print(f"Built {len(records)} infographic(s); manifest: {manifest}")
     return 0

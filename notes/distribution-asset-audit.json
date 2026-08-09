@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-08-08",
+  "checked_at": "2026-08-09",
   "status": "passed_with_manual_review_required",
   "pdf": {
     "path": "output/pdf/ai-agent-book-2026.pdf",
-    "sha256": "5156be475a00d84bd264dce96ea54054b584aad162cda4a0d692609a05a31aba",
-    "bytes": 11337880,
-    "pages": 454,
+    "sha256": "e707a4c87a2e1267779c004aeec91cd4fa3ff29d979ed7933a0391f18145947b",
+    "bytes": 24264359,
+    "pages": 461,
     "media_boxes": {
-      "594.96x841.92": 454
+      "594.96x841.92": 461
     },
     "cropbox_differs_from_mediabox_pages": 0,
     "font_resources": 1073,
@@ -20,17 +20,17 @@
     },
     "non_embedded_fonts": [],
     "unapproved_system_fonts": [],
-    "raster_image_xobjects": 2
+    "raster_image_xobjects": 8
   },
   "epub": {
     "path": "output/epub/ai-agent-book-2026.epub",
-    "sha256": "89a0e716bf1ce7412eb2d407daef28e5621c6fa1a4ab23efd5fdd76d96272436",
-    "bytes": 13443807,
+    "sha256": "9a0ddab754471db2bc726da962b3f10cb5cdb20c7a7fb964bf28d7bdaaa51c77",
+    "bytes": 22973043,
     "archive_entries_by_suffix": {
       ".css": 1,
       ".ncx": 1,
       ".opf": 1,
-      ".png": 237,
+      ".png": 243,
       ".svg": 235,
       ".xhtml": 77,
       ".xml": 2,
@@ -76,6 +76,12 @@
   "source_assets": {
     "registry": "notes/asset-provenance.yml",
     "referenced_non_diagram_assets": [
+      "docs/assets/infographics/png/agent-runtime-control-loop-infographic-2x.png",
+      "docs/assets/infographics/png/enterprise-agent-platform-infographic-2x.png",
+      "docs/assets/infographics/png/llm-product-agent-system-infographic-2x.png",
+      "docs/assets/infographics/png/mcp-protocol-boundary-infographic-2x.png",
+      "docs/assets/infographics/png/rag-evidence-pipeline-infographic-2x.png",
+      "docs/assets/infographics/png/transformer-attention-routing-infographic-2x.png",
       "docs/assets/readme-home.png",
       "docs/assets/trace-sample.png",
       "docs/assets/training-deck-preview.png"
@@ -155,6 +161,96 @@
         "external_content": true,
         "computed_sha256": "9f9664e2edf6f045c11e774f9bd0be6993971f2544a39061a5ce478b96b051f8",
         "bytes": 131128
+      },
+      {
+        "path": "docs/assets/infographics/png/agent-runtime-control-loop-infographic-2x.png",
+        "kind": "generated_textbook_infographic",
+        "origin": "repository chapter logic with an AI-generated visual base and deterministic semantic overlay",
+        "generator": "built-in imagegen + scripts/build_infographics.py",
+        "sha256": "70a74c7e0895a337c77b7888f5729e40f2aca9f8f6ec44757ff1aba91ea09ba7",
+        "rights_basis": "original repository technical content; generated visual base contains no third-party logos or copied artwork",
+        "external_content": false,
+        "computed_sha256": "70a74c7e0895a337c77b7888f5729e40f2aca9f8f6ec44757ff1aba91ea09ba7",
+        "bytes": 2024618,
+        "pixels": {
+          "width": 1536,
+          "height": 2304
+        }
+      },
+      {
+        "path": "docs/assets/infographics/png/enterprise-agent-platform-infographic-2x.png",
+        "kind": "generated_textbook_infographic",
+        "origin": "repository chapter logic with an AI-generated visual base and deterministic semantic overlay",
+        "generator": "built-in imagegen + scripts/build_infographics.py",
+        "sha256": "ebdda8eca820ac81d7e1bd745a68fe997bb6b1f210818d175b03da92c5e0954b",
+        "rights_basis": "original repository technical content; generated visual base contains no third-party logos or copied artwork",
+        "external_content": false,
+        "computed_sha256": "ebdda8eca820ac81d7e1bd745a68fe997bb6b1f210818d175b03da92c5e0954b",
+        "bytes": 1788954,
+        "pixels": {
+          "width": 1536,
+          "height": 2304
+        }
+      },
+      {
+        "path": "docs/assets/infographics/png/llm-product-agent-system-infographic-2x.png",
+        "kind": "generated_textbook_infographic",
+        "origin": "repository chapter logic with an AI-generated visual base and deterministic semantic overlay",
+        "generator": "built-in imagegen + scripts/build_infographics.py",
+        "sha256": "c1cf096e9fcfd2b2d1c5dae7f5657e5ec9fbb1ffdad8f05ce05c1c9add06db3d",
+        "rights_basis": "original repository technical content; generated visual base contains no third-party logos or copied artwork",
+        "external_content": false,
+        "computed_sha256": "c1cf096e9fcfd2b2d1c5dae7f5657e5ec9fbb1ffdad8f05ce05c1c9add06db3d",
+        "bytes": 1098864,
+        "pixels": {
+          "width": 1536,
+          "height": 1024
+        }
+      },
+      {
+        "path": "docs/assets/infographics/png/mcp-protocol-boundary-infographic-2x.png",
+        "kind": "generated_textbook_infographic",
+        "origin": "repository chapter logic with an AI-generated visual base and deterministic semantic overlay",
+        "generator": "built-in imagegen + scripts/build_infographics.py",
+        "sha256": "5b847b7ad5e8d605208acf161f0f48e01cc9d11ba0d70de03130c01692725ddb",
+        "rights_basis": "original repository technical content; generated visual base contains no third-party logos or copied artwork",
+        "external_content": false,
+        "computed_sha256": "5b847b7ad5e8d605208acf161f0f48e01cc9d11ba0d70de03130c01692725ddb",
+        "bytes": 1804541,
+        "pixels": {
+          "width": 1536,
+          "height": 2304
+        }
+      },
+      {
+        "path": "docs/assets/infographics/png/rag-evidence-pipeline-infographic-2x.png",
+        "kind": "generated_textbook_infographic",
+        "origin": "repository chapter logic with an AI-generated visual base and deterministic semantic overlay",
+        "generator": "built-in imagegen + scripts/build_infographics.py",
+        "sha256": "bf69f80c3cad2debaa9dddceecabd5a75204509c29ad99177643d06bfba761f1",
+        "rights_basis": "original repository technical content; generated visual base contains no third-party logos or copied artwork",
+        "external_content": false,
+        "computed_sha256": "bf69f80c3cad2debaa9dddceecabd5a75204509c29ad99177643d06bfba761f1",
+        "bytes": 1026418,
+        "pixels": {
+          "width": 1536,
+          "height": 1024
+        }
+      },
+      {
+        "path": "docs/assets/infographics/png/transformer-attention-routing-infographic-2x.png",
+        "kind": "generated_textbook_infographic",
+        "origin": "repository chapter logic with an AI-generated visual base and deterministic semantic overlay",
+        "generator": "built-in imagegen + scripts/build_infographics.py",
+        "sha256": "060dce04c38052f5a83f46fc1c84d02d50251c2cf53aaeb7ee9b32a65bfcb1d8",
+        "rights_basis": "original repository technical content; generated visual base contains no third-party logos or copied artwork",
+        "external_content": false,
+        "computed_sha256": "060dce04c38052f5a83f46fc1c84d02d50251c2cf53aaeb7ee9b32a65bfcb1d8",
+        "bytes": 1782111,
+        "pixels": {
+          "width": 1536,
+          "height": 2304
+        }
       },
       {
         "path": "docs/assets/readme-home.png",

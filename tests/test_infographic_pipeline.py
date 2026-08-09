@@ -73,3 +73,35 @@ def test_enterprise_architecture_pilot_integrates_layer_boundaries() -> None:
     )
     assert (ROOT / record["svg_asset"]).is_file()
     assert (ROOT / record["png_asset"]).is_file()
+
+
+def test_second_batch_infographics_are_integrated_and_high_resolution() -> None:
+    manifest = json.loads(
+        (ROOT / "assets/infographics/manifest.json").read_text(encoding="utf-8")
+    )
+    expected = {
+        "transformer-attention-routing-infographic": (
+            "docs/part-01-foundations/ch03-transformer-attention.md",
+            "图 3-A",
+        ),
+        "agent-runtime-control-loop-infographic": (
+            "docs/part-02-agent-core/ch09-agent-runtime.md",
+            "图 9-A",
+        ),
+        "mcp-protocol-boundary-infographic": (
+            "docs/part-03-rag-and-memory/ch11-mcp.md",
+            "图 11-A",
+        ),
+    }
+    records = {item["semantic_id"]: item for item in manifest}
+    for semantic_id, (chapter_path, figure_number) in expected.items():
+        record = records[semantic_id]
+        chapter = (ROOT / chapter_path).read_text(encoding="utf-8")
+        assert f"{semantic_id}-2x.png" in chapter
+        assert figure_number in chapter
+        svg = ROOT / record["svg_asset"]
+        png = ROOT / record["png_asset"]
+        assert "<title" in svg.read_text(encoding="utf-8")
+        assert "<desc" in svg.read_text(encoding="utf-8")
+        with Image.open(png) as image:
+            assert image.size == (1536, 2304)
