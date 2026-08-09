@@ -835,6 +835,176 @@ def build_observability_infographic() -> InfographicRecord:
     )
 
 
+def build_security_infographic() -> InfographicRecord:
+    labels = [
+        Label(512, 26, "Agent 安全：不可绕过的纵深防御", 27, "bold", "#24476B", 2),
+        Label(150, 190, "网页", 17, "bold", "#B94A48", 3),
+        Label(350, 190, "邮件", 17, "bold", "#B94A48", 3),
+        Label(550, 190, "文档", 17, "bold", "#B94A48", 3),
+        Label(720, 190, "文件", 17, "bold", "#B94A48", 3),
+        Label(430, 360, "不可信内容与模型决策区", 22, "bold", "#B94A48", 3),
+        Label(410, 475, "来源标记与上下文隔离", 19, "bold", "#177B72", 3),
+        Label(410, 580, "主体身份与对象授权", 19, "bold", "#177B72", 3),
+        Label(410, 685, "Tool 参数、网络与文件 allowlist", 18, "bold", "#177B72", 3),
+        Label(410, 790, "Sandbox：进程、文件、网络、资源", 18, "bold", "#177B72", 3),
+        Label(410, 895, "风险分级与人工审批绑定", 19, "bold", "#177B72", 3),
+        Label(410, 1000, "执行前重新校验主体、资源与状态", 18, "bold", "#177B72", 3),
+        Label(175, 1225, "受限工具", 20, "bold", "#24476B", 3),
+        Label(420, 1225, "敏感数据", 20, "bold", "#C8662D", 3),
+        Label(680, 1225, "外部副作用", 20, "bold", "#7656A5", 3),
+        Label(915, 185, "Secret 隔离", 17, "bold", "#24476B", 3),
+        Label(915, 485, "最小权限", 17, "bold", "#24476B", 3),
+        Label(915, 780, "预算与终止", 17, "bold", "#24476B", 3),
+        Label(915, 1080, "租户边界", 17, "bold", "#24476B", 3),
+        Label(160, 1445, "不可篡改 Audit", 17, "bold", "#7656A5", 3),
+        Label(410, 1445, "安全测试", 17, "bold", "#7656A5", 3),
+        Label(650, 1445, "告警", 17, "bold", "#7656A5", 3),
+        Label(870, 1445, "事件响应", 17, "bold", "#7656A5", 3),
+    ]
+    arrows = [
+        [(410, 400), (410, 418)],
+        [(410, 510), (410, 525)],
+        [(410, 615), (410, 630)],
+        [(410, 720), (410, 735)],
+        [(410, 825), (410, 840)],
+        [(410, 930), (410, 945)],
+        [(410, 1035), (410, 1055)],
+        [(512, 1325), (512, 1350)],
+    ]
+    return _build_portrait_infographic(
+        semantic_id="agent-security-trust-boundary-infographic",
+        title="Agent 安全：不可绕过的纵深防御",
+        description=(
+            "网页邮件文档等不可信内容进入模型后，动作仍必须依次经过上下文隔离、主体与对象"
+            "授权、参数与网络 allowlist、Sandbox、风险审批和执行前重校验；Secret、权限、"
+            "预算、租户与审计边界均在模型之外强制执行。"
+        ),
+        source_path="docs/part-05-engineering/ch30-security.md",
+        source_name="agent-security-boundary-infographic-base.png",
+        labels=labels,
+        arrows=arrows,
+    )
+
+
+def build_multi_agent_infographic() -> InfographicRecord:
+    labels = [
+        Label(512, 26, "Multi-Agent：显式协调、共享状态与终止", 27, "bold", "#24476B", 2),
+        Label(120, 170, "Supervisor", 21, "bold", "#24476B", 3),
+        Label(370, 110, "任务契约", 18, "bold", "#24476B", 3),
+        Label(730, 180, "验收 Rubric · 预算 · 允许工具", 19, "bold", "#24476B", 3),
+        Label(190, 470, "Worker A\n检索与数据", 20, "bold", "#177B72", 3),
+        Label(510, 470, "Worker B\n文档与分析", 20, "bold", "#4B7D3A", 3),
+        Label(830, 470, "Worker C\n工具与执行", 20, "bold", "#C8662D", 3),
+        Label(512, 650, "每个 Worker 使用独立的最小权限 Scope", 19, "bold", "#4E5968", 3),
+        Label(110, 800, "Handoff\nMessage Envelope", 17, "bold", "#177B72", 3),
+        Label(
+            512,
+            835,
+            "Typed Blackboard\nTask State · Artifact · Evidence · Version",
+            21,
+            "bold",
+            "#7656A5",
+            3,
+        ),
+        Label(910, 800, "Shared Memory\nArtifact Store", 17, "bold", "#177B72", 3),
+        Label(512, 1110, "Reviewer：独立 Rubric · 通过 / 返工", 20, "bold", "#C8662D", 3),
+        Label(130, 1415, "依赖 DAG", 17, "bold", "#B94A48", 3),
+        Label(315, 1415, "Deadlock 检测", 17, "bold", "#B94A48", 3),
+        Label(500, 1415, "回合 · Cost · 时间", 17, "bold", "#B94A48", 3),
+        Label(690, 1415, "无进展检测", 17, "bold", "#B94A48", 3),
+        Label(880, 1415, "Done / Failed", 17, "bold", "#B94A48", 3),
+    ]
+    arrows = [
+        [(512, 300), (190, 328)],
+        [(512, 300), (510, 328)],
+        [(512, 300), (830, 328)],
+        [(190, 678), (350, 720)],
+        [(510, 678), (510, 720)],
+        [(830, 678), (670, 720)],
+        [(512, 1025), (512, 1045)],
+        [(512, 1215), (512, 1235)],
+    ]
+    return _build_portrait_infographic(
+        semantic_id="multi-agent-coordination-infographic",
+        title="Multi-Agent：显式协调、共享状态与终止",
+        description=(
+            "Supervisor 按任务契约和预算分派 Worker，每个 Worker 使用独立最小权限并向类型化"
+            "Blackboard 提交版本化 Artifact 与 Evidence；Reviewer 独立验收，运行时通过依赖、"
+            "死锁、预算、无进展和完成条件可靠终止。"
+        ),
+        source_path="docs/part-07-advanced/ch32-multi-agent-principles.md",
+        source_name="multi-agent-coordination-infographic-base.png",
+        labels=labels,
+        arrows=arrows,
+    )
+
+
+def build_project10_infographic() -> InfographicRecord:
+    labels = [
+        Label(512, 26, "项目 10：企业 Agent 平台部署拓扑", 27, "bold", "#24476B", 2),
+        Label(145, 205, "Tenant 用户与管理员", 18, "bold", "#24476B", 3),
+        Label(335, 150, "OIDC 身份", 17, "bold", "#24476B", 3),
+        Label(485, 150, "租户策略", 17, "bold", "#24476B", 3),
+        Label(635, 150, "限流与配额", 17, "bold", "#24476B", 3),
+        Label(785, 150, "请求过滤", 17, "bold", "#24476B", 3),
+        Label(560, 315, "Ingress / Load Balancer", 20, "bold", "#24476B", 3),
+        Label(275, 530, "API 实例 × N", 21, "bold", "#177B72", 3),
+        Label(
+            700,
+            500,
+            "控制面发布\nAgent · Tool · MCP · Prompt\nPolicy · Version",
+            18,
+            "bold",
+            "#177B72",
+            3,
+        ),
+        Label(150, 850, "PostgreSQL\n权威 Run 状态", 19, "bold", "#C8662D", 3),
+        Label(390, 850, "Redis\n可恢复唤醒信号", 19, "bold", "#C8662D", 3),
+        Label(700, 850, "Worker Pool\n租约 · 幂等 · 取消", 20, "bold", "#C8662D", 3),
+        Label(130, 1060, "Agent Runtime", 16, "bold", "#7656A5", 3),
+        Label(315, 1060, "Model Gateway", 16, "bold", "#7656A5", 3),
+        Label(500, 1060, "Tool / MCP", 16, "bold", "#7656A5", 3),
+        Label(675, 1060, "RAG / pgvector", 16, "bold", "#7656A5", 3),
+        Label(835, 1060, "Approval", 16, "bold", "#7656A5", 3),
+        Label(250, 1255, "PostgreSQL · Redis\nObject Store", 15, "bold", "#24476B", 3),
+        Label(675, 1255, "Trace · Evaluation\nAudit · Metrics", 15, "bold", "#24476B", 3),
+        Label(125, 1440, "Health", 14, "bold", "#B94A48", 3),
+        Label(280, 1440, "有限\nRetry", 14, "bold", "#B94A48", 3),
+        Label(430, 1440, "Tenant\nDLQ", 14, "bold", "#B94A48", 3),
+        Label(580, 1440, "Backup", 14, "bold", "#B94A48", 3),
+        Label(740, 1440, "恢复\n演练", 14, "bold", "#B94A48", 3),
+        Label(890, 1440, "Secret\n边界", 14, "bold", "#B94A48", 3),
+        Label(950, 120, "接入层", 16, "bold", "#FFFFFF", 1),
+        Label(950, 455, "服务层", 16, "bold", "#FFFFFF", 1),
+        Label(950, 760, "执行层", 16, "bold", "#FFFFFF", 1),
+        Label(950, 980, "能力层", 16, "bold", "#FFFFFF", 1),
+        Label(950, 1190, "证据层", 16, "bold", "#FFFFFF", 1),
+        Label(950, 1390, "运维层", 16, "bold", "#FFFFFF", 1),
+    ]
+    arrows = [
+        [(560, 365), (560, 383)],
+        [(275, 645), (275, 665)],
+        [(390, 645), (390, 665)],
+        [(700, 645), (700, 665)],
+        [(700, 900), (700, 920)],
+        [(512, 1115), (512, 1135)],
+        [(512, 1305), (512, 1325)],
+    ]
+    return _build_portrait_infographic(
+        semantic_id="project10-enterprise-deployment-infographic",
+        title="项目 10：企业 Agent 平台部署拓扑",
+        description=(
+            "多租户请求经 OIDC、策略、限流和入口进入横向 API；PostgreSQL 先提交权威 Run 状态，"
+            "Redis 仅发送可恢复唤醒信号，Worker 组合模型、工具、MCP、RAG 和审批并写入存储与"
+            "治理证据；健康检查、有限重试、租户 DLQ、备份恢复和 Secret 构成运维边界。"
+        ),
+        source_path="projects/10-enterprise-platform/README.md",
+        source_name="project10-deployment-topology-infographic-base.png",
+        labels=labels,
+        arrows=arrows,
+    )
+
+
 def write_manifest(records: list[InfographicRecord]) -> Path:
     output = ASSET_ROOT / "manifest.json"
     existing: dict[str, dict[str, object]] = {}
@@ -871,6 +1041,9 @@ def main() -> int:
             "memory",
             "langgraph",
             "observability",
+            "security",
+            "multi-agent",
+            "project10",
             "all",
         ),
         default="all",
@@ -895,6 +1068,12 @@ def main() -> int:
         records.append(build_langgraph_infographic())
     if args.pilot in {"observability", "all"}:
         records.append(build_observability_infographic())
+    if args.pilot in {"security", "all"}:
+        records.append(build_security_infographic())
+    if args.pilot in {"multi-agent", "all"}:
+        records.append(build_multi_agent_infographic())
+    if args.pilot in {"project10", "all"}:
+        records.append(build_project10_infographic())
     manifest = write_manifest(records)
     print(f"Built {len(records)} infographic(s); manifest: {manifest}")
     return 0

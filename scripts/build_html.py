@@ -45,6 +45,8 @@ def prepare_html_sources(root: Path, destination: Path) -> Path:
         prepared = destination / relative_output
         prepared.parent.mkdir(parents=True, exist_ok=True)
         markdown = original.read_text(encoding="utf-8")
+        if entry.path.parts[0] == "projects":
+            markdown = markdown.replace("../../docs/assets/", "../assets/")
         diagrams = extract_diagrams(entry.path, markdown)
         output_directory = (
             prepared.parent if prepared.name == "index.md" else prepared.parent / prepared.stem

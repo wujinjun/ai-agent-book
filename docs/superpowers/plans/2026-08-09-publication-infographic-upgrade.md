@@ -103,6 +103,10 @@ notes/
 - [x] 完成 A06 第15章 Memory 生命周期图及三端验收。
 - [x] 完成 A07 第20章 LangGraph 工作流图及三端验收。
 - [x] 完成 A08 第28章 Observability 全景图及三端验收。
-- [ ] 批量升级 A 级与 B 级图稿。
+- [x] 完成 A09 第30章 Agent 安全与信任边界图及三端验收。
+- [x] 完成 A10 第32章 Multi-Agent 协作模式图及三端验收。
+- [x] 完成 A12 项目 10 企业平台部署拓扑图及三端验收。
+- [x] 完成全部 12 张 A 级核心信息图。
+- [ ] 批量升级 B 级图稿。
 
-截至 2026-08-09，A 级核心信息图已完成 9/12：技术关系、Transformer、Agent Runtime、MCP、RAG、Memory、LangGraph、Observability 和企业平台参考架构。下一批依次处理 Agent 安全与信任边界、Multi-Agent 协作模式和项目 10 部署拓扑。
+截至 2026-08-09，A 级核心信息图已完成 12/12，并全部通过 HTML、A4 PDF 与 EPUB 验收。下一阶段进入 B 级增强图筛选，优先处理上下文窗口、Embedding、Prompt Injection、Tool 权限、向量索引、部署、评估和成本关系。

@@ -5,6 +5,12 @@
 
 项目以多租户 Run 为核心纵向切片，将控制面注册、数据面执行、持久队列、RAG、Trace 与 Evaluation 放在同一可验证架构中。
 
+![企业 Agent 平台从租户身份入口、API 与控制面、PostgreSQL Redis 和 Worker、运行能力、存储治理证据，到健康检查重试 DLQ 备份恢复与 Secret 的部署拓扑](../../docs/assets/infographics/png/project10-enterprise-deployment-infographic-2x.png)
+
+*图 P10-A：项目 10 企业平台部署拓扑。PostgreSQL 保存权威 Run 状态，Redis 只承载可恢复唤醒信号；API 与 Worker 可以独立扩展，但所有执行仍受租户、版本、审批和审计约束。*
+
+控制面发布不可变配置版本，数据面按 Run 记录实际版本并产生 Trace、Evaluation、Audit 与 Metrics。图中的多个 API 和 Worker 是可扩展部署形态；本地离线模式仍可使用单进程和 SQLite 验证相同领域契约。
+
 ```mermaid
 %% id: project10-enterprise-platform-topology
 %% title: 企业级 Agent 平台部署拓扑

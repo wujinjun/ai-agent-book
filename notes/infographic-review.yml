@@ -102,3 +102,35 @@ pilots:
     html_review: pass
     pdf_review: pass_page_308
     epub_review: pass
+  - id: agent-security-trust-boundary-infographic
+    priority: A
+    status: accepted
+    base_generated: true
+    svg_composed: true
+    markdown_integrated: true
+    technical_review: pass
+    html_review: pass
+    pdf_review: pass_page_328
+    epub_review: pass
+  - id: multi-agent-coordination-infographic
+    priority: A
+    status: accepted
+    base_generated: true
+    svg_composed: true
+    markdown_integrated: true
+    technical_review: pass
+    html_review: pass
+    pdf_review: pass_page_392
+    epub_review: pass
+  - id: project10-enterprise-deployment-infographic
+    priority: A
+    status: accepted
+    base_generated: true
+    svg_composed: true
+    markdown_integrated: true
+    technical_review: pass
+    html_review: pass
+    pdf_review: pass_pages_348_and_385_after_layer_label_revision
+    epub_review: pass
+    notes: >-
+      第一版底部运维标签偏挤且右侧层级色条未标注，已改为短双行标签并补齐六层名称后复验。

@@ -11,6 +11,14 @@
 
 Agent 安全的核心是把模型视为不可信决策组件，把不可绕过的 Policy 放在工具和数据前。主图展示最小纵深防御链。
 
+下面的信息图从不可信输入一路展开到工具、数据与外部副作用。模型即使受到 Prompt Injection 影响，也必须连续跨越来源隔离、对象授权、参数与网络 allowlist、Sandbox、审批绑定和执行前重校验；右侧 Secret、最小权限、预算终止和租户边界始终由模型外系统强制执行。
+
+![网页邮件文档文件等不可信内容经过来源隔离、主体对象授权、Tool 参数网络文件 allowlist、Sandbox、审批和执行前校验，访问受限工具敏感数据外部动作并产生审计安全测试告警事件响应证据](../assets/infographics/png/agent-security-trust-boundary-infographic-2x.png)
+
+*图 30-A：Agent 安全的不可绕过纵深防御。纵向门禁表示动作执行前必须依次满足的条件，右侧轨道表示贯穿所有步骤的信任边界；任何一层都不能用 System Prompt 或模型口头拒绝替代。*
+
+图 30-A 的工程目标不是保证模型永远识别恶意内容，而是让一次攻击必须同时突破多个相互独立的控制。审计、安全测试和事件响应放在底部并不表示它们只在事后工作：策略拒绝、审批结果和 Sandbox 违规都应实时产生可关联证据。
+
 ```mermaid
 %% id: agent-security-policy-boundary
 %% title: Agent Policy 与工具安全边界

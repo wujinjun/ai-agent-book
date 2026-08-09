@@ -54,6 +54,10 @@ def test_html_source_preparation_replaces_mermaid_with_portable_picture(tmp_path
     project = prepared / "part-06-projects/project-01.md"
     assert project.is_file()
     assert "```mermaid" not in project.read_text(encoding="utf-8")
+    project_ten = prepared / "part-06-projects/project-10.md"
+    project_ten_source = project_ten.read_text(encoding="utf-8")
+    assert "../assets/infographics/png/" in project_ten_source
+    assert "../../docs/assets/" not in project_ten_source
     part_index = prepared / "part-01-foundations/index.md"
     assert "../assets/diagrams/svg/" in part_index.read_text(encoding="utf-8")
     assert "../../assets/diagrams/svg/" not in part_index.read_text(encoding="utf-8")

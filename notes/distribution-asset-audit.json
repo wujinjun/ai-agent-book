@@ -4,11 +4,11 @@
   "status": "passed_with_manual_review_required",
   "pdf": {
     "path": "output/pdf/ai-agent-book-2026.pdf",
-    "sha256": "1cacfb464873d8f8914cfb4004e69527cc27760064f54cdd42c4a9b6df14765e",
-    "bytes": 33237419,
-    "pages": 466,
+    "sha256": "63f1264d72f93d3806a8496deab7b0064fd4ca7b790810f8c0d1b97607a3a0fd",
+    "bytes": 42844716,
+    "pages": 472,
     "media_boxes": {
-      "594.96x841.92": 466
+      "594.96x841.92": 472
     },
     "cropbox_differs_from_mediabox_pages": 0,
     "font_resources": 1073,
@@ -20,17 +20,17 @@
     },
     "non_embedded_fonts": [],
     "unapproved_system_fonts": [],
-    "raster_image_xobjects": 11
+    "raster_image_xobjects": 14
   },
   "epub": {
     "path": "output/epub/ai-agent-book-2026.epub",
-    "sha256": "a69adadc0266346a67cdd356dd7714900e6c92a1ffe854e9b05ef60e4f8632e0",
-    "bytes": 29390362,
+    "sha256": "42fa47cf1862ee5db0bab30048112b26506d1474a8eb5b209335a82b95a377fd",
+    "bytes": 36075014,
     "archive_entries_by_suffix": {
       ".css": 1,
       ".ncx": 1,
       ".opf": 1,
-      ".png": 246,
+      ".png": 249,
       ".svg": 235,
       ".xhtml": 77,
       ".xml": 2,
@@ -78,11 +78,14 @@
     "referenced_non_diagram_assets": [
       "docs/assets/infographics/png/agent-observability-evidence-infographic-2x.png",
       "docs/assets/infographics/png/agent-runtime-control-loop-infographic-2x.png",
+      "docs/assets/infographics/png/agent-security-trust-boundary-infographic-2x.png",
       "docs/assets/infographics/png/enterprise-agent-platform-infographic-2x.png",
       "docs/assets/infographics/png/langgraph-recoverable-workflow-infographic-2x.png",
       "docs/assets/infographics/png/llm-product-agent-system-infographic-2x.png",
       "docs/assets/infographics/png/mcp-protocol-boundary-infographic-2x.png",
       "docs/assets/infographics/png/memory-governed-lifecycle-infographic-2x.png",
+      "docs/assets/infographics/png/multi-agent-coordination-infographic-2x.png",
+      "docs/assets/infographics/png/project10-enterprise-deployment-infographic-2x.png",
       "docs/assets/infographics/png/rag-evidence-pipeline-infographic-2x.png",
       "docs/assets/infographics/png/transformer-attention-routing-infographic-2x.png",
       "docs/assets/readme-home.png",
@@ -196,6 +199,21 @@
         }
       },
       {
+        "path": "docs/assets/infographics/png/agent-security-trust-boundary-infographic-2x.png",
+        "kind": "generated_textbook_infographic",
+        "origin": "repository chapter logic with an AI-generated visual base and deterministic semantic overlay",
+        "generator": "built-in imagegen + scripts/build_infographics.py",
+        "sha256": "37b9167956c5027bca49361f9c0ae326a39570bee3c7578731b2adedb986e09b",
+        "rights_basis": "original repository technical content; generated visual base contains no third-party logos or copied artwork",
+        "external_content": false,
+        "computed_sha256": "37b9167956c5027bca49361f9c0ae326a39570bee3c7578731b2adedb986e09b",
+        "bytes": 2350028,
+        "pixels": {
+          "width": 1536,
+          "height": 2304
+        }
+      },
+      {
         "path": "docs/assets/infographics/png/enterprise-agent-platform-infographic-2x.png",
         "kind": "generated_textbook_infographic",
         "origin": "repository chapter logic with an AI-generated visual base and deterministic semantic overlay",
@@ -265,6 +283,36 @@
         "external_content": false,
         "computed_sha256": "ce5f57f74267f37ac2f875ee42a73e1d582d21f214a1b22ff7606f1aef5f09ea",
         "bytes": 2467543,
+        "pixels": {
+          "width": 1536,
+          "height": 2304
+        }
+      },
+      {
+        "path": "docs/assets/infographics/png/multi-agent-coordination-infographic-2x.png",
+        "kind": "generated_textbook_infographic",
+        "origin": "repository chapter logic with an AI-generated visual base and deterministic semantic overlay",
+        "generator": "built-in imagegen + scripts/build_infographics.py",
+        "sha256": "35b1b40349c737627586cfd79e991df4b9573f4a41ff094e3a699375e0c58092",
+        "rights_basis": "original repository technical content; generated visual base contains no third-party logos or copied artwork",
+        "external_content": false,
+        "computed_sha256": "35b1b40349c737627586cfd79e991df4b9573f4a41ff094e3a699375e0c58092",
+        "bytes": 2088705,
+        "pixels": {
+          "width": 1536,
+          "height": 2304
+        }
+      },
+      {
+        "path": "docs/assets/infographics/png/project10-enterprise-deployment-infographic-2x.png",
+        "kind": "generated_textbook_infographic",
+        "origin": "repository chapter logic with an AI-generated visual base and deterministic semantic overlay",
+        "generator": "built-in imagegen + scripts/build_infographics.py",
+        "sha256": "c7b1e3b3c4259b06b687b09c9e3b506f178a0d6c835d32757eaebaee73a09894",
+        "rights_basis": "original repository technical content; generated visual base contains no third-party logos or copied artwork",
+        "external_content": false,
+        "computed_sha256": "c7b1e3b3c4259b06b687b09c9e3b506f178a0d6c835d32757eaebaee73a09894",
+        "bytes": 2243669,
         "pixels": {
           "width": 1536,
           "height": 2304

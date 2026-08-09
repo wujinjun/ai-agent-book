@@ -28,6 +28,20 @@
     "generated_at": "2026-08-09"
   },
   {
+    "semantic_id": "agent-security-trust-boundary-infographic",
+    "source_path": "docs/part-05-engineering/ch30-security.md",
+    "source_asset": "assets/infographics/source/agent-security-boundary-infographic-base.png",
+    "svg_asset": "docs/assets/infographics/svg/agent-security-trust-boundary-infographic.svg",
+    "png_asset": "docs/assets/infographics/png/agent-security-trust-boundary-infographic-2x.png",
+    "width": 1024,
+    "height": 1536,
+    "source_sha256": "9a403c754b962675cd58e5993430a7648f8f29e8bd4b0680d454ceb64ee2eebc",
+    "svg_sha256": "aad0d366d14e1813a802de5f05dcb30fd0186d6525f4bc533ccc5b1b6370bbf0",
+    "png_sha256": "37b9167956c5027bca49361f9c0ae326a39570bee3c7578731b2adedb986e09b",
+    "generated_with": "built-in imagegen (visual base) + deterministic SVG/Pillow semantic overlay",
+    "generated_at": "2026-08-09"
+  },
+  {
     "semantic_id": "enterprise-agent-platform-infographic",
     "source_path": "docs/part-07-advanced/ch36-architecture.md",
     "source_asset": "assets/infographics/source/enterprise-agent-platform-infographic-base-v2.png",
@@ -94,6 +108,34 @@
     "source_sha256": "48e27f29a5dd5fb6b46bece3bc3bf82a45298d3d4d35e948156c388ceff5d67f",
     "svg_sha256": "0d2d015ea1f6bce3668dc03b513e72b9526e716ad2e7992c6e5e29c6ac0125e6",
     "png_sha256": "ce5f57f74267f37ac2f875ee42a73e1d582d21f214a1b22ff7606f1aef5f09ea",
+    "generated_with": "built-in imagegen (visual base) + deterministic SVG/Pillow semantic overlay",
+    "generated_at": "2026-08-09"
+  },
+  {
+    "semantic_id": "multi-agent-coordination-infographic",
+    "source_path": "docs/part-07-advanced/ch32-multi-agent-principles.md",
+    "source_asset": "assets/infographics/source/multi-agent-coordination-infographic-base.png",
+    "svg_asset": "docs/assets/infographics/svg/multi-agent-coordination-infographic.svg",
+    "png_asset": "docs/assets/infographics/png/multi-agent-coordination-infographic-2x.png",
+    "width": 1024,
+    "height": 1536,
+    "source_sha256": "e8c0ce2dde1de743da1e18171bc1ed02852da82440ef56af3cc6ce44f432be94",
+    "svg_sha256": "6c97bec427eabe5fbdedba5bc75181e233ff11dd7e0ccb1f632f397f16835df2",
+    "png_sha256": "35b1b40349c737627586cfd79e991df4b9573f4a41ff094e3a699375e0c58092",
+    "generated_with": "built-in imagegen (visual base) + deterministic SVG/Pillow semantic overlay",
+    "generated_at": "2026-08-09"
+  },
+  {
+    "semantic_id": "project10-enterprise-deployment-infographic",
+    "source_path": "projects/10-enterprise-platform/README.md",
+    "source_asset": "assets/infographics/source/project10-deployment-topology-infographic-base.png",
+    "svg_asset": "docs/assets/infographics/svg/project10-enterprise-deployment-infographic.svg",
+    "png_asset": "docs/assets/infographics/png/project10-enterprise-deployment-infographic-2x.png",
+    "width": 1024,
+    "height": 1536,
+    "source_sha256": "f301faf8a08c45dffce2ccdaf2fe800ef5cbbb9639a27e4e527174af5202c926",
+    "svg_sha256": "a2aaadc93e71f717444c1dfcdc4a5c38e200d0f366b53735c97af432b19e0cbc",
+    "png_sha256": "c7b1e3b3c4259b06b687b09c9e3b506f178a0d6c835d32757eaebaee73a09894",
     "generated_with": "built-in imagegen (visual base) + deterministic SVG/Pillow semantic overlay",
     "generated_at": "2026-08-09"
   },

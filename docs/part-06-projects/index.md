@@ -54,3 +54,13 @@ flowchart LR
 | 8 研究工作流 Agent | 规划、搜索、Reviewer、Checkpoint、HITL | 服务模板，持久 Worker 待强化 |
 | 9 Multi-Agent 开发团队 | 共享状态、成本与终止 | 服务模板，Sandbox 与回滚待强化 |
 | 10 企业级 Agent 平台 | 租户、权限、队列、Trace、Evaluation | 离线 API/Compose 完成 |
+
+## 项目 10 企业平台部署拓扑
+
+项目 10 汇总前九个项目中的运行时、工具、MCP、RAG、权限、队列和治理能力。下面的信息图强调生产部署中最容易混淆的两个边界：PostgreSQL 是 Run 与版本的权威事实来源，Redis 是可丢失并可重建的唤醒信号；控制面发布配置，数据面执行具体 Run，两者通过不可变版本关联。
+
+![企业 Agent 平台从租户身份入口、API 与控制面、PostgreSQL Redis 和 Worker、运行能力、存储治理证据，到健康检查重试 DLQ 备份恢复与 Secret 的部署拓扑](../assets/infographics/png/project10-enterprise-deployment-infographic-2x.png)
+
+*图 P10-A：项目 10 企业平台部署拓扑。API、Worker 和能力 Adapter 可以逐步拆分扩容，但身份、租户、策略版本、权威状态和审计关联不能因部署拆分而丢失。*
+
+图中的健康检查、有限 Retry、租户 DLQ、备份与恢复演练属于部署验收，而不是“上线后再补”的附加功能。Redis 故障后 Worker 必须能扫描 PostgreSQL 的 queued 状态恢复任务；备份只有经过实际恢复与租户隔离验证，才能成为灾备证据。

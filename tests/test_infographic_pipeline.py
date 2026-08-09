@@ -133,3 +133,36 @@ def test_third_batch_infographics_are_integrated_and_high_resolution() -> None:
         assert figure_number in chapter
         with Image.open(ROOT / record["png_asset"]) as image:
             assert image.size == (1536, 2304)
+
+
+def test_final_core_infographics_are_integrated_and_high_resolution() -> None:
+    manifest = json.loads(
+        (ROOT / "assets/infographics/manifest.json").read_text(encoding="utf-8")
+    )
+    expected = {
+        "agent-security-trust-boundary-infographic": (
+            "docs/part-05-engineering/ch30-security.md",
+            "图 30-A",
+        ),
+        "multi-agent-coordination-infographic": (
+            "docs/part-07-advanced/ch32-multi-agent-principles.md",
+            "图 32-A",
+        ),
+        "project10-enterprise-deployment-infographic": (
+            "docs/part-06-projects/index.md",
+            "图 P10-A",
+        ),
+    }
+    records = {item["semantic_id"]: item for item in manifest}
+    for semantic_id, (chapter_path, figure_number) in expected.items():
+        record = records[semantic_id]
+        chapter = (ROOT / chapter_path).read_text(encoding="utf-8")
+        assert f"{semantic_id}-2x.png" in chapter
+        assert figure_number in chapter
+        with Image.open(ROOT / record["png_asset"]) as image:
+            assert image.size == (1536, 2304)
+
+    project_readme = (
+        ROOT / "projects/10-enterprise-platform/README.md"
+    ).read_text(encoding="utf-8")
+    assert "project10-enterprise-deployment-infographic-2x.png" in project_readme

@@ -105,3 +105,36 @@ pilots:
     generated_at: 2026-08-09
     source_asset: assets/infographics/source/agent-observability-infographic-base.png
     source_sha256: b3fd67b9c76c4d64593d48c8b5a372d0dab4636729b37e969ad480dd95301b2a
+  - id: agent-security-trust-boundary-infographic
+    source_path: docs/part-05-engineering/ch30-security.md
+    mermaid_id: agent-security-policy-boundary
+    status: base_selected
+    use_case: infographic-diagram
+    prompt: >-
+      出版级中文 AI Agent 工程教材的无文字安全与信任边界信息图底稿，纵向 2:3，适合 A4。顶部表现用户网页邮件文档等不可信输入和不可信模型决策区；中部依次表现来源标记与上下文隔离、主体对象授权、Tool 参数网络文件 allowlist、Sandbox、风险分级人工审批和执行前重校验；下部表现受限工具、敏感数据、外部副作用；侧边贯穿 Secret 隔离、最小权限、预算终止和租户边界；底部表现 Audit、安全测试、告警与事件响应。暖白背景，克制的深蓝青绿暖橙紫色与警示红，现代扁平矢量编辑插画。不要文字、字母、数字、公式、Logo、水印、代码、UI、人物或语义箭头。
+    generated_with: built-in imagegen
+    generated_at: 2026-08-09
+    source_asset: assets/infographics/source/agent-security-boundary-infographic-base.png
+    source_sha256: 9a403c754b962675cd58e5993430a7648f8f29e8bd4b0680d454ceb64ee2eebc
+  - id: multi-agent-coordination-infographic
+    source_path: docs/part-07-advanced/ch32-multi-agent-principles.md
+    mermaid_id: multi-agent-blackboard-architecture
+    status: base_selected
+    use_case: infographic-diagram
+    prompt: >-
+      出版级中文 AI Agent 工程教材的无文字 Multi-Agent 协作模式信息图底稿，纵向 2:3，适合 A4。顶部表现 Supervisor 与任务契约；中部表现三个不同能力和最小权限的 Worker，中心共享 Typed Blackboard 的任务状态、Artifact、Evidence 和版本，独立 Reviewer 按 Rubric 验收；侧边表现 Handoff、Message Envelope、Shared Memory 和 Artifact Store；底部表现依赖 DAG、deadlock 检测、回合成本时间预算、无进展和 Done/Failed 终止。暖白背景，现代扁平矢量编辑插画。不要文字、字母、数字、公式、Logo、水印、代码、UI、人物、机器人或语义箭头。
+    generated_with: built-in imagegen
+    generated_at: 2026-08-09
+    source_asset: assets/infographics/source/multi-agent-coordination-infographic-base.png
+    source_sha256: e8c0ce2dde1de743da1e18171bc1ed02852da82440ef56af3cc6ce44f432be94
+  - id: project10-enterprise-deployment-infographic
+    source_path: projects/10-enterprise-platform/README.md
+    mermaid_id: project10-enterprise-platform-topology
+    status: base_selected
+    use_case: infographic-diagram
+    prompt: >-
+      出版级中文 AI Agent 工程教材项目 10 的无文字企业平台部署拓扑信息图底稿，纵向 2:3，适合 A4。顶部表现多租户用户管理员经过 OIDC、租户策略和限流进入负载入口；第二层是横向 API 实例与控制面发布；第三层表现 PostgreSQL 权威 Run 状态、Redis 可恢复唤醒信号和独立 Worker 池；第四层表现 Runtime、Model Gateway、Tool/MCP、RAG/pgvector 和审批；第五层表现存储和 Trace Evaluation Audit Metrics；底部表现健康检查、有限 Retry、租户 DLQ、备份恢复与 Secret。暖白背景，现代扁平矢量编辑插画。不要文字、字母、数字、公式、Logo、水印、代码、云厂商图标、UI、人物或语义箭头。
+    generated_with: built-in imagegen
+    generated_at: 2026-08-09
+    source_asset: assets/infographics/source/project10-deployment-topology-infographic-base.png
+    source_sha256: f301faf8a08c45dffce2ccdaf2fe800ef5cbbb9639a27e4e527174af5202c926

@@ -133,6 +133,27 @@ assets:
     sha256: fb954542ed7511aff1cc09634370b80b1e72778bd92921c5ee804a93b96b69a8
     rights_basis: original repository technical content; generated visual base contains no third-party logos or copied artwork
     external_content: false
+  - path: docs/assets/infographics/png/agent-security-trust-boundary-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with an AI-generated visual base and deterministic semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 37b9167956c5027bca49361f9c0ae326a39570bee3c7578731b2adedb986e09b
+    rights_basis: original repository technical content; generated visual base contains no third-party logos or copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/multi-agent-coordination-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with an AI-generated visual base and deterministic semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 35b1b40349c737627586cfd79e991df4b9573f4a41ff094e3a699375e0c58092
+    rights_basis: original repository technical content; generated visual base contains no third-party logos or copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/project10-enterprise-deployment-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with an AI-generated visual base and deterministic semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: c7b1e3b3c4259b06b687b09c9e3b506f178a0d6c835d32757eaebaee73a09894
+    rights_basis: original repository technical content; generated visual base contains no third-party logos or copied artwork
+    external_content: false
   - path: training/slides/ai-agent-engineering-training.pptx
     kind: generated_training_deck
     origin: repository training curriculum and diagrams

@@ -11,6 +11,14 @@ Multi-Agent 的价值来自职责、上下文或权限隔离，而不是角色�
 
 多 Agent 的价值来自职责、权限或上下文边界，而不是角色数量。主图展示 Supervisor、Worker、Blackboard 与 Reviewer 的最小协调结构。
 
+下面的信息图把协作所需的共享状态、权限与终止机制放在同一视野。Supervisor 按任务契约分派三个边界化 Worker；Worker 只能使用自己的最小权限工具，并通过 Typed Blackboard 提交版本化 Artifact 和 Evidence；独立 Reviewer 按 Rubric 验收，底部运行时则检测依赖、死锁、预算和无进展。
+
+![Supervisor 按任务契约向最小权限 Worker 分派任务，Worker 通过 Typed Blackboard 共享状态 Artifact Evidence 与版本，Reviewer 独立验收并由依赖死锁预算无进展和完成条件终止的 Multi-Agent 协作体系](../assets/infographics/png/multi-agent-coordination-infographic-2x.png)
+
+*图 32-A：Multi-Agent 的显式协调、共享状态与终止体系。Worker 卡片表示职责和权限边界，不是人格角色；Blackboard 是版本化事实源，不应退化为无限自然语言群聊。*
+
+图 32-A 中最重要的不是 Worker 数量，而是每次通信都有任务、Artifact、证据与版本。若单 Agent 在相同黄金集上以更低成本达到相同成功率和权限隔离效果，应删除多余角色；Multi-Agent 必须通过净收益评估，而不是仅证明框架能运行。
+
 ```mermaid
 %% id: multi-agent-blackboard-architecture
 %% title: Supervisor 与 Blackboard 协作架构
