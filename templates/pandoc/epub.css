@@ -20,6 +20,7 @@ th, td { padding: 0.45em; border: 1px solid #dce3ea; }
 th { background: #edf2f6; }
 figure, .book-diagram { margin: 1.2em auto; text-align: center; }
 figure img, .book-diagram img { max-width: 100%; height: auto; }
+img[src*="infographics/"] { display: block; max-width: 100%; height: auto; margin: 1em auto 0.4em; }
 figcaption { color: #627184; font-size: 0.85em; }
 .figure-number { color: #263b50; font-weight: bold; }
 .page-break { break-before: page; }

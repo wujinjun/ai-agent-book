@@ -236,6 +236,19 @@ body {
   letter-spacing: 0.015em;
 }
 
+.md-typeset img[src*="/infographics/"] {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin: 1.4rem auto 0.55rem;
+  border: 1px solid var(--book-border);
+  border-radius: calc(var(--book-radius) * 1.25);
+  background: #f7f5f0;
+  box-shadow: var(--book-shadow);
+  cursor: zoom-in;
+}
+
 .book-lightbox {
   width: min(94vw, 76rem);
   max-width: none;

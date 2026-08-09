@@ -1,0 +1,42 @@
+schema_version: 1
+updated_at: 2026-08-09
+acceptance:
+  technical_facts: required
+  editable_semantic_text: required
+  grayscale_readability: required
+  html: required
+  pdf: required
+  epub: required
+pilots:
+  - id: llm-product-agent-system-infographic
+    priority: A
+    status: pilot_accepted
+    base_generated: true
+    svg_composed: true
+    markdown_integrated: true
+    technical_review: pass
+    html_review: pass
+    pdf_review: pass
+    epub_review: pass
+  - id: rag-evidence-pipeline-infographic
+    priority: A
+    status: pilot_accepted
+    base_generated: true
+    svg_composed: true
+    markdown_integrated: true
+    technical_review: pass
+    html_review: pass
+    pdf_review: pass
+    epub_review: pass
+  - id: enterprise-agent-platform-infographic
+    priority: A
+    status: pilot_accepted
+    base_generated: true
+    svg_composed: true
+    markdown_integrated: true
+    technical_review: pass
+    html_review: pass
+    pdf_review: pass_after_portrait_revision
+    epub_review: pass
+    notes: >-
+      第一版横向全景在 A4 中标签偏小，已重新生成 1024x1536 纵向五层底稿并复验第 404 页。

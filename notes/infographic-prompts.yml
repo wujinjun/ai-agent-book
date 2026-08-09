@@ -1,0 +1,41 @@
+schema_version: 1
+updated_at: 2026-08-09
+generation_policy:
+  semantic_text_in_generated_base: forbidden
+  semantic_arrows_in_generated_base: forbidden
+  final_labels: editable_svg
+  final_fallback: png_2x
+pilots:
+  - id: llm-product-agent-system-infographic
+    source_path: docs/part-01-foundations/ch01-what-is-llm.md
+    mermaid_id: llm-product-agent-system-map
+    status: base_selected
+    use_case: infographic-diagram
+    prompt: >-
+      出版级中文技术教材的无文字概念信息图底稿，表现从人工智能研究领域，经过机器学习、深度学习、Transformer 和大语言模型，延伸到聊天产品与 Agent Runtime，最后连接工具、MCP、RAG、Memory、工作流、审批、测试、评估、监控、安全和成本治理。使用清晰的分层路径和少量抽象技术图标，暖白纸张背景，深蓝、青绿、暖橙和紫色的克制配色，现代扁平矢量编辑插画风格，横向 3:2 构图，中心与各分区保留充足负空间供后续覆盖中文标签。不要文字、字母、数字、Logo、水印、代码、UI 截图，不要拟真机器人，不要霓虹科幻风，不要绘制决定技术含义的箭头。
+    generated_with: built-in imagegen
+    generated_at: 2026-08-09
+    source_asset: assets/infographics/source/llm-product-agent-system-infographic-base.png
+    source_sha256: b784bab4164917469110c0f2fce3b0ccae9d0035d81605ec26da27283bdca961
+  - id: rag-evidence-pipeline-infographic
+    source_path: docs/part-03-rag-and-memory/ch13-rag.md
+    mermaid_id: rag-end-to-end-pipeline
+    status: base_selected
+    use_case: infographic-diagram
+    prompt: >-
+      出版级技术教材的无文字 RAG 双管线信息图底稿：左侧表现文档解析、切分、元数据、向量化和版本索引的摄取路径，右侧表现问题、权限过滤、混合检索、重排、上下文、生成、引用和事实校验的查询路径，底部以评估反馈回到摄取与检索。暖白背景，深蓝、青绿、暖橙的克制配色，现代扁平矢量编辑插画，横向 3:2，使用文档、切片、向量空间、索引和证据卡片的抽象图形，预留大量标签空间。不要任何文字、字母、数字、Logo、水印、代码或真实产品界面，不要用装饰箭头决定最终数据关系。
+    generated_with: built-in imagegen
+    generated_at: 2026-08-09
+    source_asset: assets/infographics/source/rag-evidence-pipeline-infographic-base.png
+    source_sha256: 63109f887a7428e3cf57bd7560ec242136be13c163e7f29b9d8b7afcd5d21424
+  - id: enterprise-agent-platform-infographic
+    source_path: docs/part-07-advanced/ch36-architecture.md
+    mermaid_id: enterprise-agent-reference-architecture
+    status: base_selected
+    use_case: infographic-diagram
+    prompt: >-
+      出版级企业 Agent 平台分层架构无文字信息图底稿，画面依次表现入口与身份边界、Agent Runtime 与工作流控制层、模型网关工具注册检索记忆能力层、队列 Worker 与数据库基础设施层、Trace 评估审计治理层；明确留出控制面、数据面和安全边界的分区空间。暖白背景，深蓝、青绿、暖橙、紫色与少量红色，现代扁平矢量编辑插画，横向 3:2，专业克制，组件区域留出中文标签位置。不要文字、字母、数字、Logo、水印、代码、真实云厂商图标或 UI，不要科幻机器人，不要让装饰连线替代最终架构关系。
+    generated_with: built-in imagegen
+    generated_at: 2026-08-09
+    source_asset: assets/infographics/source/enterprise-agent-platform-infographic-base-v2.png
+    source_sha256: 9e6c9556f4c1c212e4805cc670aa27f78b77a7f397ab9131fede2bdff1eb4b55

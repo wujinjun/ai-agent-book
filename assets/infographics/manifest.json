@@ -1,0 +1,44 @@
+[
+  {
+    "semantic_id": "enterprise-agent-platform-infographic",
+    "source_path": "docs/part-07-advanced/ch36-architecture.md",
+    "source_asset": "assets/infographics/source/enterprise-agent-platform-infographic-base-v2.png",
+    "svg_asset": "docs/assets/infographics/svg/enterprise-agent-platform-infographic.svg",
+    "png_asset": "docs/assets/infographics/png/enterprise-agent-platform-infographic-2x.png",
+    "width": 1024,
+    "height": 1536,
+    "source_sha256": "9e6c9556f4c1c212e4805cc670aa27f78b77a7f397ab9131fede2bdff1eb4b55",
+    "svg_sha256": "a221bf2dc1243959c541556256532691952b50282d38e5c6d64b1be4e56b5810",
+    "png_sha256": "ebdda8eca820ac81d7e1bd745a68fe997bb6b1f210818d175b03da92c5e0954b",
+    "generated_with": "built-in imagegen (visual base) + deterministic SVG/Pillow semantic overlay",
+    "generated_at": "2026-08-09"
+  },
+  {
+    "semantic_id": "llm-product-agent-system-infographic",
+    "source_path": "docs/part-01-foundations/ch01-what-is-llm.md",
+    "source_asset": "assets/infographics/source/llm-product-agent-system-infographic-base.png",
+    "svg_asset": "docs/assets/infographics/svg/llm-product-agent-system-infographic.svg",
+    "png_asset": "docs/assets/infographics/png/llm-product-agent-system-infographic-2x.png",
+    "width": 1536,
+    "height": 1024,
+    "source_sha256": "b784bab4164917469110c0f2fce3b0ccae9d0035d81605ec26da27283bdca961",
+    "svg_sha256": "7c8f810a0181400ba643b6742d97f65167835516f9cb32be0155e232db03ed9d",
+    "png_sha256": "c1cf096e9fcfd2b2d1c5dae7f5657e5ec9fbb1ffdad8f05ce05c1c9add06db3d",
+    "generated_with": "built-in imagegen (visual base) + deterministic SVG/Pillow semantic overlay",
+    "generated_at": "2026-08-09"
+  },
+  {
+    "semantic_id": "rag-evidence-pipeline-infographic",
+    "source_path": "docs/part-03-rag-and-memory/ch13-rag.md",
+    "source_asset": "assets/infographics/source/rag-evidence-pipeline-infographic-base.png",
+    "svg_asset": "docs/assets/infographics/svg/rag-evidence-pipeline-infographic.svg",
+    "png_asset": "docs/assets/infographics/png/rag-evidence-pipeline-infographic-2x.png",
+    "width": 1536,
+    "height": 1024,
+    "source_sha256": "63109f887a7428e3cf57bd7560ec242136be13c163e7f29b9d8b7afcd5d21424",
+    "svg_sha256": "aa40a6c5de2f8b37b9bb5609bcbf35ae258ebe0ecf888e574791b0a5621e50de",
+    "png_sha256": "bf69f80c3cad2debaa9dddceecabd5a75204509c29ad99177643d06bfba761f1",
+    "generated_with": "built-in imagegen (visual base) + deterministic SVG/Pillow semantic overlay",
+    "generated_at": "2026-08-09"
+  }
+]
