@@ -135,7 +135,105 @@ SDK 可以把 MCP Server 能力提供给 Agent。连接初始化、工具缓存�
 项目结构把 Agent 定义、工具、依赖、guardrails、session 与入口分开。单元测试直接测试工具和 guardrail；运行时测试使用可控模型或录制的协议响应；在线 smoke test 使用专门低权限账号。版本升级先运行工具选择、handoff、output type、session 和 Trace 回归。
 
 常见误区包括把 SDK 当成托管业务平台、把 guardrail 当授权、为每个角色创建 Agent，以及默认 Trace 可以记录全部数据。选型时与第17章原生 Runtime 对照：若流程只有一次模型调用和一个工具，引入 SDK 未必带来净收益。
-总结：SDK 用少量原语提供受测运行时，但业务状态、权限与评估仍由应用负责。练习：对照原生 Runtime 写迁移 ADR，并为 handoff 加上下文过滤测试。面试：Agent-as-tool 与 handoff 有何差异？为什么仍需外部权限？Session 与 Memory 如何区分？延伸阅读与官方资料：[Agents SDK](https://openai.github.io/openai-agents-python/)、[Running agents](https://openai.github.io/openai-agents-python/running_agents/)、[Tracing](https://openai.github.io/openai-agents-python/tracing/)、[MCP](https://openai.github.io/openai-agents-python/mcp/)。本章对应代码目录为 [`examples/openai_agents_sdk/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/openai_agents_sdk)，包含离线入口、固定依赖和成功/失败路径测试。
+
+### 固定版本实测的最小证据链
+
+本章接口证据由三层组成：`pyproject.toml` 固定 `openai-agents==0.18.3`；全新 Python 3.12 环境安装真实
+包；`ScriptedModel` 实现该版本 `Model` 接口并向真实 `Runner` 返回 Responses 输出项。它没有 Mock
+掉 Runner，也不伪造在线模型推理。六项测试分别覆盖：
+
+| 能力 | 直接断言 | 没有证明什么 |
+|---|---|---|
+| Function Tool | Runner 消费 Tool Call 并回送结果 | 真实模型一定会正确选工具 |
+| Structured Output | `final_output_as(SupportReport)` 类型化 | 字段事实正确 |
+| Handoff | 控制转移到 Specialist | 拆分比单 Agent 更好 |
+| Agent-as-tool | Manager 收回专家结果 | 多角色值得额外成本 |
+| Guardrail | 阻塞模式在模型前 Tripwire | 所有并行模式都无计费窗口 |
+| SQLiteSession/Trace 配置 | 历史持久、离线禁用导出 | 生产并发与合规完成 |
+
+这套证据足以支撑教材中的具体示例，却不能外推在线 Provider、远程 MCP、Trace Backend 或下一版本 API。
+升级流程重新安装候选版本、运行相同测试并审查签名差异，再修改正文；不能先改文档后补证据。
+
+### Runner 之外仍需应用 Runtime
+
+SDK Runner 管理模型—工具回合，但企业应用仍需拥有 Run ID、租户、幂等键、Deadline、预算、审批、
+Checkpoint 和最终业务状态。把 HTTP 请求直接 `await Runner.run()` 可以做 Demo，却难以处理断线、长任务
+恢复和外部写对账。推荐在应用 Service 中包装 Runner：
+
+```mermaid
+%% id: sdk-runner-application-runtime-boundary
+%% title: Agents SDK Runner 与应用 Runtime 的边界
+%% alt: 应用 Runtime 负责租户 Run 状态预算审批和恢复，在一次受限 Attempt 中调用 SDK Runner，Runner 管理模型工具 Handoff 与 Guardrail 循环
+flowchart LR
+    API[Authenticated API] --> App[应用 Runtime]
+    App --> State[Run/Checkpoint/Idempotency]
+    App --> Policy[Budget/Approval/Authorization]
+    App --> Attempt[受限 Attempt]
+    Attempt --> Runner[SDK Runner + max_turns]
+    Runner --> Model[Model]
+    Runner --> Tool[Function Tool / MCP]
+    Runner --> Handoff[Handoff]
+    Runner --> Result[Typed candidate]
+    Result --> Validate[业务验证与条件提交]
+```
+
+图中 Runner 的最终输出仍是 Candidate。应用验证引用、权限和状态 Version 后才提交。`max_turns` 限制
+SDK 回合，但工具内部重试、MCP 调用和外层 Job Attempt 还需共享总预算。
+
+### Function Tool 的事务与权限
+
+装饰器可从 Python 签名生成 Schema，但 Schema 只验证形状。工具函数从受控 Dependency Context 获取
+Principal、Tenant、Deadline 和最小权限 Client；模型不能通过参数提供或覆盖这些字段。外部写使用业务
+幂等键并在执行前进行内容绑定审批。
+
+对模型返回安全摘要，对日志保留脱敏错误码。参数错误可让模型有限修复，Policy Denied 不应通过换个
+参数无限重试；超时后的外部写先对账。SDK 自动工具循环不能替代这些业务语义。
+
+### Handoff、Guardrail 与并发窗口
+
+Handoff 的接收 Agent 有自己的 Instructions、Tool Scope 和输出契约。传递完整对话可能泄露不必要的
+PII 或把上游不可信内容带入新权限域，因此使用过滤器和类型化 Metadata，只传已验证事实、未决任务、
+预算与引用。Handoff 后谁产生最终输出、哪些 Guardrail 运行，需要按锁定版本行为测试。
+
+Guardrail 是否并行执行会影响成本与副作用窗口。本示例显式测试 `run_in_parallel=False` 的阻塞输入
+Guardrail 在 Model 前触发；这不等于所有 Guardrail 默认都阻塞，也不等于 Guardrail 可以承担数据库
+授权。需要“未通过检查绝不调用模型/工具”的规则应采用阻塞模式并以直接测试证明。
+
+### Session 的并发、保留与 Memory 区分
+
+Session 为多个 Runner 调用提供历史。生产中同一 Session 的并发请求必须序列化、分支或用版本冲突
+明确拒绝，否则消息顺序不确定。历史长度需要截断/摘要，摘要携带版本并可追溯；租户与用户访问在
+Session Store 外层强制执行。
+
+Session 不是长期 Memory：前者服务当前会话连续性，后者需要写入门禁、来源、TTL、更正、删除与跨会话
+检索。也不是业务 Checkpoint：外部副作用、审批和 Job 状态应存在应用数据库，不能靠消息历史恢复。
+
+### Trace、MCP 与生产数据边界
+
+示例同时调用全局禁用和 `RunConfig(tracing_disabled=True, trace_include_sensitive_data=False)`，确保离线
+测试不上传 Trace。生产若启用，需核对当前版本的默认内容采集、Processor、数据地域、保留和失败行为。
+SDK Trace 用于调试，不替代不可采样的 Audit。
+
+MCP Server 提供工具发现和调用，但 Host 仍决定连接哪些 Server、暴露哪些工具和传递什么凭证。远程
+Transport、OAuth、Origin、超时和生命周期属于 MCP/基础设施边界；SDK 集成不能让 Server 自动继承
+用户全部权限。版本敏感构造方式以 SDK 官方专站和隔离测试为准，本章不凭概念关系猜测代码。
+
+### 迁移 ADR 与练习参考答案
+
+从原生 Runtime 迁移前记录 ADR：需要 SDK 的具体能力、替代方案、锁定版本、状态所有权、回退路径和
+评估结果。保留领域 Port，使框架 Adapter 可替换；不要让 SDK Result 类型渗透数据库 Schema 和所有
+业务服务。
+
+1. **Handoff 过滤测试。** 上游历史放入 PII 与无关 Tool Result，只允许接收方看到工单 ID、验证摘要、
+   未决任务和剩余预算；断言其 Tool Scope 没有扩大。
+2. **Guardrail 测试。** 用计数 ScriptedModel 验证阻塞 Tripwire 时调用次数为零；并行行为另写测试，
+   不从名称推断。
+3. **Session/Memory。** Session 保存对话顺序；Memory 只保存治理后的跨会话事实；Run State 保存审批、
+   副作用和 Checkpoint。三者具有不同生命周期和权限。
+4. **选型判断。** 单模型单工具且无需 Handoff/Session/Trace 时，原生 Responses/API Loop 更透明；需要
+   受测 Runner 原语时 SDK 才产生净收益。
+总结：SDK 用少量原语提供受测模型—工具运行时，但业务状态、权限、幂等、预算与评估仍由应用负责。
+延伸阅读与官方资料：[Agents SDK](https://openai.github.io/openai-agents-python/)、[Running agents](https://openai.github.io/openai-agents-python/running_agents/)、[Tracing](https://openai.github.io/openai-agents-python/tracing/)、[MCP](https://openai.github.io/openai-agents-python/mcp/)。本章对应代码目录为 [`examples/openai_agents_sdk/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/openai_agents_sdk)。
 
 ## 本章引用
 <!-- chapter-citations:start -->

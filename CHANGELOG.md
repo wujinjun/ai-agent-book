@@ -9,6 +9,7 @@
 - 深化第 6 章 Prompt Engineering 与第 37 章从 Demo 到产品：增加有类型上下文契约、Few-shot 污染、端到端注入验收、服务蓝图、风险分级、产品指标树、降级路径与上线运营门禁。
 - 深化第 4 章生成机制与第 23 章 Python 工程：增加数值稳定、解码过滤顺序、可重复性层级、结束原因、共享 Deadline、结构化并发、取消传播、资源关闭和 Protocol/Adapter 测试边界。
 - 深化第 26 章 Docker 部署与第 32 章 Multi-Agent 原理：增加容器供应链、Secret 轮换、滚动排空、Schema 迁移、故障注入、任务契约、Blackboard 冲突、可判定终止与净收益门禁。
+- 深化第 3 章 Transformer 与第 18 章 OpenAI Agents SDK：增加 Mask/复杂度/KV Cache、注意力解释边界、SDK 版本证据链、应用 Runtime、工具事务、Handoff/Guardrail、Session 与 MCP 边界；在全新 Python 3.12 环境复验固定 SDK。
 - 深化第 7 章 Structured Output：增加 Candidate/Validated/Committed 事务边界、错误责任分类、Schema 兼容矩阵、与离线抽取器的能力边界对照及练习参考答案，正文增至约 8.4 千字符。
 - 深化第 31 章成本与性能：增加单位成功任务成本、关键路径、重试放大、权限版本缓存、Run deadline、性能实验矩阵和练习答案，正文增至约 9.2 千字符。
 - 新增第 12 个独立示例 Cost/Latency Lab；在全新 Python 3.12 venv 中通过离线入口、7 项 pytest、Ruff 与严格 mypy，不写死模型价格或伪造真实性能数据。

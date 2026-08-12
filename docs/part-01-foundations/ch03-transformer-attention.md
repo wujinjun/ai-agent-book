@@ -163,11 +163,87 @@ def attend(
 
 调试张量形状时，应显式标注 batch、sequence、head、head dimension；验证因果掩码时，可在后文放置明显答案，确认前面位置无法读取。Attention 本身不会区分可信指令和恶意文档，不可信内容与高权限工具仍需要外部隔离、最小权限和审批。
 
+### Mask 不只是填一个极小值
+
+Decoder-only 训练使用因果 Mask，Padding Batch 还可能需要 Padding Mask。两者组合错误会让模型读取
+未来 Token，或把 Padding 当真实内容。工程实现必须明确 Mask 形状能否广播到
+`[batch, heads, query_length, key_length]`，以及布尔值中 `True` 代表“允许”还是“屏蔽”；不同库约定
+可能相反。
+
+Softmax 前把不可见位置设为负无穷是概念表达。低精度计算中应使用框架提供的 Masked Attention，
+避免自行选择一个“足够小”的常数引发溢出或全 Mask 行得到 NaN。每个 Query 若没有任何合法 Key，
+必须有明确定义而不能默默归一化。
+
+```mermaid
+%% id: attention-mask-composition
+%% title: 因果 Mask 与 Padding Mask 的组合
+%% alt: Query Key 分数矩阵同时应用只允许读取历史位置的因果掩码和排除批次填充位置的 Padding 掩码，之后才做稳定 Softmax
+flowchart LR
+    Score[QK 相关性矩阵] --> Causal[因果 Mask：不可读未来]
+    Padding[Batch 有效长度] --> Pad[Padding Mask：排除填充]
+    Causal --> Combine[组合可见矩阵]
+    Pad --> Combine
+    Combine --> Softmax[稳定 Masked Softmax]
+    Softmax --> Values[加权读取 Value]
+```
+
+这张图说明 Mask 是 Attention 计算契约的一部分，而不是生成结束后的过滤。测试可构造两个不同后缀，
+断言前缀位置输出完全一致，从而发现未来信息泄漏。
+
+### 复杂度与真实瓶颈
+
+标准全注意力的分数矩阵随序列长度平方增长，但模型总成本还包括 Q/K/V 投影、FFN、激活和内存搬运。
+不能仅用 `O(n²)` 判断某次请求为何慢。短序列可能由矩阵乘与框架开销主导，长序列才明显受 Attention
+矩阵和显存约束；硬件、精度、Batch 和 Kernel 都会改变交叉点。
+
+FlashAttention 类算法通过分块和减少高带宽内存读写得到精确 Attention 结果，主要改善 I/O 与内存，
+不是把模型改成另一套语义。稀疏、滑窗或线性 Attention 则改变可见模式或近似方式，需要重新评估任务
+质量。应用开发者应查看目标模型/服务的承诺，而不是根据营销名称推断实现。
+
+### KV Cache、并发与延迟
+
+自回归 Decode 的每一层保存既有 Token 的 Key/Value，使新 Token 无需重算全部历史表示。Cache 大小
+大致随层数、KV Head 数、Head Dimension、序列长度、Batch 和数据类型增长。Multi-Query/Grouped-
+Query Attention 可减少 KV Head，但具体结构由模型决定。
+
+KV Cache 优化的是重复计算，不消除逐 Token 串行依赖，也不保证长上下文中的信息利用质量。高并发
+时显存常由 Cache 而非权重主导，因此服务会采用连续批处理、Paged Cache、前缀缓存或抢占。前缀缓存
+只有在 Token 序列、模型版本和相关配置一致时才能安全复用；含租户敏感内容的缓存还需隔离和生命周期
+策略。
+
+| 阶段 | 主要输入 | 常见瓶颈 | 关键指标 |
+|---|---|---|---|
+| Prefill | 全部 Prompt Token | 计算与长序列 Attention | Time to First Token、输入吞吐 |
+| Decode | 每轮一个新 Token + KV Cache | 内存带宽、串行步数 | Tokens/s、Inter-token Latency |
+| 并发调度 | 多请求与不同长度 | Cache 容量、Batch 空洞 | P95/P99、公平性、抢占率 |
+
+### Attention 可视化的解释边界
+
+一张 Attention Heatmap 能说明某层某头读取 Value 的权重，但不能单独证明模型“因为这个词”得出结论。
+残差流可能绕过该头，多个层会重新混合信息，Value 向量本身也包含上下文。更可靠的行为分析结合输入
+扰动、消融、对照集和最终指标；即便如此，也应谨慎区分相关、机制线索和因果结论。
+
+[`examples/attention_demo/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/attention_demo)
+用 NumPy 实现稳定 Softmax、因果 Mask 和多头形状，并导出 SVG/PNG Heatmap。它是机制实验，不是训练
+模型，也不能从玩具权重推断真实 LLM 内部语义。
+
+### 练习参考答案与面试要点
+
+1. **因果 Mask。** 在 Softmax 前屏蔽 `key_position > query_position`；改变未来 Token 后，所有前缀
+   Query 的输出应不变。还需测试 Padding、全 Mask 与形状广播。
+2. **扩大上下文或 RAG。** 上下文适合任务所需且可承受的原始材料；RAG 适合外部、更新频繁且需引用
+   的知识。二者可组合，都不保证模型一定采用正确证据。
+3. **KV Cache。** 它复用历史 K/V、降低 Decode 重算；不能并行生成未来 Token、消除显存增长或提供
+   长期记忆。
+4. **Encoder/Decoder。** Encoder 可双向表示，常用于 Embedding/分类；Decoder-only 适合自回归生成；
+   具体任务还需比较质量、吞吐和部署约束。
+
 ## 误区、安全、总结与练习
 
 常见误区：Attention 等于人类注意；某个头必然对应某条语法规则；Transformer 可以无限处理上下文；模型能注意到文本就会遵守文本。特别是最后一点，不可信内容可能被模型错误当作指令，因此权限边界必须在模型之外。
 
-总结：Transformer 用 Attention 建立位置间的内容相关连接，以并行性和可扩展性推动了 LLM。练习：手算三个 Token 的归一化权重；为完整实验加入因果掩码；比较“扩大上下文”和“使用检索”的成本与时效。面试问题：KV Cache 优化了什么、不能优化什么？Encoder-only 与 Decoder-only 分别适合哪些任务？为什么注意力图不等于因果解释？
+总结：Transformer 用 Attention 建立位置间的内容相关连接，以并行训练和可扩展性推动了 LLM；工程上
+还必须理解 Mask、KV Cache、Prefill/Decode、显存与解释边界，不能把一张权重图当成完整模型原因。
 
 延伸阅读：Vaswani et al., *Attention Is All You Need*；Dao et al., *FlashAttention*。本章代码目录为 [`examples/attention_demo/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/attention_demo)，已用 Python 3.12 与 NumPy 2.5.1 验证张量形状、稳定 Softmax、因果 Mask、多头变形，并生成 SVG/PNG 热力图。图中的权重只用于机制教学，不构成因果解释。
 
