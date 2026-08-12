@@ -1,0 +1,10 @@
+%% id: blackboard-optimistic-conflict
+%% title: Blackboard 乐观并发与冲突处理
+%% alt: 两个 Worker 读取同一版本并提交不同候选，版本检查阻止覆盖，可安全归并的证据集合进入 Reducer，不可归并的正文进入 Reviewer
+flowchart TD
+    V4[Blackboard v4] --> A[Worker A 候选 v5a]
+    V4 --> B[Worker B 候选 v5b]
+    A --> Check{版本与 Reducer 契约}
+    B --> Check
+    Check -->|集合型证据| Merge[幂等归并为 v5]
+    Check -->|正文/Patch 冲突| Review[Reviewer 选择或要求返工]

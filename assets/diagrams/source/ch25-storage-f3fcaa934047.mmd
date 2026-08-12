@@ -1,0 +1,15 @@
+%% id: outbox-crash-windows
+%% title: Outbox 发布中的两个崩溃窗口
+%% alt: 业务事务原子写入状态和事件，发布前崩溃可重新领取，发送后标记前崩溃会重复投递，因此消费者必须按事件标识幂等
+sequenceDiagram
+    participant DB as PostgreSQL
+    participant P as Publisher
+    participant Q as Broker
+    participant C as Consumer
+    P->>DB: claim(event_id, lease)
+    Note over P,DB: 此前崩溃：租约过期后重新领取
+    P->>Q: publish(event_id)
+    Q-->>C: at-least-once delivery
+    Note over P,Q: 此后、mark 前崩溃：可能重复发布
+    P->>DB: mark published
+    C->>C: deduplicate(event_id)

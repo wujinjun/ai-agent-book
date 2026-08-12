@@ -1,0 +1,10 @@
+%% id: attention-mask-composition
+%% title: 因果 Mask 与 Padding Mask 的组合
+%% alt: Query Key 分数矩阵同时应用只允许读取历史位置的因果掩码和排除批次填充位置的 Padding 掩码，之后才做稳定 Softmax
+flowchart LR
+    Score[QK 相关性矩阵] --> Causal[因果 Mask：不可读未来]
+    Padding[Batch 有效长度] --> Pad[Padding Mask：排除填充]
+    Causal --> Combine[组合可见矩阵]
+    Pad --> Combine
+    Combine --> Softmax[稳定 Masked Softmax]
+    Softmax --> Values[加权读取 Value]

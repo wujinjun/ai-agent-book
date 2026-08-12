@@ -1,0 +1,14 @@
+%% id: sdk-runner-application-runtime-boundary
+%% title: Agents SDK Runner 与应用 Runtime 的边界
+%% alt: 应用 Runtime 负责租户 Run 状态预算审批和恢复，在一次受限 Attempt 中调用 SDK Runner，Runner 管理模型工具 Handoff 与 Guardrail 循环
+flowchart LR
+    API[Authenticated API] --> App[应用 Runtime]
+    App --> State[Run/Checkpoint/Idempotency]
+    App --> Policy[Budget/Approval/Authorization]
+    App --> Attempt[受限 Attempt]
+    Attempt --> Runner[SDK Runner + max_turns]
+    Runner --> Model[Model]
+    Runner --> Tool[Function Tool / MCP]
+    Runner --> Handoff[Handoff]
+    Runner --> Result[Typed candidate]
+    Result --> Validate[业务验证与条件提交]

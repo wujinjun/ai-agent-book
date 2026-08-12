@@ -1,8 +1,11 @@
 import zipfile
 from pathlib import Path
+from unittest.mock import patch
+
+from pypdf import PdfWriter
 
 import scripts.build_pandoc as pandoc_pipeline
-from scripts.build_pandoc import chrome_pdf_command, compose_book
+from scripts.build_pandoc import chrome_pdf_command, compose_book, prepare_print_markdown
 
 ROOT = Path(__file__).parents[1]
 
@@ -71,6 +74,61 @@ def test_chrome_pdf_command_disables_browser_headers(tmp_path: Path) -> None:
 
     assert "--no-pdf-header-footer" in command
     assert "--print-to-pdf-no-header" not in command
+
+
+def test_chrome_pdf_command_uses_isolated_profile_when_supplied(tmp_path: Path) -> None:
+    profile = tmp_path / "profile"
+    command = chrome_pdf_command(
+        Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
+        tmp_path / "print.html",
+        tmp_path / "book.tmp.pdf",
+        user_data_dir=profile,
+    )
+
+    assert f"--user-data-dir={profile}" in command
+    assert "--disable-extensions" in command
+    assert "--disable-background-networking" in command
+    assert f"--print-to-pdf={tmp_path / 'book.tmp.pdf'}" in command
+
+
+def test_pdf_is_complete_rejects_partial_and_accepts_parseable_pdf(tmp_path: Path) -> None:
+    output = tmp_path / "book.pdf"
+    output.write_bytes(b"%PDF-1.7\npartial")
+    assert not pandoc_pipeline.pdf_is_complete(output)
+
+    writer = PdfWriter()
+    writer.add_blank_page(width=595, height=842)
+    with output.open("wb") as stream:
+        writer.write(stream)
+
+    assert pandoc_pipeline.pdf_is_complete(output)
+
+
+def test_print_markdown_prefers_vector_diagrams_and_infographics(tmp_path: Path) -> None:
+    mermaid_svg = tmp_path / "assets/diagrams/svg/demo.svg"
+    infographic_png = tmp_path / "assets/infographics/png/concept-2x.png"
+    mermaid_svg.parent.mkdir(parents=True)
+    infographic_png.parent.mkdir(parents=True)
+    mermaid_svg.write_text("<svg/>", encoding="utf-8")
+    infographic_png.write_bytes(b"png")
+    markdown = """<picture>
+<source type="image/svg+xml" srcset="assets/diagrams/svg/demo.svg">
+<img src="assets/diagrams/png/demo.png" alt="demo" loading="lazy">
+</picture>
+![concept](docs/assets/infographics/png/concept-2x.png)
+"""
+
+    def fake_run(command: list[str], *, timeout: int = 600) -> None:
+        Path(command[-1]).write_bytes(b"print-png")
+
+    with patch("scripts.build_pandoc._run", fake_run):
+        rendered = prepare_print_markdown(markdown, root=tmp_path)
+
+    assert "<picture>" not in rendered
+    assert 'src="assets/diagrams/svg/demo.svg"' in rendered
+    assert "output/intermediate/infographics/concept-print.png" in rendered
+    assert "docs/output/intermediate" not in rendered
+    assert "assets/diagrams/png" not in rendered
 
 
 def test_print_tables_repeat_headers_and_split_only_between_rows() -> None:

@@ -1,0 +1,21 @@
+%% id: agent-product-service-blueprint
+%% title: 企业知识库 Agent 服务蓝图
+%% alt: 用户从提交问题到查看引用，前台显示排队检索生成验证和终态，后台执行权限检索模型引用验证，运营侧负责数据质量供应商故障与人工接管
+flowchart TB
+    subgraph UX[用户可见层]
+        Ask[提交问题] --> Progress[排队/检索/生成进度] --> Answer[答案、引用与不确定性] --> Control[反馈/重试/取消]
+    end
+    subgraph Runtime[运行时]
+        Auth[身份与对象授权] --> Retrieve[过滤检索] --> Generate[模型生成] --> Verify[引用与输出验证]
+    end
+    subgraph Operations[运营与依赖]
+        Source[文档所有者与更新] --> Quality[数据质量门禁]
+        Provider[模型/Embedding 供应商] --> Incident[故障降级与值班]
+        Human[人工接管队列] --> Incident
+    end
+    Ask --> Auth
+    Retrieve --> Progress
+    Verify --> Answer
+    Quality --> Retrieve
+    Provider --> Generate
+    Runtime --> Incident

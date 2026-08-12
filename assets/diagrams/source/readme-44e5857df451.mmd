@@ -1,0 +1,15 @@
+%% id: project6-durable-outbox-state
+%% title: 自动办公 Outbox 状态与故障恢复
+%% alt: 通过审批的投递进入 pending，经租约声明进入 delivering，成功后 published；失败进入 failed，可在次数预算内重新声明，超过预算进入人工处理
+stateDiagram-v2
+    [*] --> pending: 内容与目标获批
+    pending --> delivering: 原子 claim + lease
+    delivering --> published: 记录外部 ID
+    delivering --> failed: 超时或 HTTP 错误
+    failed --> delivering: 预算内重试
+    delivering --> unknown: 可能已接受但响应丢失
+    unknown --> published: 远端查询命中回执
+    unknown --> [*]: 无法查询则人工对账
+    delivering --> delivering: 活跃租约拒绝并发
+    failed --> [*]: 达到重试预算后人工处理
+    published --> published: 重复请求返回已有结果

@@ -1,0 +1,8 @@
+%% id: decoding-filter-order-comparison
+%% title: 采样过滤顺序会改变候选集合
+%% alt: 同一 Logit 分布分别经过先 Top-k 后 Top-p 和先 Top-p 后 Top-k 两条路径，可能产生不同候选集合，因此实验必须记录实现与顺序
+flowchart LR
+    Logits[同一 Logit 分布] --> K[先 Top-k] --> KP[再 Top-p] --> A[候选集合 A]
+    Logits --> P[先 Top-p] --> PK[再 Top-k] --> B[候选集合 B]
+    A --> Compare[记录实现、参数和任务指标]
+    B --> Compare

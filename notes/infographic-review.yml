@@ -1,5 +1,5 @@
 schema_version: 1
-updated_at: 2026-08-12
+updated_at: 2026-08-13
 acceptance:
   technical_facts: required
   editable_semantic_text: required
@@ -7,6 +7,17 @@ acceptance:
   html: required
   pdf: required
   epub: required
+current_release_review:
+  date: 2026-08-13
+  pdf_pages: 558
+  pdf_sha256: 1c5ce7569cabe16907949795dc7f02335d226a7b486c3b0f6cbdd9e6908d486f
+  epub_sha256: 2757c7a7f80edeced1d1e6222ac19bd441e564828fba5a73f82386bb236e581d
+  engineering_diagrams: 260
+  publication_infographics: 48
+  contact_sheets: {engineering: 13, infographics: 4}
+  html_review: pass
+  pdf_review: pass_after_print_path_fix
+  epub_review: pass_publication_audit
 pilots:
   - id: llm-product-agent-system-infographic
     priority: A

@@ -1,0 +1,10 @@
+%% id: sse-reconnect-retention-flow
+%% title: SSE 断线重连与事件保留
+%% alt: 客户端携带最后事件游标重连，服务端先做对象授权并检查保留窗口，游标有效则增量回放，过期则返回当前 Run 快照和游标过期错误
+flowchart TD
+    Reconnect[重连 + Last-Event-ID] --> Auth[租户与 Run 对象授权]
+    Auth --> Retention{游标仍在保留窗口}
+    Retention -->|是| Replay[按 sequence 增量回放]
+    Replay --> Live[订阅新事件]
+    Retention -->|否| Snapshot[读取当前 Run 快照]
+    Snapshot --> Expired[cursor_expired + latest sequence]

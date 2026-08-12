@@ -1,0 +1,11 @@
+%% id: python-structured-concurrency-failure
+%% title: Agent 中的结构化并发与失败传播
+%% alt: 父 Run 在 TaskGroup 中启动独立只读子任务，一个失败触发同组取消并回到父级分类，外部副作用任务不进入无约束并行
+flowchart TD
+    Run[父 Run + Deadline] --> Group[TaskGroup]
+    Group --> R1[Retriever A 只读]
+    Group --> R2[Retriever B 只读]
+    Group --> R3[Retriever C 只读]
+    R2 -->|异常| Cancel[取消同组未完成任务]
+    Cancel --> Classify[父级分类：失败/部分结果/重试]
+    Effect[外部写 Tool] -.按顺序、审批与幂等执行.-> Run

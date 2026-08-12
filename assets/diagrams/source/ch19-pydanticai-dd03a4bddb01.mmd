@@ -1,0 +1,12 @@
+%% id: pydanticai-capability-dependencies
+%% title: 类型化依赖与最小权限 Capability
+%% alt: 已认证主体经依赖工厂得到租户限定 Repository 和受预算 HTTP Client，PydanticAI Tool 只能调用这些窄能力，原始凭证不进入模型
+flowchart LR
+    Principal[已认证 Principal] --> Factory[Dependency Factory]
+    Factory --> Repo[租户限定 TicketRepository]
+    Factory --> Client[受预算 Tool Client]
+    Repo --> Deps[SupportDeps]
+    Client --> Deps
+    Deps --> Tool[PydanticAI Tool]
+    Secret[原始 Secret] -.只停留在 Adapter.-> Client
+    Tool --> Model[仅返回最小事实]

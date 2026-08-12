@@ -9,8 +9,12 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
+import time
 import zipfile
 from pathlib import Path
+
+from pypdf import PdfReader
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
@@ -324,10 +328,15 @@ def inject_epub_svg_fallbacks(epub_path: Path, root: Path) -> Path:
 
 def build_print_html(pandoc: str, source: Path) -> Path:
     output = ROOT / "output/intermediate/print.html"
+    print_source = ROOT / "output/intermediate/book-print.md"
+    print_source.write_text(
+        prepare_print_markdown(source.read_text(encoding="utf-8"), root=ROOT),
+        encoding="utf-8",
+    )
     _run(
         [
             pandoc,
-            str(source),
+            str(print_source),
             "--from=gfm+raw_html",
             "--to=html5",
             "--standalone",
@@ -350,16 +359,143 @@ def build_print_html(pandoc: str, source: Path) -> Path:
     return output
 
 
+MERMAID_PICTURE_RE = re.compile(
+    r'<picture>\s*<source type="image/svg\+xml" srcset="(?P<svg>[^"]+)">\s*'
+    r'<img src="[^"]+"(?P<attrs>[^>]*)>\s*</picture>',
+    re.DOTALL,
+)
+INFOGRAPHIC_PNG_RE = re.compile(
+    r"(?:docs/)?assets/infographics/png/(?P<name>[a-z0-9-]+?)(?:-2x)?\.png"
+)
+
+
+def prepare_print_markdown(markdown: str, *, root: Path) -> str:
+    """Prefer vector assets in the PDF-only source to keep Chrome memory bounded."""
+
+    def replace_mermaid_picture(match: re.Match[str]) -> str:
+        svg = match.group("svg")
+        if not (root / svg).is_file():
+            raise RuntimeError(f"打印版 Mermaid SVG 不存在：{svg}")
+        return f'<img src="{svg}"{match.group("attrs")}>'
+
+    def replace_infographic(match: re.Match[str]) -> str:
+        source = root / f"assets/infographics/png/{match.group('name')}-2x.png"
+        target = root / f"output/intermediate/infographics/{match.group('name')}-print.png"
+        if not source.is_file():
+            raise RuntimeError(f"打印版信息图 PNG 不存在：{source}")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.is_file() or target.stat().st_mtime_ns < source.stat().st_mtime_ns:
+            _run(
+                [
+                    "sips",
+                    "--resampleHeightWidth",
+                    "768",
+                    "1152",
+                    str(source),
+                    "--out",
+                    str(target),
+                ]
+            )
+        return target.relative_to(root).as_posix()
+
+    vectorized = MERMAID_PICTURE_RE.sub(replace_mermaid_picture, markdown)
+    return INFOGRAPHIC_PNG_RE.sub(replace_infographic, vectorized)
+
+
 def build_pdf(print_html: Path) -> Path:
     chrome = next((path for path in CHROME_CANDIDATES if path.is_file()), None)
     if chrome is None:
         raise RuntimeError("未找到 Google Chrome/Chromium，无法输出 PDF。")
     output = ROOT / f"output/pdf/{BOOK_NAME}.pdf"
     output.parent.mkdir(parents=True, exist_ok=True)
-    _run(chrome_pdf_command(chrome, print_html, output))
-    if not output.is_file() or output.stat().st_size == 0:
+    temporary = output.with_suffix(".tmp.pdf")
+    temporary.unlink(missing_ok=True)
+    with tempfile.TemporaryDirectory(prefix="ai-agent-book-chrome-") as profile:
+        try:
+            run_chrome_pdf(
+                chrome_pdf_command(
+                    chrome, print_html, temporary, user_data_dir=Path(profile)
+                ),
+                temporary,
+            )
+        except Exception:
+            temporary.unlink(missing_ok=True)
+            raise
+    if not temporary.is_file() or temporary.stat().st_size == 0:
         raise RuntimeError("Chrome 未生成有效 PDF。")
+    temporary.replace(output)
     return output
+
+
+def pdf_is_complete(path: Path) -> bool:
+    """Return true only when Chrome has flushed a parseable, non-empty PDF."""
+
+    if not path.is_file() or path.stat().st_size == 0:
+        return False
+    try:
+        reader = PdfReader(path)
+        return len(reader.pages) > 0 and not reader.is_encrypted
+    except Exception:
+        return False
+
+
+def run_chrome_pdf(
+    command: list[str],
+    output: Path,
+    *,
+    timeout: float = 600,
+    poll_interval: float = 2,
+    stable_checks: int = 5,
+) -> None:
+    """Run Chrome and recover from its occasional post-write headless hang.
+
+    Some Chrome builds finish and flush ``--print-to-pdf`` but keep an idle
+    browser process alive.  A file is accepted only after its byte size remains
+    stable across several polls *and* pypdf can traverse every page object.
+    The idle shell may then be terminated without treating the valid document
+    as a failed build.
+    """
+
+    process = subprocess.Popen(
+        command,
+        cwd=ROOT,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    deadline = time.monotonic() + timeout
+    previous_size = -1
+    stable = 0
+    while time.monotonic() < deadline:
+        returncode = process.poll()
+        size = output.stat().st_size if output.is_file() else 0
+        if size > 0 and size == previous_size and pdf_is_complete(output):
+            stable += 1
+        else:
+            stable = 0
+        previous_size = size
+
+        if stable >= stable_checks:
+            if returncode is None:
+                process.terminate()
+                try:
+                    process.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                    process.wait(timeout=10)
+            return
+        if returncode is not None:
+            stderr = process.stderr.read() if process.stderr is not None else ""
+            if returncode != 0:
+                raise RuntimeError(f"Chrome PDF 渲染失败（{returncode}）：{stderr}")
+            if pdf_is_complete(output):
+                return
+            raise RuntimeError("Chrome 正常退出，但没有生成完整 PDF。")
+        time.sleep(poll_interval)
+
+    process.kill()
+    process.wait(timeout=10)
+    raise subprocess.TimeoutExpired(command, timeout)
 
 
 def stage_offline_editions(
@@ -377,19 +513,30 @@ def stage_offline_editions(
     return outputs
 
 
-def chrome_pdf_command(chrome: Path, print_html: Path, output: Path) -> list[str]:
+def chrome_pdf_command(
+    chrome: Path,
+    print_html: Path,
+    output: Path,
+    *,
+    user_data_dir: Path | None = None,
+) -> list[str]:
     """Build the deterministic Chrome Headless PDF command."""
 
-    return [
+    command = [
         str(chrome),
         "--headless=new",
         "--no-sandbox",
         "--disable-gpu",
+        "--disable-extensions",
+        "--disable-background-networking",
         "--allow-file-access-from-files",
         "--no-pdf-header-footer",
         f"--print-to-pdf={output}",
         print_html.resolve().as_uri(),
     ]
+    if user_data_dir is not None:
+        command.insert(1, f"--user-data-dir={user_data_dir}")
+    return command
 
 
 def main() -> int:

@@ -1,0 +1,9 @@
+%% id: framework-evidence-depth-layers
+%% title: Multi-Agent 框架证据深度分层
+%% alt: 从包可安装到原语接线契约故障恢复在线质量和生产规模逐层增强证据，低层通过不能替代高层
+flowchart TD
+    Install[版本可安装/导入] --> Primitive[指定框架原语实际调用]
+    Primitive --> Contract[权限、状态、消息和终止契约]
+    Contract --> Failure[崩溃、恢复、重放与并发]
+    Failure --> Online[真实模型质量/成本]
+    Online --> Scale[目标平台规模与运维]

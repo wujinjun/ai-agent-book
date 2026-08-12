@@ -1,0 +1,17 @@
+%% id: agent-product-metric-tree
+%% title: Agent 产品价值指标树
+%% alt: 用户任务成功由覆盖率正确性可用性和效率共同决定，并分别下钻到拒答引用工具成功延迟成本与人工接管
+flowchart TD
+    Value[用户任务成功] --> Coverage[覆盖率]
+    Value --> Correctness[正确性与证据]
+    Value --> Reliability[可用性与恢复]
+    Value --> Efficiency[时间与成本]
+    Coverage --> Answered[可回答率]
+    Coverage --> Abstain[正确拒答率]
+    Correctness --> Citation[引用支持率]
+    Correctness --> Tool[工具结果准确率]
+    Reliability --> Terminal[终态收敛率]
+    Reliability --> Recovery[故障恢复率]
+    Efficiency --> Latency[任务完成时间]
+    Efficiency --> UnitCost[单位成功成本]
+    Efficiency --> Human[人工接管时长]

@@ -1,0 +1,21 @@
+%% id: project8-report-publication-outbox
+%% title: 报告发布 Outbox 与未知结果恢复
+%% alt: 完成报告先按内容哈希写入持久 Outbox，Worker 用稳定幂等键调用 Publisher，崩溃后复用同一键对账重试并保存回执
+sequenceDiagram
+    participant G as Research Graph
+    participant O as Publication Outbox
+    participant W as Publisher Worker
+    participant P as External Publisher
+    G->>O: completed report + report_hash + idempotency_key
+    W->>O: claim pending -> publishing
+    W->>P: publish(report, same key)
+    alt receipt committed
+        P-->>W: stable receipt
+        W->>O: published + receipt
+    else crash after remote success
+        P-->>W: accepted
+        Note over W,O: local receipt not committed
+        W->>O: recover publishing -> pending
+        W->>P: retry with same key
+        P-->>W: same receipt, no duplicate
+    end

@@ -1,0 +1,21 @@
+%% id: browser-side-effect-transaction
+%% title: 浏览器副作用的可验证事务
+%% alt: 页面快照与候选动作形成绑定审批，执行时携带幂等键，随后重新观察业务状态，状态未知则停止而不是重复点击
+sequenceDiagram
+    participant R as Runtime
+    participant H as Human
+    participant P as Page Adapter
+    participant B as Business System
+    R->>P: observe()
+    P-->>R: subject + URL + revision + semantic target
+    R->>H: 展示对象、字段差异和动作影响
+    H-->>R: 绑定 observation + action 的批准
+    R->>P: click(target, idempotency_key)
+    P->>B: 提交业务请求
+    R->>P: re-observe()
+    P-->>R: 当前业务状态与单号
+    alt 状态符合预期
+        R-->>H: 完成并写入审计
+    else 状态未知或页面已变化
+        R-->>H: 停止，转人工核对
+    end

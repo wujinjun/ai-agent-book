@@ -1,0 +1,12 @@
+%% id: container-artifact-lineage
+%% title: 容器发布物的供应链证据链
+%% alt: 源码提交依赖锁和固定基础镜像进入受控构建，产生镜像摘要 SBOM Provenance 与签名，部署策略验证后按摘要发布
+flowchart LR
+    Commit[Source commit] --> Build[受控 Builder]
+    Lock[Dependency lock] --> Build
+    Base[Base image digest] --> Build
+    Build --> Image[Runtime image digest]
+    Image --> SBOM[SBOM + vulnerability scan]
+    Image --> Sign[Provenance + signature]
+    SBOM --> Policy[部署策略验证]
+    Sign --> Policy --> Deploy[按 Digest 部署]

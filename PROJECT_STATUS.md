@@ -1,6 +1,6 @@
 # 项目状态
 
-仓库状态审计日期：2026-08-12。外部框架与规范的实际核对日期单独记录在 `notes/version-check.md`；仓库审计日期不能替代 API 版本核查日期。
+仓库状态审计日期：2026-08-13。外部框架与规范的实际核对日期单独记录在 `notes/version-check.md`；仓库审计日期不能替代 API 版本核查日期。
 
 完整的逐章、逐项目状态见 [`notes/completion-matrix.md`](notes/completion-matrix.md)，后续工作和验收标准见 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
 
@@ -22,7 +22,7 @@ P9 当前状态为 `complete_repository_scope`。仓库证据分为个人系统�
 
 ## 代码完成度
 
-- 当前 Python 3.12.13 环境下，288 项根级与项目测试全量通过。其中十项目共享服务契约按项目参数化验证持久化、幂等、租户权限、预算、取消、SSE 回放、指标与重建恢复，项目 4、8、10 另有生产恢复路径测试；独立示例、框架候选、发行资产、培训课件字体与范围化发布契约测试也纳入同一根测试集合。
+- 当前 Python 3.12.13 环境下，291 项根级与项目测试全量通过。其中十项目共享服务契约按项目参数化验证持久化、幂等、租户权限、预算、取消、SSE 回放、指标与重建恢复，项目 4、8、10 另有生产恢复路径测试；独立示例、框架候选、发行资产、培训课件字体与范围化发布契约测试也纳入同一根测试集合。
 - 根代码包含 Tool Runtime、十个项目领域模块、出版管线和质量审计；十个项目入口都能在离线模式运行。
 - 当前 13 个独立示例已全部完成目录契约、离线运行、直接测试、章节双向链接和根级隔离环境编排。Browser Safety Lab 在全新 Python 3.12 venv 中通过离线入口、6 项测试、Ruff 与严格 mypy，验证语义目标唯一性、页面与动作绑定审批、主体和 Origin Policy、幂等抑制及动作后业务状态复核；Cost/Latency Lab 同样保留全新环境验证。Framework Comparison 还使用三个隔离环境生成带版本与源码哈希的同题证据。`tool_runtime` 是清单外的既有工程，不计入 13 个示例。索引、图示和三种出版格式均由统一流水线维护。
 - OpenAI Agents SDK 0.18.3 已于 2026-08-12 在全新 Python 3.12 环境重新安装并通过 6 个离线测试；LangGraph、PydanticAI、LangChain、LlamaIndex、CrewAI、AutoGen 与 Semantic Kernel 保留各自固定版本和隔离实测范围。
@@ -47,11 +47,11 @@ P9 当前状态为 `complete_repository_scope`。仓库证据分为个人系统�
 
 ## 出版完成度
 
-- 上次完整出版基线的 HTML 全站共有 240 张 Mermaid 图，正式书稿收录其中 239 张，并生成 SVG、2x PNG 和内容哈希清单。此后项目 8 新增 1 张发布 Outbox 时序图；当前源码图数与上次资产清单暂不一致，必须在最终出版阶段重建并重新统计，不能把旧清单数字当成当前候选结果。三种格式均使用预渲染资产，不依赖阅读器现场执行 Mermaid。
-- 出版级信息图采用分层视觉体系：A 级核心信息图 12/12、B 级增强信息图 20/20、全章与十项目覆盖图 16/16 已完成；48 张信息图均保留生成式无文字底稿、可编辑 SVG、高分辨率 PNG、中文语义层、图号、长替代文本、图后解释、来源与 SHA-256。38 个正文章节和 10 个项目均有独立出版图；Mermaid 继续作为精确、可维护的工程图保留，其最新数量待最终重建后写入。
+- 当前 HTML 全站共有 260 张 Mermaid 图，正式 PDF/EPUB 书稿收录其中 259 张；全部图均生成源文件、SVG、PNG 和内容哈希清单。三种格式使用预渲染资产，不依赖阅读器现场执行 Mermaid。
+- 出版级信息图采用分层视觉体系：A 级核心信息图 12/12、B 级增强信息图 20/20、全章与十项目覆盖图 16/16 已完成；48 张信息图均保留生成式无文字底稿、可编辑 SVG、高分辨率 PNG、中文语义层、图号、长替代文本、图后解释、来源与 SHA-256。38 个正文章节和 10 个项目均有独立出版图。Mermaid 继续承担精确、可维护的工程语义，当前全站共 260 张；2026-08-13 已通过 13 页工程图联系表与 4 页出版信息图联系表的全量复审，详见 `notes/2026-08-13-visual-qa.md`。
 - MkDocs HTML 严格构建、断链、缺图、alt、重复 ID 和残留 Mermaid 自动审计已建立。
-- 内容扩写前的最近一次本地候选 PDF 为 535 页 A4、约 170 MiB；它已经落后于当前源码，不能作为本轮候选页数。该基线中 48 张出版信息图进入同一出版管线，代表页 259、280、296、447、467、492 完成过栅格化抽查。Noto Sans SC 与 Source Code Pro 固定到上游 commit 并携带 OFL；最终页数、体积与代表页将在本轮重建后更新。
-- 当前本地 EPUB3 约 127 MiB，出版信息图 PNG 均进入容器且不依赖 JavaScript 渲染；MkDocs HTML、PDF 和 EPUB 已于 2026-08-12 从同一源码重新构建并通过出版审计。
+- 当前 PDF 候选于 2026-08-13 从现行源码重建：A4 共 558 页、61,712,269 字节，SHA-256 为 `1c5ce7569cabe16907949795dc7f02335d226a7b486c3b0f6cbdd9e6908d486f`。Mermaid 使用 SVG 矢量资源，48 张出版信息图使用印刷缓存；代表性封面、目录、正文、代码、表格、工程图、信息图、项目、索引和末页已栅格化复审。Noto Sans SC 与 Source Code Pro 固定到上游 commit 并携带 OFL。
+- 当前 EPUB3 为 134,730,989 字节，SHA-256 为 `2757c7a7f80edeced1d1e6222ac19bd441e564828fba5a73f82386bb236e581d`，容器含 259 张 SVG 与 309 张 PNG；出版信息图进入容器且不依赖 JavaScript 渲染。MkDocs HTML、PDF 和 EPUB 已于 2026-08-13 从同一源码重新构建并通过出版审计，HTML 下载目录同步同批 PDF 与 EPUB。
 - P7 本地候选 EPUB3 为 13,443,800 字节，具备 nav、spine、严格 XHTML、跨文件片段和资源引用检查；Apple Books 实机与 Calibre 9.13.0 解析引擎复验通过，HTML 下载目录同时包含同次构建的 PDF 与 EPUB。
 - GitHub `main` 已合并 P0—P9 仓库范围成果；[GitHub Release v2026.8.1](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.1) 发布完整 HTML 压缩包、454 页 PDF、EPUB3、企业培训 PPTX、发行清单与 SHA-256。
 - P7 的 macOS 实机、Calibre 引擎、390/768/1440px 视口与 12 页图稿联系表复验已完成；实体 iOS/Android、商业印刷样张和出版社终审仍由 P9 跟踪。
@@ -83,4 +83,4 @@ P9 当前状态为 `complete_repository_scope`。仓库证据分为个人系统�
 
 ## 当前验证证据
 
-2026-08-12 较早批次曾在 Python 3.12 环境运行 Ruff、272 项根级测试、MkDocs 严格构建和 HTML/PDF/EPUB 出版审计并通过；该批次的 48 张出版信息图、240 张全站 Mermaid、239 张正式书稿 Mermaid 与 535 页 A4 PDF 是历史候选证据，不是当前源码统计。图页 259、280、296、447、467、492 在该候选上完成过渲染抽检。最新测试数见本页顶部；当前内容完成后必须重新构建出版物。更早的十项目容器和隔离框架证据继续见 `notes/p9-project-runtime-qa.md`、`notes/distribution-asset-audit.json` 和 `notes/p9-acceptance.yml`。
+2026-08-13 当前批次已重建 260 张全站 Mermaid、259 张正式书稿 Mermaid、48 张出版级信息图、558 页 A4 PDF、EPUB3 与离线 HTML，并通过出版资源审计。13 页工程图联系表与 4 页信息图联系表完成全量目视复审；PDF 代表页同时覆盖矢量工程图和栅格出版信息图。完整测试、Ruff、MkDocs 严格构建与仓库审计结果以本批最终门禁输出为准。更早的十项目容器和隔离框架证据继续见 `notes/p9-project-runtime-qa.md`、`notes/distribution-asset-audit.json` 和 `notes/p9-acceptance.yml`。

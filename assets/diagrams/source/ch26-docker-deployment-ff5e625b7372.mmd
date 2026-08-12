@@ -1,0 +1,9 @@
+%% id: deployment-schema-expand-contract
+%% title: 滚动发布中的 Expand/Migrate/Contract
+%% alt: 先扩展兼容 Schema，再部署新旧兼容代码和回填，验证后切换读取，观察期结束才删除旧字段，回滚始终保留旧路径
+flowchart LR
+    Expand[Expand 兼容 Schema] --> Compat[部署双版本兼容代码]
+    Compat --> Backfill[受控回填 + 校验]
+    Backfill --> Switch[切换读取/写入指针]
+    Switch --> Observe[观察与回滚窗口]
+    Observe --> Contract[Contract 删除旧结构]

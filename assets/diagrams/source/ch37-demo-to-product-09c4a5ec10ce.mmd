@@ -1,0 +1,11 @@
+%% id: product-degradation-decision
+%% title: Agent 产品故障降级决策
+%% alt: 依赖异常时先检查结果契约和安全能力，兼容则切换受测备用方案，不兼容则缩小为只读证据或异步人工，不伪装完整成功
+flowchart TD
+    Failure[模型/检索/工具异常] --> Contract{备用路径满足安全与结果契约}
+    Contract -->|是| Fallback[切换已验证备用适配器]
+    Contract -->|否| Partial{可提供有用且诚实的部分结果}
+    Partial -->|是| Evidence[只读证据/草稿/异步通知]
+    Partial -->|否| Human[人工接管或明确失败]
+    Fallback --> Label[记录降级版本并通知用户]
+    Evidence --> Label

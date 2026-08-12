@@ -1,0 +1,11 @@
+%% id: unknown-external-state-reconciliation
+%% title: 外部写超时后的状态核对
+%% alt: 外部写发生超时后先按业务幂等键查询，已完成则收敛成功，明确未执行且可幂等才重试，无法确认进入人工核对
+flowchart TD
+    Timeout[外部写调用超时] --> Lookup[按业务键查询远端状态]
+    Lookup --> Known{状态确定}
+    Known -->|已完成| Commit[记录远端 ID 并收敛成功]
+    Known -->|明确未执行| Safe{同键重放安全}
+    Safe -->|是且预算允许| Retry[有限重试]
+    Safe -->|否| Human[人工核对或补偿]
+    Known -->|仍未知| Human
