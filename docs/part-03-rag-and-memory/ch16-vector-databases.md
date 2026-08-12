@@ -139,11 +139,13 @@ Metadata Filtering 与 ANN 的执行顺序影响召回。先过滤后 ANN 候选
 设第 `i` 个查询的精确 Top-k 集合为 `G_i`，近似检索结果为 `A_i`，则：
 
 ```text
-Recall@k = (1 / |Q|) × Σᵢ |Gᵢ ∩ Aᵢ| / k
+Recall@k = (1 / |Q|) * sum_i(|intersection(G_i, A_i)| / k)
 Filter leakage rate = 越权结果数 / 返回结果总数
 Freshness lag = 新版本提交时间到查询可见时间
 Deletion lag = 删除确认时间到所有读取路径不可见时间
 ```
+
+其中 `sum_i` 表示对查询集合中的每个查询求和，`intersection(G_i, A_i)` 表示精确结果与近似结果的集合交集。这里使用 ASCII 记法，是为了让公式在网页、PDF、EPUB 和终端中都能稳定呈现。
 
 Recall 计算必须在权限过滤后的合法候选空间中生成真值。若精确基线包含租户 B 的文档、ANN 查询却
 过滤到租户 A，算出的“低召回”没有诊断意义。反过来，Recall 很高也不能掩盖一次权限泄漏：

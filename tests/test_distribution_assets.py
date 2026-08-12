@@ -72,7 +72,10 @@ def test_print_css_does_not_fall_back_to_untracked_system_fonts() -> None:
     css = (ROOT / "templates/pandoc/print.css").read_text(encoding="utf-8")
 
     assert 'font-family: "Book Noto Sans SC", sans-serif' in css
-    assert 'font-family: "Book Source Code Pro", "Book Noto Sans SC", monospace' in css
+    assert (
+        'font-family: "Book Source Code Pro", "Book Noto Sans SC" !important;' in css
+    )
+    assert 'font-family: "Book Noto Sans SC", sans-serif !important;' in css
     for forbidden in ("Menlo", "Monaco", "PingFang", "Hiragino"):
         assert forbidden not in css
 

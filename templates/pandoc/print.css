@@ -74,15 +74,21 @@ pre {
   border: 0.5pt solid #dce3ea;
   border-radius: 5pt;
   background: #f6f8fa;
-  font-family: "Book Source Code Pro", "Book Noto Sans SC", monospace;
+  font-family: "Book Source Code Pro", "Book Noto Sans SC" !important;
   font-size: 8pt;
   line-height: 1.45;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 code {
-  font-family: "Book Source Code Pro", "Book Noto Sans SC", monospace;
+  font-family: "Book Source Code Pro", "Book Noto Sans SC" !important;
   font-size: 0.92em;
+}
+.sourceCode, .sourceCode span, pre code, kbd, samp {
+  font-family: "Book Source Code Pro", "Book Noto Sans SC" !important;
+}
+.math, span.math {
+  font-family: "Book Noto Sans SC", sans-serif !important;
 }
 table { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
 thead { display: table-header-group; }

@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from scripts.package_release import package_release
+from scripts.package_release import package_release, release_notes
 from scripts.prepare_external_validation_kit import prepare_kit
 from scripts.validate_external_evidence import validate_directory
 
@@ -82,6 +82,16 @@ def test_release_package_contains_site_editions_notes_and_valid_checksums(
     for path in (archive, pdf, epub, pptx, notes, release_manifest):
         expected = hashlib.sha256(path.read_bytes()).hexdigest()
         assert f"{expected}  {path.name}" in manifest
+
+
+def test_release_candidate_notes_fall_back_to_unreleased_section() -> None:
+    changelog = "# 变更记录\n\n## Unreleased\n\n- 完成候选版视觉验收。\n\n## v1.0.0\n"
+
+    notes = release_notes(changelog, "2026-08-13-rc2")
+
+    assert "## Unreleased" in notes
+    assert "完成候选版视觉验收" in notes
+    assert "## v1.0.0" not in notes
 
 
 def test_local_release_candidate_rejects_a_dirty_git_worktree(

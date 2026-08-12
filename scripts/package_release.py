@@ -93,10 +93,11 @@ def release_notes(changelog: str, version: str) -> str:
     heading = f"## v{normalized}"
     start = changelog.find(heading)
     if start < 0:
-        return (
-            f"# AI Agent 从零到实战 {version}\n\n"
-            "本文件由发布打包脚本生成。完整变更见仓库 `CHANGELOG.md`。\n"
-        )
+        heading = "## Unreleased"
+        start = changelog.find(heading)
+    if start < 0:
+        section = "本文件由发布打包脚本生成。完整变更见仓库 `CHANGELOG.md`。"
+        return f"# AI Agent 从零到实战 {version}\n\n{section}\n"
     end = changelog.find("\n## ", start + len(heading))
     section = changelog[start : end if end >= 0 else None].strip()
     return f"# AI Agent 从零到实战 {version}\n\n{section}\n"

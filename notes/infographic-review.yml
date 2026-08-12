@@ -10,13 +10,13 @@ acceptance:
 current_release_review:
   date: 2026-08-13
   pdf_pages: 558
-  pdf_sha256: 1c5ce7569cabe16907949795dc7f02335d226a7b486c3b0f6cbdd9e6908d486f
-  epub_sha256: 2757c7a7f80edeced1d1e6222ac19bd441e564828fba5a73f82386bb236e581d
+  pdf_sha256: 234f9719ec8ef39f367583a1eb9cfea5053e47c75c28c9d92e2b76f24b1b7770
+  epub_sha256: 3e75f60fe0fdec9c3896f2fd38b3961546058806b91af320ad02d763dbf65567
   engineering_diagrams: 260
   publication_infographics: 48
   contact_sheets: {engineering: 13, infographics: 4}
   html_review: pass
-  pdf_review: pass_after_print_path_fix
+  pdf_review: pass_after_print_path_and_font_fix
   epub_review: pass_publication_audit
 pilots:
   - id: llm-product-agent-system-infographic

@@ -140,6 +140,15 @@ def test_print_tables_repeat_headers_and_split_only_between_rows() -> None:
     assert "th, td { padding: 3pt;" in css
 
 
+def test_print_css_forbids_system_monospace_fallbacks() -> None:
+    css = (ROOT / "templates/pandoc/print.css").read_text(encoding="utf-8")
+
+    assert 'font-family: "Book Source Code Pro", "Book Noto Sans SC" !important;' in css
+    assert '.sourceCode, .sourceCode span, pre code, kbd, samp {' in css
+    assert 'font-family: "Book Noto Sans SC", sans-serif !important;' in css
+    assert "Menlo" not in css
+
+
 def test_build_print_html_stages_relative_svg_sources(tmp_path: Path, monkeypatch) -> None:
     svg = tmp_path / "assets/diagrams/svg/demo.svg"
     svg.parent.mkdir(parents=True)
