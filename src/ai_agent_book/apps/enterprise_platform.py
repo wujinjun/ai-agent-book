@@ -5,6 +5,7 @@ from __future__ import annotations
 import base64
 import binascii
 import hmac
+import inspect as python_inspect
 import json
 import sqlite3
 import time
@@ -100,6 +101,35 @@ class DeadLetterRecord(BaseModel):
     created_at: datetime
 
 
+class ReplayApprovalRecord(BaseModel):
+    run_id: str
+    content_hash: str
+    expires_at: datetime
+
+
+class RunCancelled(RuntimeError):
+    """执行器在显式安全检查点观察到取消请求。"""
+
+
+class RunExecutionContext:
+    """长任务执行器使用的协作式控制面；不会异步杀死业务代码。"""
+
+    def __init__(self, platform: EnterprisePlatform, run: RunRecord, worker_id: str) -> None:
+        self._platform = platform
+        self.run = run
+        self.worker_id = worker_id
+
+    def heartbeat(self) -> datetime:
+        return self._platform.heartbeat_run(self.run.run_id, self.worker_id)
+
+    def cancellation_requested(self) -> bool:
+        return self._platform.is_cancellation_requested(self.run.run_id, self.worker_id)
+
+    def checkpoint(self) -> None:
+        if self.cancellation_requested():
+            raise RunCancelled(f"run {self.run.run_id} cancellation requested")
+
+
 class RunQueue(Protocol):
     def push(self, run_id: str) -> None: ...
 
@@ -193,6 +223,7 @@ runs = Table(
     Column("created_at", DateTime(timezone=True), nullable=False),
     Column("worker_id", String(64), nullable=True),
     Column("lease_expires_at", DateTime(timezone=True), nullable=True),
+    Column("cancel_requested", Boolean, nullable=False, default=False),
 )
 traces = Table(
     "traces",
@@ -238,9 +269,20 @@ dead_letters = Table(
     Column("attempts", Integer, nullable=False),
     Column("created_at", DateTime(timezone=True), nullable=False),
 )
+replay_approvals = Table(
+    "replay_approvals",
+    metadata,
+    Column("token_hash", String(64), primary_key=True),
+    Column("run_id", String(36), nullable=False, index=True),
+    Column("tenant_id", String(100), nullable=False, index=True),
+    Column("content_hash", String(64), nullable=False),
+    Column("expires_at", DateTime(timezone=True), nullable=False),
+    Column("used_at", DateTime(timezone=True), nullable=True),
+)
 
 
-RunExecutor = Callable[[RunRecord, list[dict[str, str]]], str]
+RunExecutor = Callable[..., str]
+ContextRunExecutor = Callable[[RunRecord, list[dict[str, str]], RunExecutionContext], str]
 
 
 class EnterprisePlatform:
@@ -282,6 +324,13 @@ class EnterprisePlatform:
                 connection.execute(
                     insert(schema_versions).values(version=2, applied_at=datetime.now(UTC))
                 )
+            version_three = connection.execute(
+                select(schema_versions.c.version).where(schema_versions.c.version == 3)
+            ).scalar_one_or_none()
+            if version_three is None:
+                connection.execute(
+                    insert(schema_versions).values(version=3, applied_at=datetime.now(UTC))
+                )
 
     def _migrate_run_leases(self) -> None:
         """为已有 v1 数据库增加租约列；生产环境应使用正式迁移工具。"""
@@ -291,10 +340,19 @@ class EnterprisePlatform:
             statements.append("ALTER TABLE runs ADD COLUMN worker_id VARCHAR(64)")
         if "lease_expires_at" not in existing:
             statements.append("ALTER TABLE runs ADD COLUMN lease_expires_at TIMESTAMP")
+        if "cancel_requested" not in existing:
+            statements.append(
+                "ALTER TABLE runs ADD COLUMN cancel_requested BOOLEAN NOT NULL DEFAULT 0"
+            )
         if statements:
             with self.engine.begin() as connection:
                 for statement in statements:
                     connection.exec_driver_sql(statement)
+
+    @staticmethod
+    def _as_utc(value: datetime) -> datetime:
+        """SQLite 可能返回 naive datetime；领域层统一按 UTC 解释。"""
+        return value.replace(tzinfo=UTC) if value.tzinfo is None else value.astimezone(UTC)
 
     def create_tenant(self, tenant_id: str, name: str) -> None:
         with self.engine.begin() as connection:
@@ -492,7 +550,39 @@ class EnterprisePlatform:
                 for item in document_rows
             ]
         try:
-            output = self.run_executor(running, docs)
+            context = RunExecutionContext(self, running, worker_id)
+            context.checkpoint()
+            parameters = python_inspect.signature(self.run_executor).parameters
+            if len(parameters) >= 3:
+                context_executor = cast(ContextRunExecutor, self.run_executor)
+                output = context_executor(running, docs, context)
+            else:
+                output = self.run_executor(running, docs)
+            context.checkpoint()
+        except RunCancelled:
+            with self.engine.begin() as connection:
+                cancelled_write = connection.execute(
+                    update(runs)
+                    .where(
+                        runs.c.run_id == running.run_id,
+                        runs.c.status == "running",
+                        runs.c.worker_id == worker_id,
+                        runs.c.cancel_requested.is_(True),
+                    )
+                    .values(
+                        status="cancelled",
+                        output="cancelled",
+                        worker_id=None,
+                        lease_expires_at=None,
+                    )
+                )
+                if cancelled_write.rowcount != 1:
+                    raise RuntimeError("run lease was lost before cancellation") from None
+                cancelled = running.model_copy(
+                    update={"status": "cancelled", "output": "cancelled"}
+                )
+                self._trace(connection, cancelled, "run.cancelled", {"source": "worker"})
+                return cancelled
         except Exception as exc:
             with self.engine.begin() as connection:
                 return self._record_failure(connection, running, exc, worker_id=worker_id)
@@ -516,6 +606,36 @@ class EnterprisePlatform:
             completed = running.model_copy(update={"status": "succeeded", "output": output})
             self._trace(connection, completed, "run.succeeded", {"rag": str(bool(docs))})
             return completed
+
+    def heartbeat_run(self, run_id: str, worker_id: str) -> datetime:
+        """仅当前租约持有者可续租；worker_id 同时承担 fencing token 的作用。"""
+        expires_at = datetime.now(UTC) + timedelta(seconds=self.lease_seconds)
+        with self.engine.begin() as connection:
+            renewed = connection.execute(
+                update(runs)
+                .where(
+                    runs.c.run_id == run_id,
+                    runs.c.status == "running",
+                    runs.c.worker_id == worker_id,
+                )
+                .values(lease_expires_at=expires_at)
+            )
+        if renewed.rowcount != 1:
+            raise RuntimeError("run lease cannot be renewed by this worker")
+        return expires_at
+
+    def is_cancellation_requested(self, run_id: str, worker_id: str) -> bool:
+        with self.engine.connect() as connection:
+            value = connection.execute(
+                select(runs.c.cancel_requested).where(
+                    runs.c.run_id == run_id,
+                    runs.c.status == "running",
+                    runs.c.worker_id == worker_id,
+                )
+            ).scalar_one_or_none()
+        if value is None:
+            raise RuntimeError("run lease is no longer owned by this worker")
+        return bool(value)
 
     @staticmethod
     def _default_execute(run: RunRecord, docs: list[dict[str, str]]) -> str:
@@ -615,17 +735,25 @@ class EnterprisePlatform:
                 ).scalar_one_or_none()
             if owner != user_id:
                 raise PermissionError("run cancellation denied")
-        if current.status != "queued":
-            raise ValueError("only queued runs can be cancelled")
+        if current.status not in {"queued", "running"}:
+            raise ValueError("only queued or running runs can be cancelled")
         with self.engine.begin() as connection:
+            if current.status == "running":
+                connection.execute(
+                    update(runs)
+                    .where(runs.c.run_id == run_id, runs.c.status == "running")
+                    .values(cancel_requested=True)
+                )
+                self._trace(connection, current, "run.cancel_requested", {"user_id": user_id})
+                return current
             connection.execute(
                 update(runs)
-                .where(runs.c.run_id == run_id)
-                .values(status="cancelled", output="cancelled")
+                .where(runs.c.run_id == run_id, runs.c.status == "queued")
+                .values(status="cancelled", output="cancelled", cancel_requested=True)
             )
             cancelled = current.model_copy(update={"status": "cancelled", "output": "cancelled"})
             self._trace(connection, cancelled, "run.cancelled", {"user_id": user_id})
-        return cancelled
+            return cancelled
 
     def list_dead_letters(self, tenant_id: str, user_id: str) -> list[DeadLetterRecord]:
         self._require_admin(tenant_id, user_id)
@@ -646,7 +774,59 @@ class EnterprisePlatform:
             for row in rows
         ]
 
-    def retry_dead_letter(self, tenant_id: str, user_id: str, run_id: str) -> RunRecord:
+    def _dead_letter_content_hash(self, connection: object, run_id: str) -> str:
+        row = connection.execute(  # type: ignore[attr-defined]
+            select(
+                runs.c.prompt,
+                runs.c.trace_id,
+                dead_letters.c.error_type,
+                dead_letters.c.attempts,
+            )
+            .select_from(runs.join(dead_letters, runs.c.run_id == dead_letters.c.run_id))
+            .where(runs.c.run_id == run_id)
+        ).mappings().first()
+        if row is None:
+            raise KeyError(run_id)
+        canonical = json.dumps(dict(row), sort_keys=True, separators=(",", ":"), default=str)
+        return sha256(canonical.encode()).hexdigest()
+
+    def approve_dead_letter_replay(
+        self,
+        tenant_id: str,
+        user_id: str,
+        run_id: str,
+        *,
+        ttl_seconds: int = 300,
+    ) -> tuple[ReplayApprovalRecord, str]:
+        self._require_admin(tenant_id, user_id)
+        if ttl_seconds < 1 or ttl_seconds > 3600:
+            raise ValueError("approval ttl must be between 1 and 3600 seconds")
+        token = uuid4().hex + uuid4().hex
+        expires_at = datetime.now(UTC) + timedelta(seconds=ttl_seconds)
+        with self.engine.begin() as connection:
+            owner = connection.execute(
+                select(dead_letters.c.tenant_id).where(dead_letters.c.run_id == run_id)
+            ).scalar_one_or_none()
+            if owner != tenant_id:
+                raise KeyError(run_id)
+            content_hash = self._dead_letter_content_hash(connection, run_id)
+            connection.execute(
+                insert(replay_approvals).values(
+                    token_hash=sha256(token.encode()).hexdigest(),
+                    run_id=run_id,
+                    tenant_id=tenant_id,
+                    content_hash=content_hash,
+                    expires_at=expires_at,
+                    used_at=None,
+                )
+            )
+        return ReplayApprovalRecord(
+            run_id=run_id, content_hash=content_hash, expires_at=expires_at
+        ), token
+
+    def retry_dead_letter(
+        self, tenant_id: str, user_id: str, run_id: str, *, approval_token: str
+    ) -> RunRecord:
         self._require_admin(tenant_id, user_id)
         with self.engine.begin() as connection:
             letter = connection.execute(
@@ -657,10 +837,41 @@ class EnterprisePlatform:
             ).first()
             if letter is None:
                 raise KeyError(run_id)
+            token_hash = sha256(approval_token.encode()).hexdigest()
+            approval = connection.execute(
+                select(replay_approvals).where(
+                    replay_approvals.c.token_hash == token_hash,
+                    replay_approvals.c.tenant_id == tenant_id,
+                    replay_approvals.c.run_id == run_id,
+                )
+            ).mappings().first()
+            current_hash = self._dead_letter_content_hash(connection, run_id)
+            now = datetime.now(UTC)
+            if (
+                approval is None
+                or approval["used_at"] is not None
+                or self._as_utc(cast(datetime, approval["expires_at"])) < now
+                or approval["content_hash"] != current_hash
+            ):
+                raise PermissionError("valid content-bound replay approval required")
+            consumed = connection.execute(
+                update(replay_approvals)
+                .where(
+                    replay_approvals.c.token_hash == token_hash,
+                    replay_approvals.c.used_at.is_(None),
+                    replay_approvals.c.content_hash == current_hash,
+                    replay_approvals.c.expires_at >= now,
+                )
+                .values(used_at=now)
+            )
+            if consumed.rowcount != 1:
+                raise PermissionError("replay approval was already consumed or expired")
             connection.execute(delete(dead_letters).where(dead_letters.c.run_id == run_id))
             connection.execute(delete(run_failures).where(run_failures.c.run_id == run_id))
             connection.execute(
-                update(runs).where(runs.c.run_id == run_id).values(status="queued")
+                update(runs)
+                .where(runs.c.run_id == run_id)
+                .values(status="queued", cancel_requested=False)
             )
         try:
             self.queue.push(run_id)
@@ -869,6 +1080,19 @@ class RunCreate(BaseModel):
     prompt: str = Field(min_length=1, max_length=20_000)
 
 
+class ReplayApprovalCreate(BaseModel):
+    ttl_seconds: int = Field(default=300, ge=1, le=3600)
+
+
+class ReplayApprovalResponse(BaseModel):
+    approval: ReplayApprovalRecord
+    token: str
+
+
+class DeadLetterRetryRequest(BaseModel):
+    approval_token: str = Field(min_length=64, max_length=128)
+
+
 def create_enterprise_app(
     platform: EnterprisePlatform,
     *,
@@ -995,10 +1219,37 @@ def create_enterprise_app(
 
     @app.post("/admin/dead-letters/{run_id}/retry", response_model=RunRecord)
     async def retry_dead_letter(
-        run_id: str, identity: EnterprisePrincipalDep
+        run_id: str, body: DeadLetterRetryRequest, identity: EnterprisePrincipalDep
     ) -> RunRecord:
         try:
-            return platform.retry_dead_letter(identity.tenant_id, identity.user_id, run_id)
+            return platform.retry_dead_letter(
+                identity.tenant_id,
+                identity.user_id,
+                run_id,
+                approval_token=body.approval_token,
+            )
+        except PermissionError as exc:
+            raise forbidden(exc) from exc
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail="dead letter not found") from exc
+
+    @app.post(
+        "/admin/dead-letters/{run_id}/approval",
+        response_model=ReplayApprovalResponse,
+    )
+    async def approve_dead_letter_replay(
+        run_id: str,
+        body: ReplayApprovalCreate,
+        identity: EnterprisePrincipalDep,
+    ) -> ReplayApprovalResponse:
+        try:
+            approval, token = platform.approve_dead_letter_replay(
+                identity.tenant_id,
+                identity.user_id,
+                run_id,
+                ttl_seconds=body.ttl_seconds,
+            )
+            return ReplayApprovalResponse(approval=approval, token=token)
         except PermissionError as exc:
             raise forbidden(exc) from exc
         except KeyError as exc:

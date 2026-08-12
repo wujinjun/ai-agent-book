@@ -8,9 +8,12 @@ from ai_agent_book.apps.enterprise_platform import (
     EnterprisePlatform,
     HMACIdentityVerifier,
     Principal,
+    RunExecutionContext,
     RunRecord,
     create_enterprise_app,
+    replay_approvals,
     runs,
+    schema_versions,
 )
 
 
@@ -72,7 +75,10 @@ def test_admin_can_retry_dead_letter_after_provider_recovers(tmp_path: Path) -> 
     run = platform.submit_run("tenant-a", "member-a", session_id, "task")
     platform.process_next()
     executor.fail = False
-    queued = platform.retry_dead_letter("tenant-a", "admin-a", run.run_id)
+    _, token = platform.approve_dead_letter_replay("tenant-a", "admin-a", run.run_id)
+    queued = platform.retry_dead_letter(
+        "tenant-a", "admin-a", run.run_id, approval_token=token
+    )
     completed = platform.process_next()
     assert queued.status == "queued"
     assert completed is not None and completed.status == "succeeded"
@@ -134,6 +140,38 @@ def test_dead_letter_admin_api_is_rbac_protected(tmp_path: Path) -> None:
     assert client.get("/admin/dead-letters", headers=member).status_code == 403
 
 
+def test_dead_letter_http_replay_requires_fresh_approval_token(tmp_path: Path) -> None:
+    executor = SwitchableExecutor()
+    platform, session_id = _platform(
+        tmp_path / "platform.db", executor=executor, max_attempts=1
+    )
+    run = platform.submit_run("tenant-a", "member-a", session_id, "task")
+    platform.process_next()
+    client = TestClient(create_enterprise_app(platform))
+    admin = {"X-Tenant-ID": "tenant-a", "X-User-ID": "admin-a"}
+
+    rejected = client.post(
+        f"/admin/dead-letters/{run.run_id}/retry",
+        headers=admin,
+        json={"approval_token": "0" * 64},
+    )
+    approval = client.post(
+        f"/admin/dead-letters/{run.run_id}/approval",
+        headers=admin,
+        json={"ttl_seconds": 30},
+    )
+    accepted = client.post(
+        f"/admin/dead-letters/{run.run_id}/retry",
+        headers=admin,
+        json={"approval_token": approval.json()["token"]},
+    )
+
+    assert rejected.status_code == 403
+    assert approval.status_code == 200
+    assert accepted.status_code == 200
+    assert accepted.json()["status"] == "queued"
+
+
 def test_trace_evaluation_readiness_and_metrics_are_exposed(tmp_path: Path) -> None:
     platform, session_id = _platform(tmp_path / "platform.db")
     run = platform.submit_run("tenant-a", "member-a", session_id, "task")
@@ -181,3 +219,108 @@ def test_expired_running_lease_is_recovered_after_worker_crash(tmp_path: Path) -
     recovered = platform.process_next(tenant_id="tenant-a")
 
     assert recovered is not None and recovered.status == "succeeded"
+
+
+def test_resilience_schema_version_is_recorded(tmp_path: Path) -> None:
+    platform, _ = _platform(tmp_path / "platform.db")
+    with platform.engine.connect() as connection:
+        versions = connection.execute(schema_versions.select()).scalars().all()
+    assert versions == [1, 2, 3]
+
+
+def test_running_executor_observes_cooperative_cancellation(tmp_path: Path) -> None:
+    platform: EnterprisePlatform
+
+    def executor(
+        run: RunRecord, docs: list[dict[str, str]], context: RunExecutionContext
+    ) -> str:
+        platform.cancel_run(run.tenant_id, "member-a", run.run_id)
+        context.checkpoint()
+        return "must not be committed"
+
+    platform, session_id = _platform(tmp_path / "platform.db")
+    platform.run_executor = executor
+    run = platform.submit_run("tenant-a", "member-a", session_id, "cancel me")
+
+    result = platform.process_next(tenant_id="tenant-a")
+
+    assert result is not None and result.status == "cancelled"
+    assert platform.get_run("tenant-a", run.run_id).output == "cancelled"
+    assert [trace.event for trace in platform.list_traces("tenant-a", run.run_id)][-2:] == [
+        "run.cancel_requested",
+        "run.cancelled",
+    ]
+
+
+def test_only_current_worker_can_renew_lease(tmp_path: Path) -> None:
+    platform, session_id = _platform(tmp_path / "platform.db")
+    run = platform.submit_run("tenant-a", "member-a", session_id, "long task")
+    with platform.engine.begin() as connection:
+        connection.execute(
+            runs.update()
+            .where(runs.c.run_id == run.run_id)
+            .values(status="running", worker_id="worker-current")
+        )
+
+    expires_at = platform.heartbeat_run(run.run_id, "worker-current")
+
+    assert expires_at > datetime.now(UTC)
+    with pytest.raises(RuntimeError, match="cannot be renewed"):
+        platform.heartbeat_run(run.run_id, "worker-stale")
+
+
+def test_dead_letter_replay_approval_is_content_bound_and_single_use(tmp_path: Path) -> None:
+    executor = SwitchableExecutor()
+    platform, session_id = _platform(
+        tmp_path / "platform.db", executor=executor, max_attempts=1
+    )
+    first = platform.submit_run("tenant-a", "member-a", session_id, "first")
+    platform.process_next()
+    approval, token = platform.approve_dead_letter_replay(
+        "tenant-a", "admin-a", first.run_id
+    )
+    assert approval.content_hash
+    queued = platform.retry_dead_letter(
+        "tenant-a", "admin-a", first.run_id, approval_token=token
+    )
+    assert queued.status == "queued"
+    with pytest.raises((KeyError, PermissionError)):
+        platform.retry_dead_letter(
+            "tenant-a", "admin-a", first.run_id, approval_token=token
+        )
+
+    second = platform.submit_run("tenant-a", "member-a", session_id, "second")
+    platform.process_next()
+    platform.process_next()
+    _, second_token = platform.approve_dead_letter_replay(
+        "tenant-a", "admin-a", second.run_id
+    )
+    with platform.engine.begin() as connection:
+        connection.execute(
+            runs.update().where(runs.c.run_id == second.run_id).values(prompt="changed")
+        )
+    with pytest.raises(PermissionError, match="content-bound"):
+        platform.retry_dead_letter(
+            "tenant-a", "admin-a", second.run_id, approval_token=second_token
+        )
+
+
+def test_expired_dead_letter_replay_approval_is_rejected(tmp_path: Path) -> None:
+    executor = SwitchableExecutor()
+    platform, session_id = _platform(
+        tmp_path / "platform.db", executor=executor, max_attempts=1
+    )
+    run = platform.submit_run("tenant-a", "member-a", session_id, "expired")
+    platform.process_next()
+    _, token = platform.approve_dead_letter_replay("tenant-a", "admin-a", run.run_id)
+    with platform.engine.begin() as connection:
+        connection.execute(
+            replay_approvals.update().values(
+                expires_at=datetime.now(UTC) - timedelta(seconds=1)
+            )
+        )
+
+    with pytest.raises(PermissionError, match="content-bound"):
+        platform.retry_dead_letter(
+            "tenant-a", "admin-a", run.run_id, approval_token=token
+        )

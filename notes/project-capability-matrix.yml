@@ -1,0 +1,129 @@
+schema_version: 1
+updated_at: 2026-08-12
+maturity_vocabulary:
+  - concept
+  - vertical_slice
+  - service_template
+  - production_reference
+  - externally_validated
+projects:
+  - id: 1
+    name: 最小 AI Assistant
+    maturity: service_template
+    demo_entry: projects/01-minimal-assistant/main.py
+    api_entry: projects/01-minimal-assistant/api.py
+    domain_implementation: src/ai_agent_book/apps/minimal_assistant.py
+    direct_tests: [tests/test_minimal_assistant_app.py]
+    dockerfile: projects/01-minimal-assistant/Dockerfile
+    persistence_recovery: 持久 Run、SSE 回放、预算与取消
+    side_effect_safety: 只读模型适配边界，无外部写操作
+    external_adapter: mock_only
+    gaps: [真实 Provider 受控联调, 流中断续传压测]
+  - id: 2
+    name: 天气与工具调用 Agent
+    maturity: service_template
+    demo_entry: projects/02-weather-tool-agent/main.py
+    api_entry: projects/02-weather-tool-agent/api.py
+    domain_implementation: src/ai_agent_book/apps/weather_agent.py
+    direct_tests: [tests/test_weather_agent_app.py]
+    dockerfile: projects/02-weather-tool-agent/Dockerfile
+    persistence_recovery: 持久 Run 与有限重试
+    side_effect_safety: 参数校验、幂等键与人工批准边界
+    external_adapter: mock_only
+    gaps: [真实天气数据源, 审批恢复专项链路]
+  - id: 3
+    name: MCP 本地工具 Agent
+    maturity: service_template
+    demo_entry: projects/03-mcp-local-agent/main.py
+    api_entry: projects/03-mcp-local-agent/api.py
+    domain_implementation: src/ai_agent_book/apps/mcp_local.py
+    direct_tests: [tests/test_mcp_local_app.py, tests/test_mcp_official_sdk_contract.py]
+    dockerfile: projects/03-mcp-local-agent/Dockerfile
+    persistence_recovery: 租户化服务状态与协议错误处理
+    side_effect_safety: 文件根目录约束与工具白名单
+    external_adapter: official_sdk_offline
+    gaps: [OAuth, Origin 校验, 远程取消与超时压测]
+  - id: 4
+    name: 企业知识库 Agent
+    maturity: production_reference
+    demo_entry: projects/04-knowledge-agent/main.py
+    api_entry: projects/04-knowledge-agent/api.py
+    domain_implementation: src/ai_agent_book/apps/knowledge_agent.py
+    direct_tests: [tests/test_knowledge_agent_app.py, tests/test_knowledge_pipeline.py]
+    dockerfile: projects/04-knowledge-agent/Dockerfile
+    persistence_recovery: 版本索引、摄取 Worker、黄金门禁、原子切换与恢复
+    side_effect_safety: 租户过滤、版本激活与引用证据
+    external_adapter: local_pgvector_reference
+    gaps: [OCR, 正式 Embedding 与 Reranker, 规模压测]
+  - id: 5
+    name: 代码 Review Agent
+    maturity: service_template
+    demo_entry: projects/05-code-review-agent/main.py
+    api_entry: projects/05-code-review-agent/api.py
+    domain_implementation: src/ai_agent_book/apps/code_review.py
+    direct_tests: [tests/test_code_review_app.py, tests/test_coding_workspace.py]
+    dockerfile: projects/05-code-review-agent/Dockerfile
+    persistence_recovery: Webhook 持久去重与报告恢复
+    side_effect_safety: Diff 预算、提交与报告哈希绑定批准
+    external_adapter: mock_only
+    gaps: [GitHub App 安装鉴权, 多语言静态分析沙箱, 远程评论对账]
+  - id: 6
+    name: 自动办公 Agent
+    maturity: service_template
+    demo_entry: projects/06-office-agent/main.py
+    api_entry: projects/06-office-agent/api.py
+    domain_implementation: src/ai_agent_book/apps/office_agent.py
+    direct_tests: [tests/test_office_agent_app.py]
+    dockerfile: projects/06-office-agent/Dockerfile
+    persistence_recovery: 持久租约 Outbox 与失败恢复
+    side_effect_safety: 内容和目标绑定批准、幂等发布与审计
+    external_adapter: mock_only
+    gaps: [真实账号 OAuth, 远端结果对账, 供应商限流联调]
+  - id: 7
+    name: 股票研究 Agent
+    maturity: service_template
+    demo_entry: projects/07-stock-research-agent/main.py
+    api_entry: projects/07-stock-research-agent/api.py
+    domain_implementation: src/ai_agent_book/apps/stock_research.py
+    direct_tests: [tests/test_stock_research_app.py]
+    dockerfile: projects/07-stock-research-agent/Dockerfile
+    persistence_recovery: 持久研究 Run 与结构化报告
+    side_effect_safety: 事实推断分离、数据时间与引用；不执行交易
+    external_adapter: mock_only
+    gaps: [正式行情与公告源, 财报解析, 时效评估]
+  - id: 8
+    name: LangGraph 研究工作流 Agent
+    maturity: production_reference
+    demo_entry: projects/08-research-workflow/main.py
+    api_entry: projects/08-research-workflow/api.py
+    domain_implementation: src/ai_agent_book/apps/langgraph_research.py
+    direct_tests: [tests/test_langgraph_research_app.py, tests/test_durable_research_service.py]
+    dockerfile: projects/08-research-workflow/Dockerfile
+    persistence_recovery: 持久 Run Journal、证据哈希与跨进程确定性重放
+    side_effect_safety: 证据 Allowlist、人工中断与只读恢复
+    external_adapter: langgraph_offline
+    gaps: [真实搜索, 数据库 Checkpointer, 外部写操作幂等]
+  - id: 9
+    name: Multi-Agent 软件开发团队
+    maturity: service_template
+    demo_entry: projects/09-multi-agent-dev-team/main.py
+    api_entry: projects/09-multi-agent-dev-team/api.py
+    domain_implementation: src/ai_agent_book/apps/multi_agent_team.py
+    direct_tests: [tests/test_multi_agent_team_app.py, tests/test_coding_workspace.py]
+    dockerfile: projects/09-multi-agent-dev-team/Dockerfile
+    persistence_recovery: 版本共享状态、硬预算与状态指纹终止
+    side_effect_safety: 一次性 Git 工作区、补丁策略和白名单测试
+    external_adapter: local_git_only
+    gaps: [OCI 或微虚拟机强隔离, 依赖供应链治理, 真实任务基准]
+  - id: 10
+    name: 企业级 Agent 平台
+    maturity: production_reference
+    demo_entry: projects/10-enterprise-platform/main.py
+    api_entry: projects/10-enterprise-platform/api.py
+    domain_implementation: src/ai_agent_book/apps/enterprise_platform.py
+    direct_tests: [tests/test_enterprise_platform_app.py, tests/test_enterprise_resilience.py]
+    dockerfile: projects/10-enterprise-platform/Dockerfile
+    persistence_recovery: PostgreSQL/SQLite 权威状态、Redis 唤醒、租约心跳、崩溃恢复与一致性备份
+    side_effect_safety: 租户 RBAC、协作式取消、内容绑定一次性 DLQ 重放批准
+    external_adapter: local_infrastructure_reference
+    gaps: [真实 OIDC 与 JWKS, PostgreSQL RLS, 独立 Worker 部署, OpenTelemetry, 灾备演练]

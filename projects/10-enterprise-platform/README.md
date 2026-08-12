@@ -73,7 +73,7 @@ sequenceDiagram
     A-->>U: status and authorized result
 ```
 
-Redis 只是可恢复唤醒信号，PostgreSQL 是任务事实来源。Worker API 必须用已验证主体的 `tenant_id` 领取任务；租户 A 管理员不能触发或收到租户 B 的 Run。领取使用 `worker_id + lease_expires_at`，先提交短事务再执行模型或工具；完成与失败写入都必须匹配原 worker。进程崩溃后，其他 Worker 只能在租约过期后重新领取，迟到的旧结果会因租约不匹配而拒绝覆盖。
+Redis 只是可恢复唤醒信号，PostgreSQL 是任务事实来源。Worker API 必须用已验证主体的 `tenant_id` 领取任务；租户 A 管理员不能触发或收到租户 B 的 Run。领取使用 `worker_id + lease_expires_at`，先提交短事务再执行模型或工具；完成与失败写入都必须匹配原 worker。长任务通过 `RunExecutionContext.heartbeat()` 续租，并在工具或阶段边界调用 `checkpoint()` 协作式响应取消。进程崩溃后，其他 Worker 只能在租约过期后重新领取，迟到的旧结果会因租约不匹配而拒绝覆盖。这里的取消不是强杀线程；无法到达检查点的第三方调用仍必须依赖供应商超时和幂等恢复。
 
 `租户/用户 → Agent/Tool/MCP 注册 → Session → 持久任务队列 → Runtime/RAG → Trace → Evaluation → 管理 API`。独立实现位于 `src/ai_agent_book/apps/enterprise_platform.py`，API 入口是 `api.py`，直接测试位于 `tests/test_enterprise_platform_app.py`。
 
@@ -97,7 +97,7 @@ docker compose down
 
 ## 实现说明与验收
 
-`EnterprisePlatform` 通过 SQLAlchemy 在 SQLite 与 PostgreSQL 上使用同一领域表，存储租户、用户、Agent、Tool/MCP、Session、文档、Run、Trace 和 Evaluation。`RedisRunQueue` 提供任务唤醒，Redis 故障时 Worker 扫描数据库 queued 状态恢复，不丢任务。长时间 Provider 调用不持有数据库事务；Run 领取和最终提交分别是短事务。RAG 只在当前租户文档中检索；FastAPI 管理及 Worker 接口区分管理员与成员并拒绝跨租户读取/执行。测试覆盖完整运行、权限、Worker 租户隔离、过期租约恢复、Redis 故障降级和 API；Compose 三服务健康、纵向验收、PostgreSQL 持久化与 API 重启恢复均已通过。
+`EnterprisePlatform` 通过 SQLAlchemy 在 SQLite 与 PostgreSQL 上使用同一领域表，存储租户、用户、Agent、Tool/MCP、Session、文档、Run、Trace 和 Evaluation。`RedisRunQueue` 提供任务唤醒，Redis 故障时 Worker 扫描数据库 queued 状态恢复，不丢任务。长时间 Provider 调用不持有数据库事务；Run 领取和最终提交分别是短事务。RAG 只在当前租户文档中检索；FastAPI 管理及 Worker 接口区分管理员与成员并拒绝跨租户读取/执行。测试覆盖完整运行、权限、Worker 租户隔离、过期租约恢复、租约心跳、运行中取消、Redis 故障降级和 API；Compose 三服务健康、纵向验收、PostgreSQL 持久化与 API 重启恢复均已有仓库证据。
 
 ## 目录、配置与扩展
 
@@ -129,4 +129,4 @@ flowchart LR
     RBAC --> Backup["SQLite backup API<br/>or PostgreSQL managed snapshot"]
 ```
 
-DLQ 只保存错误类型、次数和 Run 引用，不复制 Prompt 或 Secret；管理员重放会清空失败计数。成员只能取消自己的排队任务。`backup.py` 使用 SQLite Online Backup API 生成一致性快照；PostgreSQL 路径明确要求 `pg_dump` 或托管快照，代码不会把文件复制伪装成数据库备份。
+DLQ 只保存错误类型、次数和 Run 引用，不复制 Prompt 或 Secret。重放分为两个动作：管理员先签发最长一小时的一次性批准票据，票据绑定租户、Run、Prompt、Trace、错误类型和尝试次数的规范化哈希；重放时重新计算哈希，过期、篡改、跨 Run 或已使用票据都会被拒绝。批准成功后才清空失败计数并重新排队。成员可直接取消自己排队中的任务，也可对运行中任务写入取消请求，Worker 在下一个安全检查点结束。`backup.py` 使用 SQLite Online Backup API 生成一致性快照；PostgreSQL 路径明确要求 `pg_dump` 或托管快照，代码不会把文件复制伪装成数据库备份。

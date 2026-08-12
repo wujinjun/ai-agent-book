@@ -1,6 +1,6 @@
 # 教材完成矩阵
 
-状态审计日期：2026-08-08。该日期只表示仓库交付审计，不表示所有外部 API 在当天重新核对。
+状态审计日期：2026-08-12。该日期只表示仓库交付审计，不表示所有外部 API 在当天重新核对。十项目的逐项路径证据另见 `notes/project-capability-matrix.yml`，该文件由根测试校验。
 
 ## 状态词汇
 
@@ -73,7 +73,7 @@
 | 第31章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 压测、模型路由和质量约束实验 | P1—P4 |
 | 第32章 | `publishable_draft` | `offline_verified` | `installed_and_tested` | `pdf_epub_verified` | 扩大黄金集并评估真实模型协作净收益 | P4 |
 | 第33章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 沙箱、补丁回滚和真实仓库实验 | P1—P4 |
-| 第34章 | `publishable_draft` | `inline_only` | `official_docs_checked` | `pdf_epub_verified` | Browser Agent 可重复 UI 测试工程 | P1—P4 |
+| 第34章 | `publishable_draft` | `offline_verified` | `official_docs_checked` | `pdf_epub_verified` | 真实浏览器供应商联调与动态站点回归 | P4 |
 | 第35章 | `publishable_draft` | `inline_only` | `official_docs_checked` | `pdf_epub_verified` | OCR、音频、视频和多模态评估 | P1—P4 |
 | 第36章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | 在项目 10 落地 Outbox 与拆分演练 | P4 |
 | 第37章 | `publishable_draft` | `offline_verified` | `stable_concepts` | `pdf_epub_verified` | SLA、灰度、运营和商业化案例 | P1—P5 |
@@ -92,7 +92,7 @@
 | 项目7 | `service_template` | 多 Provider、指标、来源、事实/推断；持久服务状态 | 正式数据源、财报解析和时效评估 | P4 |
 | 项目8 | `production_reference` | LangGraph、RetryPolicy、Interrupt、持久 Run Journal、证据 Allowlist/哈希、租户 Worker、审批与跨进程确定性重放恢复 | 真实搜索、原生数据库 Saver、副作用幂等与外部验证 | P4—P9 |
 | 项目9 | `service_template` | 五角色、版本共享状态、预算、指纹循环终止、单 Agent 基线、一次性 Git 克隆、补丁策略、失败销毁与白名单测试；权限、取消与审计 | OCI/微虚拟机强隔离、依赖供应链治理和真实任务基准 | P4 |
-| 项目10 | `production_reference` | 多租户 API、PostgreSQL/SQLite、Redis 恢复队列、Verifier/RBAC、租户限定 Worker、短事务租约与崩溃恢复、Agent/Tool/MCP/RAG、Trace/Eval/指标、重试、DLQ、取消和一致性备份 | 真实 OIDC/JWKS、RLS、独立 Worker Deployment、管理前端与灾备演练 | P4—P9 |
+| 项目10 | `production_reference` | 多租户 API、PostgreSQL/SQLite、Redis 恢复队列、Verifier/RBAC、租户限定 Worker、短事务租约、心跳、崩溃恢复、协作式运行中取消、内容绑定一次性 DLQ 重放批准、Trace/Eval/指标和一致性备份 | 真实 OIDC/JWKS、RLS、独立 Worker Deployment、管理前端、OpenTelemetry 与灾备演练 | P4—P9 |
 
 项目 4、8、10 已达到离线 `production_reference`，但没有项目标记为 `externally_validated`。外部状态必须有真实账号、远程系统或设备验收证据，不能仅根据 README 描述升级。
 
