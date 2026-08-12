@@ -184,10 +184,96 @@ SIGTERM 后 API 停止接新 run，等待短请求完成；Worker 停止领取�
 
 CI 执行测试、lint/type、依赖与镜像扫描、SBOM、构建和签名；CD 部署到测试环境，运行迁移检查、健康、smoke 与黄金 eval，再灰度生产。回滚使用上一个镜像和兼容数据库 Schema；不可逆迁移先设计恢复。
 
+### 镜像供应链与可验证发布物
+
+Tag 可移动，部署和回滚应记录镜像 Digest。构建证据至少关联源码 Commit、Builder、基础镜像 Digest、
+依赖锁、SBOM、测试结果和签名。多阶段构建减少 Runtime 内容，但 Builder 被污染仍可能把恶意 Wheel
+复制进去，因此扫描最终镜像并验证 Provenance。
+
+```mermaid
+%% id: container-artifact-lineage
+%% title: 容器发布物的供应链证据链
+%% alt: 源码提交依赖锁和固定基础镜像进入受控构建，产生镜像摘要 SBOM Provenance 与签名，部署策略验证后按摘要发布
+flowchart LR
+    Commit[Source commit] --> Build[受控 Builder]
+    Lock[Dependency lock] --> Build
+    Base[Base image digest] --> Build
+    Build --> Image[Runtime image digest]
+    Image --> SBOM[SBOM + vulnerability scan]
+    Image --> Sign[Provenance + signature]
+    SBOM --> Policy[部署策略验证]
+    Sign --> Policy --> Deploy[按 Digest 部署]
+```
+
+漏洞扫描结果具有时间性，昨日通过不代表今日无新 CVE。团队定义修复 SLA、例外审批和重建策略；
+基础镜像更新触发测试与评估，而不是在生产节点自动拉取 `latest`。
+
+### Secret 注入与轮换
+
+Secret 不进入 Dockerfile、Build Arg、Compose Git 文件或环境打印。平台以文件、短时身份或 Secret
+Volume 注入；应用读取后不写 Prompt、Checkpoint 和 Trace。环境变量虽然常用，但可能被进程检查、
+崩溃转储或误打印，仍需字段脱敏与最小进程权限。
+
+轮换流程先让服务接受新旧凭证的短兼容窗口，发布新配置并验证，再撤销旧凭证。数据库账号、模型 Key
+和 Webhook Secret 分别轮换，避免一次变更无法定位。泄漏响应包含撤销、影响审计和历史清理，简单从
+Git 删除并不能抹去镜像层或提交历史。
+
+### 滚动发布、排空与租约
+
+API 收到终止信号后先 Readiness=false，从负载均衡摘除，再停止新 Run 并完成短请求。Worker 先停止
+领取，续租或 Checkpoint 当前任务，在 Grace Period 内完成安全边界后退出；超时任务由租约过期接管。
+旧 Worker 的迟到结果必须因 Worker ID/Fencing 不匹配而拒绝。
+
+SSE/WebSocket 在滚动发布中会断线，客户端必须按事件游标恢复。仅设置容器 `stop_grace_period` 不会
+自动产生这些语义，应用和队列都要配合。Autoscaler 还要避免在任务运行中直接杀死唯一持有状态的
+进程。
+
+### 数据库迁移与回滚顺序
+
+滚动期间新旧代码并存，所以采用 Expand/Migrate/Contract：先添加兼容字段或表，发布兼容读写代码，
+异步回填并验证，再切换读取，最后在回滚窗口结束后删除旧结构。破坏性 Migration 与新镜像同时执行，
+会让旧 Pod 无法回滚。
+
+```mermaid
+%% id: deployment-schema-expand-contract
+%% title: 滚动发布中的 Expand/Migrate/Contract
+%% alt: 先扩展兼容 Schema，再部署新旧兼容代码和回填，验证后切换读取，观察期结束才删除旧字段，回滚始终保留旧路径
+flowchart LR
+    Expand[Expand 兼容 Schema] --> Compat[部署双版本兼容代码]
+    Compat --> Backfill[受控回填 + 校验]
+    Backfill --> Switch[切换读取/写入指针]
+    Switch --> Observe[观察与回滚窗口]
+    Observe --> Contract[Contract 删除旧结构]
+```
+
+大型索引和回填有锁、I/O 与复制延迟风险，必须在生产规模副本演练。回滚镜像前检查 Schema 仍兼容；
+已经执行的数据转换或外部副作用可能需要前向修复，而非简单回退二进制。
+
+### 健康、容量与故障注入
+
+Liveness 只回答进程能否继续，不应因数据库短暂故障重启所有实例。Readiness 检查接流量所需的本地
+状态和关键依赖，并设置短超时；模型供应商故障通常触发产品降级而非容器重启。健康端点本身应有
+低成本、低基数指标。
+
+上线验收注入数据库断连、Redis 丢失、DNS/证书错误、磁盘只读、SIGTERM、慢客户端和上游限流。
+证明任务不丢、Secret 不泄漏、旧 Worker 不覆盖、客户端可恢复和告警可操作。`docker compose config`
+只能验证配置语法，不能证明这些运行时性质。
+
+### 练习参考答案与面试要点
+
+1. **项目 2 镜像。** Builder 生成 Wheel，Runtime 固定 Digest、非 Root、只读根目录；运行配置外置，
+   Liveness/Readiness 分离，Compose 数据服务仅绑定私网。
+2. **健康边界。** Liveness 失败触发重启，Readiness 失败只摘流量；昂贵模型调用不放健康检查，以免
+   上游故障制造重启风暴。
+3. **最终镜像扫描。** 多阶段只减少内容，不能证明复制产物安全；最终层、系统库和 Wheel 都需 SBOM
+   与扫描。
+4. **代理超时。** 它只结束客户端连接，不自动取消持久任务；取消由授权 API 与 Worker 协作处理。
+
 ### 常见误区、调试与安全
 
 常见误区是使用 `latest`、在镜像写 key、以 root 运行、把数据库端口暴露互联网、只测容器能启动。调试比较架构、DNS、证书、代理缓冲、文件权限和健康日志。安全扫描不替代最小镜像和运行时限制。
-总结：部署是可复现产物、配置、网络、状态与运营的组合。练习：为项目2写非 root 多阶段 Dockerfile、健康检查和 Compose。面试：liveness/readiness 有何区别？为何多阶段构建仍需扫描最终镜像？代理超时与任务取消如何关联？延伸阅读：Docker、Compose、OCI、Nginx 与目标容器平台官方文档。代码目录：各项目 `Dockerfile` 和根 Compose。
+总结：部署是可验证供应链、配置、网络、状态迁移和运营恢复的组合。延伸阅读包括 Docker、Compose、
+OCI、Nginx、SLSA 与目标容器平台官方文档；代码目录为各项目 `Dockerfile` 和根 Compose。
 
 ## 本章引用
 <!-- chapter-citations:start -->

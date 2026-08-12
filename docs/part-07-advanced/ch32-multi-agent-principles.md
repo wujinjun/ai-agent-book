@@ -159,10 +159,86 @@ flowchart TD
 
 本书的受限 Reviewer/Executor Fixture 在 CrewAI 1.15.12、AutoGen AgentChat 0.7.5 和 Semantic Kernel 1.44.1 中都能拒绝越权工具、导出状态并在四条消息内终止，但均未胜过一条消息的单 Agent 基线。这个结果说明“框架可运行”和“拆分有价值”是两个不同命题；代码与稳定证据位于 `examples/framework_comparison/multi_agent_spike/`。
 
+### 任务契约与消息协议
+
+自然语言“请研究这个问题”不是可调度契约。子任务至少声明输入 Artifact、预期输出 Schema、允许工具、
+数据范围、Deadline、预算、依赖和验收 Rubric。消息 Envelope 只携带小型控制数据与 Artifact 引用，
+并以 `message_id + task_version` 幂等；过期版本不得覆盖新状态。
+
+```python
+class TaskContract(BaseModel):
+    task_id: str
+    version: int = Field(ge=1)
+    assignee: str
+    input_artifact_ids: list[str]
+    output_schema: str
+    allowed_tools: set[str]
+    max_turns: int = Field(ge=1, le=20)
+    deadline_ms: int = Field(gt=0)
+```
+
+Handoff 必须显式转移所有权，而不是复制上下文后让两个 Agent 都认为自己是负责人。接收方校验契约，
+拒绝超出 Scope 的任务；发送方只有在 Blackboard 记录接收确认后才释放所有权。消息丢失可重发，
+但同一版本只能产生一个有效转移事件。
+
+### Blackboard 并发冲突
+
+共享状态使用 Append-only Artifact 与乐观锁。两个 Worker 基于版本 4 同时产出时，不应 Last-write-wins
+覆盖；它们各自产生候选，Reducer 只能合并满足交换律、结合律且幂等的数据，例如证据 ID 集合。
+报告正文和代码 Patch 通常不能自动合并，应由 Reviewer 或版本控制系统处理冲突。
+
+```mermaid
+%% id: blackboard-optimistic-conflict
+%% title: Blackboard 乐观并发与冲突处理
+%% alt: 两个 Worker 读取同一版本并提交不同候选，版本检查阻止覆盖，可安全归并的证据集合进入 Reducer，不可归并的正文进入 Reviewer
+flowchart TD
+    V4[Blackboard v4] --> A[Worker A 候选 v5a]
+    V4 --> B[Worker B 候选 v5b]
+    A --> Check{版本与 Reducer 契约}
+    B --> Check
+    Check -->|集合型证据| Merge[幂等归并为 v5]
+    Check -->|正文/Patch 冲突| Review[Reviewer 选择或要求返工]
+```
+
+这张图说明 Shared Memory 不是一个所有角色可随意改写的字符串。每次写入保留作者、基线版本、证据、
+内容哈希和 Trace，才能解释最终产物来自哪些贡献。
+
+### 可判定的终止与无进展
+
+终止器维护状态指纹，例如“未完成任务集合、已批准 Artifact 哈希、证据集合、预算余额”。若连续若干
+回合指纹不变，或动作签名重复，就判定无进展。阈值是防护参数，不是完成证明；真正完成仍要求所有
+必需任务终态、依赖闭合、Reviewer Rubric 通过且没有悬空副作用。
+
+Deadlock 检测构造 Wait-for Graph：Task A 等待 B、B 又等待 A 时形成环。人工审批是外部依赖，应进入
+`waiting_approval` 并释放 Worker，而不是让角色互相发送“还在等待”。预算耗尽、用户取消和不可恢复
+Policy 拒绝都是一等终态。
+
+### 与项目 9 的对应及净收益门禁
+
+[`projects/09-multi-agent-dev-team/`](https://github.com/wujinjun/ai-agent-book/tree/main/projects/09-multi-agent-dev-team)
+使用 Product、Planner、Coder、Reviewer、Tester 角色演示共享状态，但工程强化把它们落成一次性 Git
+工作区、Patch 范围策略、白名单测试、状态指纹和终止预算。进程隔离不等于恶意代码 Sandbox，角色名
+也不等于权限边界。
+
+采用 Multi-Agent 前在同一 Dataset 上比较单 Agent、确定性 Workflow 与多 Agent：任务成功率、权限
+违规、P95、单位成功成本、人工接管和终止可靠性都进入报告。若差异没有超过预先声明的实际意义阈值，
+保留更简单方案；不能用“对话更像团队”作为收益证据。
+
 ### 常见反模式与安全
 
 反模式包括角色数量按组织架构复制、自由群聊、所有 Agent 共享管理员工具、用自然语言投票替代规则、无限 Reviewer 循环、每个角色重复读全部上下文。安全上每个 Agent 最小权限，handoff 不升级 scope，消息/Memory 按租户隔离，秘密使用引用而不是正文转发。
-总结：Multi-Agent 是显式协调系统，不是角色扮演。练习：证明 Reviewer 拆分相对单 Agent 的净收益，并注入环依赖测试 deadlock。面试：如何检测死锁和无进展？Blackboard 与群聊有何不同？多个同模型 Agent 是否独立？延伸阅读：分布式系统、Actor、Blackboard、Agent orchestration 与协作评估资料。代码目录：项目9。
+
+### 练习参考答案与面试要点
+
+1. **Reviewer 净收益。** 固定模型、数据和预算，比较无 Reviewer 基线；报告成功率差异及置信范围、
+   新增成本和返工次数。只列一个成功案例不构成证明。
+2. **环依赖。** 构造 A 等 B、B 等 A 的 Wait-for Graph，断言运行时在超时前检测环、保存状态并进入
+  人工/失败终态，而非继续对话。
+3. **面试要点。** Blackboard 是版本化事实与 Artifact Store，群聊只是消息；同模型实例错误高度相关，
+   不自动形成独立证据。无进展通过状态指纹与重复动作检测，完成由外部 Rubric 判定。
+
+总结：Multi-Agent 是显式协调、版本化共享状态和可判定终止系统，不是角色扮演。延伸阅读包括分布式
+系统、Actor、Blackboard、Agent Orchestration 与协作评估资料；代码目录为项目 9。
 
 ## 本章引用
 <!-- chapter-citations:start -->
