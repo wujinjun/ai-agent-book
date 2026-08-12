@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -15,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REMOTE_IMAGE_RE = re.compile(r"!\[[^\]]*\]\(https?://", re.IGNORECASE)
 MARKETING_PATTERNS = ("业界领先", "颠覆性", "万能框架", "零成本上线")
 AMBIGUOUS_PATTERNS = ("API接口", "截止目前", "最新的最新")
+LAST_CHECKED_RE = re.compile(r"最后核对日期：(?P<date>\d{4}-\d{2}-\d{2})")
 
 
 def _strip_code(source: str) -> str:
@@ -40,6 +42,9 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
         prose = _strip_code(source)
         if "最后核对日期" not in source:
             issues.append({"path": relative, "issue": "missing_last_checked_date"})
+        checked = LAST_CHECKED_RE.search(source)
+        if checked and date.fromisoformat(checked.group("date")) > date.today():
+            issues.append({"path": relative, "issue": "future_last_checked_date"})
         if source.count("<!-- chapter-citations:start -->") != 1:
             issues.append({"path": relative, "issue": "missing_or_duplicate_citation_block"})
         configured = citation_manifest["chapters"].get(relative, [])
@@ -66,7 +71,7 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
 
     return {
         "schema_version": 1,
-        "checked": "2026-08-08",
+        "checked": date.today().isoformat(),
         "chapters": len(chapters),
         "references": len(references),
         "chapter_citations": citation_count,

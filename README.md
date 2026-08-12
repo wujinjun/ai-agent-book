@@ -7,7 +7,7 @@
 
 这是一套面向软件工程师的中文技术教材工程。它不把 Agent 等同于某个框架，也不把能调用一次模型的脚本包装成生产系统；全书从 LLM 的生成机制出发，依次讨论结构化输出、工具调用、MCP、RAG、Memory、工作流、多 Agent，以及测试、部署、可观测性和安全治理。
 
-> 第 1—38 章、11 个独立示例、十个项目与 HTML/PDF/EPUB 出版管线已经完成仓库范围验收；项目 4、8、10 达到离线 `production_reference`，Python 3.12、十项目容器和 257 项测试证据齐全。P9 当前状态为 `complete_repository_scope`。独立外审、真人试学/试讲、实体设备/印刷与专业权利意见已按维护者决定排除出本次范围，并明确记录为“未验证”，不冒充通过。当前仓库范围正式版为 **v2026.8.1**；完整边界见 [`FINAL_ACCEPTANCE.md`](FINAL_ACCEPTANCE.md) 与 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
+> 第 1—38 章、13 个独立示例、十个项目与 HTML/PDF/EPUB 出版管线已经完成仓库范围验收；项目 4、8、10 达到离线 `production_reference`。当前 Python 3.12 根级测试共 288 项通过；v2026.8.1 的十项目容器与出版证据仍作为历史发行快照保留，本轮内容与项目增强将在下一次出版候选中统一重建。P9 状态为 `complete_repository_scope`。独立外审、真人试学/试讲、实体设备/印刷与专业权利意见已按维护者决定排除出本次范围，并明确记录为“未验证”，不冒充通过。当前仓库范围正式版仍为 **v2026.8.1**；完整边界见 [`FINAL_ACCEPTANCE.md`](FINAL_ACCEPTANCE.md) 与 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
 
 ![教材 HTML 首页：三栏导航、学习地图与离线下载入口](docs/assets/readme-home.png)
 
