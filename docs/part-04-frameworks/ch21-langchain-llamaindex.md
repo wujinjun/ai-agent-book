@@ -152,7 +152,112 @@ flowchart LR
 常见误区：框架连接器多就等于 RAG 质量高；LangChain Agent 与 LangGraph 是竞争关系；LlamaIndex 只是一种向量数据库。调试展开实际 Prompt、工具、Retriever 候选与 callback/Trace，逐层确认。
 
 权限过滤不能只放在 response synthesizer；Tool 与 Reader 使用最小凭证；Prompt Injection 文档标记为数据。小流程、稳定接口或强性能控制可用原生实现；多集成快速验证可用 LangChain；数据摄取和 RAG 组合复杂时 LlamaIndex 更方便；持久工作流使用 LangGraph。
-总结：框架提供组合与集成，不替代数据质量、权限和评估。练习：为当前 Spike 加入真实 Embedding、Recall@k、P95 与 Citation 完整性并写 ADR。面试：LangChain 与 LangGraph 的职责差别？LlamaIndex 的 Node 为何不应成为领域模型？Query Engine 与 Retriever 有何区别？延伸阅读：[LangChain Agents](https://docs.langchain.com/oss/python/langchain/agents)、Structured Output 与 [LlamaIndex Framework](https://developers.llamaindex.ai/python/framework/) 官方文档。代码目录：`examples/framework_comparison/rag_spike/`。
+
+### 摄取幂等与领域版本
+
+框架 Reader/Loader 能读取文件，不代表摄取流程可恢复。领域摄取请求应绑定 Tenant、Document ID、
+Source Version、Parser Version、Chunk Policy 和 Embedding Version，并计算稳定指纹。重复提交相同指纹
+返回既有 Job；内容或策略变化产生候选索引版本，不原地覆盖活动数据。
+
+LangChain `Document` 或 LlamaIndex `Node` 的 Metadata 只是载体。Adapter 从领域 ACL 生成框架过滤条件，
+检索返回后再次校验 Tenant、Permission Version 和 Document Version。不要直接信任 Loader 从文件头、
+网页或第三方连接器带回的 Metadata，它可能缺字段或被内容作者操纵。
+
+```python
+@dataclass(frozen=True)
+class RetrievalHit:
+    chunk_id: str
+    document_id: str
+    document_version: str
+    tenant_id: str
+    score: float
+    text: str
+    location: str
+
+
+class RetrieverPort(Protocol):
+    async def retrieve(
+        self,
+        query: str,
+        *,
+        tenant_id: str,
+        permission_version: str,
+        top_k: int,
+    ) -> list[RetrievalHit]: ...
+```
+
+业务 Service 只依赖这个领域接口。LangChain Adapter 把框架 `Document` 转成 `RetrievalHit`，LlamaIndex
+Adapter 从 Node/NodeWithScore 提取同样字段；缺失 ID、版本或位置时 Fail Closed，不能生成无法定位的
+引用。
+
+### 分数不是跨框架统一单位
+
+不同 Retriever 可能返回相似度、距离、重排分或无分数对象，方向和范围也不同。Adapter 不应把任意
+原始数值都命名为 `similarity` 后直接共用阈值。统一结果需要保存 `score_kind`、原始值、归一化版本和
+排序阶段；拒答阈值分别在黄金集上校准。
+
+同题 Spike 使用相同确定性八维向量和明确阈值，所以可以比较控制流，不代表真实外部 Vector Store 的
+分数可互换。加入真实 Embedding 后应重新生成 Exact Baseline、Recall@k、MRR、引用完整率和过滤泄漏，
+并分别报告无过滤、普通租户和极小租户。
+
+```mermaid
+%% id: rag-framework-score-normalization-boundary
+%% title: 框架检索分数的归一化边界
+%% alt: LangChain 与 LlamaIndex 返回各自原始命中，Adapter 保留分数语义和来源并转换为领域 Hit，再用各自校准阈值和统一引用验证
+flowchart LR
+    LC[LangChain raw Document/score] --> LCA[LC Adapter]
+    LI[LlamaIndex raw Node/score] --> LIA[LI Adapter]
+    LCA --> Hit[Domain RetrievalHit + score_kind]
+    LIA --> Hit
+    Hit --> Threshold[按实现版本校准阈值]
+    Threshold --> Citation[统一 ACL 与引用验证]
+```
+
+这张图避免“抽象统一”掩盖语义差异。排序一致不等于分数可比，分数可比也不等于生成回答正确。
+
+### Query Engine 与业务回答边界
+
+LlamaIndex Query Engine 可以组合检索、后处理和生成，LangChain Agent/Chain 也能快速完成端到端问答。
+原型阶段很方便，生产中仍建议把 Retrieval Hit、Context Assembly、Generation 和 Citation Validation
+分别观测。否则一次“答案错误”无法判断是 ACL、召回、重排、上下文截断还是模型未采用证据。
+
+当 Query Engine 内置合成不能满足引用、拒答或数据地域策略时，保留其 Retriever 能力并由应用自己的
+Answer Service 收口。不要为了“全用一个框架”牺牲确定性业务边界。
+
+### Callback、Trace 与敏感数据
+
+框架 Callback/Middleware 能记录链路，但默认事件、Metadata 和 Prompt 可能包含正文。应用在 Adapter
+前定义字段 Allowlist，只记录 Chunk ID、版本、分数种类、耗时和安全错误码；全文调试进入独立短期
+存储。不同框架事件转换为统一领域 Trace，避免 Dashboard 被某个 Callback Schema 锁定。
+
+Exporter 或 Callback 失败不应改变检索结果。测试关闭观测后端、注入异常并断言核心任务降级继续；
+安全 Audit 则走独立持久通道。
+
+### 升级、回归与退场策略
+
+框架升级不只运行 Import Test。固定同一 Fixture，重建隔离环境，验证 Node/Document 转换、Metadata
+Filter、排序、阈值、Callback、异步取消和依赖闭包。`evidence.json` 绑定实现源码哈希，代码变化后旧
+证据自动失效。
+
+退场演练让领域测试同时运行原生/框架 Adapter。若去掉 LangChain/LlamaIndex 后业务 Schema、数据库
+和 API 无需迁移，说明边界健康；若历史记录存满框架 Pickle 或内部 ID，锁定已发生。ADR 应记录采用
+理由、专有能力、替代实现、迁移成本和复审日期。
+
+### 练习参考答案与面试要点
+
+1. **扩展 Spike。** 在两个隔离环境接入同一真实 Embedding Fixture，生成过滤后的 Exact Truth；测
+   Recall@k、MRR、P95、引用完整率和零泄漏，并记录硬件与源码哈希。
+2. **LangChain/LangGraph。** 前者提供组件与高层 Agent 接口，后者负责显式状态与可恢复工作流；当前
+   LangChain Agent 可构建于 LangGraph 之上，二者不是简单竞争关系。
+3. **Node 不作领域模型。** 它是框架内部摄取/检索单元，字段与生命周期会变化；企业的 Document ID、
+   ACL、版本和位置必须独立保存。
+4. **Retriever/Query Engine。** Retriever 返回相关证据；Query Engine 还可能做改写、后处理与生成。
+   生产排障常需要保留分层边界。
+
+总结：框架提供组合与集成，不替代数据质量、权限、评分语义和评估。延伸阅读：
+[LangChain Agents](https://docs.langchain.com/oss/python/langchain/agents)、Structured Output 与
+[LlamaIndex Framework](https://developers.llamaindex.ai/python/framework/) 官方文档。本章代码目录为
+[`examples/framework_comparison/rag_spike/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/framework_comparison/rag_spike)。
 
 ## 本章引用
 <!-- chapter-citations:start -->
