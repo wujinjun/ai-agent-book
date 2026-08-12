@@ -148,10 +148,123 @@ def next_delay(attempt: int, base: float = 1.0, cap: float = 60.0) -> float:
 
 消息 broker 网络隔离与认证，payload 加密或仅 ID，Worker 角色最小权限。不同风险任务用独立队列/Worker，代码执行 Worker 无生产数据库凭证。
 
+### 领取协议：租约不是一把永久锁
+
+可靠领取至少包含 Job ID、Worker ID、Attempt/Epoch、租约截止时间和当前状态。数据库是事实来源时，
+多个 Worker 可以用锁定跳过或条件更新竞争；Broker 的消息只是优先提示。领取事务必须短，Provider、
+模型和工具调用全部在事务外运行。
+
+```sql
+WITH candidate AS (
+    SELECT job_id
+    FROM agent_job
+    WHERE status = 'queued'
+       OR (status = 'running' AND lease_expires_at < now())
+    ORDER BY created_at
+    FOR UPDATE SKIP LOCKED
+    LIMIT 1
+)
+UPDATE agent_job AS j
+SET status = 'running',
+    worker_id = :worker_id,
+    attempt = attempt + 1,
+    lease_epoch = lease_epoch + 1,
+    lease_expires_at = now() + :lease_interval
+FROM candidate
+WHERE j.job_id = candidate.job_id
+RETURNING j.*;
+```
+
+SQL 是 PostgreSQL 风格示例，部署前需按目标版本验证。`SKIP LOCKED` 提高并行领取吞吐，但不是权限
+边界；查询仍须限定 Worker 可处理的租户、队列和风险级别。`lease_epoch` 是 Fencing Token，完成时
+必须匹配。租约过期仅表示其他 Worker 可以接管，不表示旧进程已经停止，因此可控下游也应记录并
+拒绝旧 Epoch；无法支持 Fencing 的外部 API 必须依赖业务幂等键和结果对账。
+
+长步骤要续租，但不能无限续租掩盖挂死。续租前检查取消、总 Deadline 和最大运行时间；监控
+`lease_remaining`，在到期前留出足够安全余量。若 Worker 失去数据库连接，最安全的默认行为是停止
+发起新的副作用，而不是继续离线执行到最后再尝试覆盖状态。
+
+### 取消、超时与未知外部状态
+
+三者是不同概念：取消是用户或系统表达“不再继续”的意图；超时是本地等待预算耗尽；未知外部状态
+表示请求可能已经被远端接受，但本地未收到确定响应。对只读动作，超时后有限重试通常安全；对发送、
+购买、删除或权限修改，未知状态必须先按幂等键或业务对象查询。
+
+```mermaid
+%% id: unknown-external-state-reconciliation
+%% title: 外部写超时后的状态核对
+%% alt: 外部写发生超时后先按业务幂等键查询，已完成则收敛成功，明确未执行且可幂等才重试，无法确认进入人工核对
+flowchart TD
+    Timeout[外部写调用超时] --> Lookup[按业务键查询远端状态]
+    Lookup --> Known{状态确定}
+    Known -->|已完成| Commit[记录远端 ID 并收敛成功]
+    Known -->|明确未执行| Safe{同键重放安全}
+    Safe -->|是且预算允许| Retry[有限重试]
+    Safe -->|否| Human[人工核对或补偿]
+    Known -->|仍未知| Human
+```
+
+这张图禁止把网络超时直接映射为“业务失败”。取消已运行任务时，Worker 在步骤边界停止后续动作并
+保存可解释状态；已经完成的副作用只能补偿，不能被 `cancelled` 标签抹去。等待人工审批的 Job 应
+释放 Worker 与租约，把恢复所需 Checkpoint 持久化。
+
+### 重试预算与错误分类
+
+嵌套重试会产生乘法放大。若 Job 最多 3 次、模型 3 次、工具 4 次，最坏可能产生 36 次工具相关
+尝试。Runtime 应维护共享总预算，并把错误分为：
+
+| 错误类别 | 示例 | 默认处理 |
+|---|---|---|
+| 暂时基础设施故障 | 连接重置、限流、短暂 5xx | 抖动退避，受总预算约束 |
+| 确定性输入错误 | Schema、参数、文件损坏 | 直接失败或请求用户修正 |
+| 权限/策略拒绝 | Scope 不足、需审批 | 不重试；进入授权或审批状态 |
+| 未知副作用状态 | 写请求超时 | 先对账，禁止盲重放 |
+| 程序缺陷 | 不变量破坏、未知异常 | 安全失败、告警，有限隔离后进 DLQ |
+
+Backoff 应加入全抖动并遵守服务端 `Retry-After`。测试注入 Clock 和随机源，从而断言调度区间而不
+真实睡眠。每次 Attempt 记录错误类型、剩余预算、下次可运行时间和 Trace Link，不能把敏感 Prompt
+复制到错误消息。
+
+### DLQ 是受控运维工作流
+
+死信至少保存 Job/租户 ID、失败分类、Attempts、代码与配置版本、最后 Checkpoint、发生时间和安全
+Trace 引用。管理员查看与 Replay 都要租户隔离和审计。修复代码或依赖后，Replay 仍需检查原任务
+是否过期、用户权限是否变化、外部副作用是否已发生以及输入数据是否仍允许处理。
+
+Replay 应创建新的 Attempt 或 Run 关联，而不是删除历史失败证据。高风险副作用需要再次人工批准；
+批量 Replay 设置速率、并发和停止阈值，防止恢复时形成重试风暴。DLQ 年龄、增长速率和最高错误类
+应有告警与处理 SLA。
+
+### 与项目 10 的实现和边界
+
+[`projects/10-enterprise-platform/`](https://github.com/wujinjun/ai-agent-book/tree/main/projects/10-enterprise-platform)
+实现了租户限定领取、`worker_id + lease_expires_at`、过期租约接管、迟到 Worker 写入拒绝、有限
+Attempts、租户隔离 DLQ、RBAC Replay 与排队状态取消。`tests/test_enterprise_resilience.py` 注入
+Provider 故障和崩溃租约，验证恢复路径，而不是只 Mock 队列的 `push()`。
+
+当前教学实现有意保持范围：只允许取消 `queued` Run，没有实现运行中协作取消和租约心跳；DLQ
+Replay 由管理员触发，但尚未实现内容绑定的再次审批；SQLite 测试也不能证明 PostgreSQL 高并发领取。
+这些边界必须在正文中保留，不能因 Happy Path 通过就宣称已具备所有生产能力。
+
 ### 常见误区与测试
 
 常见误区：队列自动保证只执行一次、HTTP 断开就取消任务、超时等于外部动作未完成、DLQ 可永远不看。测试覆盖重复投递、Worker 崩溃、租约恢复、取消、重试上限、审批恢复和外部写幂等。
-总结：队列把长任务从请求中分离，可靠性来自状态、租约、幂等和恢复。练习：设计可恢复研究任务并注入 Worker 崩溃。面试：如何实现幂等消费？取消与超时有何不同？为什么 DLQ replay 有风险？延伸阅读：Celery、RQ、Dramatiq、Redis/RabbitMQ 与分布式任务官方文档。代码目录：项目8、10。
+
+### 练习参考答案与面试要点
+
+1. **崩溃恢复实验。** 在领取后、Checkpoint 后、外部写返回前后、最终状态提交前分别终止 Worker。
+   断言租约过期可接管、旧 Worker 不能提交、已完成副作用不重复、Trace 能解释最终状态。
+2. **幂等消费。** 消息只携带稳定 Job ID；Handler 在事务中检查当前状态和 Event/Business Key，
+   条件更新后执行或返回既有结果。Ack 丢失导致重复消息时，业务状态仍收敛到同一结果。
+3. **取消与超时。** 取消是意图并需要协作检查；超时只是等待结束，远端可能仍执行。二者都不自动
+   回滚已发生副作用。
+4. **DLQ Replay。** 风险来自旧输入、权限变化、已发生副作用、修复不完整和批量重试风暴。应先
+   分类、对账、重新授权，再带原幂等键和新 Attempt 受控恢复。
+
+总结：队列把长任务从请求中分离，可靠性来自权威状态、租约/Fencing、幂等、对账、有限重试和
+受控 DLQ。延伸阅读包括 Celery、RQ、Dramatiq、Redis/RabbitMQ 与分布式任务官方文档；代码目录为
+项目 8 和
+[`projects/10-enterprise-platform/`](https://github.com/wujinjun/ai-agent-book/tree/main/projects/10-enterprise-platform)。
 
 ## 本章引用
 <!-- chapter-citations:start -->

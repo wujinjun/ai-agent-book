@@ -145,10 +145,118 @@ PII 字段分类、加密和最小保留；日志只写 ID/哈希；Secret 不�
 
 测试使用临时 PostgreSQL/Redis 容器，覆盖迁移、事务回滚、乐观锁、outbox、租户隔离、TTL、删除传播和备份恢复。Mock 数据库无法证明 SQL constraint 与隔离有效。
 
+### 状态所有权与一致性边界
+
+Agent 平台最重要的存储决策不是“选 PostgreSQL 还是 Redis”，而是谁拥有哪一种事实。一个可审计的
+最小划分如下：
+
+| 数据 | 权威来源 | 可派生副本 | 丢失后的处理 |
+|---|---|---|---|
+| Run 状态与版本 | PostgreSQL | Redis 状态缓存 | 从数据库重建 |
+| 工具副作用结果 | PostgreSQL 执行记录、远端业务 ID | Trace、指标 | 先向远端对账，不能盲重放 |
+| 队列唤醒 | Broker/Redis | 无 | 扫描数据库中可领取 Job 补发 |
+| 文档原件 | 受控对象存储 | 解析 Chunk、向量 | 按版本重新解析与索引 |
+| 长期 Memory | 治理后的主记录 | Embedding、摘要 | 从主记录重建并重新应用删除 |
+| Audit Event | 追加式审计存储 | 检索索引、报表 | 从受保护原始事件重建 |
+
+“Redis 丢失后扫描 PostgreSQL”成立的前提是数据库能够表达所有可领取状态，而且扫描器不会重复推进
+非幂等副作用。若任务只存在 Broker 中，队列短暂不可用就可能变成永久丢失；若任务只存在数据库但
+没有高效索引和唤醒机制，系统虽不丢数据却会出现不可接受的调度延迟。
+
+状态更新必须同时验证旧状态、Version 或租约所有者。下面的条件更新不是普通 `UPDATE` 的写法偏好，
+而是防止两个 Worker 同时声称完成同一个 Run 的并发契约：
+
+```sql
+UPDATE agent_run
+SET status = 'succeeded',
+    output_ref = :output_ref,
+    version = version + 1,
+    worker_id = NULL,
+    lease_expires_at = NULL
+WHERE tenant_id = :tenant_id
+  AND run_id = :run_id
+  AND status = 'running'
+  AND worker_id = :worker_id
+  AND version = :expected_version;
+```
+
+应用必须检查 `rowcount == 1`。零行不是可以忽略的“最终一致性”，它表示状态已变化、租约已丢失或
+请求越过租户边界；旧 Worker 此时不得发布结果。更严格的系统使用单调递增 Fencing Token，使每次
+重新领取都有更大的 Epoch，并要求所有可控下游拒绝较旧 Epoch。仅有过期时间而没有所有者或
+Fencing 条件，无法阻止暂停很久的旧进程恢复后覆盖新结果。
+
+### Outbox 的真实交付语义
+
+Outbox 把业务状态和“需要发布的事件”放进同一个数据库事务，消除了第一次双写裂缝，但它不提供
+端到端 Exactly Once。Publisher 仍有两个崩溃窗口：
+
+1. 发布前崩溃：事件仍是未发布，下一实例可继续领取；
+2. Broker 已接收但 `published_at` 尚未提交：下一实例会再次发布同一 `event_id`。
+
+所以消费者必须以 `event_id` 或业务幂等键去重。Publisher 领取 Outbox 行也应使用短租约或
+`FOR UPDATE SKIP LOCKED`，不能在发送网络请求期间持有数据库长事务。若 Broker 支持事务或去重，
+它只能缩小局部重复窗口，不能替代外部 Tool 的幂等设计。
+
+```mermaid
+%% id: outbox-crash-windows
+%% title: Outbox 发布中的两个崩溃窗口
+%% alt: 业务事务原子写入状态和事件，发布前崩溃可重新领取，发送后标记前崩溃会重复投递，因此消费者必须按事件标识幂等
+sequenceDiagram
+    participant DB as PostgreSQL
+    participant P as Publisher
+    participant Q as Broker
+    participant C as Consumer
+    P->>DB: claim(event_id, lease)
+    Note over P,DB: 此前崩溃：租约过期后重新领取
+    P->>Q: publish(event_id)
+    Q-->>C: at-least-once delivery
+    Note over P,Q: 此后、mark 前崩溃：可能重复发布
+    P->>DB: mark published
+    C->>C: deduplicate(event_id)
+```
+
+这张图说明 Outbox 的价值是让“需要发送”成为可恢复事实，而不是神奇地消除所有重复。
+
+### 删除、备份与恢复闭环
+
+删除请求必须沿数据血缘传播到主记录、对象、Chunk、向量、缓存、搜索索引和导出文件。常用流程是
+先写 Tombstone 并立即阻止在线读取，再异步清理派生副本；每个清理器回写完成证据。备份通常按
+保留周期清除，而不是原地修改不可变快照，因此隐私说明必须准确披露恢复后的重放删除机制。
+
+恢复演练不能止于“数据库能启动”。验收应证明 Schema 版本一致、最新 Tombstone 已重放、租户策略
+仍启用、对象与数据库引用闭合、密钥可解密且审计连续。推荐记录 RPO（最多可接受丢失多久的数据）
+和 RTO（多久恢复服务），再用实测时间验证，而不是从备份产品宣传页推断。
+
+### 与项目 10 的实现对照
+
+[`projects/10-enterprise-platform/`](https://github.com/wujinjun/ai-agent-book/tree/main/projects/10-enterprise-platform)
+提供本章的生产参考纵切面。`EnterprisePlatform.process_next()` 先在短事务中以租户条件领取 Run，写入
+`worker_id + lease_expires_at`，随后在事务外执行 Provider；完成和失败都必须匹配 Worker ID。
+测试覆盖租户隔离、过期租约恢复、迟到结果保护、DLQ、取消和 SQLite 可恢复备份。
+
+该实现也明确保留边界：SQLite 用于离线可重复测试，不能证明 PostgreSQL 的 `SKIP LOCKED`、RLS、
+连接池或并发性能；教学迁移函数也不替代 Alembic 等正式迁移工具。生产验收必须在目标数据库版本、
+并发规模和故障模型下重新执行。
+
 ### 常见误区与工程实践
 
 常见误区：Redis 是更快数据库、Checkpoint 等于事务、向量库自动多租户、备份存在就等于能恢复。工程实践从数据分类、明确事实来源、版本和生命周期开始，再做性能优化。
-总结：数据层必须为恢复、权限和审计提供确定证据。练习：设计任务状态表、outbox 和幂等更新，并写跨租户测试。面试：状态、事件和 Checkpoint 有何区别？缓存如何避免跨租户污染？为什么外部模型调用不能放在数据库事务内？延伸阅读：PostgreSQL、Redis、pgvector 与所选迁移工具官方文档。代码目录：项目4、10。
+
+### 练习参考答案与面试要点
+
+1. **任务状态表。** 至少包含租户、状态、Version、Worker/Fencing、租约、预算和时间；领取与完成
+   都用条件更新。状态变化与 Outbox Event 同事务写入，消费者按 Event ID 幂等。
+2. **跨租户测试。** 使用两个真实租户和同名业务 ID，分别验证普通查询、缓存命中、向量检索、
+   管理接口和备份导出。只测试 Repository 的一个方法不足以证明系统隔离。
+3. **缓存污染。** Key 包含 Tenant、Subject/Permission Version、Model、Prompt、Data Version 和
+   输入哈希；撤权提升权限版本，使旧条目不可命中。敏感结果设短 TTL 并支持主动失效。
+4. **事务边界。** 外部模型调用耗时且结果不确定，把它放进事务会长期占连接和锁；正确做法是先
+   提交待执行事实，事务外调用，再用幂等和条件更新提交结果。
+
+总结：数据层必须为恢复、权限和审计提供确定证据。状态所有权、条件写入、Outbox、租约和删除血缘
+比“用了哪种数据库”更能决定可靠性。延伸阅读包括 PostgreSQL、Redis、pgvector 与所选迁移工具的
+官方文档；代码目录为项目 4 和
+[`projects/10-enterprise-platform/`](https://github.com/wujinjun/ai-agent-book/tree/main/projects/10-enterprise-platform)。
 
 ## 本章引用
 <!-- chapter-citations:start -->
