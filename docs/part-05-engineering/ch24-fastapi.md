@@ -148,10 +148,115 @@ ASGITransport/TestClient 测路由，无需启动端口；Fake Service 验证 HT
 
 调试拆分网关排队、API 处理、队列等待、模型与工具 span。请求 ID 贯穿代理、API、Worker 和 Trace。断连后确认上游是否取消，否则用户离开但费用继续产生。
 
+### SSE 不是无限生命周期的 Token 管道
+
+SSE 事件至少包含单调递增 ID、稳定类型、时间和 Schema Version。事件 ID 是 Run 内游标，不应假设
+全局连续。客户端用 `Last-Event-ID` Header 或明确的 `after` 参数恢复；服务端先校验 Run 的租户和
+对象权限，再读取游标之后的持久事件。若游标早于保留窗口，返回明确的 `cursor_expired`，让客户端
+先读取当前 Run 快照，而不是静默从头播放。
+
+```text
+id: 42
+event: tool.completed
+data: {"schema_version":1,"run_id":"...","tool":"weather","status":"ok"}
+
+```
+
+生产流还要处理代理缓冲、空闲超时和半开连接。可以发送不含业务数据的 Heartbeat Comment，设置
+适合 SSE 的缓存与代理配置，并让客户端指数退避重连。Heartbeat 只能证明传输仍活跃，不能证明
+Run 在推进。慢消费者必须有每连接缓冲上限；超过上限后断开并要求按游标恢复，不能让一个移动端
+连接无限占用内存。
+
+```mermaid
+%% id: sse-reconnect-retention-flow
+%% title: SSE 断线重连与事件保留
+%% alt: 客户端携带最后事件游标重连，服务端先做对象授权并检查保留窗口，游标有效则增量回放，过期则返回当前 Run 快照和游标过期错误
+flowchart TD
+    Reconnect[重连 + Last-Event-ID] --> Auth[租户与 Run 对象授权]
+    Auth --> Retention{游标仍在保留窗口}
+    Retention -->|是| Replay[按 sequence 增量回放]
+    Replay --> Live[订阅新事件]
+    Retention -->|否| Snapshot[读取当前 Run 快照]
+    Snapshot --> Expired[cursor_expired + latest sequence]
+```
+
+这张图把事件流和事实快照分开：流可以过期或丢连接，Run 资源仍可恢复。最终事件之后关闭连接是
+正常行为；客户端必须以 `run.completed`/`run.failed` 等业务事件判断终止，而不是把 EOF 当成功。
+
+### WebSocket 的会话与安全边界
+
+WebSocket 建连时完成认证并不够。长连接期间 Token 可能过期、角色可能撤销，服务端需设置最大
+会话时长、定期重新授权或安全关闭。每条客户端消息都使用版本化 Schema、大小上限和动作级授权；
+Ping/Pong、心跳和业务 Ack 不能混为一谈。单连接写入应串行或经过有界队列，避免并发 `send` 造成
+帧乱序。
+
+负载均衡器必须支持 Upgrade 与空闲时间，扩容时不能把进程内 Connection Map 当权威 Session。
+若需要跨实例推送，可用 Broker 做广播，但历史与最终状态仍写数据库。WebSocket 适合低延迟双向
+控制，不意味着任务必须依附于 Socket：网络断开后，已提交的 Run 按产品策略继续、暂停或请求取消，
+而不是由 TCP 状态暗中决定。
+
+### 断连、取消与背压
+
+同步生成端点可以在 `request.is_disconnected()` 后取消上游，以节省费用，但取消是尽力而为，远端
+模型或工具可能已执行。持久长任务通常不因显示连接断开而取消；用户需调用带对象授权的 Cancel API。
+API 返回 `cancel_requested` 后，Worker 在边界协作停止，最终状态可能是 `cancelled`、`succeeded`
+或 `unknown_external_state`，客户端必须接受竞争结果。
+
+背压要贯穿模型流、事件缓冲和网络。若模型每秒生成速度高于客户端消费，系统可以合并 Token Chunk、
+限制缓冲、暂停上游（若 Provider 支持）或断开并恢复。把所有 Token 永久写数据库通常代价过高；可
+持久化语义事件与定期文本快照，Token 级流作为短期体验数据。具体保留策略由恢复精度、成本和隐私
+共同决定。
+
+### 稳定错误协议与幂等创建
+
+错误响应使用机器可读 Code，不让客户端解析中文消息。HTTP 状态与业务状态分工：401/403 表达
+认证授权失败，404 可避免跨租户枚举，409 表达幂等键冲突或非法状态转换，413 表达大小超限，429
+配合 `Retry-After`。已创建的长任务返回 201/202；同一幂等键和相同请求可返回已有 Run，不同请求
+复用同键必须 409。
+
+```json
+{
+  "type": "https://errors.example.test/run-state-conflict",
+  "title": "Run state conflict",
+  "status": 409,
+  "code": "run_state_conflict",
+  "trace_id": "01J...",
+  "retryable": false
+}
+```
+
+示例采用 RFC 9457 风格，但具体字段必须进入 OpenAPI 并做契约测试。`trace_id` 便于支持人员定位，
+不能泄露内部调用栈、SQL 或 Provider 原始敏感错误。
+
+### 与十项目共享 API 的对应关系
+
+仓库的 `src/ai_agent_book/project_service.py` 为十个教学项目提供统一持久 Run API。它实现幂等创建、
+租户隔离、取消、事件表和 `after` 游标，`tests/test_project_service.py` 直接验证游标重放与权限。
+这证明控制面契约可以离线运行，但当前 Event Endpoint 是一次性读取已有事件，不是长期保持连接的
+Live Tail，也尚未实现事件保留过期、Heartbeat 和慢消费者背压。
+
+项目 10 进一步提供租约 Worker、Trace 与 RBAC Metrics。生产版应在目标 ASGI Server、反向代理和
+负载均衡器上测试真实断线、长连接、Graceful Shutdown 和多实例广播，不能从 TestClient 的一次响应
+推断完整网络行为。
+
 ### 常见误区与安全注意事项
 
 常见误区：用 WebSocket 表示“高级”、把长任务放 BackgroundTasks、只做路由鉴权、信任 MIME、返回内部异常。安全上设置 CORS allowlist、HTTPS、安全 header、请求大小、超时、限流和审计；OpenAPI 文档不应暴露内部管理接口给未授权网络。
-总结：Agent API 的核心是任务状态与事件协议，不只是一个聊天端点。练习：实现可取消、可断线恢复的 SSE 任务。面试：SSE 与 WebSocket 如何选？BackgroundTasks 何时不可靠？认证与对象授权如何分层？延伸阅读：FastAPI、Starlette、OAuth/OIDC 和 SSE 规范。代码目录：`projects/10-enterprise-platform/`。
+
+### 练习参考答案与面试要点
+
+1. **可恢复 SSE。** 事件表以 Run 内 Sequence 排序；Endpoint 做对象授权、保留窗口检查和增量读取；
+   客户端保存最后处理成功的 ID。慢消费者超限断开，重连后不重复应用旧事件。
+2. **取消竞争。** 同时注入客户端断开、Cancel 请求和 Worker 完成。断开不自动删除 Run，取消写入
+   意图，最终状态由条件更新决定；已完成副作用保留审计。
+3. **协议选择。** 单向进度使用 SSE，频繁双向音频/控制使用 WebSocket，无持续事件则 202 + 轮询；
+   所有协议都以持久 Run 为事实来源。
+4. **鉴权分层。** Authentication 产生 Principal；Authorization 依次检查租户、对象、动作和字段。
+   通过登录不能自动读取任意 Run，404/403 策略还需避免资源枚举。
+
+总结：Agent API 的核心是任务状态、事件游标和明确的断线/取消语义，而不只是聊天端点。延伸阅读包括
+FastAPI、Starlette、OAuth/OIDC、RFC 9457、SSE 与 WebSocket 规范；代码目录为
+[`projects/10-enterprise-platform/`](https://github.com/wujinjun/ai-agent-book/tree/main/projects/10-enterprise-platform)。
 
 ## 本章引用
 <!-- chapter-citations:start -->
