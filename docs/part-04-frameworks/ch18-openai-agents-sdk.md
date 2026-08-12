@@ -7,6 +7,14 @@ SDK 用少量原语管理 Agent、工具、handoff、guardrail、session 与 tra
 
 学习目标是能够实现、测试和审查一个受限的 SDK Agent，而不是只运行 Quickstart。
 
+本章只用稳定概念关系建立 SDK 心智模型，具体接口仍以锁定版本和官方文档为准。Runner 驱动一次 Run，Agent 组合指令、模型、工具和输出契约，Guardrail、Handoff、Session、MCP 与 Tracing 分别承担不同职责。
+
+![OpenAI Agents SDK 中任务由 Runner 驱动 Run，Agent 连接指令模型工具和输出契约，Guardrail 约束输入输出，Handoff 移交最小上下文并连接 Session MCP 和 Trace](../assets/infographics/png/openai-agents-sdk-concepts-infographic-2x.png)
+
+*图 18-A：Agents SDK 的运行、工具、护栏与交接关系。本图表达职责边界，不承诺任何具体函数签名或版本敏感参数。*
+
+图 18-A 中 Handoff 是受控的责任移交，不是鼓励多个 Agent 无限互聊。交接载荷、允许工具、预算和终止状态都应显式定义，并通过 Trace 关联到同一次任务。
+
 ## 核心原理与架构
 
 OpenAI Agents SDK 将 Agent 配置与 Runner 控制循环分开。下图标出工具、转交、护栏、会话与追踪围绕 Runner 的关系。

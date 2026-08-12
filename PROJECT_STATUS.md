@@ -1,6 +1,6 @@
 # 项目状态
 
-仓库状态审计日期：2026-08-08。外部框架与规范的实际核对日期单独记录在 `notes/version-check.md`；仓库审计日期不能替代 API 版本核查日期。
+仓库状态审计日期：2026-08-12。外部框架与规范的实际核对日期单独记录在 `notes/version-check.md`；仓库审计日期不能替代 API 版本核查日期。
 
 完整的逐章、逐项目状态见 [`notes/completion-matrix.md`](notes/completion-matrix.md)，后续工作和验收标准见 [`docs/QUALITY_ROADMAP.md`](docs/QUALITY_ROADMAP.md)。
 
@@ -48,8 +48,10 @@ P9 当前状态为 `complete_repository_scope`。仓库证据分为个人系统�
 ## 出版完成度
 
 - 当前候选共有 236 张 Mermaid 图，已经生成 SVG、2x PNG 和内容哈希清单；HTML、PDF 和 EPUB 使用预渲染资产，不依赖阅读器现场执行 Mermaid。
+- 出版级信息图采用三级视觉体系：A 级核心信息图 12/12、B 级增强信息图 20/20 已完成；32 张信息图均保留生成式无文字底稿、可编辑 SVG、高分辨率 PNG、中文语义层、图号、长替代文本、图后解释、来源与 SHA-256。236 张 Mermaid 继续作为 C 级精确工程图保留。
 - MkDocs HTML 严格构建、断链、缺图、alt、重复 ID 和残留 Mermaid 自动审计已建立。
-- 当前本地候选 PDF 为 454 页 A4、11,337,048 字节；封面、目录、正文、代码、图示和末页已重新栅格化抽检。Noto Sans SC 与 Source Code Pro 固定到上游 commit 并携带 OFL，发行预检确认未批准系统字体和硬失败均为 0。
+- 当前本地候选 PDF 为 506 页 A4、约 105 MiB；20 张 B 级信息图所在页面已按全书分布抽样栅格化检查，图片未裁切、未跨页且图题清晰。Noto Sans SC 与 Source Code Pro 固定到上游 commit 并携带 OFL，发行预检硬失败为 0。
+- 当前本地 EPUB3 约 79 MiB，20 张 B 级 PNG 均进入容器且不依赖 JavaScript 渲染；MkDocs HTML、PDF 和 EPUB 已于 2026-08-12 从同一源码重新构建并通过出版审计。
 - P7 本地候选 EPUB3 为 13,443,800 字节，具备 nav、spine、严格 XHTML、跨文件片段和资源引用检查；Apple Books 实机与 Calibre 9.13.0 解析引擎复验通过，HTML 下载目录同时包含同次构建的 PDF 与 EPUB。
 - GitHub `main` 已合并 P0—P9 仓库范围成果；[GitHub Release v2026.8.1](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.1) 发布完整 HTML 压缩包、454 页 PDF、EPUB3、企业培训 PPTX、发行清单与 SHA-256。
 - P7 的 macOS 实机、Calibre 引擎、390/768/1440px 视口与 12 页图稿联系表复验已完成；实体 iOS/Android、商业印刷样张和出版社终审仍由 P9 跟踪。
@@ -68,4 +70,4 @@ P9 当前状态为 `complete_repository_scope`。仓库证据分为个人系统�
 
 ## 当前验证证据
 
-2026-08-08 在 Python 3.12.13 下重新运行 Ruff、mypy 和 257 项根级/项目测试，全部通过。全新虚拟环境安装 `.[dev,docs,publish]` 后再次完成测试、十项目 CLI、HTML、454 页 PDF、EPUB 与出版审计。十个 Linux 服务镜像从当前源码构建，项目 1—9 的 Readiness 及项目 10 的 API/PostgreSQL/Redis 健康检查通过。PDF 使用固定版本 OFL 字体，培训 PPTX 的 105 个可见文本框统一为 Noto Sans SC。最终标签强制校验仓库范围完成状态与排除项边界；236 组 Mermaid 图、113 条外部参考链接、密钥、隐私和仓库卫生审计无未处理失败。结构化证据见 `notes/p9-project-runtime-qa.md`、`notes/distribution-asset-audit.json` 和 `notes/p9-acceptance.yml`。
+2026-08-12 在 Python 3.12 环境重新运行 Ruff、255 项根级测试、MkDocs 严格构建、HTML/PDF/EPUB 出版审计、隐私审计、仓库卫生和视觉审计，全部通过。发行资产预检无硬失败，仍保留 6 项既有人工权利/设备复核提示。当前 32 张出版信息图的 manifest、章节引用、1536×2304 PNG、SVG title/desc 和三端资源均有直接测试；A4 PDF 为 506 页。更早的十项目容器和隔离框架证据继续见 `notes/p9-project-runtime-qa.md`、`notes/distribution-asset-audit.json` 和 `notes/p9-acceptance.yml`。

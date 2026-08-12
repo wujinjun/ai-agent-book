@@ -6,6 +6,14 @@
 
 复杂任务需要分解，但规划本身也消耗时间并可能制造错误。本章学习 Plan-and-Execute、依赖、重规划、Reviewer 与成本控制。前置知识为第 9 章。
 
+研究型 Agent 的价值来自显式任务依赖、证据交付和独立验收，而不是增加更多角色对话。主图把 Planner、Executor 与 Reviewer 放在共享状态周围，并把局部返工、整体重规划和预算终止同时画出。
+
+![用户目标被 Planner 分解为带依赖预算和验收条件的任务，Executor 提交证据与产物，Reviewer 决定通过局部返工或整体重规划](../assets/infographics/png/planning-review-replan-infographic-2x.png)
+
+*图 10-A：规划、执行、评审与失败重规划闭环。共享状态保存 Evidence、Artifact、状态、成本和版本，不能由自由对话替代。*
+
+图 10-A 的终止区与计划同等重要。最大回合、成本、时间和无进展检测必须由 Runtime 执行；Reviewer 的否决不能无限触发重新规划。
+
 ## 核心概念与流程图
 
 复杂任务的规划价值来自可验证的分解和局部恢复。下面的主闭环显示 Planner、Executor 与 Reviewer 如何围绕证据推进，而不是用一段自然语言计划替代执行控制。

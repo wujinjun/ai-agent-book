@@ -7,6 +7,14 @@ Agent 输出非确定且包含工具和检索，单元测试不足。本章建�
 
 学习目标是掌握核心评估设计，并实现一个可重复的黄金数据集示例。前置知识为第13、17、28章。
 
+Agent Evaluation 必须从任务成功定义开始，并沿模型、工具、检索、证据和系统运行链路分解。主图把测试层级、指标层级、Judge 校准和持续回归连接成一条可重放流水线。
+
+![任务契约和 Golden Dataset 驱动单元集成端到端与人工评审，并分别度量结构化输出 Tool Retrieval Faithfulness 任务成功成本延迟，经过 Judge 校准和回归门](../assets/infographics/png/agent-evaluation-pipeline-infographic-2x.png)
+
+*图 29-A：Agent Evaluation 的分层指标与持续回归。LLM-as-Judge 是带偏差的测量工具，需要 Rubric、盲测、校准集和人工抽检。*
+
+图 29-A 的回归门针对 Prompt、模型、工具、索引或代码的每次变更运行。总分相近仍可能掩盖特定租户、语言、工具或失败类型的退化，因此还要分析失败切片。
+
 ## 评估金字塔
 
 Agent 测试需要把确定性组件、外部契约与完整任务分层。主图强调大量快速单元测试支撑少量昂贵 E2E。

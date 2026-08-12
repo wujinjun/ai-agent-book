@@ -493,6 +493,7 @@ def _build_portrait_infographic(
     source_name: str,
     labels: list[Label],
     arrows: list[list[tuple[int, int]]],
+    generated_at: str = "2026-08-09",
 ) -> InfographicRecord:
     """Compose a generated visual base with deterministic semantic overlays."""
     source = ASSET_ROOT / f"source/{source_name}"
@@ -577,7 +578,7 @@ def _build_portrait_infographic(
         generated_with=(
             "built-in imagegen (visual base) + deterministic SVG/Pillow semantic overlay"
         ),
-        generated_at="2026-08-09",
+        generated_at=generated_at,
     )
 
 
@@ -1005,6 +1006,749 @@ def build_project10_infographic() -> InfographicRecord:
     )
 
 
+@dataclass(frozen=True, slots=True)
+class PortraitSpec:
+    semantic_id: str
+    title: str
+    description: str
+    source_path: str
+    source_name: str
+    labels: tuple[Label, ...]
+
+
+_B_FLOW_ARROWS = (
+    ((512, 305), (512, 325)),
+    ((512, 625), (512, 645)),
+    ((512, 930), (512, 950)),
+    ((512, 1235), (512, 1255)),
+)
+
+
+def _b_specs() -> dict[str, PortraitSpec]:
+    """Return the locked B-level publication infographic specifications."""
+    specs = (
+        PortraitSpec(
+            "context-budget-memory-infographic",
+            "上下文窗口：有限预算，不是长期记忆",
+            "一次请求先为规则、问题和输出预留硬预算，再在历史、证据和工具结果间分配弹性预算；超限时按价值保留、截断、摘要或外部检索，会话结束后只有显式写入外部存储的信息才能在未来恢复。",
+            "docs/part-01-foundations/ch02-token-and-context.md",
+            "context-budget-memory-infographic-base.png",
+            (
+                Label(512, 28, "上下文窗口：有限预算，不是长期记忆", 27, "bold", "#24476B", 3),
+                Label(210, 195, "系统规则\n硬约束", 18, "bold", "#24476B", 3),
+                Label(512, 195, "当前问题与证据\n任务工作区", 18, "bold", "#177B72", 3),
+                Label(815, 195, "工具与历史\n竞争剩余容量", 18, "bold", "#C8662D", 3),
+                Label(170, 555, "固定保留", 19, "bold", "#24476B", 3),
+                Label(512, 555, "弹性预算", 19, "bold", "#177B72", 3),
+                Label(850, 555, "输出预留", 19, "bold", "#C8662D", 3),
+                Label(128, 810, "保留", 17, "bold", "#24476B", 3),
+                Label(382, 810, "截断", 17, "bold", "#7656A5", 3),
+                Label(640, 810, "摘要", 17, "bold", "#177B72", 3),
+                Label(890, 810, "外部检索", 17, "bold", "#177B72", 3),
+                Label(512, 1085, "成本 · 延迟 · 信息密度", 21, "bold", "#7656A5", 3),
+                Label(250, 1400, "持久存储", 19, "bold", "#24476B", 3),
+                Label(512, 1400, "按需检索", 19, "bold", "#177B72", 3),
+                Label(795, 1400, "下一次上下文", 19, "bold", "#C8662D", 3),
+            ),
+        ),
+        PortraitSpec(
+            "generation-control-infographic",
+            "生成控制：采样、运行边界与结构化输出",
+            (
+                "模型从概率分布中选择下一个 Token；Temperature、Top-p 和 Top-k 改变候选"
+                "分布，运行时再施加长度、停止与流式边界，结构化结果只有通过语法、"
+                "Schema 和业务校验后才能交给下游。"
+            ),
+            "docs/part-01-foundations/ch04-generation.md",
+            "generation-control-infographic-base.png",
+            (
+                Label(512, 25, "生成控制：从概率分布到可靠结果", 27, "bold", "#24476B", 3),
+                Label(512, 185, "Logits → 概率分布 → 候选 Token", 20, "bold", "#24476B", 3),
+                Label(170, 505, "Temperature\n分布形状", 18, "bold", "#24476B", 3),
+                Label(512, 505, "Top-p\n累计概率", 18, "bold", "#177B72", 3),
+                Label(850, 505, "Top-k\n候选数量", 18, "bold", "#C8662D", 3),
+                Label(130, 820, "随机种子", 16, "bold", "#7656A5", 3),
+                Label(380, 820, "最大长度", 16, "bold", "#7656A5", 3),
+                Label(640, 820, "停止条件", 16, "bold", "#7656A5", 3),
+                Label(875, 820, "流式事件", 16, "bold", "#7656A5", 3),
+                Label(175, 1110, "语法解析", 17, "bold", "#177B72", 3),
+                Label(430, 1110, "Schema 校验", 17, "bold", "#177B72", 3),
+                Label(680, 1110, "有限重试", 17, "bold", "#C8662D", 3),
+                Label(870, 1110, "明确失败", 17, "bold", "#B94A48", 3),
+                Label(512, 1400, "按任务复杂度路由普通模型与推理模型", 19, "bold", "#24476B", 3),
+            ),
+        ),
+        PortraitSpec(
+            "embedding-retrieval-evidence-infographic",
+            "Embedding：从相关候选到可引用证据",
+            "文档经过清洗、切分、元数据和向量化形成版本化索引；查询同时使用稀疏与稠密检索，经融合、权限过滤和重排后，还必须验证相关性、可见性、时效与主张支持关系。",
+            "docs/part-01-foundations/ch05-embedding.md",
+            "embedding-evidence-infographic-base.png",
+            (
+                Label(512, 25, "Embedding：从相关候选到可引用证据", 27, "bold", "#24476B", 3),
+                Label(160, 190, "解析与清洗", 17, "bold", "#24476B", 3),
+                Label(390, 190, "Chunk + Metadata", 17, "bold", "#24476B", 3),
+                Label(640, 190, "向量表示", 17, "bold", "#177B72", 3),
+                Label(865, 190, "版本化索引", 17, "bold", "#177B72", 3),
+                Label(245, 525, "稀疏检索\n关键词与编号", 18, "bold", "#24476B", 3),
+                Label(775, 525, "稠密检索\n语义改写", 18, "bold", "#177B72", 3),
+                Label(170, 835, "租户与 ACL", 18, "bold", "#C8662D", 3),
+                Label(510, 835, "融合与 Rerank", 18, "bold", "#7656A5", 3),
+                Label(840, 835, "Top-k + 来源", 18, "bold", "#7656A5", 3),
+                Label(125, 1110, "相关", 16, "bold", "#24476B", 3),
+                Label(375, 1110, "可见", 16, "bold", "#177B72", 3),
+                Label(625, 1110, "时效", 16, "bold", "#C8662D", 3),
+                Label(875, 1110, "支持主张", 16, "bold", "#B94A48", 3),
+                Label(
+                    512,
+                    1400,
+                    "真实查询集 → Recall / MRR → 引用与 Faithfulness",
+                    18,
+                    "bold",
+                    "#7656A5",
+                    3,
+                ),
+            ),
+        ),
+        PortraitSpec(
+            "prompt-context-injection-infographic",
+            "Prompt 与 Context：指令层级和注入防线",
+            (
+                "平台与系统约束高于用户任务，检索网页邮件等外部内容始终是数据而非新"
+                "指令；Context Assembly 只装入必要材料，任何工具动作仍在模型外通过"
+                "授权、白名单和审批。"
+            ),
+            "docs/part-02-agent-core/ch06-prompt-engineering.md",
+            "prompt-injection-context-infographic-base.png",
+            (
+                Label(512, 25, "Prompt 与 Context：指令层级和注入防线", 27, "bold", "#24476B", 3),
+                Label(320, 105, "平台与系统约束", 18, "bold", "#24476B", 3),
+                Label(320, 185, "用户任务", 18, "bold", "#177B72", 3),
+                Label(320, 265, "示例与历史", 18, "bold", "#7656A5", 3),
+                Label(820, 185, "网页 · 邮件 · 文档\n不可信内容", 18, "bold", "#B94A48", 3),
+                Label(
+                    512,
+                    545,
+                    "Context Assembly：规则 + 任务 + 最小证据 + 输出契约",
+                    18,
+                    "bold",
+                    "#177B72",
+                    3,
+                ),
+                Label(160, 825, "来源标记", 16, "bold", "#B94A48", 3),
+                Label(365, 825, "数据 / 指令隔离", 16, "bold", "#C8662D", 3),
+                Label(575, 825, "Tool Allowlist", 16, "bold", "#177B72", 3),
+                Label(775, 825, "主体授权", 16, "bold", "#24476B", 3),
+                Label(920, 825, "人工审批", 16, "bold", "#7656A5", 3),
+                Label(250, 1115, "模型输出：动作提议", 19, "bold", "#7656A5", 3),
+                Label(745, 1115, "模型外策略执行点", 19, "bold", "#24476B", 3),
+                Label(512, 1400, "版本 · 测试集 · Trace · 回归", 20, "bold", "#7656A5", 3),
+            ),
+        ),
+        PortraitSpec(
+            "structured-output-validation-infographic",
+            "Structured Output：契约、校验与恢复",
+            (
+                "业务契约先映射为版本化 Schema，模型候选依次经过解析、Schema 和业务"
+                "校验；只有完整对象通过验收后才提交下游，失败按可修复性进入有限重试"
+                "或明确拒绝。"
+            ),
+            "docs/part-02-agent-core/ch07-structured-output.md",
+            "structured-output-validation-infographic-base.png",
+            (
+                Label(512, 25, "Structured Output：契约、校验与恢复", 27, "bold", "#24476B", 3),
+                Label(250, 180, "业务需求", 18, "bold", "#24476B", 3),
+                Label(515, 180, "JSON Schema / Pydantic", 18, "bold", "#24476B", 3),
+                Label(820, 180, "模型候选对象", 18, "bold", "#177B72", 3),
+                Label(255, 520, "语法解析", 18, "bold", "#177B72", 3),
+                Label(510, 520, "Schema 校验", 18, "bold", "#177B72", 3),
+                Label(760, 520, "业务规则", 18, "bold", "#C8662D", 3),
+                Label(250, 825, "可修复格式错误", 16, "bold", "#C8662D", 3),
+                Label(512, 825, "字段 / 类型错误", 16, "bold", "#7656A5", 3),
+                Label(760, 825, "不可重试拒绝", 16, "bold", "#B94A48", 3),
+                Label(900, 825, "重试预算", 16, "bold", "#C8662D", 3),
+                Label(250, 1110, "流式部分：仅预览", 18, "bold", "#7656A5", 3),
+                Label(650, 1110, "完整验收后提交", 18, "bold", "#177B72", 3),
+                Label(
+                    512, 1400, "Schema 版本 · 兼容迁移 · 错误样本 · 回归", 18, "bold", "#24476B", 3
+                ),
+            ),
+        ),
+        PortraitSpec(
+            "tool-permission-execution-infographic",
+            "Tool Calling：权限、审批、幂等与审计",
+            (
+                "模型只提出工具动作，Runtime 依次完成注册表检查、参数校验、主体资源"
+                "授权和风险分级；高风险动作绑定人工审批，执行器再施加超时、Sandbox、"
+                "幂等和状态核对。"
+            ),
+            "docs/part-02-agent-core/ch08-tool-calling.md",
+            "tool-permission-execution-infographic-base.png",
+            (
+                Label(512, 25, "Tool Calling：模型提议，Runtime 执行", 27, "bold", "#24476B", 3),
+                Label(250, 180, "工具动作提议", 18, "bold", "#24476B", 3),
+                Label(770, 180, "注册表 + 参数 Schema", 18, "bold", "#24476B", 3),
+                Label(130, 505, "未知工具拒绝", 16, "bold", "#B94A48", 3),
+                Label(385, 505, "参数校验", 16, "bold", "#177B72", 3),
+                Label(640, 505, "主体 / 资源授权", 16, "bold", "#177B72", 3),
+                Label(885, 505, "风险分级", 16, "bold", "#C8662D", 3),
+                Label(170, 810, "只读", 18, "bold", "#177B72", 3),
+                Label(512, 810, "可逆写入", 18, "bold", "#C8662D", 3),
+                Label(850, 810, "不可逆写入\n绑定人工审批", 18, "bold", "#B94A48", 3),
+                Label(110, 1100, "超时", 15, "bold", "#7656A5", 3),
+                Label(305, 1100, "Allowlist", 15, "bold", "#7656A5", 3),
+                Label(505, 1100, "Sandbox", 15, "bold", "#7656A5", 3),
+                Label(700, 1100, "幂等键", 15, "bold", "#7656A5", 3),
+                Label(890, 1100, "状态核对", 15, "bold", "#7656A5", 3),
+                Label(512, 1400, "Observation · 步数预算 · 终止 · Audit", 19, "bold", "#24476B", 3),
+            ),
+        ),
+        PortraitSpec(
+            "planning-review-replan-infographic",
+            "研究型 Agent：规划、执行、评审与重规划",
+            (
+                "Planner 将目标分解为带依赖、预算和验收条件的任务，Executor 只执行"
+                "当前就绪节点并提交证据，Reviewer 依据独立 Rubric 决定通过、局部返工"
+                "或整体重规划。"
+            ),
+            "docs/part-02-agent-core/ch10-planning-reflection.md",
+            "planning-review-replan-infographic-base.png",
+            (
+                Label(512, 25, "研究型 Agent：规划、执行、评审与重规划", 27, "bold", "#24476B", 3),
+                Label(160, 175, "用户目标", 18, "bold", "#24476B", 3),
+                Label(510, 175, "任务 DAG + 验收条件", 18, "bold", "#24476B", 3),
+                Label(865, 175, "回合 · 成本 · 时间", 17, "bold", "#C8662D", 3),
+                Label(250, 520, "Planner\n约束计划", 19, "bold", "#24476B", 3),
+                Label(745, 520, "Executor\n搜索 · 阅读 · 工具", 19, "bold", "#177B72", 3),
+                Label(512, 625, "显式共享状态", 17, "bold", "#7656A5", 3),
+                Label(105, 820, "Evidence", 15, "bold", "#24476B", 3),
+                Label(305, 820, "Artifact", 15, "bold", "#177B72", 3),
+                Label(505, 820, "状态", 15, "bold", "#C8662D", 3),
+                Label(705, 820, "成本", 15, "bold", "#7656A5", 3),
+                Label(900, 820, "版本", 15, "bold", "#4E5968", 3),
+                Label(
+                    512, 1110, "Reviewer：通过 · 局部返工 · 整体重规划", 19, "bold", "#7656A5", 3
+                ),
+                Label(255, 1400, "预算与无进展终止", 18, "bold", "#B94A48", 3),
+                Label(750, 1400, "带来源最终报告", 18, "bold", "#24476B", 3),
+            ),
+        ),
+        PortraitSpec(
+            "mcp-server-lifecycle-infographic",
+            "MCP Server：生命周期、传输与生产边界",
+            (
+                "MCP Server 启动后注册能力并与 Client 协商；stdio 和远程 HTTP 具有"
+                "不同进程与认证边界，每次调用仍要执行参数、主体、资源范围、超时和"
+                "结果限制，最终支持取消和优雅关闭。"
+            ),
+            "docs/part-03-rag-and-memory/ch12-mcp-server.md",
+            "mcp-server-lifecycle-infographic-base.png",
+            (
+                Label(512, 25, "MCP Server：生命周期、传输与生产边界", 27, "bold", "#24476B", 3),
+                Label(165, 180, "启动与配置", 18, "bold", "#24476B", 3),
+                Label(500, 180, "能力注册", 18, "bold", "#177B72", 3),
+                Label(835, 180, "Tool · Resource · Prompt", 17, "bold", "#177B72", 3),
+                Label(250, 500, "初始化与能力协商", 18, "bold", "#24476B", 3),
+                Label(750, 500, "发现能力 ≠ 获得权限", 18, "bold", "#7656A5", 3),
+                Label(250, 820, "stdio\n本地进程边界", 18, "bold", "#177B72", 3),
+                Label(750, 820, "远程 HTTP\n认证与会话", 18, "bold", "#C8662D", 3),
+                Label(120, 1110, "参数", 15, "bold", "#177B72", 3),
+                Label(300, 1110, "主体权限", 15, "bold", "#24476B", 3),
+                Label(500, 1110, "资源范围", 15, "bold", "#177B72", 3),
+                Label(690, 1110, "超时", 15, "bold", "#C8662D", 3),
+                Label(875, 1110, "结构化错误", 15, "bold", "#B94A48", 3),
+                Label(
+                    512,
+                    1400,
+                    "stderr 日志 · 健康 · 取消 · 优雅关闭 · 测试",
+                    18,
+                    "bold",
+                    "#7656A5",
+                    3,
+                ),
+            ),
+        ),
+        PortraitSpec(
+            "advanced-rag-diagnostic-infographic",
+            "高级 RAG：按失败类型选择纠错策略",
+            (
+                "高级 RAG 先定位失败发生在召回、排名、时效冲突、上下文噪声还是生成"
+                "忠实度，再选择查询改写、重排、校验、压缩或拒答；Graph、Agentic 与"
+                "多模态 RAG 只是按需侧路。"
+            ),
+            "docs/part-03-rag-and-memory/ch14-advanced-rag.md",
+            "advanced-rag-diagnostic-infographic-base.png",
+            (
+                Label(512, 25, "高级 RAG：按失败类型选择纠错策略", 27, "bold", "#24476B", 3),
+                Label(512, 165, "查询分类与改写", 19, "bold", "#24476B", 3),
+                Label(115, 430, "Parent-Child\n语义切分", 15, "bold", "#24476B", 3),
+                Label(310, 430, "Metadata\n过滤", 15, "bold", "#177B72", 3),
+                Label(510, 430, "Multi-Query", 15, "bold", "#177B72", 3),
+                Label(705, 430, "Hybrid", 15, "bold", "#7656A5", 3),
+                Label(900, 430, "Reranking", 15, "bold", "#C8662D", 3),
+                Label(110, 730, "无召回", 14, "bold", "#24476B", 3),
+                Label(310, 730, "排名低", 14, "bold", "#177B72", 3),
+                Label(510, 730, "冲突 / 过期", 14, "bold", "#B94A48", 3),
+                Label(705, 730, "上下文噪声", 14, "bold", "#7656A5", 3),
+                Label(900, 730, "回答不忠实", 14, "bold", "#C8662D", 3),
+                Label(110, 1015, "扩大 / 改写", 14, "bold", "#24476B", 3),
+                Label(310, 1015, "重排", 14, "bold", "#177B72", 3),
+                Label(510, 1015, "时效冲突校验", 14, "bold", "#B94A48", 3),
+                Label(705, 1015, "Context 压缩", 14, "bold", "#7656A5", 3),
+                Label(900, 1015, "拒答 / 纠错检索", 14, "bold", "#C8662D", 3),
+                Label(410, 1275, "引用回答 → 评估 → 失败样本回灌", 18, "bold", "#7656A5", 3),
+                Label(900, 1380, "Graph · Agentic · 多模态\n按需侧路", 16, "bold", "#4E5968", 3),
+            ),
+        ),
+        PortraitSpec(
+            "vector-index-migration-infographic",
+            "向量索引：检索、迁移与多租户隔离",
+            (
+                "摄取记录绑定文档、切分器、Embedding 与租户版本；查询先施加权限和"
+                "元数据过滤，再使用 HNSW 或 IVF 等索引；模型变更通过影子构建、双读、"
+                "原子切换和回滚完成。"
+            ),
+            "docs/part-03-rag-and-memory/ch16-vector-databases.md",
+            "vector-index-migration-infographic-base.png",
+            (
+                Label(512, 25, "向量索引：检索、迁移与多租户隔离", 27, "bold", "#24476B", 3),
+                Label(160, 175, "文档 / Chunk 版本", 16, "bold", "#24476B", 3),
+                Label(390, 175, "Embedding 版本", 16, "bold", "#177B72", 3),
+                Label(630, 175, "向量与距离", 16, "bold", "#177B72", 3),
+                Label(850, 175, "租户 Metadata", 16, "bold", "#7656A5", 3),
+                Label(180, 505, "HNSW\n近邻图", 18, "bold", "#24476B", 3),
+                Label(510, 505, "IVF\n聚类分桶", 18, "bold", "#177B72", 3),
+                Label(840, 505, "精确基线", 18, "bold", "#4E5968", 3),
+                Label(145, 820, "租户 / ACL 过滤", 16, "bold", "#24476B", 3),
+                Label(430, 820, "ANN 搜索", 16, "bold", "#177B72", 3),
+                Label(690, 820, "候选重排", 16, "bold", "#7656A5", 3),
+                Label(880, 820, "可见结果", 16, "bold", "#24476B", 3),
+                Label(260, 1110, "活动索引", 17, "bold", "#24476B", 3),
+                Label(512, 1110, "双读验证 · 原子切换 · 回滚", 17, "bold", "#7656A5", 3),
+                Label(770, 1110, "影子索引", 17, "bold", "#177B72", 3),
+                Label(512, 1400, "更新 / 撤权 / 删除传播与审计", 19, "bold", "#B94A48", 3),
+            ),
+        ),
+        PortraitSpec(
+            "native-agent-runtime-infographic",
+            "原生 Agent Runtime：内核、端口与测试边界",
+            (
+                "传输和模型供应商位于适配层，确定性 Runtime 内核负责状态、工具、策略、"
+                "超时、预算和终止；模型、检索、工具和存储通过端口替换为真实适配器或"
+                "离线 Fake。"
+            ),
+            "docs/part-04-frameworks/ch17-native-api.md",
+            "native-agent-runtime-infographic-base.png",
+            (
+                Label(
+                    512, 25, "原生 Agent Runtime：内核、端口与测试边界", 27, "bold", "#24476B", 3
+                ),
+                Label(200, 175, "任务请求", 18, "bold", "#24476B", 3),
+                Label(512, 175, "不可变 Run 配置", 18, "bold", "#7656A5", 3),
+                Label(820, 175, "消息与响应", 18, "bold", "#177B72", 3),
+                Label(170, 480, "模型适配器", 17, "bold", "#177B72", 3),
+                Label(512, 480, "消息 + Tool Schema", 17, "bold", "#177B72", 3),
+                Label(850, 480, "结构化动作解析", 17, "bold", "#177B72", 3),
+                Label(512, 720, "确定性 Runtime 内核", 22, "bold", "#24476B", 3),
+                Label(190, 790, "状态 · Tool Registry · Policy", 15, "bold", "#24476B", 3),
+                Label(825, 790, "超时 · Retry · 预算 · 终止", 15, "bold", "#24476B", 3),
+                Label(105, 1085, "Model", 15, "bold", "#7656A5", 3),
+                Label(305, 1085, "Retrieval", 15, "bold", "#177B72", 3),
+                Label(510, 1085, "Tool", 15, "bold", "#C8662D", 3),
+                Label(710, 1085, "Storage", 15, "bold", "#24476B", 3),
+                Label(905, 1085, "Fake / Mock", 15, "bold", "#B94A48", 3),
+                Label(
+                    512,
+                    1400,
+                    "Event Log · Trace · Checkpoint · 测试金字塔",
+                    18,
+                    "bold",
+                    "#7656A5",
+                    3,
+                ),
+            ),
+        ),
+        PortraitSpec(
+            "openai-agents-sdk-concepts-infographic",
+            "OpenAI Agents SDK：运行、工具、护栏与交接",
+            (
+                "Runner 驱动一次 Run 并维护上下文，Agent 组合指令、模型、工具和输出"
+                "契约；Guardrail 约束输入输出，Handoff 只移交最小必要上下文，Session、"
+                "MCP 和 Tracing 提供外围能力。"
+            ),
+            "docs/part-04-frameworks/ch18-openai-agents-sdk.md",
+            "openai-agents-sdk-infographic-base.png",
+            (
+                Label(512, 25, "Agents SDK：运行、工具、护栏与交接", 27, "bold", "#24476B", 3),
+                Label(250, 155, "任务", 18, "bold", "#C8662D", 3),
+                Label(512, 155, "Runner / Run", 20, "bold", "#C8662D", 3),
+                Label(512, 390, "上下文与运行控制", 20, "bold", "#24476B", 3),
+                Label(130, 690, "Instructions", 15, "bold", "#177B72", 3),
+                Label(315, 690, "Model", 15, "bold", "#177B72", 3),
+                Label(512, 690, "Agent", 17, "bold", "#177B72", 3),
+                Label(700, 690, "Tools", 15, "bold", "#177B72", 3),
+                Label(885, 690, "Output Type", 15, "bold", "#7656A5", 3),
+                Label(255, 1010, "Input Guardrail", 17, "bold", "#B94A48", 3),
+                Label(512, 1010, "Tool Loop", 17, "bold", "#C8662D", 3),
+                Label(770, 1010, "Output Guardrail", 17, "bold", "#B94A48", 3),
+                Label(512, 1165, "Handoff：最小必要上下文", 18, "bold", "#24476B", 3),
+                Label(95, 950, "Session", 15, "bold", "#177B72", 3),
+                Label(930, 950, "MCP · Trace", 15, "bold", "#7656A5", 3),
+                Label(
+                    512,
+                    1400,
+                    "成功 · 护栏拒绝 · 工具失败 · 超预算 · 人工中断",
+                    17,
+                    "bold",
+                    "#B94A48",
+                    3,
+                ),
+            ),
+        ),
+        PortraitSpec(
+            "agent-api-transport-infographic",
+            "Agent API：同步、流式与异步任务边界",
+            (
+                "请求先通过认证、租户、限流和校验，再按任务性质选择同步、SSE、"
+                "WebSocket 或异步 Job；长任务的权威状态写数据库并由 Worker 执行，"
+                "客户端断线不等于任务丢失。"
+            ),
+            "docs/part-05-engineering/ch24-fastapi.md",
+            "agent-api-transport-infographic-base.png",
+            (
+                Label(512, 25, "Agent API：同步、流式与异步任务边界", 27, "bold", "#24476B", 3),
+                Label(120, 180, "客户端", 16, "bold", "#24476B", 3),
+                Label(310, 180, "认证", 16, "bold", "#24476B", 3),
+                Label(500, 180, "租户策略", 16, "bold", "#177B72", 3),
+                Label(690, 180, "限流", 16, "bold", "#177B72", 3),
+                Label(875, 180, "请求校验", 16, "bold", "#24476B", 3),
+                Label(130, 520, "短任务\n同步响应", 17, "bold", "#24476B", 3),
+                Label(385, 520, "SSE\n单向事件流", 17, "bold", "#177B72", 3),
+                Label(640, 520, "WebSocket\n双向交互", 17, "bold", "#7656A5", 3),
+                Label(885, 520, "异步 Job", 17, "bold", "#C8662D", 3),
+                Label(200, 855, "创建 Run", 18, "bold", "#24476B", 3),
+                Label(512, 855, "权威状态", 18, "bold", "#24476B", 3),
+                Label(820, 855, "Queue / Worker", 18, "bold", "#C8662D", 3),
+                Label(
+                    512, 1120, "序号 · 重连 · 取消 · 超时 · 背压 · 幂等", 18, "bold", "#7656A5", 3
+                ),
+                Label(
+                    512, 1400, "Health · OpenAPI · Mock · Trace · Audit", 18, "bold", "#24476B", 3
+                ),
+            ),
+        ),
+        PortraitSpec(
+            "agent-data-storage-infographic",
+            "Agent 数据：按语义选择权威存储",
+            (
+                "用户、会话、Run、Artifact、Memory、向量、缓存和审计具有不同一致性"
+                "与生命周期；PostgreSQL 保存权威事务状态，Redis 只承担可重建缓存和"
+                "唤醒信号。"
+            ),
+            "docs/part-05-engineering/ch25-storage.md",
+            "agent-data-storage-infographic-base.png",
+            (
+                Label(512, 25, "Agent 数据：按语义选择权威存储", 27, "bold", "#24476B", 3),
+                Label(70, 180, "租户", 13, "bold", "#24476B", 3),
+                Label(195, 180, "会话", 13, "bold", "#177B72", 3),
+                Label(320, 180, "Run", 13, "bold", "#24476B", 3),
+                Label(445, 180, "Artifact", 13, "bold", "#C8662D", 3),
+                Label(570, 180, "Memory", 13, "bold", "#7656A5", 3),
+                Label(695, 180, "Vector", 13, "bold", "#177B72", 3),
+                Label(820, 180, "Cache", 13, "bold", "#B94A48", 3),
+                Label(945, 180, "Audit", 13, "bold", "#C8662D", 3),
+                Label(110, 500, "PostgreSQL", 16, "bold", "#24476B", 3),
+                Label(315, 500, "Object Store", 16, "bold", "#C8662D", 3),
+                Label(510, 500, "Vector Index", 16, "bold", "#177B72", 3),
+                Label(710, 500, "Redis", 16, "bold", "#B94A48", 3),
+                Label(905, 500, "Audit Store", 16, "bold", "#7656A5", 3),
+                Label(410, 810, "PostgreSQL：权威状态与幂等记录", 19, "bold", "#24476B", 3),
+                Label(790, 810, "Redis 丢失后可重建", 17, "bold", "#B94A48", 3),
+                Label(
+                    512,
+                    1110,
+                    "Checkpoint · Migration · Version · Tenant · Delete",
+                    17,
+                    "bold",
+                    "#7656A5",
+                    3,
+                ),
+                Label(
+                    512,
+                    1400,
+                    "Backup · Restore Drill · Rollback · Consistency",
+                    18,
+                    "bold",
+                    "#24476B",
+                    3,
+                ),
+            ),
+        ),
+        PortraitSpec(
+            "agent-deployment-release-infographic",
+            "Agent 部署：镜像、拓扑、健康与可恢复发布",
+            (
+                "多阶段构建生成固定版本的最小运行镜像，配置和 Secret 从镜像外注入；"
+                "API、Worker 与存储分离部署，通过存活、就绪、滚动发布、迁移和回滚"
+                "形成可恢复交付链。"
+            ),
+            "docs/part-05-engineering/ch26-docker-deployment.md",
+            "agent-deployment-release-infographic-base.png",
+            (
+                Label(
+                    512, 25, "Agent 部署：镜像、拓扑、健康与可恢复发布", 27, "bold", "#24476B", 3
+                ),
+                Label(180, 175, "依赖构建", 18, "bold", "#24476B", 3),
+                Label(512, 175, "最小运行镜像", 18, "bold", "#24476B", 3),
+                Label(840, 175, "非 root · 固定版本", 18, "bold", "#24476B", 3),
+                Label(180, 500, "Secret 外置", 18, "bold", "#7656A5", 3),
+                Label(480, 500, "开发", 16, "bold", "#177B72", 3),
+                Label(680, 500, "测试", 16, "bold", "#24476B", 3),
+                Label(875, 500, "生产", 16, "bold", "#C8662D", 3),
+                Label(170, 810, "Ingress", 16, "bold", "#24476B", 3),
+                Label(470, 810, "API × N", 17, "bold", "#24476B", 3),
+                Label(790, 810, "Worker × N", 17, "bold", "#7656A5", 3),
+                Label(512, 940, "PostgreSQL · Redis · Object Store", 17, "bold", "#177B72", 3),
+                Label(175, 1110, "启动 / 存活 / 就绪", 17, "bold", "#177B72", 3),
+                Label(512, 1110, "滚动发布与连接排空", 17, "bold", "#24476B", 3),
+                Label(850, 1110, "有限 Retry 与降级", 17, "bold", "#B94A48", 3),
+                Label(
+                    512,
+                    1400,
+                    "CI Gate · Scan · Migration · Backup · Trace · Rollback",
+                    17,
+                    "bold",
+                    "#7656A5",
+                    3,
+                ),
+            ),
+        ),
+        PortraitSpec(
+            "job-queue-reliability-infographic",
+            "长任务队列：租约、重试、取消与 DLQ",
+            (
+                "API 在事务中创建 Job 和 Outbox，Worker 只有取得有效租约后才能执行并"
+                "保存 Checkpoint；失败按类型分类，只有幂等暂时故障在预算内重试，"
+                "耗尽后进入 DLQ。"
+            ),
+            "docs/part-05-engineering/ch27-job-queues.md",
+            "job-queue-reliability-infographic-base.png",
+            (
+                Label(512, 25, "长任务队列：租约、重试、取消与 DLQ", 27, "bold", "#24476B", 3),
+                Label(160, 180, "API", 17, "bold", "#24476B", 3),
+                Label(470, 180, "Job + Outbox\n同一事务", 18, "bold", "#24476B", 3),
+                Label(780, 180, "发布唤醒信号", 18, "bold", "#C8662D", 3),
+                Label(180, 505, "Queue", 17, "bold", "#24476B", 3),
+                Label(510, 505, "Worker 竞争 Lease", 19, "bold", "#177B72", 3),
+                Label(835, 505, "Heartbeat\nCheckpoint", 17, "bold", "#177B72", 3),
+                Label(90, 790, "排队", 14, "bold", "#24476B", 3),
+                Label(260, 790, "运行", 14, "bold", "#177B72", 3),
+                Label(430, 790, "成功", 14, "bold", "#177B72", 3),
+                Label(600, 790, "失败", 14, "bold", "#B94A48", 3),
+                Label(770, 790, "取消", 14, "bold", "#C8662D", 3),
+                Label(935, 790, "未知", 14, "bold", "#7656A5", 3),
+                Label(160, 1050, "暂时故障", 14, "bold", "#24476B", 3),
+                Label(360, 1050, "限流", 14, "bold", "#177B72", 3),
+                Label(560, 1050, "业务 / 权限拒绝", 14, "bold", "#C8662D", 3),
+                Label(750, 1050, "超时未知", 14, "bold", "#B94A48", 3),
+                Label(900, 1120, "DLQ", 17, "bold", "#7656A5", 3),
+                Label(
+                    512,
+                    1400,
+                    "协作取消 · 僵尸回收 · 定时防重 · DLQ 审批重放",
+                    17,
+                    "bold",
+                    "#24476B",
+                    3,
+                ),
+            ),
+        ),
+        PortraitSpec(
+            "agent-evaluation-pipeline-infographic",
+            "Agent Evaluation：分层指标与持续回归",
+            (
+                "评估从任务契约和版本化 Golden Dataset 开始，分别验证单元、集成、"
+                "端到端和人工评审；指标按工具、检索、证据、任务、成本与延迟分解，"
+                "变更必须通过回归门。"
+            ),
+            "docs/part-05-engineering/ch29-evaluation.md",
+            "agent-evaluation-pipeline-infographic-base.png",
+            (
+                Label(512, 25, "Agent Evaluation：分层指标与持续回归", 27, "bold", "#24476B", 3),
+                Label(170, 175, "任务契约", 18, "bold", "#24476B", 3),
+                Label(500, 175, "成功 Rubric", 18, "bold", "#24476B", 3),
+                Label(835, 175, "Golden Dataset", 18, "bold", "#24476B", 3),
+                Label(125, 505, "单元", 15, "bold", "#24476B", 3),
+                Label(365, 505, "集成", 15, "bold", "#177B72", 3),
+                Label(605, 505, "端到端", 15, "bold", "#177B72", 3),
+                Label(845, 505, "人工评审", 15, "bold", "#7656A5", 3),
+                Label(80, 775, "结构化输出", 13, "bold", "#24476B", 3),
+                Label(225, 775, "Tool", 13, "bold", "#177B72", 3),
+                Label(370, 775, "Retrieval", 13, "bold", "#177B72", 3),
+                Label(515, 775, "Faithfulness", 13, "bold", "#C8662D", 3),
+                Label(660, 775, "任务成功", 13, "bold", "#B94A48", 3),
+                Label(805, 775, "成本", 13, "bold", "#C8662D", 3),
+                Label(940, 775, "延迟", 13, "bold", "#7656A5", 3),
+                Label(
+                    512,
+                    1095,
+                    "Judge：Rubric · 盲测 · 位置交换 · 校准 · 人工抽检",
+                    17,
+                    "bold",
+                    "#7656A5",
+                    3,
+                ),
+                Label(
+                    512,
+                    1400,
+                    "版本变更 → 基线对比 → 退化门禁 → 失败切片 → 回灌",
+                    17,
+                    "bold",
+                    "#B94A48",
+                    3,
+                ),
+            ),
+        ),
+        PortraitSpec(
+            "cost-quality-latency-infographic",
+            "成本优化：质量、延迟与单位任务成本",
+            "成本必须按成功任务而非单次调用衡量；优化先消除无效循环和错误重试，再压缩上下文与工具集合，随后采用模型路由、缓存、批处理和安全并行。",
+            "docs/part-05-engineering/ch31-cost-performance.md",
+            "cost-quality-latency-infographic-base.png",
+            (
+                Label(512, 25, "成本优化：质量、延迟与单位任务成本", 27, "bold", "#24476B", 3),
+                Label(95, 230, "模型 Token", 14, "bold", "#24476B", 3),
+                Label(300, 230, "检索 / 重排", 14, "bold", "#177B72", 3),
+                Label(505, 230, "Tool", 14, "bold", "#C8662D", 3),
+                Label(705, 230, "存储 / 队列", 14, "bold", "#7656A5", 3),
+                Label(905, 230, "失败 Retry", 14, "bold", "#B94A48", 3),
+                Label(512, 520, "任务成功：不可牺牲的硬约束", 19, "bold", "#B94A48", 3),
+                Label(330, 625, "质量", 18, "bold", "#24476B", 3),
+                Label(512, 625, "P95 延迟", 18, "bold", "#177B72", 3),
+                Label(700, 625, "单位任务成本", 18, "bold", "#C8662D", 3),
+                Label(130, 885, "先消除循环\n与错误重试", 16, "bold", "#B94A48", 3),
+                Label(365, 885, "再缩上下文\n与工具集合", 16, "bold", "#177B72", 3),
+                Label(610, 885, "模型路由\n缓存与 Batch", 16, "bold", "#24476B", 3),
+                Label(845, 885, "最后调参数\n安全并行", 16, "bold", "#7656A5", 3),
+                Label(250, 1120, "小模型：分类 · 路由 · 抽取", 17, "bold", "#177B72", 3),
+                Label(755, 1120, "大模型：高复杂度步骤", 17, "bold", "#7656A5", 3),
+                Label(
+                    512,
+                    1400,
+                    "预算 · 上限 · 超时 · 熔断 · 降级 · 压测 · 告警",
+                    18,
+                    "bold",
+                    "#24476B",
+                    3,
+                ),
+            ),
+        ),
+        PortraitSpec(
+            "browser-agent-safety-infographic",
+            "Browser Agent：感知、动作、验证与恢复",
+            (
+                "Browser Agent 综合 DOM、截图、OCR、URL 与会话状态定位目标，优先使用"
+                "稳定语义选择器；每次有限动作后必须重新观测验证，异常进入恢复分支，"
+                "高风险操作绑定确认和审计。"
+            ),
+            "docs/part-07-advanced/ch34-browser-computer-use.md",
+            "browser-agent-safety-infographic-base.png",
+            (
+                Label(512, 25, "Browser Agent：感知、动作、验证与恢复", 27, "bold", "#24476B", 3),
+                Label(120, 180, "DOM / 可访问性树", 15, "bold", "#24476B", 3),
+                Label(370, 180, "Screenshot", 15, "bold", "#24476B", 3),
+                Label(625, 180, "OCR", 15, "bold", "#177B72", 3),
+                Label(865, 180, "URL / Session", 15, "bold", "#24476B", 3),
+                Label(260, 500, "语义选择器优先", 18, "bold", "#177B72", 3),
+                Label(760, 500, "视觉坐标降级", 18, "bold", "#7656A5", 3),
+                Label(512, 750, "点击 · 输入 · 滚动 · 下载 · 上传", 18, "bold", "#177B72", 3),
+                Label(220, 865, "重新观测", 17, "bold", "#24476B", 3),
+                Label(820, 865, "验证预期状态", 17, "bold", "#177B72", 3),
+                Label(100, 1080, "页面变化", 13, "bold", "#B94A48", 3),
+                Label(280, 1080, "遮挡 / 弹窗", 13, "bold", "#B94A48", 3),
+                Label(465, 1080, "网络超时", 13, "bold", "#B94A48", 3),
+                Label(650, 1080, "重复提交", 13, "bold", "#B94A48", 3),
+                Label(835, 1080, "登录过期", 13, "bold", "#B94A48", 3),
+                Label(
+                    512,
+                    1400,
+                    "凭证隔离 · 域名 Allowlist · 下载 Sandbox · 确认 · 脱敏 Audit",
+                    16,
+                    "bold",
+                    "#24476B",
+                    3,
+                ),
+            ),
+        ),
+        PortraitSpec(
+            "framework-selection-map-infographic",
+            "Agent 技术选型：从问题形态到渐进架构",
+            (
+                "技术选型先建立确定性、状态恢复、类型安全、RAG、协作、MCP、团队和"
+                "锁定风险画像，再从原生闭环渐进增加 SDK、图工作流、数据框架或"
+                "多 Agent，并用 Spike 与评估验证。"
+            ),
+            "docs/part-07-advanced/ch38-selection-guide.md",
+            "framework-selection-map-infographic-base.png",
+            (
+                Label(512, 25, "Agent 技术选型：从问题形态到渐进架构", 27, "bold", "#24476B", 3),
+                Label(
+                    512,
+                    210,
+                    "需求画像：确定性 · 恢复 · 类型 · RAG · 协作 · MCP · 锁定",
+                    18,
+                    "bold",
+                    "#24476B",
+                    3,
+                ),
+                Label(110, 520, "原生 API", 15, "bold", "#24476B", 3),
+                Label(310, 520, "类型安全 SDK", 15, "bold", "#177B72", 3),
+                Label(510, 520, "图式工作流", 15, "bold", "#C8662D", 3),
+                Label(710, 520, "RAG 数据框架", 15, "bold", "#7656A5", 3),
+                Label(910, 520, "Multi-Agent", 15, "bold", "#B94A48", 3),
+                Label(120, 820, "评价维度", 16, "bold", "#24476B", 3),
+                Label(325, 820, "可控性", 14, "bold", "#177B72", 3),
+                Label(500, 820, "学习成本", 14, "bold", "#C8662D", 3),
+                Label(675, 820, "工作流 / RAG", 14, "bold", "#7656A5", 3),
+                Label(850, 820, "协作 / 运维", 14, "bold", "#B94A48", 3),
+                Label(
+                    512,
+                    1110,
+                    "先原生闭环 → 再恢复状态 → 再复杂数据 → 最后真实协作",
+                    17,
+                    "bold",
+                    "#24476B",
+                    3,
+                ),
+                Label(
+                    512,
+                    1400,
+                    "Spike · Golden Dataset · 故障注入 · 迁移出口 · TCO",
+                    18,
+                    "bold",
+                    "#7656A5",
+                    3,
+                ),
+            ),
+        ),
+    )
+    return {spec.semantic_id: spec for spec in specs}
+
+
+def build_b_infographic(semantic_id: str) -> InfographicRecord:
+    spec = _b_specs()[semantic_id]
+    return _build_portrait_infographic(
+        semantic_id=spec.semantic_id,
+        title=spec.title,
+        description=spec.description,
+        source_path=spec.source_path,
+        source_name=spec.source_name,
+        labels=list(spec.labels),
+        arrows=[list(points) for points in _B_FLOW_ARROWS],
+        generated_at="2026-08-11",
+    )
+
+
 def write_manifest(records: list[InfographicRecord]) -> Path:
     output = ASSET_ROOT / "manifest.json"
     existing: dict[str, dict[str, object]] = {}
@@ -1044,6 +1788,7 @@ def main() -> int:
             "security",
             "multi-agent",
             "project10",
+            "b-all",
             "all",
         ),
         default="all",
@@ -1074,6 +1819,8 @@ def main() -> int:
         records.append(build_multi_agent_infographic())
     if args.pilot in {"project10", "all"}:
         records.append(build_project10_infographic())
+    if args.pilot in {"b-all", "all"}:
+        records.extend(build_b_infographic(semantic_id) for semantic_id in _b_specs())
     manifest = write_manifest(records)
     print(f"Built {len(records)} infographic(s); manifest: {manifest}")
     return 0

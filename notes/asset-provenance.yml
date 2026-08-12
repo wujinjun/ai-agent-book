@@ -154,6 +154,146 @@ assets:
     sha256: c7b1e3b3c4259b06b687b09c9e3b506f178a0d6c835d32757eaebaee73a09894
     rights_basis: original repository technical content; generated visual base contains no third-party logos or copied artwork
     external_content: false
+  - path: docs/assets/infographics/png/advanced-rag-diagnostic-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 64900661cf84b023037ad46a1e6f65bb50bc4a7b33bcb8dbc9997b4b60f551c5
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/agent-api-transport-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: f0653c8ba52008142420a83d14f07f0579e7ca3653301a57d58a7e56650383d4
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/agent-data-storage-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: d19e1b610e97a086341eb996e89babcf54ff57c333a2092710fe4ea8a7f833d9
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/agent-deployment-release-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 1e8aed9a00626fa70ce2758d81e087c121e21b05a2a1693d7b0b87bb88a9b09b
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/agent-evaluation-pipeline-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: b91625d41ec5624a7816cf5668ffa87706efd45b9fb5f09370cb205678261f34
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/browser-agent-safety-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: aed9e187a6063bdd78f8eed692911234893d6cd59cb1ec15ef6400b3c8506b36
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/context-budget-memory-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: f88742e832e3432834da02be531c0199cd4643d6e555f12695b96f82b256aae5
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/cost-quality-latency-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 26fb6450404b05f66ac9bf01fa77c98662eb2acd660a6e0555dbceeab4ce8492
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/embedding-retrieval-evidence-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: af9cbac5e40c66f2781187f692374d3830aafef4f3abd23cc542a4c5f5b1d243
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/framework-selection-map-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: c4ada0d20cac1c960d1d7db6ab3e4c1f09e1caca35989431de055c9323414af6
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/generation-control-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 70f060a418c75587ea41ca459df44f10467d0a62b7bd3e56f0364cbb41aaad06
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/job-queue-reliability-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 949f6e4f46e52856d5060fb81e4eac053894da7a747ee5bcb9e19c0aa88b1e88
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/mcp-server-lifecycle-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: a783ae55342afdf49045896ed7ef736e6e0e273376f9c1e73c8a544c2e6be3db
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/native-agent-runtime-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: db18365d71fc19f1e21599be4bf86b7b0cf830262814353c0002a874a18d0e66
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/openai-agents-sdk-concepts-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 60072d5f22d274afcd0a0cd33d2ddaaea025156ed36e52ed2bc87b05200119f2
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/planning-review-replan-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 23035a9fcef7082d2fc6a171cb795dd12a95244437518829dd89f50010906fdc
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/prompt-context-injection-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: dca94a8db291b4bbf47bd53cc2fdca5939a798e0ab940363ac2b2c467d220d0a
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/structured-output-validation-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 4dde6ed7fa716f4b08d958597361fe071bed1336f9c18ebca0aa23e1a3da2c99
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/tool-permission-execution-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 8a172ff3726abc972f2707ecd3ad24053493f712684405b9ed59ac01cad77130
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/vector-index-migration-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 1bb0a63ea07d87145a8e543dbb8223435662ad111367bc07fa6a522fc07b10a1
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
   - path: training/slides/ai-agent-engineering-training.pptx
     kind: generated_training_deck
     origin: repository training curriculum and diagrams

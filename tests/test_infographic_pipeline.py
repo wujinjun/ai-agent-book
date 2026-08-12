@@ -7,14 +7,10 @@ ROOT = Path(__file__).parents[1]
 
 
 def test_pilot_infographic_assets_are_tracked_and_publishable() -> None:
-    manifest = json.loads(
-        (ROOT / "assets/infographics/manifest.json").read_text(encoding="utf-8")
-    )
+    manifest = json.loads((ROOT / "assets/infographics/manifest.json").read_text(encoding="utf-8"))
     assert len(manifest) >= 1
     record = next(
-        item
-        for item in manifest
-        if item["semantic_id"] == "llm-product-agent-system-infographic"
+        item for item in manifest if item["semantic_id"] == "llm-product-agent-system-infographic"
     )
     assert len(record["source_sha256"]) == 64
     assert len(record["svg_sha256"]) == 64
@@ -31,24 +27,18 @@ def test_pilot_infographic_assets_are_tracked_and_publishable() -> None:
 
 
 def test_chapter_one_integrates_infographic_with_explanation() -> None:
-    chapter = (ROOT / "docs/part-01-foundations/ch01-what-is-llm.md").read_text(
-        encoding="utf-8"
-    )
+    chapter = (ROOT / "docs/part-01-foundations/ch01-what-is-llm.md").read_text(encoding="utf-8")
     assert "llm-product-agent-system-infographic-2x.png" in chapter
     assert "图 1-A" in chapter
     assert "信息图帮助读者建立全局心智模型" in chapter
 
 
 def test_rag_pilot_integrates_infographic_and_evaluation_boundary() -> None:
-    chapter = (ROOT / "docs/part-03-rag-and-memory/ch13-rag.md").read_text(
-        encoding="utf-8"
-    )
+    chapter = (ROOT / "docs/part-03-rag-and-memory/ch13-rag.md").read_text(encoding="utf-8")
     assert "rag-evidence-pipeline-infographic-2x.png" in chapter
     assert "图 13-A" in chapter
     assert "权限过滤属于检索契约" in chapter
-    manifest = json.loads(
-        (ROOT / "assets/infographics/manifest.json").read_text(encoding="utf-8")
-    )
+    manifest = json.loads((ROOT / "assets/infographics/manifest.json").read_text(encoding="utf-8"))
     record = next(
         item for item in manifest if item["semantic_id"] == "rag-evidence-pipeline-infographic"
     )
@@ -57,28 +47,20 @@ def test_rag_pilot_integrates_infographic_and_evaluation_boundary() -> None:
 
 
 def test_enterprise_architecture_pilot_integrates_layer_boundaries() -> None:
-    chapter = (ROOT / "docs/part-07-advanced/ch36-architecture.md").read_text(
-        encoding="utf-8"
-    )
+    chapter = (ROOT / "docs/part-07-advanced/ch36-architecture.md").read_text(encoding="utf-8")
     assert "enterprise-agent-platform-infographic-2x.png" in chapter
     assert "图 36-A" in chapter
     assert "不要求每层独立部署成微服务" in chapter
-    manifest = json.loads(
-        (ROOT / "assets/infographics/manifest.json").read_text(encoding="utf-8")
-    )
+    manifest = json.loads((ROOT / "assets/infographics/manifest.json").read_text(encoding="utf-8"))
     record = next(
-        item
-        for item in manifest
-        if item["semantic_id"] == "enterprise-agent-platform-infographic"
+        item for item in manifest if item["semantic_id"] == "enterprise-agent-platform-infographic"
     )
     assert (ROOT / record["svg_asset"]).is_file()
     assert (ROOT / record["png_asset"]).is_file()
 
 
 def test_second_batch_infographics_are_integrated_and_high_resolution() -> None:
-    manifest = json.loads(
-        (ROOT / "assets/infographics/manifest.json").read_text(encoding="utf-8")
-    )
+    manifest = json.loads((ROOT / "assets/infographics/manifest.json").read_text(encoding="utf-8"))
     expected = {
         "transformer-attention-routing-infographic": (
             "docs/part-01-foundations/ch03-transformer-attention.md",
@@ -108,9 +90,7 @@ def test_second_batch_infographics_are_integrated_and_high_resolution() -> None:
 
 
 def test_third_batch_infographics_are_integrated_and_high_resolution() -> None:
-    manifest = json.loads(
-        (ROOT / "assets/infographics/manifest.json").read_text(encoding="utf-8")
-    )
+    manifest = json.loads((ROOT / "assets/infographics/manifest.json").read_text(encoding="utf-8"))
     expected = {
         "memory-governed-lifecycle-infographic": (
             "docs/part-03-rag-and-memory/ch15-memory.md",
@@ -136,9 +116,7 @@ def test_third_batch_infographics_are_integrated_and_high_resolution() -> None:
 
 
 def test_final_core_infographics_are_integrated_and_high_resolution() -> None:
-    manifest = json.loads(
-        (ROOT / "assets/infographics/manifest.json").read_text(encoding="utf-8")
-    )
+    manifest = json.loads((ROOT / "assets/infographics/manifest.json").read_text(encoding="utf-8"))
     expected = {
         "agent-security-trust-boundary-infographic": (
             "docs/part-05-engineering/ch30-security.md",
@@ -162,7 +140,91 @@ def test_final_core_infographics_are_integrated_and_high_resolution() -> None:
         with Image.open(ROOT / record["png_asset"]) as image:
             assert image.size == (1536, 2304)
 
-    project_readme = (
-        ROOT / "projects/10-enterprise-platform/README.md"
-    ).read_text(encoding="utf-8")
+    project_readme = (ROOT / "projects/10-enterprise-platform/README.md").read_text(
+        encoding="utf-8"
+    )
     assert "project10-enterprise-deployment-infographic-2x.png" in project_readme
+
+
+def test_b_level_infographics_are_integrated_and_high_resolution() -> None:
+    manifest = json.loads((ROOT / "assets/infographics/manifest.json").read_text(encoding="utf-8"))
+    expected = {
+        "context-budget-memory-infographic": (
+            "part-01-foundations/ch02-token-and-context.md",
+            "图 2-A",
+        ),
+        "generation-control-infographic": ("part-01-foundations/ch04-generation.md", "图 4-A"),
+        "embedding-retrieval-evidence-infographic": (
+            "part-01-foundations/ch05-embedding.md",
+            "图 5-A",
+        ),
+        "prompt-context-injection-infographic": (
+            "part-02-agent-core/ch06-prompt-engineering.md",
+            "图 6-A",
+        ),
+        "structured-output-validation-infographic": (
+            "part-02-agent-core/ch07-structured-output.md",
+            "图 7-A",
+        ),
+        "tool-permission-execution-infographic": (
+            "part-02-agent-core/ch08-tool-calling.md",
+            "图 8-A",
+        ),
+        "planning-review-replan-infographic": (
+            "part-02-agent-core/ch10-planning-reflection.md",
+            "图 10-A",
+        ),
+        "mcp-server-lifecycle-infographic": (
+            "part-03-rag-and-memory/ch12-mcp-server.md",
+            "图 12-A",
+        ),
+        "advanced-rag-diagnostic-infographic": (
+            "part-03-rag-and-memory/ch14-advanced-rag.md",
+            "图 14-A",
+        ),
+        "vector-index-migration-infographic": (
+            "part-03-rag-and-memory/ch16-vector-databases.md",
+            "图 16-A",
+        ),
+        "native-agent-runtime-infographic": ("part-04-frameworks/ch17-native-api.md", "图 17-A"),
+        "openai-agents-sdk-concepts-infographic": (
+            "part-04-frameworks/ch18-openai-agents-sdk.md",
+            "图 18-A",
+        ),
+        "agent-api-transport-infographic": ("part-05-engineering/ch24-fastapi.md", "图 24-A"),
+        "agent-data-storage-infographic": ("part-05-engineering/ch25-storage.md", "图 25-A"),
+        "agent-deployment-release-infographic": (
+            "part-05-engineering/ch26-docker-deployment.md",
+            "图 26-A",
+        ),
+        "job-queue-reliability-infographic": ("part-05-engineering/ch27-job-queues.md", "图 27-A"),
+        "agent-evaluation-pipeline-infographic": (
+            "part-05-engineering/ch29-evaluation.md",
+            "图 29-A",
+        ),
+        "cost-quality-latency-infographic": (
+            "part-05-engineering/ch31-cost-performance.md",
+            "图 31-A",
+        ),
+        "browser-agent-safety-infographic": (
+            "part-07-advanced/ch34-browser-computer-use.md",
+            "图 34-A",
+        ),
+        "framework-selection-map-infographic": (
+            "part-07-advanced/ch38-selection-guide.md",
+            "图 38-A",
+        ),
+    }
+    records = {item["semantic_id"]: item for item in manifest}
+    assert set(expected).issubset(records)
+    for semantic_id, (chapter_path, figure_number) in expected.items():
+        record = records[semantic_id]
+        chapter = (ROOT / "docs" / chapter_path).read_text(encoding="utf-8")
+        assert f"{semantic_id}-2x.png" in chapter
+        assert figure_number in chapter
+        assert record["generated_at"] == "2026-08-11"
+        svg = ROOT / record["svg_asset"]
+        assert "<title" in svg.read_text(encoding="utf-8")
+        assert "<desc" in svg.read_text(encoding="utf-8")
+        with Image.open(ROOT / record["png_asset"]) as image:
+            assert image.size == (1536, 2304)

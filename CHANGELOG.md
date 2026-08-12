@@ -1,5 +1,12 @@
 # 变更记录
 
+## Unreleased - 2026-08-12
+
+- 完成出版信息图升级：A 级核心图 12/12、B 级增强图 20/20；保留 236 张 Mermaid 作为 C 级精确工程图。
+- 为上下文、生成控制、Embedding、Prompt Injection、Structured Output、Tool 权限、规划、MCP Server、高级 RAG、向量索引、原生 Runtime、Agents SDK、Agent API、存储、部署、队列、评估、成本、Browser Agent 和技术选型增加出版级信息图。
+- 32 张信息图统一生成可编辑 SVG 与 1536×2304 PNG，并补齐 manifest、SHA-256、来源、提示词台账、图号、长替代文本和图后解释。
+- 重新构建并验收 MkDocs HTML、506 页 A4 PDF 与 EPUB3；Ruff、255 项测试、严格文档构建、出版、隐私、仓库卫生和视觉审计通过。
+
 ## v2026.8.1 - 2026-08-08
 
 - P7：完成 235 张图的作用域图号、联系表复审、真实离线 Trace 截图，以及 447 页 PDF、EPUB 跨 XHTML 链接、Apple Books、Calibre 与三视口验收。

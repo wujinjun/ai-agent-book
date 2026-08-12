@@ -1,0 +1,214 @@
+schema_version: 1
+generated_at: 2026-08-11
+mode: built-in imagegen
+note: >-
+  本文件保存可复现的规范化最终提示词。底图只承载构图、材质和视觉隐喻；
+  最终中文、箭头、图号和技术关系由 scripts/build_infographics.py 确定性叠加。
+shared_style: >-
+  出版级中文 AI Agent 工程教材无文字信息图视觉底稿，纵向 2:3，适合 A4；
+  暖白背景，深蓝、青绿、暖橙、紫色与少量警示红，现代扁平矢量编辑插画，
+  专业克制，灰度打印可辨，预留中文标签空间。
+shared_constraints: >-
+  不要任何文字、字母、数字、公式、代码、Logo、水印、品牌图标、人物、
+  机器人或霓虹效果；不要让生成式箭头决定最终技术语义。
+prompts:
+  - id: advanced-rag-diagnostic-infographic
+    source_path: docs/part-03-rag-and-memory/ch14-advanced-rag.md
+    source_asset: assets/infographics/source/advanced-rag-diagnostic-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 advanced rag diagnostic infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
+  - id: agent-api-transport-infographic
+    source_path: docs/part-05-engineering/ch24-fastapi.md
+    source_asset: assets/infographics/source/agent-api-transport-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 agent api transport infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
+  - id: agent-data-storage-infographic
+    source_path: docs/part-05-engineering/ch25-storage.md
+    source_asset: assets/infographics/source/agent-data-storage-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 agent data storage infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
+  - id: agent-deployment-release-infographic
+    source_path: docs/part-05-engineering/ch26-docker-deployment.md
+    source_asset: assets/infographics/source/agent-deployment-release-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 agent deployment release infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
+  - id: agent-evaluation-pipeline-infographic
+    source_path: docs/part-05-engineering/ch29-evaluation.md
+    source_asset: assets/infographics/source/agent-evaluation-pipeline-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 agent evaluation pipeline infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
+  - id: browser-agent-safety-infographic
+    source_path: docs/part-07-advanced/ch34-browser-computer-use.md
+    source_asset: assets/infographics/source/browser-agent-safety-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 browser agent safety infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
+  - id: context-budget-memory-infographic
+    source_path: docs/part-01-foundations/ch02-token-and-context.md
+    source_asset: assets/infographics/source/context-budget-memory-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 context budget memory infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
+  - id: cost-quality-latency-infographic
+    source_path: docs/part-05-engineering/ch31-cost-performance.md
+    source_asset: assets/infographics/source/cost-quality-latency-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 cost quality latency infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
+  - id: embedding-retrieval-evidence-infographic
+    source_path: docs/part-01-foundations/ch05-embedding.md
+    source_asset: assets/infographics/source/embedding-evidence-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 embedding retrieval evidence infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
+  - id: framework-selection-map-infographic
+    source_path: docs/part-07-advanced/ch38-selection-guide.md
+    source_asset: assets/infographics/source/framework-selection-map-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 framework selection map infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
+  - id: generation-control-infographic
+    source_path: docs/part-01-foundations/ch04-generation.md
+    source_asset: assets/infographics/source/generation-control-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 generation control infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
+  - id: job-queue-reliability-infographic
+    source_path: docs/part-05-engineering/ch27-job-queues.md
+    source_asset: assets/infographics/source/job-queue-reliability-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 job queue reliability infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
+  - id: mcp-server-lifecycle-infographic
+    source_path: docs/part-03-rag-and-memory/ch12-mcp-server.md
+    source_asset: assets/infographics/source/mcp-server-lifecycle-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 mcp server lifecycle infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
+  - id: native-agent-runtime-infographic
+    source_path: docs/part-04-frameworks/ch17-native-api.md
+    source_asset: assets/infographics/source/native-agent-runtime-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 native agent runtime infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
+  - id: openai-agents-sdk-concepts-infographic
+    source_path: docs/part-04-frameworks/ch18-openai-agents-sdk.md
+    source_asset: assets/infographics/source/openai-agents-sdk-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 openai agents sdk concepts infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
+  - id: planning-review-replan-infographic
+    source_path: docs/part-02-agent-core/ch10-planning-reflection.md
+    source_asset: assets/infographics/source/planning-review-replan-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 planning review replan infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
+  - id: prompt-context-injection-infographic
+    source_path: docs/part-02-agent-core/ch06-prompt-engineering.md
+    source_asset: assets/infographics/source/prompt-injection-context-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 prompt context injection infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
+  - id: structured-output-validation-infographic
+    source_path: docs/part-02-agent-core/ch07-structured-output.md
+    source_asset: assets/infographics/source/structured-output-validation-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 structured output validation infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
+  - id: tool-permission-execution-infographic
+    source_path: docs/part-02-agent-core/ch08-tool-calling.md
+    source_asset: assets/infographics/source/tool-permission-execution-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 tool permission execution infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
+  - id: vector-index-migration-infographic
+    source_path: docs/part-03-rag-and-memory/ch16-vector-databases.md
+    source_asset: assets/infographics/source/vector-index-migration-infographic-base.png
+    use_case: infographic-diagram
+    prompt: >-
+      围绕 vector index migration infographic 构建五段式技术叙事；
+      清楚表现本章定义、关键机制、控制边界、失败恢复和工程治理；
+      不超过十二个主要视觉对象，所有技术标签和连线由后续 SVG 语义层完成。
+    generated_with: built-in imagegen
+    semantic_overlay: scripts/build_infographics.py
