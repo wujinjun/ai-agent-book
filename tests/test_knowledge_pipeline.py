@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 
 from ai_agent_book.apps.knowledge_agent import (
@@ -119,3 +120,52 @@ def test_knowledge_api_runs_tenant_scoped_ingestion_and_query(tmp_path: Path) ->
     assert client.post(
         "/v1/knowledge/query", headers=other, json={"query": "如何保存状态？"}
     ).json()["citations"] == []
+
+
+def test_active_index_chunk_tampering_is_detected(tmp_path: Path) -> None:
+    source = _source(tmp_path / "guide.md", "Checkpoint 保存工作流状态并支持恢复。")
+    pipeline = VersionedKnowledgePipeline(tmp_path / "pipeline.db")
+    pipeline.submit(source, tenant_id="a", golden_cases=_golden())
+    pipeline.process_next()
+    with pipeline._connect() as db:
+        db.execute(
+            "UPDATE index_versions SET chunks_json='[]' WHERE tenant_id='a' AND status='active'"
+        )
+
+    with pytest.raises(ValueError, match="digest mismatch"):
+        pipeline.answer("如何保存状态？", tenant_id="a")
+
+
+def test_archived_version_can_be_atomically_rolled_back_within_tenant(tmp_path: Path) -> None:
+    pipeline = VersionedKnowledgePipeline(tmp_path / "pipeline.db")
+    first_source = _source(
+        tmp_path / "first.md", "Checkpoint 保存工作流状态并支持恢复。第一版。"
+    )
+    first_job, _ = pipeline.submit(first_source, tenant_id="a", golden_cases=_golden())
+    first_completed = pipeline.process_next()
+    assert first_completed is not None and first_completed.version_id
+
+    second_source = _source(
+        tmp_path / "second.md", "Checkpoint 保存工作流状态并支持恢复。第二版。"
+    )
+    pipeline.submit(second_source, tenant_id="a", golden_cases=_golden())
+    pipeline.process_next()
+    assert pipeline.active_version("a") != pipeline.active_version("b")
+
+    rolled_back = pipeline.rollback("a", first_completed.version_id)
+
+    assert rolled_back.version_id == first_completed.version_id
+    assert "第一版" in pipeline.answer("第一版", tenant_id="a").text
+    with pytest.raises(KeyError):
+        pipeline.rollback("b", first_completed.version_id)
+
+
+def test_rejected_version_cannot_be_activated_by_rollback(tmp_path: Path) -> None:
+    pipeline = VersionedKnowledgePipeline(tmp_path / "pipeline.db")
+    source = _source(tmp_path / "bad.md", "无关材料。")
+    pipeline.submit(source, tenant_id="a", golden_cases=_golden())
+    rejected = pipeline.process_next()
+    assert rejected is not None and rejected.version_id
+
+    with pytest.raises(KeyError):
+        pipeline.rollback("a", rejected.version_id)

@@ -407,6 +407,7 @@ class VersionedKnowledgePipeline:
                     mrr REAL NOT NULL,
                     chunk_count INTEGER NOT NULL,
                     chunks_json TEXT NOT NULL,
+                    chunks_hash TEXT NOT NULL DEFAULT '',
                     created_at TEXT NOT NULL
                 );
                 CREATE UNIQUE INDEX IF NOT EXISTS one_active_index_per_tenant
@@ -419,6 +420,21 @@ class VersionedKnowledgePipeline:
                 );
                 """
             )
+            columns = {
+                str(row[1]) for row in db.execute("PRAGMA table_info(index_versions)").fetchall()
+            }
+            if "chunks_hash" not in columns:
+                db.execute(
+                    "ALTER TABLE index_versions ADD COLUMN chunks_hash TEXT NOT NULL DEFAULT ''"
+                )
+            rows = db.execute(
+                "SELECT version_id,chunks_json FROM index_versions WHERE chunks_hash=''"
+            ).fetchall()
+            for row in rows:
+                db.execute(
+                    "UPDATE index_versions SET chunks_hash=? WHERE version_id=?",
+                    (sha256(str(row["chunks_json"]).encode()).hexdigest(), row["version_id"]),
+                )
 
     @staticmethod
     def _job(row: sqlite3.Row) -> IngestionJob:
@@ -578,6 +594,13 @@ class VersionedKnowledgePipeline:
         )
         version_status = "active" if accepted else "rejected"
         now = self._now()
+        chunks_json = json.dumps(
+            [chunk.model_dump() for chunk in kb.chunks],
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        chunks_hash = sha256(chunks_json.encode()).hexdigest()
         with self._connect() as db:
             if accepted:
                 db.execute(
@@ -588,8 +611,8 @@ class VersionedKnowledgePipeline:
             db.execute(
                 """INSERT OR REPLACE INTO index_versions
                    (version_id,tenant_id,source_hash,status,recall_at_k,mrr,
-                    chunk_count,chunks_json,created_at)
-                   VALUES (?,?,?,?,?,?,?,?,?)""",
+                    chunk_count,chunks_json,chunks_hash,created_at)
+                   VALUES (?,?,?,?,?,?,?,?,?,?)""",
                 (
                     version_id,
                     job["tenant_id"],
@@ -598,7 +621,8 @@ class VersionedKnowledgePipeline:
                     metrics.recall_at_k,
                     metrics.mrr,
                     len(kb.chunks),
-                    json.dumps([chunk.model_dump() for chunk in kb.chunks], ensure_ascii=False),
+                    chunks_json,
+                    chunks_hash,
                     now,
                 ),
             )
@@ -639,15 +663,47 @@ class VersionedKnowledgePipeline:
     def answer(self, query: str, *, tenant_id: str, top_k: int = 3) -> KnowledgeAnswer:
         with self._connect() as db:
             row = db.execute(
-                """SELECT chunks_json FROM index_versions
+                """SELECT chunks_json,chunks_hash FROM index_versions
                    WHERE tenant_id=? AND status='active'""",
                 (tenant_id,),
             ).fetchone()
         if row is None:
             return KnowledgeAnswer(text="证据不足，无法回答。", citations=[])
+        chunks_json = str(row["chunks_json"])
+        if sha256(chunks_json.encode()).hexdigest() != row["chunks_hash"]:
+            raise ValueError("active index chunk digest mismatch")
         kb = KnowledgeBase(chunk_size=self.chunk_size, overlap=self.overlap)
-        kb.chunks = [Chunk.model_validate(item) for item in json.loads(row["chunks_json"])]
+        kb.chunks = [Chunk.model_validate(item) for item in json.loads(chunks_json)]
         return kb.answer(query, tenant_id=tenant_id, top_k=top_k)
+
+    def rollback(self, tenant_id: str, version_id: str) -> IndexVersion:
+        """原子激活同租户已归档版本；拒绝版本不能绕过发布门禁。"""
+        with self._connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            target = db.execute(
+                """SELECT * FROM index_versions
+                   WHERE tenant_id=? AND version_id=? AND status='archived'""",
+                (tenant_id, version_id),
+            ).fetchone()
+            if target is None:
+                raise KeyError(version_id)
+            chunks_json = str(target["chunks_json"])
+            if sha256(chunks_json.encode()).hexdigest() != target["chunks_hash"]:
+                raise ValueError("rollback target chunk digest mismatch")
+            db.execute(
+                "UPDATE index_versions SET status='archived' WHERE tenant_id=? AND status='active'",
+                (tenant_id,),
+            )
+            updated = db.execute(
+                """UPDATE index_versions SET status='active'
+                   WHERE tenant_id=? AND version_id=? AND status='archived'""",
+                (tenant_id, version_id),
+            )
+            if updated.rowcount != 1:
+                raise RuntimeError("rollback target changed during activation")
+        active = self.active_version(tenant_id)
+        assert active is not None
+        return active
 
 
 class IngestionCreate(BaseModel):

@@ -36,6 +36,6 @@ def test_production_references_expose_recovery_and_multiple_direct_tests() -> No
         assert len(project["direct_tests"]) >= 2
         assert any(
             term in project["persistence_recovery"]
-            for term in ("恢复", "重放", "备份")
+            for term in ("恢复", "重放", "备份", "回滚")
         )
         assert project["external_adapter"] != "mock_only"

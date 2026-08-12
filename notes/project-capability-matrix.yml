@@ -51,10 +51,10 @@ projects:
     domain_implementation: src/ai_agent_book/apps/knowledge_agent.py
     direct_tests: [tests/test_knowledge_agent_app.py, tests/test_knowledge_pipeline.py]
     dockerfile: projects/04-knowledge-agent/Dockerfile
-    persistence_recovery: 版本索引、摄取 Worker、黄金门禁、原子切换与恢复
-    side_effect_safety: 租户过滤、版本激活与引用证据
+    persistence_recovery: 版本索引、摄取 Worker、黄金门禁、Chunk 摘要、原子切换与显式回滚
+    side_effect_safety: 租户过滤、版本激活/回滚约束、完整性校验与引用证据
     external_adapter: local_pgvector_reference
-    gaps: [OCR, 正式 Embedding 与 Reranker, 规模压测]
+    gaps: [OCR, 正式 Embedding 与 Reranker, 删除传播, 规模压测]
   - id: 5
     name: 代码 Review Agent
     maturity: service_template

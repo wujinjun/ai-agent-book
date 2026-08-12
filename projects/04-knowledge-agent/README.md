@@ -78,7 +78,7 @@ docker run --rm ai-agent-book/project-4
 
 `PgVectorKnowledgeRepository` 使用 Psycopg 实际创建 vector 扩展、写入 128 维教学向量、建立 HNSW 索引并执行带租户条件的余弦查询。根级 Compose 使用 `pgvector/pgvector:pg17`，数据库端口只绑定宿主 loopback；`scripts/verify_pgvector.py` 提供可重复的真实摄取与检索验收。
 
-`VersionedKnowledgePipeline` 进一步把摄取变成持久队列：提交时绑定原文、Chunk 配置和黄金集指纹；Worker 构建候选版本，只有 Recall@K 与 MRR 同时达标才在一个事务中归档旧版本并激活新版本。进程中断留下的 `running` Job 会恢复到队列，失败只公开错误类型，原始异常与文档内容不会进入 API 响应。
+`VersionedKnowledgePipeline` 进一步把摄取变成持久队列：提交时绑定原文、Chunk 配置和黄金集指纹；Worker 构建候选版本，只有 Recall@K 与 MRR 同时达标才在一个事务中归档旧版本并激活新版本。每个版本还保存规范化 `chunks_json` 的 SHA-256，查询和回滚前重新校验，数据库内容被篡改时拒绝提供答案。进程中断留下的 `running` Job 会恢复到队列，失败只公开错误类型，原始异常与文档内容不会进入 API 响应。
 
 ```mermaid
 %% id: project4-ingestion-release-state
@@ -96,6 +96,8 @@ stateDiagram-v2
 ```
 
 状态机把“文档处理成功”和“索引允许发布”分开。离线哈希向量仍只是测试 Adapter；正式 Embedding 或 Reranker 替换后必须使用同一黄金集门禁重新生成证据。
+
+`rollback(tenant_id, version_id)` 只允许激活同租户的 `archived` 版本：它先校验 Chunk 摘要，再在同一事务中归档当前 Active 并恢复目标版本。`rejected` 候选不能借回滚绕过发布门禁，跨租户版本也不可见。回滚恢复的是仍保留的索引版本，不代表可以恢复因合规删除而销毁的原文、Chunk、Embedding 或缓存；删除传播必须拥有单独的墓碑、保留期和下游清理协议。
 
 ## 目录、配置与扩展
 
