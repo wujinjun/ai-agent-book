@@ -1,6 +1,6 @@
 # 第18章：OpenAI Agents SDK
 
-最后核对日期：2026-08-07；本章核心代码已按官方文档和隔离安装的 `openai-agents==0.18.3` 复验。后续升级仍须先运行本章独立示例的回归测试。
+最后核对日期：2026-08-12；本章核心代码在全新 Python 3.12 隔离环境固定 `openai-agents==0.18.3`，6 个离线测试重新通过。OpenAI 官方开发者站当前确认 Responses API、工具契约、权限与停止边界等平台原则；具体 `Runner`、Handoff、Session 与 Tracing 接口仍以固定包、SDK 官方专站和本章测试共同为证，不能仅凭平台模型指南外推。
 
 ## 导读、目标与前置知识
 SDK 用少量原语管理 Agent、工具、handoff、guardrail、session 与 tracing。本章目标是理解它替开发者承担的运行时职责及适用边界。前置知识为第17章。
@@ -67,7 +67,7 @@ flowchart LR
 
 Guardrail 负责模型交互前后的检查，工具和数据库边界仍执行确定性授权。Trace 与审计日志分别服务调试和合规记录。
 
-## 最小与完整工程
+## 最小示例与完整工程
 最小流程是定义 Agent 并用 Runner 执行。本书在独立 Python 3.12 环境固定 `openai-agents==0.18.3`，以实现 SDK `Model` 接口的 `ScriptedModel` 离线验证 Responses 输出项，不模拟模型推理，也不访问网络。工程版应固定版本、设置 `max_turns`、配置敏感 Trace、处理 guardrail tripwire、工具失败和 session 并发，并用 Fake/测试模型隔离在线调用。
 
 ## 误区、调试、实践与安全

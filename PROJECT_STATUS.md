@@ -14,7 +14,7 @@ P9 当前状态为 `complete_repository_scope`。仓库证据分为个人系统�
 
 ## 正文完成度
 
-- 38 章正文齐全，约 29.1 万字符；本轮选定的 16 个核心章节均超过 8,000 字符，其余普通章节多数约 4,000—6,000 字符。
+- 38 章正文齐全，所有章节至少 5,000 字符；本轮选定的 16 个核心章节均超过 8,000 字符。第 33、35 章已补充可运行最小实验、工程案例、失败调试与练习答案，分别达到约 8.9 千字符。
 - 每章具备学习目标、前置知识、核心原理、Mermaid 图、代码或配置块、误区、调试、安全、总结、练习、面试和延伸阅读等结构要素。
 - 第一章与第 2、5、8—15、17、20、29、30、36、38 章达到核心讲义深度，具备独立原理、最小实验、工程案例、失败调试与练习参考答案；其他普通章节仍需在后续编辑批次加深。
 - 全书当前状态统一为 `publishable_draft`，尚未标记为 `editor_reviewed`。
@@ -22,16 +22,16 @@ P9 当前状态为 `complete_repository_scope`。仓库证据分为个人系统�
 
 ## 代码完成度
 
-- 当前 Python 3.12.13 环境下，根级与项目测试共 257 项通过；其中十项目共享服务契约按项目参数化验证持久化、幂等、租户权限、预算、取消、SSE 回放、指标与重建恢复，项目 4、8、10 另有生产恢复路径测试；独立示例、框架候选、发行资产、培训课件字体与范围化发布契约测试也均通过。
+- 当前 Python 3.12.13 环境下，根级与项目测试共 268 项通过；其中十项目共享服务契约按项目参数化验证持久化、幂等、租户权限、预算、取消、SSE 回放、指标与重建恢复，项目 4、8、10 另有生产恢复路径测试；独立示例、框架候选、发行资产、培训课件字体与范围化发布契约测试也均通过。
 - 根代码包含 Tool Runtime、十个项目领域模块、出版管线和质量审计；十个项目入口都能在离线模式运行。
 - P2 规划的 11 个独立示例已全部完成目录契约、离线运行、直接测试、章节双向链接和根级隔离环境编排；Framework Comparison 还使用三个隔离环境生成带版本与源码哈希的同题证据。`tool_runtime` 是规划外的既有工程，不计入 11/11。P2 的索引、图示和三种出版格式也已重新构建并审计通过。
-- LangGraph 项目使用固定版本并有直接测试；OpenAI Agents SDK 0.18.3、PydanticAI 2.25.0、LangChain 1.3.14、LlamaIndex Core 0.14.23、CrewAI 1.15.12、AutoGen AgentChat 0.7.5 与 Semantic Kernel 1.44.1 已在各自独立 Python 3.12 环境实测明确范围。
+- OpenAI Agents SDK 0.18.3 已于 2026-08-12 在全新 Python 3.12 环境重新安装并通过 6 个离线测试；LangGraph、PydanticAI、LangChain、LlamaIndex、CrewAI、AutoGen 与 Semantic Kernel 保留各自固定版本和隔离实测范围。
 - Mock、Fixture 和本地协议测试只证明适配边界与控制逻辑，不代表真实第三方账号联调。
 
 ## 项目成熟度
 
-- 项目 1—9 已达到 `service_template`：保留各自领域纵切面，并新增项目级 FastAPI、SQLite Run 状态、幂等、租户权限、预算、取消、SSE 回放、审计、Trace、指标和统一安全 Compose；真实 Provider 与专项恢复能力仍需增强。
-- 项目 10 已达到离线 `production_reference`：具备多租户 API、PostgreSQL/SQLite、Redis 恢复队列、身份 Verifier 与数据库 RBAC、Agent/Tool/MCP/RAG、Trace/Eval/指标、有限重试、租户 DLQ、重放、取消和一致性备份；真实 OIDC/JWKS、RLS、独立 Worker 与灾备演练仍待外部验证。
+- 项目 1—9 已达到 `service_template`：保留各自领域纵切面，并新增项目级 FastAPI、SQLite Run 状态、幂等、租户权限、预算、取消、SSE 回放、审计、Trace、指标和统一安全 Compose。项目 5、6、9 已进一步补齐 Diff/审批、Outbox/失败恢复、一次性 Git 工作区/循环终止等专项边界；真实 Provider 与操作系统级 Sandbox 仍需外部联调。
+- 项目 10 已达到离线 `production_reference`：具备多租户 API、PostgreSQL/SQLite、Redis 恢复队列、身份 Verifier 与数据库 RBAC、租户限定 Worker、短事务租约与崩溃恢复、Agent/Tool/MCP/RAG、Trace/Eval/指标、有限重试、租户 DLQ、重放、取消和一致性备份；真实 OIDC/JWKS、RLS、独立 Worker Deployment 与灾备演练仍待外部验证。
 - 项目 4 已达到离线 `production_reference`：在 pgvector 与四格式解析基础上新增持久摄取 Worker、内容/配置/黄金集指纹、索引版本、Recall/MRR 发布门禁、原子激活、失败脱敏、恢复和租户 API；正式 Embedding/Reranker 与 OCR 仍未外部验证。
 - 项目 8 已达到离线 `production_reference`：在真实 LangGraph、RetryPolicy、Interrupt/Command 基础上增加 SQLite Run Journal、来源 Allowlist、证据哈希、租户 Worker、人工审批和跨进程确定性重放；原生数据库 Saver 与真实搜索仍待外部联调。当前没有项目标记为 `externally_validated`。
 - GitHub 评论、办公 Webhook 和行情 HTTP 使用真实适配器接口与 `httpx.MockTransport` 验证请求边界；默认不执行外部写操作。
@@ -70,4 +70,4 @@ P9 当前状态为 `complete_repository_scope`。仓库证据分为个人系统�
 
 ## 当前验证证据
 
-2026-08-12 在 Python 3.12 环境重新运行 Ruff、255 项根级测试、MkDocs 严格构建、HTML/PDF/EPUB 出版审计、隐私审计、仓库卫生和视觉审计，全部通过。发行资产预检无硬失败，仍保留 6 项既有人工权利/设备复核提示。当前 32 张出版信息图的 manifest、章节引用、1536×2304 PNG、SVG title/desc 和三端资源均有直接测试；A4 PDF 为 506 页。更早的十项目容器和隔离框架证据继续见 `notes/p9-project-runtime-qa.md`、`notes/distribution-asset-audit.json` 和 `notes/p9-acceptance.yml`。
+2026-08-12 在 Python 3.12 环境重新运行 Ruff、268 项根级测试、MkDocs 严格构建、HTML/PDF/EPUB 出版审计、隐私审计、仓库卫生和视觉审计，全部通过。发行资产预检无硬失败，仍保留 6 项既有人工权利/设备复核提示。当前 32 张出版信息图的 manifest、章节引用、1536×2304 PNG、SVG title/desc 和三端资源均有直接测试；A4 PDF 为 506 页。更早的十项目容器和隔离框架证据继续见 `notes/p9-project-runtime-qa.md`、`notes/distribution-asset-audit.json` 和 `notes/p9-acceptance.yml`。

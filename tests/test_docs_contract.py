@@ -158,7 +158,7 @@ def test_all_chapters_meet_the_publishable_content_contract() -> None:
     for chapter in chapters:
         source = chapter.read_text(encoding="utf-8")
         missing = [concept for concept in required_concepts if concept not in source]
-        if len(source) < 2_500 or missing:
+        if len(source) < 5_000 or missing:
             failures.append(
                 f"{chapter.relative_to(ROOT)}: chars={len(source)}, missing={','.join(missing)}"
             )

@@ -1,6 +1,6 @@
 # 版本核查清单
 
-官方资料最后核对：各条目单独记录。仓库完成度审计：2026-08-08。
+官方资料最后核对：各条目单独记录。仓库完成度审计：2026-08-12。
 
 两个日期含义不同：完成度审计只核对仓库中已有文件、测试与声明，不能据此推断外部框架 API 已在 2026-08-07 重新验证。
 
@@ -8,7 +8,7 @@
 
 | 主题 | 当前状态 | 核查要求 |
 |---|---|---|
-| OpenAI Agents SDK | 2026-08-07 固定并安装实测 `openai-agents==0.18.3` | `examples/openai_agents_sdk/` 离线验证 Runner、工具、结构化输出、handoff、agent-as-tool、阻塞 guardrail、SQLiteSession 与敏感 Trace 配置；MCP 在线/远程集成仍留待 P3 |
+| OpenAI Agents SDK | 2026-08-12 在全新 Python 3.12 环境固定安装 `openai-agents==0.18.3`，包自省确认版本，6 个离线测试通过 | `examples/openai_agents_sdk/` 验证 Runner、工具、结构化输出、handoff、agent-as-tool、阻塞 guardrail、SQLiteSession 与敏感 Trace 配置；OpenAI Developer Platform 支撑 Responses API、工具契约和控制边界原则，具体 Python API 仍以 SDK 官方专站、固定包和测试为证；MCP 在线/远程集成未验证 |
 | PydanticAI | 2026-08-07 固定并安装实测 `pydantic-ai-slim==2.25.0` | `examples/pydanticai_service/` 离线验证 Agent、`deps_type`、`output_type`、`RunContext`、Tool Schema、output validator、`TestModel`、`FunctionModel`、`Agent.override` 与 FastAPI 错误映射；真实 Provider 联调仍留待后续受控验证 |
 | Framework Comparison | 2026-08-07 隔离实跑 Native、OpenAI Agents SDK 0.18.3、PydanticAI 2.25.0 | 同一研究 Fixture 运行 20 次，记录工具准确率、瞬时恢复、P95、请求成本代理、状态导出、Python/框架版本与实现 SHA-256；不外推真实 Provider 质量或网络延迟 |
 | LangGraph | 已安装实测 | 1.2.9；项目 8 覆盖 StateGraph、RetryPolicy、Checkpoint、interrupt 与 Command(resume) |
@@ -21,3 +21,5 @@
 依赖固定于 `requirements.txt` 的日期快照并不意味着这些版本长期推荐。升级应先运行测试与文档构建，再更新章节的“最后核对日期”。
 
 P6 引用目录另在 `notes/references.yml` 为版本敏感官方页面记录 `checked` 日期；2026-08-08 的网络核查结果见 `notes/reference-link-audit.json`。HTTP 受限响应只证明站点拒绝自动客户端，不等于正文结论已永久有效。
+
+2026-08-12 的 OpenAI 官方文档搜索未在 `developers.openai.com` 找到能够替代 Python SDK 专站的 `Runner`、Handoff、Session 具体接口页。因此本书没有把当前模型指南当作 SDK 接口证据，也没有仅因平台新增能力而升级固定示例版本。升级决策仍需重新创建隔离环境、安装候选版本并运行同一回归集。

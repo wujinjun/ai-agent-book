@@ -1,6 +1,6 @@
 # OpenAI Agents SDK 0.18.3 实测示例
 
-最后核对日期：2026-08-07。对应[第 18 章：OpenAI Agents SDK](../../docs/part-04-frameworks/ch18-openai-agents-sdk.md)。本工程固定并实际安装 `openai-agents==0.18.3`，使用实现 SDK `Model` 接口的 ScriptedModel 离线验证 Runner、Function Tool、结构化输出、Handoff、Agent-as-tool、阻塞 Guardrail、SQLiteSession 和安全 Trace 配置。
+最后核对日期：2026-08-12。对应[第 18 章：OpenAI Agents SDK](../../docs/part-04-frameworks/ch18-openai-agents-sdk.md)。本工程在全新 Python 3.12 隔离环境固定并实际安装 `openai-agents==0.18.3`，6 个测试重新通过；使用实现 SDK `Model` 接口的 ScriptedModel 离线验证 Runner、Function Tool、结构化输出、Handoff、Agent-as-tool、阻塞 Guardrail、SQLiteSession 和安全 Trace 配置。
 
 ## 架构与运行边界
 
@@ -44,4 +44,4 @@ OPENAI_AGENTS_DISABLE_TRACING=1 .venv/bin/python -m pytest -q
 
 在线模式应另加预算受限的 Smoke Test，从环境读取 `OPENAI_API_KEY`，并明确模型、最大轮数和 Trace 数据策略。本示例不默认提供在线命令，以免 CI 意外计费。Guardrail 不能替代工具权限，Session 也不等于长期 Memory。
 
-版本证据来自 2026-08-07 的隔离安装与包自省；官方资料包括 [Agents SDK 首页](https://openai.github.io/openai-agents-python/)、[Agents](https://openai.github.io/openai-agents-python/agents/)、[Running agents](https://openai.github.io/openai-agents-python/running_agents/)、[Guardrails](https://openai.github.io/openai-agents-python/guardrails/)、[Handoffs](https://openai.github.io/openai-agents-python/handoffs/)和[Tracing](https://openai.github.io/openai-agents-python/tracing/)。
+版本证据来自 2026-08-12 的全新隔离安装、包自省与直接测试；官方资料包括 [OpenAI Developer Platform](https://developers.openai.com/)、[Agents SDK 首页](https://openai.github.io/openai-agents-python/)、[Agents](https://openai.github.io/openai-agents-python/agents/)、[Running agents](https://openai.github.io/openai-agents-python/running_agents/)、[Guardrails](https://openai.github.io/openai-agents-python/guardrails/)、[Handoffs](https://openai.github.io/openai-agents-python/handoffs/)和[Tracing](https://openai.github.io/openai-agents-python/tracing/)。平台开发者站未被用来替代 SDK 专站对具体 Python 接口的证明。
