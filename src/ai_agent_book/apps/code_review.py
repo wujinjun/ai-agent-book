@@ -2,8 +2,14 @@
 
 from __future__ import annotations
 
+import hashlib
+import hmac
+import json
 import re
+import sqlite3
 import subprocess
+import time
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, Protocol
 
@@ -44,13 +50,192 @@ class PublishResult(BaseModel):
     url: str | None = None
 
 
+class DiffPolicyError(ValueError):
+    """Diff 超出审查沙箱允许范围。"""
+
+
+@dataclass(frozen=True, slots=True)
+class DiffPolicy:
+    max_bytes: int = 1_000_000
+    max_files: int = 200
+    max_added_lines: int = 20_000
+
+    def validate(self, diff: str) -> None:
+        encoded = diff.encode("utf-8")
+        files = {
+            line.removeprefix("+++ b/") for line in diff.splitlines() if line.startswith("+++ b/")
+        }
+        added = sum(
+            line.startswith("+") and not line.startswith("+++") for line in diff.splitlines()
+        )
+        if len(encoded) > self.max_bytes:
+            raise DiffPolicyError("diff exceeds byte budget")
+        if len(files) > self.max_files:
+            raise DiffPolicyError("diff exceeds file budget")
+        if added > self.max_added_lines:
+            raise DiffPolicyError("diff exceeds added-line budget")
+
+
+class CommentApproval(BaseModel):
+    owner: str
+    repository: str
+    pull_number: int = Field(ge=1)
+    commit_sha: str = Field(pattern=r"^[0-9a-f]{7,64}$")
+    report_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    expires_at: int
+    signature: str
+
+
+class ApprovalAuthority:
+    """把人工批准绑定到仓库、PR、提交和报告内容。"""
+
+    def __init__(self, secret: bytes) -> None:
+        if len(secret) < 16:
+            raise ValueError("approval secret must contain at least 16 bytes")
+        self.secret = secret
+
+    @staticmethod
+    def _payload(
+        owner: str,
+        repository: str,
+        pull_number: int,
+        commit_sha: str,
+        report_sha256: str,
+        expires_at: int,
+    ) -> bytes:
+        return json.dumps(
+            {
+                "owner": owner,
+                "repository": repository,
+                "pull_number": pull_number,
+                "commit_sha": commit_sha,
+                "report_sha256": report_sha256,
+                "expires_at": expires_at,
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+
+    def issue(
+        self,
+        *,
+        owner: str,
+        repository: str,
+        pull_number: int,
+        commit_sha: str,
+        markdown: str,
+        ttl_seconds: int = 600,
+        now: int | None = None,
+    ) -> CommentApproval:
+        issued_at = int(time.time()) if now is None else now
+        report_sha256 = hashlib.sha256(markdown.encode()).hexdigest()
+        expires_at = issued_at + ttl_seconds
+        payload = self._payload(
+            owner, repository, pull_number, commit_sha, report_sha256, expires_at
+        )
+        signature = hmac.new(self.secret, payload, hashlib.sha256).hexdigest()
+        return CommentApproval(
+            owner=owner,
+            repository=repository,
+            pull_number=pull_number,
+            commit_sha=commit_sha,
+            report_sha256=report_sha256,
+            expires_at=expires_at,
+            signature=signature,
+        )
+
+    def verify(
+        self,
+        approval: CommentApproval,
+        *,
+        owner: str,
+        repository: str,
+        pull_number: int,
+        commit_sha: str,
+        markdown: str,
+        now: int | None = None,
+    ) -> None:
+        current = int(time.time()) if now is None else now
+        expected_report = hashlib.sha256(markdown.encode()).hexdigest()
+        expected_fields = (
+            approval.owner == owner
+            and approval.repository == repository
+            and approval.pull_number == pull_number
+            and approval.commit_sha == commit_sha
+            and approval.report_sha256 == expected_report
+        )
+        payload = self._payload(
+            approval.owner,
+            approval.repository,
+            approval.pull_number,
+            approval.commit_sha,
+            approval.report_sha256,
+            approval.expires_at,
+        )
+        expected_signature = hmac.new(self.secret, payload, hashlib.sha256).hexdigest()
+        if not expected_fields or not hmac.compare_digest(approval.signature, expected_signature):
+            raise PermissionError("approval is not bound to this review action")
+        if approval.expires_at < current:
+            raise PermissionError("approval has expired")
+
+
+class WebhookDeliveryStore:
+    """验证 GitHub Webhook，并以 delivery ID 防止重复执行。"""
+
+    def __init__(self, path: Path, webhook_secret: bytes) -> None:
+        self.path = path
+        self.webhook_secret = webhook_secret
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        with sqlite3.connect(self.path) as connection:
+            connection.execute(
+                """CREATE TABLE IF NOT EXISTS webhook_delivery (
+                delivery_id TEXT PRIMARY KEY,
+                payload_sha256 TEXT NOT NULL,
+                status TEXT NOT NULL,
+                updated_at INTEGER NOT NULL
+                )"""
+            )
+
+    def claim(self, delivery_id: str, body: bytes, signature: str) -> bool:
+        if not re.fullmatch(r"[A-Za-z0-9-]{1,128}", delivery_id):
+            raise ValueError("invalid delivery id")
+        expected = "sha256=" + hmac.new(self.webhook_secret, body, hashlib.sha256).hexdigest()
+        if not hmac.compare_digest(signature, expected):
+            raise PermissionError("invalid webhook signature")
+        digest = hashlib.sha256(body).hexdigest()
+        with sqlite3.connect(self.path) as connection:
+            row = connection.execute(
+                "SELECT payload_sha256 FROM webhook_delivery WHERE delivery_id = ?",
+                (delivery_id,),
+            ).fetchone()
+            if row:
+                if row[0] != digest:
+                    raise ValueError("delivery id reused with different payload")
+                return False
+            connection.execute(
+                "INSERT INTO webhook_delivery VALUES (?, ?, 'claimed', ?)",
+                (delivery_id, digest, int(time.time())),
+            )
+        return True
+
+    def complete(self, delivery_id: str, *, succeeded: bool) -> None:
+        with sqlite3.connect(self.path) as connection:
+            cursor = connection.execute(
+                "UPDATE webhook_delivery SET status = ?, updated_at = ? WHERE delivery_id = ?",
+                ("completed" if succeeded else "failed", int(time.time()), delivery_id),
+            )
+            if cursor.rowcount != 1:
+                raise KeyError(delivery_id)
+
+
 class SemanticReviewer(Protocol):
     def review(self, lines: list[ChangedLine]) -> list[ReviewFinding]: ...
 
 
 class GitRepository:
-    def __init__(self, path: Path) -> None:
+    def __init__(self, path: Path, *, policy: DiffPolicy | None = None) -> None:
         self.path = path.resolve()
+        self.policy = policy or DiffPolicy()
         if not (self.path / ".git").exists():
             raise ValueError("not a Git repository")
 
@@ -67,6 +252,7 @@ class GitRepository:
             text=True,
             timeout=10,
         )
+        self.policy.validate(completed.stdout)
         return completed.stdout
 
 
@@ -235,3 +421,33 @@ class GitHubCommentClient:
         finally:
             if owns_client:
                 await client.aclose()
+
+    async def publish_with_approval(
+        self,
+        owner: str,
+        repository: str,
+        pull_number: int,
+        commit_sha: str,
+        markdown: str,
+        *,
+        approval: CommentApproval,
+        authority: ApprovalAuthority,
+        now: int | None = None,
+    ) -> PublishResult:
+        authority.verify(
+            approval,
+            owner=owner,
+            repository=repository,
+            pull_number=pull_number,
+            commit_sha=commit_sha,
+            markdown=markdown,
+            now=now,
+        )
+        marker = f"<!-- ai-agent-book-review:{approval.report_sha256} -->"
+        return await self.publish(
+            owner,
+            repository,
+            pull_number,
+            f"{marker}\n{markdown}",
+            approved=True,
+        )

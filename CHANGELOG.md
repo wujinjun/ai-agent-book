@@ -6,6 +6,7 @@
 - 为上下文、生成控制、Embedding、Prompt Injection、Structured Output、Tool 权限、规划、MCP Server、高级 RAG、向量索引、原生 Runtime、Agents SDK、Agent API、存储、部署、队列、评估、成本、Browser Agent 和技术选型增加出版级信息图。
 - 32 张信息图统一生成可编辑 SVG 与 1536×2304 PNG，并补齐 manifest、SHA-256、来源、提示词台账、图号、长替代文本和图后解释。
 - 重新构建并验收 MkDocs HTML、506 页 A4 PDF 与 EPUB3；Ruff、255 项测试、严格文档构建、出版、隐私、仓库卫生和视觉审计通过。
+- 项目 5 增加 Diff 审查预算、Webhook HMAC 验签与持久 delivery 去重，以及绑定仓库、PR、提交 SHA、报告哈希和有效期的评论审批令牌。
 
 ## v2026.8.1 - 2026-08-08
 
