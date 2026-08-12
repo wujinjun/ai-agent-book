@@ -93,7 +93,7 @@
 - [x] 项目 4：实现持久异步摄取、内容完整性校验、索引版本、黄金集 Recall/MRR 发布门禁、原子激活、租户查询和中断恢复。
 - [ ] 项目 4 后续外部联调：OCR、正式 Embedding、Cross-Encoder Reranker 与规模压测。
 - [ ] 项目 5：已实现 Diff 预算 Sandbox、Webhook HMAC 验签与持久去重、绑定仓库/PR/提交/报告的限时评论审批；真实 GitHub App 安装鉴权、多语言静态分析容器和远程评论去重仍待外部联调。
-- [ ] 项目 6：邮件、日历、Notion/飞书适配器、Outbox 和审批令牌。
+- [ ] 项目 6：已实现持久内容/目标绑定审批、限时令牌、租约 Outbox、幂等键、重试预算和故障恢复；真实 Gmail/Outlook/Notion/飞书 OAuth 适配器及远端结果对账仍待外部联调。
 - [ ] 项目 7：行情、公告、财报、新闻去重、来源时效和报告评估。
 - [x] 项目 8：实现 SQLite 持久 Run Journal、来源 Allowlist、证据哈希、租户 Worker、人工审批和重启后确定性重放恢复，并明确与原生持久 Saver 的边界。
 - [ ] 项目 8 后续外部联调：真实搜索/内容读取、数据库原生 LangGraph Checkpointer 与副作用幂等演练。

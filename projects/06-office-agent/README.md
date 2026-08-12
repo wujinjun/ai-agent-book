@@ -14,7 +14,9 @@ flowchart LR
     Calendar["Calendar Read"] --> Draft
     Draft --> Approval{"Human Approval"}
     Approval -->|拒绝| Audit
-    Approval -->|绑定草稿的令牌| Send["External Write"] --> Audit
+    Approval -->|绑定草稿和目标的限时令牌| Outbox["Durable Outbox"]
+    Outbox -->|幂等键| Send["External Write"] --> Audit
+    Send -->|失败可恢复| Outbox
 ```
 
 实现邮件读取接口、摘要、日报、日历查询、外部系统适配、审批和审计。 离线模式使用确定性 Mock，使无 API Key 也能运行和测试；在线服务通过适配器替换，领域结果保持稳定 Schema。
@@ -54,7 +56,24 @@ sequenceDiagram
     P-->>W: external result ID
 ```
 
-审批后任何正文或目标修改都会改变摘要并使令牌失效。准备、阻止、批准和发布均进入不可混淆的审计事件。
+审批后任何正文或目标修改都会使令牌失效。令牌只以 SHA-256 摘要落库，不保存明文；批准记录、目标、有效期和 Outbox 都持久化到 SQLite。准备、阻止、批准、失败和发布均进入不可混淆的审计事件。
+
+```mermaid
+%% id: project6-durable-outbox-state
+%% title: 自动办公 Outbox 状态与故障恢复
+%% alt: 通过审批的投递进入 pending，经租约声明进入 delivering，成功后 published；失败进入 failed，可在次数预算内重新声明，超过预算进入人工处理
+stateDiagram-v2
+    [*] --> pending: 内容与目标获批
+    pending --> delivering: 原子 claim + lease
+    delivering --> published: 记录外部 ID
+    delivering --> failed: 超时或 HTTP 错误
+    failed --> delivering: 同一幂等键重试
+    delivering --> delivering: 活跃租约拒绝并发发送
+    failed --> [*]: 达到重试预算后人工处理
+    published --> published: 重复请求返回已有结果
+```
+
+Outbox 的主键由报告 ID、报告摘要和目标共同计算。工作进程崩溃后，租约到期即可重新声明；若远端支持 `Idempotency-Key`，未知结果重试也不会产生重复写入。若目标服务不支持幂等键，仍存在“远端已接受但本地尚未记账”的经典双写窗口，生产适配器必须用远端查询或业务唯一键消除它，不能声称 SQLite 单独提供 exactly-once。
 
 `邮件与日历 Provider → 时间窗口过滤 → 摘要/日报 → 内容摘要绑定审批 → Mock/Webhook 发布 → JSONL 审计`。独立实现位于 `src/ai_agent_book/apps/office_agent.py`，直接测试位于 `tests/test_office_agent_app.py`。
 
@@ -72,7 +91,7 @@ docker run --rm ai-agent-book/project-6
 
 ## 实现说明与验收
 
-`OfficeWorkflow` 通过 Mail/Calendar Protocol 接入数据，Fixture 让无账号环境完整运行；日报包含邮件摘要与日程。批准令牌绑定报告 ID、内容摘要和审批者，未批准绝不会发出 HTTP 请求。`WebhookPublisher` 可连接飞书自定义机器人或内部办公 Webhook，测试以 MockTransport 验证真实 HTTP 边界。所有准备、阻止、批准和发布动作写入 JSONL 审计。
+`OfficeWorkflow` 通过 Mail/Calendar Protocol 接入数据，Fixture 让无账号环境完整运行；日报包含邮件摘要与日程。批准令牌绑定报告 ID、内容摘要、目标、审批者和有效期，未批准绝不会发出 HTTP 请求。`ApprovalOutboxStore` 提供跨进程恢复、租约、最多三次尝试和成功结果去重；`WebhookPublisher` 发送稳定 `Idempotency-Key`，测试以 MockTransport 验证真实 HTTP 边界。所有准备、阻止、批准、失败和发布动作写入 JSONL 审计，日志仅记录错误类型而不记录凭证或完整响应。
 
 ## 目录、配置与扩展
 
@@ -81,4 +100,4 @@ docker run --rm ai-agent-book/project-6
 src/ai_agent_book/apps/office_agent.py  # Provider、审批、发布、审计
 ```
 
-Fixture 模式不需要邮箱账号；Webhook 只有在绑定内容的批准令牌存在时调用。常见问题是审批后继续修改正文，本项目用摘要使旧令牌失效。扩展方向包括 Gmail/Outlook OAuth 最小 Scope、日历冲突检测、Notion 页面适配器和审计归档。
+Fixture 模式不需要邮箱账号；Webhook 只有在绑定内容与目标的有效批准令牌存在时调用。常见问题是审批后继续修改正文，本项目会重新计算摘要并拒绝旧令牌。当前真实边界是通用 Webhook，尚未假装实现 Gmail、Outlook、Notion 或飞书 OAuth：生产扩展需增加最小 Scope、令牌轮换、分页/增量同步、供应商限流、远端业务键查询、日历冲突检测与审计归档。
