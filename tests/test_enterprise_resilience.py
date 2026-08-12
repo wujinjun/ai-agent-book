@@ -1,3 +1,4 @@
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pytest
@@ -9,6 +10,7 @@ from ai_agent_book.apps.enterprise_platform import (
     Principal,
     RunRecord,
     create_enterprise_app,
+    runs,
 )
 
 
@@ -144,3 +146,38 @@ def test_trace_evaluation_readiness_and_metrics_are_exposed(tmp_path: Path) -> N
     assert evaluation.json()["passed"] is True
     metrics = client.get("/metrics", headers=admin)
     assert "agent_platform_runs" in metrics.text
+
+
+def test_worker_api_never_processes_or_returns_another_tenants_run(tmp_path: Path) -> None:
+    platform, _ = _platform(tmp_path / "platform.db")
+    agent_b = platform.register_agent("tenant-b", "admin-b", "assistant-b", "assistant")
+    session_b = platform.create_session("tenant-b", "admin-b", agent_b.agent_id)
+    run_b = platform.submit_run("tenant-b", "admin-b", session_b.session_id, "tenant b task")
+    client = TestClient(create_enterprise_app(platform))
+
+    tenant_a = {"X-Tenant-ID": "tenant-a", "X-User-ID": "admin-a"}
+    tenant_b = {"X-Tenant-ID": "tenant-b", "X-User-ID": "admin-b"}
+    assert client.post("/worker/process-one", headers=tenant_a).json() is None
+    processed = client.post("/worker/process-one", headers=tenant_b)
+
+    assert processed.status_code == 200
+    assert processed.json()["run_id"] == run_b.run_id
+
+
+def test_expired_running_lease_is_recovered_after_worker_crash(tmp_path: Path) -> None:
+    platform, session_id = _platform(tmp_path / "platform.db")
+    run = platform.submit_run("tenant-a", "member-a", session_id, "recover")
+    with platform.engine.begin() as connection:
+        connection.execute(
+            runs.update()
+            .where(runs.c.run_id == run.run_id)
+            .values(
+                status="running",
+                worker_id="crashed-worker",
+                lease_expires_at=datetime.now(UTC) - timedelta(seconds=1),
+            )
+        )
+
+    recovered = platform.process_next(tenant_id="tenant-a")
+
+    assert recovered is not None and recovered.status == "succeeded"

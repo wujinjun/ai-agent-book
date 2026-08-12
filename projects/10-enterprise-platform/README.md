@@ -66,13 +66,14 @@ sequenceDiagram
     A->>A: tenant and object authorization
     A->>D: commit queued run and versions
     A->>Q: publish run_id wakeup
-    W->>D: lease authoritative run
+    W->>D: claim tenant-scoped run + worker lease
+    D-->>W: commit short claim transaction
     W->>W: tenant-scoped RAG tools model
-    W->>D: events trace evaluation final state
+    W->>D: complete only with same worker_id
     A-->>U: status and authorized result
 ```
 
-Redis 只是可恢复唤醒信号，PostgreSQL 是任务事实来源。Worker 扫描 queued 状态可在 Redis 故障后恢复，且所有检索和管理接口强制租户隔离。
+Redis 只是可恢复唤醒信号，PostgreSQL 是任务事实来源。Worker API 必须用已验证主体的 `tenant_id` 领取任务；租户 A 管理员不能触发或收到租户 B 的 Run。领取使用 `worker_id + lease_expires_at`，先提交短事务再执行模型或工具；完成与失败写入都必须匹配原 worker。进程崩溃后，其他 Worker 只能在租约过期后重新领取，迟到的旧结果会因租约不匹配而拒绝覆盖。
 
 `租户/用户 → Agent/Tool/MCP 注册 → Session → 持久任务队列 → Runtime/RAG → Trace → Evaluation → 管理 API`。独立实现位于 `src/ai_agent_book/apps/enterprise_platform.py`，API 入口是 `api.py`，直接测试位于 `tests/test_enterprise_platform_app.py`。
 
@@ -96,7 +97,7 @@ docker compose down
 
 ## 实现说明与验收
 
-`EnterprisePlatform` 通过 SQLAlchemy 在 SQLite 与 PostgreSQL 上使用同一表和事务边界，存储租户、用户、Agent、Tool/MCP、Session、文档、Run、Trace 和 Evaluation。`RedisRunQueue` 提供任务唤醒，Redis 故障时 Worker 扫描数据库 queued 状态恢复，不丢任务。RAG 只在当前租户文档中检索；FastAPI 管理接口区分管理员与成员并拒绝跨租户读取。测试覆盖完整运行、权限、隔离、Redis 故障降级和 API；Compose 三服务健康、纵向验收、PostgreSQL 持久化与 API 重启恢复均已通过。
+`EnterprisePlatform` 通过 SQLAlchemy 在 SQLite 与 PostgreSQL 上使用同一领域表，存储租户、用户、Agent、Tool/MCP、Session、文档、Run、Trace 和 Evaluation。`RedisRunQueue` 提供任务唤醒，Redis 故障时 Worker 扫描数据库 queued 状态恢复，不丢任务。长时间 Provider 调用不持有数据库事务；Run 领取和最终提交分别是短事务。RAG 只在当前租户文档中检索；FastAPI 管理及 Worker 接口区分管理员与成员并拒绝跨租户读取/执行。测试覆盖完整运行、权限、Worker 租户隔离、过期租约恢复、Redis 故障降级和 API；Compose 三服务健康、纵向验收、PostgreSQL 持久化与 API 重启恢复均已通过。
 
 ## 目录、配置与扩展
 
@@ -106,7 +107,7 @@ src/ai_agent_book/apps/enterprise_platform.py  # 数据、队列、权限与 API
 docker-compose.yml  # API + PostgreSQL + Redis
 ```
 
-本地 CLI 默认 SQLite；Compose 使用 `postgresql+psycopg` 和 Redis。Secret 不应采用示例密码进入生产。常见问题是 Redis 入队成功却数据库事务失败，本实现先提交数据库并把 Redis 作为可恢复唤醒信号。扩展方向包括 OIDC、PostgreSQL RLS、独立 Worker、MCP 执行器、pgvector、配额、OpenTelemetry 和迁移工具。
+本地 CLI 默认 SQLite；Compose 使用 `postgresql+psycopg` 和 Redis。Secret 不应采用示例密码进入生产。常见问题是 Redis 入队成功却数据库事务失败，本实现先提交数据库并把 Redis 作为可恢复唤醒信号。租约列的仓库内升级逻辑只用于教学兼容，正式环境必须采用 Alembic 等可审计迁移。尚未完成且不会被模拟代码冒充的外部边界包括真实 OIDC/JWKS 轮换、PostgreSQL RLS、独立 Worker Deployment、MCP/模型网关、pgvector、配额、OpenTelemetry 和跨区域灾备演练。
 
 ## 身份、失败恢复与备份边界
 

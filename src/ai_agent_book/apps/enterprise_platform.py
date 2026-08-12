@@ -10,7 +10,7 @@ import sqlite3
 import time
 from collections import deque
 from collections.abc import Callable
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from hashlib import sha256
 from pathlib import Path
 from typing import Annotated, Literal, Protocol, cast
@@ -35,6 +35,8 @@ from sqlalchemy import (
     create_engine,
     delete,
     insert,
+    inspect,
+    or_,
     select,
     update,
 )
@@ -189,6 +191,8 @@ runs = Table(
     Column("output", Text, nullable=False, default=""),
     Column("trace_id", String(32), nullable=False),
     Column("created_at", DateTime(timezone=True), nullable=False),
+    Column("worker_id", String(64), nullable=True),
+    Column("lease_expires_at", DateTime(timezone=True), nullable=True),
 )
 traces = Table(
     "traces",
@@ -247,6 +251,7 @@ class EnterprisePlatform:
         queue: RunQueue | None = None,
         run_executor: RunExecutor | None = None,
         max_attempts: int = 3,
+        lease_seconds: int = 60,
     ) -> None:
         if isinstance(database, Path):
             database.parent.mkdir(parents=True, exist_ok=True)
@@ -257,7 +262,11 @@ class EnterprisePlatform:
         self.queue = queue or InMemoryRunQueue()
         self.run_executor = run_executor or self._default_execute
         self.max_attempts = max_attempts
+        if lease_seconds < 1:
+            raise ValueError("lease_seconds must be positive")
+        self.lease_seconds = lease_seconds
         metadata.create_all(self.engine)
+        self._migrate_run_leases()
         with self.engine.begin() as connection:
             exists = connection.execute(
                 select(schema_versions.c.version).where(schema_versions.c.version == 1)
@@ -266,6 +275,26 @@ class EnterprisePlatform:
                 connection.execute(
                     insert(schema_versions).values(version=1, applied_at=datetime.now(UTC))
                 )
+            version_two = connection.execute(
+                select(schema_versions.c.version).where(schema_versions.c.version == 2)
+            ).scalar_one_or_none()
+            if version_two is None:
+                connection.execute(
+                    insert(schema_versions).values(version=2, applied_at=datetime.now(UTC))
+                )
+
+    def _migrate_run_leases(self) -> None:
+        """为已有 v1 数据库增加租约列；生产环境应使用正式迁移工具。"""
+        existing = {str(item["name"]) for item in inspect(self.engine).get_columns("runs")}
+        statements: list[str] = []
+        if "worker_id" not in existing:
+            statements.append("ALTER TABLE runs ADD COLUMN worker_id VARCHAR(64)")
+        if "lease_expires_at" not in existing:
+            statements.append("ALTER TABLE runs ADD COLUMN lease_expires_at TIMESTAMP")
+        if statements:
+            with self.engine.begin() as connection:
+                for statement in statements:
+                    connection.exec_driver_sql(statement)
 
     def create_tenant(self, tenant_id: str, name: str) -> None:
         with self.engine.begin() as connection:
@@ -404,39 +433,55 @@ class EnterprisePlatform:
             pass
         return record
 
-    def process_next(self) -> RunRecord | None:
+    def process_next(self, *, tenant_id: str | None = None) -> RunRecord | None:
+        """领取租户限定 Run，先提交短事务，再在事务外执行 Provider。"""
         hinted_id: str | None
         try:
             hinted_id = self.queue.pop()
         except Exception:
             hinted_id = None
+        current = datetime.now(UTC)
+        claimable = or_(
+            runs.c.status == "queued",
+            (runs.c.status == "running") & (runs.c.lease_expires_at < current),
+        )
+        worker_id = uuid4().hex
         with self.engine.begin() as connection:
-            query = (
-                select(runs)
-                .where(runs.c.status == "queued")
-                .order_by(runs.c.created_at)
-                .limit(1)
-            )
+            query = select(runs).where(claimable)
+            if tenant_id:
+                query = query.where(runs.c.tenant_id == tenant_id)
+            query = query.order_by(runs.c.created_at).limit(1)
             if hinted_id:
-                query = select(runs).where(
-                    runs.c.run_id == hinted_id, runs.c.status == "queued"
-                ).limit(1)
+                query = select(runs).where(runs.c.run_id == hinted_id, claimable)
+                if tenant_id:
+                    query = query.where(runs.c.tenant_id == tenant_id)
+                query = query.limit(1)
             row = connection.execute(query.with_for_update(skip_locked=True)).mappings().first()
             if row is None and hinted_id:
+                fallback = select(runs).where(claimable)
+                if tenant_id:
+                    fallback = fallback.where(runs.c.tenant_id == tenant_id)
+                fallback = fallback.order_by(runs.c.created_at).limit(1)
                 row = connection.execute(
-                    select(runs)
-                    .where(runs.c.status == "queued")
-                    .order_by(runs.c.created_at)
-                    .limit(1)
-                    .with_for_update(skip_locked=True)
+                    fallback.with_for_update(skip_locked=True)
                 ).mappings().first()
             if row is None:
                 return None
             running = self._mapping_to_run(row, status="running")
-            connection.execute(
-                update(runs).where(runs.c.run_id == running.run_id).values(status="running")
+            claimed = connection.execute(
+                update(runs)
+                .where(runs.c.run_id == running.run_id, claimable)
+                .values(
+                    status="running",
+                    worker_id=worker_id,
+                    lease_expires_at=current + timedelta(seconds=self.lease_seconds),
+                )
             )
+            if claimed.rowcount != 1:
+                return None
             self._trace(connection, running, "run.started", {})
+
+        with self.engine.connect() as connection:
             document_rows = connection.execute(
                 select(documents.c.document_id, documents.c.content).where(
                     documents.c.tenant_id == running.tenant_id
@@ -446,15 +491,28 @@ class EnterprisePlatform:
                 {"document_id": str(item["document_id"]), "content": str(item["content"])}
                 for item in document_rows
             ]
-            try:
-                output = self.run_executor(running, docs)
-            except Exception as exc:
-                return self._record_failure(connection, running, exc)
-            connection.execute(
+        try:
+            output = self.run_executor(running, docs)
+        except Exception as exc:
+            with self.engine.begin() as connection:
+                return self._record_failure(connection, running, exc, worker_id=worker_id)
+        with self.engine.begin() as connection:
+            completed_write = connection.execute(
                 update(runs)
-                .where(runs.c.run_id == running.run_id)
-                .values(status="succeeded", output=output)
+                .where(
+                    runs.c.run_id == running.run_id,
+                    runs.c.status == "running",
+                    runs.c.worker_id == worker_id,
+                )
+                .values(
+                    status="succeeded",
+                    output=output,
+                    worker_id=None,
+                    lease_expires_at=None,
+                )
             )
+            if completed_write.rowcount != 1:
+                raise RuntimeError("run lease was lost before completion")
             completed = running.model_copy(update={"status": "succeeded", "output": output})
             self._trace(connection, completed, "run.succeeded", {"rag": str(bool(docs))})
             return completed
@@ -479,6 +537,8 @@ class EnterprisePlatform:
         connection: object,
         run: RunRecord,
         exc: Exception,
+        *,
+        worker_id: str,
     ) -> RunRecord:
         error_type = type(exc).__name__
         existing = connection.execute(  # type: ignore[attr-defined]
@@ -514,9 +574,21 @@ class EnterprisePlatform:
                     created_at=datetime.now(UTC),
                 )
             )
-        connection.execute(  # type: ignore[attr-defined]
-            update(runs).where(runs.c.run_id == run.run_id).values(status=status_value)
+        updated = connection.execute(  # type: ignore[attr-defined]
+            update(runs)
+            .where(
+                runs.c.run_id == run.run_id,
+                runs.c.status == "running",
+                runs.c.worker_id == worker_id,
+            )
+            .values(
+                status=status_value,
+                worker_id=None,
+                lease_expires_at=None,
+            )
         )
+        if updated.rowcount != 1:
+            raise RuntimeError("run lease was lost before failure recording")
         failed = run.model_copy(update={"status": status_value})
         self._trace(
             connection,
@@ -879,7 +951,7 @@ def create_enterprise_app(
     ) -> RunRecord | None:
         try:
             platform._require_admin(identity.tenant_id, identity.user_id)
-            return platform.process_next()
+            return platform.process_next(tenant_id=identity.tenant_id)
         except PermissionError as exc:
             raise forbidden(exc) from exc
 
