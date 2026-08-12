@@ -33,8 +33,9 @@ flowchart LR
 | [PydanticAI Service](https://github.com/wujinjun/ai-agent-book/tree/main/examples/pydanticai_service) | 19 | 类型化依赖、工具与输出，有限重试和 FastAPI 错误映射 | 已完成：固定并实测 2.25.0 |
 | [Framework Comparison](https://github.com/wujinjun/ai-agent-book/tree/main/examples/framework_comparison) | 38 | 三个隔离候选的同题实跑、故障注入、加权敏感性与可逆 ADR | 已完成：20 次实跑证据 + 源码哈希 |
 | [Cost / Latency Lab](https://github.com/wujinjun/ai-agent-book/tree/main/examples/cost_latency_lab) | 31 | 关键路径、单位成功成本、重试放大、缓存隔离与预算路由 | 已完成：离线合成 Trace |
+| [Browser Safety Lab](https://github.com/wujinjun/ai-agent-book/tree/main/examples/browser_safety_lab) | 34 | 观察指纹、语义定位、审批、幂等与业务状态复核 | 已完成：离线页面夹具 |
 
-机器可读的真实状态记录在 `notes/example-matrix.yml`。当前 12 个计划内示例均已交付，表中的完成状态以目录契约、离线运行、直接测试和章节双向链接为依据；后续在线 Provider 冒烟测试会单独记录，不能用来替代确定性离线验收。
+机器可读的真实状态记录在 `notes/example-matrix.yml`。当前 13 个计划内示例均已交付，表中的完成状态以目录契约、离线运行、直接测试和章节双向链接为依据；后续在线 Provider 冒烟测试会单独记录，不能用来替代确定性离线验收。
 
 ## 统一运行边界
 
@@ -49,7 +50,7 @@ python3.12 -m venv .venv
 
 具体命令以各示例 README 为准。任何真实密钥都不得写入仓库；`.env.example` 只声明变量名和安全默认值。
 
-仓库维护者可用根级编排器为 12 个示例分别创建虚拟环境，禁止把框架依赖合并成一个环境：
+仓库维护者可用根级编排器为 13 个示例分别创建虚拟环境，禁止把框架依赖合并成一个环境：
 
 ```bash
 .venv/bin/python scripts/verify_examples.py \

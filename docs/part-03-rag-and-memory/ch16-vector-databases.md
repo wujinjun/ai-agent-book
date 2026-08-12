@@ -134,10 +134,138 @@ Metadata Filtering 与 ANN 的执行顺序影响召回。先过滤后 ANN 候选
 
 调试召回下降时检查模型/归一化/距离是否一致、索引是否完成、过滤是否误排、参数是否改变和数据分布是否漂移。延迟上升则分解网络、过滤、ANN、反序列化和连接池，而不是只调 HNSW 参数。
 
+#### 用公式固定验收口径
+
+设第 `i` 个查询的精确 Top-k 集合为 `G_i`，近似检索结果为 `A_i`，则：
+
+```text
+Recall@k = (1 / |Q|) × Σᵢ |Gᵢ ∩ Aᵢ| / k
+Filter leakage rate = 越权结果数 / 返回结果总数
+Freshness lag = 新版本提交时间到查询可见时间
+Deletion lag = 删除确认时间到所有读取路径不可见时间
+```
+
+Recall 计算必须在权限过滤后的合法候选空间中生成真值。若精确基线包含租户 B 的文档、ANN 查询却
+过滤到租户 A，算出的“低召回”没有诊断意义。反过来，Recall 很高也不能掩盖一次权限泄漏：
+`Filter leakage rate` 的验收目标通常是严格为零，而不是一个可以用平均值折中的质量指标。
+
+基准输入应保存数据快照、查询集、黄金结果、Embedding 模型与预处理版本、距离度量、索引参数、
+硬件、并发模型和预热方式。报告只给“P95 为 20 ms”无法复现；至少还要给过滤选择性分桶：
+
+| 场景 | 合法候选占比 | 主要风险 | 必测结果 |
+|---|---:|---|---|
+| 无过滤公共语料 | 100% | ANN 参数召回损失 | Recall@k、P95/P99 |
+| 普通租户 | 1%—10% | 过滤与 ANN 顺序 | 返回条数、泄漏率、尾延迟 |
+| 极小租户 | <0.1% | 候选不足 | Recall、Fallback 次数 |
+| 混合读写 | 动态 | 索引可见性与膨胀 | Freshness、删除延迟、QPS |
+
+百分比只是实验分桶示例，不是所有系统的固定阈值。生产报告使用本系统分布的 P50、P90 和极端租户，
+否则平均租户会掩盖长尾。
+
+#### 过滤是在索引前还是索引后
+
+预过滤先限定合法候选，再做 ANN，天然避免越权候选进入后续链路，但低选择性过滤可能使通用索引
+失效。后过滤先取近邻再丢弃不符合条件的记录，容易不足 k 条；简单把 ANN 候选倍增又会增加延迟，
+并且不能作为权限边界。实际数据库可能采用迭代扫描、分区索引或混合策略，具体能力应按当前版本
+官方文档和 Explain Plan 复核。
+
+无论执行器如何优化，应用层契约都应要求 `tenant_id` 与 `permission_version`，数据库访问层再用
+RLS、受控 Repository 或独立集合形成不可绕过的边界。不要让 LLM 自己决定是否附加租户条件。
+
+```python
+@dataclass(frozen=True)
+class VectorQuery:
+    tenant_id: str
+    permission_version: str
+    embedding_model: str
+    index_version: str
+    vector: tuple[float, ...]
+    top_k: int
+
+    def __post_init__(self) -> None:
+        if not self.tenant_id or not self.permission_version:
+            raise ValueError("tenant and permission version are mandatory")
+        if self.top_k < 1 or self.top_k > 100:
+            raise ValueError("top_k outside service budget")
+```
+
+类型只能防止调用者遗漏字段；真正的强制隔离仍应在 Repository 与数据库策略中完成。缓存键也必须
+包含这些版本，否则撤权之后可能从旧缓存返回原本合法、现在越权的结果。
+
+### 索引迁移是一项可回滚发布
+
+Embedding 模型更换会同时改变维度、向量空间、分数分布和最佳阈值。即使维度恰好相同，新旧向量
+也不能混用。安全迁移把每个索引当不可变发布物，并维护独立的别名或 Active Version 指针：
+
+1. 冻结同一份规范化文档快照与 ACL 快照，记录内容哈希；
+2. 用新模型写入候选索引，不覆盖活动索引；
+3. 对黄金查询运行精确真值、ANN、过滤泄漏与引用一致性测试；
+4. 对影子流量双读，只记录差异，不让候选结果影响用户；
+5. 达到 Recall、P99、成本、Freshness 和零泄漏门禁后，在一个受控事务中切换别名；
+6. 保留旧索引到观察期结束，失败时只切回指针；之后按删除策略清理。
+
+活动指针与索引内容的提交不能靠“先写配置、再祈祷所有实例刷新”。单数据库场景可把版本状态和
+别名切换放在事务中；分布式服务使用带 Revision 的配置、Compare-and-Swap 与就绪确认。查询 Trace
+必须记录最终命中的索引版本，这样回答质量回归才能定位到具体发布物。
+
+```sql
+BEGIN;
+
+SELECT version
+FROM vector_index_release
+WHERE alias = 'knowledge-active'
+FOR UPDATE;
+
+UPDATE vector_index_release
+SET version = :candidate_version,
+    switched_at = CURRENT_TIMESTAMP
+WHERE alias = 'knowledge-active'
+  AND version = :expected_old_version;
+
+-- 应用必须检查恰好更新一行；否则说明并发发布或状态已变化。
+COMMIT;
+```
+
+这段 SQL 只示范活动指针的并发边界，不代表任意向量产品都使用相同表结构。候选索引若尚未完整、
+ACL 快照不一致或门禁证据过期，发布器必须拒绝切换。
+
+### 与项目 4 的代码对应
+
+本章工程代码位于 [`projects/04-knowledge-agent/`](https://github.com/wujinjun/ai-agent-book/tree/main/projects/04-knowledge-agent)。离线
+`KnowledgeBase` 用确定性 Hash 向量验证摄取、混合检索、租户预过滤、引用、Recall@K 与 MRR；它
+不具备真实语义泛化能力。`schema.sql` 和 `PgVectorKnowledgeRepository` 提供 128 维 pgvector
+适配边界，`VersionedKnowledgePipeline` 把候选构建、黄金集门禁、失败恢复和活动版本切换组成
+持久任务。两条路径分别回答“控制逻辑能否离线复现”和“真实存储边界是否成立”，不能互相冒充。
+
+运行真实 pgvector 验收前应核对镜像、扩展与操作符版本，再执行：
+
+```bash
+docker compose up -d postgres
+.venv/bin/python scripts/verify_pgvector.py
+```
+
+若本机没有容器，离线测试仍可验证算法与权限契约，但 PROJECT_STATUS 不应据此声称完成真实数据库
+性能验证。
+
 ### 常见误区、工程实践与安全
 
 常见误区是向量库自动完成 RAG、更高维度必然更准、索引参数可照抄、删除原文就等于删除向量。工程实践从精确基线和真实评估集开始，参数变更版本化，升级前后并行测试，并准备回滚。
-总结：向量数据库提供相似性基础设施，不负责文档质量、权限语义和回答正确性。练习：用同一数据比较精确搜索与 HNSW；测试两种过滤选择性；设计一次 Embedding 模型迁移。面试：HNSW 参数如何权衡？为什么 Metadata 过滤会影响性能？共享与独立租户索引如何选择？延伸阅读：FAISS、pgvector、Milvus、HNSW 与所选托管服务的官方文档。代码目录：`projects/04-knowledge-agent/`。
+
+### 练习参考答案与面试要点
+
+1. **精确搜索与 HNSW。** 固定数据快照与查询集，用精确过滤后 Top-k 生成真值；逐级改变查询探索
+   参数，绘制 Recall@k—P95—内存曲线。不能只记录最快的一组参数。
+2. **过滤选择性。** 至少构造 100%、5% 和 0.1% 合法候选场景，断言零租户泄漏、返回数量、
+   Recall 与尾延迟；解释执行计划是否采用预过滤、后过滤或迭代扫描。
+3. **Embedding 迁移。** 候选索引携带模型、维度、预处理和数据快照版本；完成回填、黄金集、影子
+   双读、原子切换和回滚演练。直接原地覆盖不是可接受答案。
+4. **面试要点。** HNSW 用更多连接和搜索探索换召回与延迟；Metadata 过滤会改变合法候选空间和
+   执行路径；共享索引降低运维成本，但隔离与长尾过滤更复杂，独立索引隔离强却增加数量和发布成本。
+
+总结：向量数据库提供相似性基础设施，不负责文档质量、权限语义和回答正确性。工程验收必须同时
+证明召回、尾延迟、零权限泄漏、更新/删除可见性和可回滚迁移。延伸阅读包括 FAISS、pgvector、
+Milvus、HNSW 与所选托管服务的官方文档；产品版本与参数应在选型当天复核。代码目录为
+[`projects/04-knowledge-agent/`](https://github.com/wujinjun/ai-agent-book/tree/main/projects/04-knowledge-agent)。
 
 ## 本章引用
 <!-- chapter-citations:start -->

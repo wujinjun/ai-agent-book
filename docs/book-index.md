@@ -39,7 +39,7 @@
 
 | 术语 | 重点章节 | 出现次数 |
 |---|---|---:|
-| Agent | [第18章 OpenAI Agents SDK](part-04-frameworks/ch18-openai-agents-sdk.md)；[第22章 Multi-Agent 框架](part-04-frameworks/ch22-multi-agent-frameworks.md)；[第38章 技术选型](part-07-advanced/ch38-selection-guide.md)；[第32章 Multi-Agent 原理](part-07-advanced/ch32-multi-agent-principles.md)；[第33章 Agentic Coding](part-07-advanced/ch33-agentic-coding.md) | 674 |
+| Agent | [第18章 OpenAI Agents SDK](part-04-frameworks/ch18-openai-agents-sdk.md)；[第22章 Multi-Agent 框架](part-04-frameworks/ch22-multi-agent-frameworks.md)；[第38章 技术选型](part-07-advanced/ch38-selection-guide.md)；[第32章 Multi-Agent 原理](part-07-advanced/ch32-multi-agent-principles.md)；[第33章 Agentic Coding](part-07-advanced/ch33-agentic-coding.md) | 681 |
 | Agent Runtime | [第8章 Tool Calling](part-02-agent-core/ch08-tool-calling.md)；[第1章 什么是大语言模型](part-01-foundations/ch01-what-is-llm.md)；[第9章 Agent Runtime](part-02-agent-core/ch09-agent-runtime.md)；[第17章 原生 API](part-04-frameworks/ch17-native-api.md)；[第10章 Planning 与 Reflection](part-02-agent-core/ch10-planning-reflection.md) | 89 |
 | Memory | [第15章 Memory](part-03-rag-and-memory/ch15-memory.md)；[第2章 Token 与上下文窗口](part-01-foundations/ch02-token-and-context.md)；[第36章 Agent 架构设计](part-07-advanced/ch36-architecture.md)；[第1章 什么是大语言模型](part-01-foundations/ch01-what-is-llm.md)；[第20章 LangGraph](part-04-frameworks/ch20-langgraph.md) | 148 |
 | Multi-Agent | [第22章 Multi-Agent 框架](part-04-frameworks/ch22-multi-agent-frameworks.md)；[第32章 Multi-Agent 原理](part-07-advanced/ch32-multi-agent-principles.md)；[第38章 技术选型](part-07-advanced/ch38-selection-guide.md)；[第18章 OpenAI Agents SDK](part-04-frameworks/ch18-openai-agents-sdk.md)；[第20章 LangGraph](part-04-frameworks/ch20-langgraph.md) | 59 |
@@ -62,9 +62,9 @@
 
 | 术语 | 重点章节 | 出现次数 |
 |---|---|---:|
-| Embedding | [第5章 Embedding 与语义表示](part-01-foundations/ch05-embedding.md)；[第13章 RAG 基础](part-03-rag-and-memory/ch13-rag.md)；[第16章 向量数据库](part-03-rag-and-memory/ch16-vector-databases.md)；[第35章 多模态 Agent](part-07-advanced/ch35-multimodal.md)；[第21章 LangChain 与 LlamaIndex](part-04-frameworks/ch21-langchain-llamaindex.md) | 76 |
+| Embedding | [第5章 Embedding 与语义表示](part-01-foundations/ch05-embedding.md)；[第16章 向量数据库](part-03-rag-and-memory/ch16-vector-databases.md)；[第13章 RAG 基础](part-03-rag-and-memory/ch13-rag.md)；[第35章 多模态 Agent](part-07-advanced/ch35-multimodal.md)；[第21章 LangChain 与 LlamaIndex](part-04-frameworks/ch21-langchain-llamaindex.md) | 79 |
 | Grounding | [第13章 RAG 基础](part-03-rag-and-memory/ch13-rag.md) | 3 |
-| Hybrid Search | [第5章 Embedding 与语义表示](part-01-foundations/ch05-embedding.md)；[第14章 高级 RAG](part-03-rag-and-memory/ch14-advanced-rag.md)；[第13章 RAG 基础](part-03-rag-and-memory/ch13-rag.md) | 16 |
+| Hybrid Search | [第5章 Embedding 与语义表示](part-01-foundations/ch05-embedding.md)；[第14章 高级 RAG](part-03-rag-and-memory/ch14-advanced-rag.md)；[第13章 RAG 基础](part-03-rag-and-memory/ch13-rag.md)；[第16章 向量数据库](part-03-rag-and-memory/ch16-vector-databases.md) | 17 |
 | RAG | [第14章 高级 RAG](part-03-rag-and-memory/ch14-advanced-rag.md)；[第13章 RAG 基础](part-03-rag-and-memory/ch13-rag.md)；[第21章 LangChain 与 LlamaIndex](part-04-frameworks/ch21-langchain-llamaindex.md)；[第38章 技术选型](part-07-advanced/ch38-selection-guide.md)；[第1章 什么是大语言模型](part-01-foundations/ch01-what-is-llm.md) | 142 |
 | Reranker | [第14章 高级 RAG](part-03-rag-and-memory/ch14-advanced-rag.md)；[第5章 Embedding 与语义表示](part-01-foundations/ch05-embedding.md)；[第13章 RAG 基础](part-03-rag-and-memory/ch13-rag.md)；[第35章 多模态 Agent](part-07-advanced/ch35-multimodal.md)；[第31章 成本与性能](part-05-engineering/ch31-cost-performance.md) | 25 |
 | Vector Database | [第16章 向量数据库](part-03-rag-and-memory/ch16-vector-databases.md)；[第5章 Embedding 与语义表示](part-01-foundations/ch05-embedding.md)；[第21章 LangChain 与 LlamaIndex](part-04-frameworks/ch21-langchain-llamaindex.md) | 9 |

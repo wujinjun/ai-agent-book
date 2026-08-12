@@ -141,6 +141,89 @@ async def test_submit_requires_approval(browser_agent):
     assert result.audit_events[-1].kind == "approval.requested"
 ```
 
+上面的测试只表达验收意图；可直接运行的离线工程位于
+[`examples/browser_safety_lab/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/browser_safety_lab)。它没有把浏览器驱动 Mock
+成一个永远成功的 `click()`，而是把观察、定位、Policy、审批、执行与业务验证逐层拆开。
+
+```python
+page = FakeExpensePage()
+runtime = BrowserRuntime(
+    page,
+    Policy("employee-42", "https://expense.test/"),
+)
+action = Action(
+    "click",
+    "button",
+    "提交审批",
+    "awaiting_approval",
+    "ER-2026-001:submit",
+)
+
+pending = runtime.execute(action)
+assert pending.status == "approval_required"
+
+approval = Approval.issue(page.observe(), action)
+completed = runtime.execute(action, approval)
+assert completed.status == "completed"
+```
+
+`Approval` 同时绑定观察指纹与动作摘要。因此，批准之后若页面 Revision、登录主体、URL、目标
+或幂等键发生变化，Runtime 会返回 `stale_approval`，而不是把旧批准套用到新页面。这个约束尤其
+重要：页面中的恶意指令可能在用户批准后替换收件人或金额，仅把批准绑定到“允许点击”没有意义。
+
+### 从驱动事件到业务事务
+
+浏览器驱动通常只能证明事件已经派发，不能证明业务事务已提交。例如按钮可能被透明遮罩拦截，
+后端可能返回校验错误，网络重试也可能已经提交两次。可靠 Runtime 至少记录以下四类证据：
+
+| 证据 | 示例 | 不能证明什么 |
+|---|---|---|
+| 动作证据 | 元素 ID、语义名称、点击时间 | 后端已接受请求 |
+| 导航证据 | URL 或页面 Revision 改变 | 业务状态正确 |
+| 业务证据 | 状态变为“等待审批”、出现服务端单号 | 副作用只发生一次 |
+| 幂等证据 | 业务键已登记、重复请求返回同一结果 | 用户仍然授权当前内容 |
+
+因此完整顺序是“读取当前状态—绑定批准—带幂等键执行—重新观察—核对业务状态”。对于不提供
+幂等接口的网页，可以在提交前查询业务对象、提交后读取服务端单号，并在状态不确定时转人工，
+不能用自动重复点击掩盖超时。
+
+```mermaid
+%% id: browser-side-effect-transaction
+%% title: 浏览器副作用的可验证事务
+%% alt: 页面快照与候选动作形成绑定审批，执行时携带幂等键，随后重新观察业务状态，状态未知则停止而不是重复点击
+sequenceDiagram
+    participant R as Runtime
+    participant H as Human
+    participant P as Page Adapter
+    participant B as Business System
+    R->>P: observe()
+    P-->>R: subject + URL + revision + semantic target
+    R->>H: 展示对象、字段差异和动作影响
+    H-->>R: 绑定 observation + action 的批准
+    R->>P: click(target, idempotency_key)
+    P->>B: 提交业务请求
+    R->>P: re-observe()
+    P-->>R: 当前业务状态与单号
+    alt 状态符合预期
+        R-->>H: 完成并写入审计
+    else 状态未知或页面已变化
+        R-->>H: 停止，转人工核对
+    end
+```
+
+这张时序图把 UI 点击放在更大的业务事务中。幂等键抑制重复副作用，重新观察验证结果，审批则
+证明用户同意的是哪一个页面和哪一组参数；三者互补，缺一不可。
+
+### 状态空间与失败预算
+
+恢复策略应按失败类型分层。`detached element` 可以重新观察和定位；加载超时可以在剩余 Deadline
+内重试；登录过期、验证码、跨域跳转、目标歧义和批准失效必须暂停。每次恢复都消耗动作预算，
+并保留前后 Observation 的指纹。若同一错误连续发生，继续点击通常只会增加副作用风险。
+
+生产测试不能只替换驱动方法。Contract Test 应让 Playwright/WebDriver Adapter 在本地测试页上
+生成同一 `Observation` Schema；集成测试验证弹窗、重绘和导航；端到端测试使用隔离账号与可回滚
+业务对象。截图回归负责视觉异常，业务 API 或数据库查询负责最终状态，两类断言不能互相替代。
+
 ### Computer Use 与桌面应用
 
 桌面应用缺少 DOM 时依赖截图、OCR、窗口树和坐标，风险更高。操作前确认前台应用和窗口标题，避免键盘输入落入错误窗口。OS 权限、文件选择器和系统对话框由明确规则处理。终端或原生 API 可完成的任务优先专用工具，Computer Use 作为最后一公里。
@@ -148,7 +231,22 @@ async def test_submit_requires_approval(browser_agent):
 ### 常见误区、调试与安全
 
 常见误区：坐标稳定、登录即拥有授权、动作返回成功即完成、验证码可以自动处理。调试保存操作前后截图/DOM、选择器、URL 与事件，不保存凭证。页面诱导 Agent 上传文件或粘贴 Secret 时，Policy 拒绝。
-总结：Browser/Computer Use 是观察—动作—再观察的受控闭环。练习：为表单提交设计确认、幂等和布局变化测试。面试：DOM 与视觉定位如何互补？动作后为何必须观察？如何安全使用已有登录 session？延伸阅读：Web Accessibility、Playwright/WebDriver、安全浏览器自动化和 Human-in-the-Loop 资料。代码目录：项目6、8。
+### 练习参考答案与面试要点
+
+1. **表单确认设计。** 参考答案应让批准绑定主体、Origin、业务对象、字段差异、Observation
+   Fingerprint、动作摘要与过期时间；执行携带业务幂等键，动作后查询服务端状态。
+2. **布局变化测试。** 同一个业务按钮分别改变 DOM 顺序、CSS 类与屏幕坐标。Role + Name 仍应
+   定位成功；若出现两个同名按钮必须返回歧义，不能默认点击第一个。
+3. **不确定超时。** 若提交后连接中断，先按业务键查询。查到记录则返回已有结果；查不到且接口
+   支持同键幂等时才重试；无法确定时进入人工核对。
+4. **面试要点。** DOM/Accessibility Tree 提供语义和结构，截图提供视觉可见性与 Canvas 信息，
+   OCR 是带置信度的补充。动作后再观察是因为驱动成功不等于业务成功；已有登录 Session 只证明
+   身份，不自动扩大本次任务授权。
+
+总结：Browser/Computer Use 是观察—动作—再观察的受控闭环。它的工程质量由授权绑定、目标唯一性、
+业务幂等、结果验证和有限恢复共同决定，而不是由一次演示能否点击网页决定。延伸阅读包括 Web
+Accessibility、Playwright/WebDriver、安全浏览器自动化和 Human-in-the-Loop 资料。本章独立代码目录为
+[`examples/browser_safety_lab/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/browser_safety_lab)；项目 6、8 展示审批与长流程组合。
 
 ## 本章引用
 <!-- chapter-citations:start -->

@@ -7,7 +7,7 @@ from scripts.verify_examples import environment_python, load_examples, replace_p
 
 def test_orchestrator_loads_all_completed_examples() -> None:
     examples = load_examples()
-    assert len(examples) == 12
+    assert len(examples) == 13
     assert all(item.complete for item in examples)
 
 

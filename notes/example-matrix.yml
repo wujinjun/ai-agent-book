@@ -101,3 +101,11 @@ examples:
     test_command: python -m pytest -q
     dependency_group: root
     complete: true
+  - name: browser_safety_lab
+    chapter: 34
+    package: browser_safety_lab
+    python: ">=3.12,<3.13"
+    offline_command: python -m browser_safety_lab.main --fixture expense
+    test_command: python -m pytest -q
+    dependency_group: root
+    complete: true
