@@ -6,6 +6,7 @@
 - 新增第 13 个独立示例 Browser Safety Lab；在全新 Python 3.12 venv 中通过离线入口、6 项 pytest、Ruff 与严格 mypy，不访问真实浏览器、网络或账号。
 - 深化第 25 章数据存储与第 27 章异步任务：增加状态所有权、Fencing、Outbox 崩溃窗口、删除恢复、领取 SQL、未知副作用对账、共享重试预算与受控 DLQ Replay，并明确项目 10 的当前实现边界。
 - 深化第 24 章 FastAPI 服务化与第 28 章 Observability：增加 SSE 恢复和背压、WebSocket 长连接安全、断线/取消竞态、稳定错误协议、可计算 SLI/SLO、Span 状态、采样偏差、Telemetry 故障隔离与隐私数据流。
+- 深化第 6 章 Prompt Engineering 与第 37 章从 Demo 到产品：增加有类型上下文契约、Few-shot 污染、端到端注入验收、服务蓝图、风险分级、产品指标树、降级路径与上线运营门禁。
 - 深化第 7 章 Structured Output：增加 Candidate/Validated/Committed 事务边界、错误责任分类、Schema 兼容矩阵、与离线抽取器的能力边界对照及练习参考答案，正文增至约 8.4 千字符。
 - 深化第 31 章成本与性能：增加单位成功任务成本、关键路径、重试放大、权限版本缓存、Run deadline、性能实验矩阵和练习答案，正文增至约 9.2 千字符。
 - 新增第 12 个独立示例 Cost/Latency Lab；在全新 Python 3.12 venv 中通过离线入口、7 项 pytest、Ruff 与严格 mypy，不写死模型价格或伪造真实性能数据。
