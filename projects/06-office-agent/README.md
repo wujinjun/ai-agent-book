@@ -74,12 +74,15 @@ stateDiagram-v2
     delivering --> published: 记录外部 ID
     delivering --> failed: 超时或 HTTP 错误
     failed --> delivering: 预算内重试
+    delivering --> unknown: 可能已接受但响应丢失
+    unknown --> published: 远端查询命中回执
+    unknown --> [*]: 无法查询则人工对账
     delivering --> delivering: 活跃租约拒绝并发
     failed --> [*]: 达到重试预算后人工处理
     published --> published: 重复请求返回已有结果
 ```
 
-Outbox 的主键由报告 ID、报告摘要和目标共同计算。工作进程崩溃后，租约到期即可重新声明；若远端支持 `Idempotency-Key`，未知结果重试也不会产生重复写入。若目标服务不支持幂等键，仍存在“远端已接受但本地尚未记账”的经典双写窗口，生产适配器必须用远端查询或业务唯一键消除它，不能声称 SQLite 单独提供 exactly-once。
+Outbox 的主键由报告 ID、报告摘要和目标共同计算。工作进程崩溃后，租约到期即可重新声明；若远端支持 `Idempotency-Key`，未知结果重试也不会产生重复写入。实现进一步区分连接失败与歧义超时：前者通常意味着尚未送达，可进入有限重试；读取超时或部分写失败可能发生在远端已经接受之后，先通过 `ReceiptReconciler` 按幂等键查询回执。查询命中则直接记为 `published`；无法确认则记为 `unknown`，普通调用不会再次领取，必须人工对账。若目标服务既不支持幂等键也无法查询，不能声称 SQLite 单独提供 exactly-once。
 
 `邮件与日历 Provider → 时间窗口过滤 → 摘要/日报 → 内容摘要绑定审批 → Mock/Webhook 发布 → JSONL 审计`。独立实现位于 `src/ai_agent_book/apps/office_agent.py`，直接测试位于 `tests/test_office_agent_app.py`。
 
@@ -97,7 +100,7 @@ docker run --rm ai-agent-book/project-6
 
 ## 实现说明与验收
 
-`OfficeWorkflow` 通过 Mail/Calendar Protocol 接入数据，Fixture 让无账号环境完整运行；日报包含邮件摘要与日程。批准令牌绑定报告 ID、内容摘要、目标、审批者和有效期，未批准绝不会发出 HTTP 请求。`ApprovalOutboxStore` 提供跨进程恢复、租约、最多三次尝试和成功结果去重；`WebhookPublisher` 发送稳定 `Idempotency-Key`，测试以 MockTransport 验证真实 HTTP 边界。所有准备、阻止、批准、失败和发布动作写入 JSONL 审计，日志仅记录错误类型而不记录凭证或完整响应。
+`OfficeWorkflow` 通过 Mail/Calendar Protocol 接入数据，Fixture 让无账号环境完整运行；日报包含邮件摘要与日程。批准令牌绑定报告 ID、内容摘要、目标、审批者和有效期，未批准绝不会发出 HTTP 请求。`ApprovalOutboxStore` 提供跨进程恢复、租约、最多三次确定失败尝试、成功结果去重与未知状态冻结；`WebhookPublisher` 发送稳定 `Idempotency-Key`，可选 `ReceiptReconciler` 查询远端业务回执，测试以 MockTransport 验证真实 HTTP 边界。所有准备、阻止、批准、失败、未知、对账和发布动作写入 JSONL 审计，日志仅记录错误类型而不记录凭证或完整响应。
 
 ## 目录、配置与扩展
 

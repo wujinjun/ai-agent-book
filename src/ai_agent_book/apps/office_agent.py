@@ -43,6 +43,7 @@ class PublishResult(BaseModel):
     status: Literal["approval_required", "published", "failed"]
     external_id: str | None = None
     retryable: bool = False
+    reconciliation_required: bool = False
 
 
 class AuditEntry(BaseModel):
@@ -63,6 +64,10 @@ class CalendarProvider(Protocol):
 
 class Publisher(Protocol):
     async def publish(self, title: str, markdown: str, *, idempotency_key: str) -> str: ...
+
+
+class ReceiptReconciler(Protocol):
+    async def lookup_receipt(self, *, idempotency_key: str) -> str | None: ...
 
 
 class FixtureMailProvider:
@@ -184,7 +189,7 @@ class ApprovalOutboxStore:
         max_attempts: int = 3,
         now: int | None = None,
     ) -> tuple[str, str | None]:
-        """返回 ``(状态, external_id)``；状态为 claimed/published/busy/exhausted。"""
+        """返回 ``(状态, external_id)``；未知远端结果不会被普通重试重新领取。"""
         _validate_report_digest(report)
         current = int(time.time()) if now is None else now
         key = self.idempotency_key(report, target)
@@ -218,6 +223,8 @@ class ApprovalOutboxStore:
             assert item is not None
             if item["status"] == "published":
                 return "published", str(item["external_id"])
+            if item["status"] == "unknown":
+                return "unknown", None
             if item["status"] == "delivering" and int(item["lease_until"] or 0) >= current:
                 return "busy", None
             if int(item["attempts"]) >= max_attempts:
@@ -247,6 +254,18 @@ class ApprovalOutboxStore:
         with self._connect() as connection:
             cursor = connection.execute(
                 """UPDATE outbox SET status = 'failed', last_error = ?, lease_until = NULL,
+                updated_at = ? WHERE idempotency_key = ? AND status = 'delivering'""",
+                (safe_error, current, key),
+            )
+            if cursor.rowcount != 1:
+                raise RuntimeError("outbox item is not claimed")
+
+    def mark_unknown(self, key: str, error: str, *, now: int | None = None) -> None:
+        current = int(time.time()) if now is None else now
+        safe_error = error[:500]
+        with self._connect() as connection:
+            cursor = connection.execute(
+                """UPDATE outbox SET status = 'unknown', last_error = ?, lease_until = NULL,
                 updated_at = ? WHERE idempotency_key = ? AND status = 'delivering'""",
                 (safe_error, current, key),
             )
@@ -368,6 +387,7 @@ class OfficeWorkflow:
         approval_token: str | None,
         target: str = "daily-report",
         now: int | None = None,
+        reconciler: ReceiptReconciler | None = None,
     ) -> PublishResult:
         if not approval_token:
             self._audit("publish_blocked", report.report_id, "agent", {"reason": "missing"})
@@ -383,8 +403,12 @@ class OfficeWorkflow:
             return PublishResult(status="approval_required")
         if claim == "published":
             return PublishResult(status="published", external_id=external_id)
-        if claim in {"busy", "exhausted"}:
-            return PublishResult(status="failed", retryable=claim == "busy")
+        if claim in {"busy", "exhausted", "unknown"}:
+            return PublishResult(
+                status="failed",
+                retryable=claim == "busy",
+                reconciliation_required=claim == "unknown",
+            )
 
         key = self.state.idempotency_key(report, target)
         if publisher is None:
@@ -394,7 +418,32 @@ class OfficeWorkflow:
                 external_id = await publisher.publish(
                     "自动办公日报", report.markdown, idempotency_key=key
                 )
-            except (httpx.HTTPError, TimeoutError, OSError, ValueError) as exc:
+            except (httpx.ReadTimeout, httpx.WriteError, TimeoutError) as exc:
+                receipt = (
+                    await reconciler.lookup_receipt(idempotency_key=key)
+                    if reconciler is not None
+                    else None
+                )
+                if receipt:
+                    self.state.mark_published(key, receipt)
+                    self._audit(
+                        "publish_reconciled",
+                        report.report_id,
+                        "agent",
+                        {"external_id": receipt, "target": target},
+                    )
+                    return PublishResult(status="published", external_id=receipt)
+                self.state.mark_unknown(key, type(exc).__name__)
+                self._audit(
+                    "publish_unknown",
+                    report.report_id,
+                    "agent",
+                    {"error_type": type(exc).__name__, "target": target},
+                )
+                return PublishResult(
+                    status="failed", retryable=False, reconciliation_required=True
+                )
+            except (httpx.HTTPError, OSError, ValueError) as exc:
                 self.state.mark_failed(key, type(exc).__name__)
                 self._audit(
                     "publish_failed",

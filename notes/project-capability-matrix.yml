@@ -75,10 +75,10 @@ projects:
     domain_implementation: src/ai_agent_book/apps/office_agent.py
     direct_tests: [tests/test_office_agent_app.py]
     dockerfile: projects/06-office-agent/Dockerfile
-    persistence_recovery: 持久租约 Outbox 与失败恢复
-    side_effect_safety: 内容和目标绑定批准、幂等发布与审计
+    persistence_recovery: 持久租约 Outbox、确定失败重试、未知结果冻结与远端回执对账
+    side_effect_safety: 内容和目标绑定批准、幂等发布、ReceiptReconciler 与审计
     external_adapter: mock_only
-    gaps: [真实账号 OAuth, 远端结果对账, 供应商限流联调]
+    gaps: [真实账号 OAuth, 真实供应商回执查询适配, 供应商限流联调]
   - id: 7
     name: 股票研究 Agent
     maturity: service_template

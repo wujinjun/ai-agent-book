@@ -16,6 +16,16 @@ from ai_agent_book.apps.office_agent import (
 )
 
 
+class FixtureReconciler:
+    def __init__(self, receipt: str | None) -> None:
+        self.receipt = receipt
+        self.keys: list[str] = []
+
+    async def lookup_receipt(self, *, idempotency_key: str) -> str | None:
+        self.keys.append(idempotency_key)
+        return self.receipt
+
+
 @pytest.mark.asyncio
 async def test_office_workflow_summarizes_mail_and_calendar_then_requires_approval(
     tmp_path: Path,
@@ -179,3 +189,71 @@ async def test_transient_failure_is_persisted_and_retry_recovers(tmp_path: Path)
     assert item_after_failure is not None and item_after_failure["status"] == "failed"
     assert recovered.status == "published" and recovered.external_id == "retry-ok"
     assert requests == 2
+
+
+@pytest.mark.asyncio
+async def test_ambiguous_timeout_is_reconciled_by_remote_receipt(tmp_path: Path) -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        raise httpx.ReadTimeout("response lost after accept", request=request)
+
+    now = datetime.now(UTC)
+    store = ApprovalOutboxStore(tmp_path / "office.db")
+    workflow = OfficeWorkflow(
+        FixtureMailProvider([]),
+        FixtureCalendarProvider([]),
+        JsonlAuditLog(tmp_path / "audit.jsonl"),
+        store,
+    )
+    report = await workflow.prepare_daily_report(now, now + timedelta(days=1))
+    token = workflow.approve(report, approver="manager")
+    reconciler = FixtureReconciler("remote-receipt-1")
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+        result = await workflow.publish(
+            report,
+            WebhookPublisher("https://office.test/hook", client=client),
+            approval_token=token,
+            reconciler=reconciler,
+        )
+
+    item = store.get_outbox(store.idempotency_key(report, "daily-report"))
+    assert result.status == "published" and result.external_id == "remote-receipt-1"
+    assert item is not None and item["status"] == "published"
+    assert len(reconciler.keys) == 1
+
+
+@pytest.mark.asyncio
+async def test_unresolved_ambiguous_timeout_requires_manual_reconciliation(
+    tmp_path: Path,
+) -> None:
+    requests = 0
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal requests
+        requests += 1
+        raise httpx.ReadTimeout("unknown remote result", request=request)
+
+    now = datetime.now(UTC)
+    store = ApprovalOutboxStore(tmp_path / "office.db")
+    workflow = OfficeWorkflow(
+        FixtureMailProvider([]),
+        FixtureCalendarProvider([]),
+        JsonlAuditLog(tmp_path / "audit.jsonl"),
+        store,
+    )
+    report = await workflow.prepare_daily_report(now, now + timedelta(days=1))
+    token = workflow.approve(report, approver="manager")
+    reconciler = FixtureReconciler(None)
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+        publisher = WebhookPublisher("https://office.test/hook", client=client)
+        unknown = await workflow.publish(
+            report, publisher, approval_token=token, reconciler=reconciler
+        )
+        repeated = await workflow.publish(
+            report, publisher, approval_token=token, reconciler=reconciler
+        )
+
+    item = store.get_outbox(store.idempotency_key(report, "daily-report"))
+    assert unknown.reconciliation_required and not unknown.retryable
+    assert repeated.reconciliation_required and not repeated.retryable
+    assert item is not None and item["status"] == "unknown"
+    assert requests == 1
