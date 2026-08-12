@@ -53,7 +53,7 @@ P9 当前状态为 `complete_repository_scope`。仓库证据分为个人系统�
 - 当前 PDF 候选于 2026-08-13 从现行源码重建：A4 共 558 页、61,711,644 字节，SHA-256 为 `234f9719ec8ef39f367583a1eb9cfea5053e47c75c28c9d92e2b76f24b1b7770`。Mermaid 使用 SVG 矢量资源，48 张出版信息图使用印刷缓存；代表性封面、目录、正文、代码、表格、工程图、信息图、项目、索引和末页已栅格化复审。Noto Sans SC 与 Source Code Pro 固定到上游 commit 并携带 OFL；发行预检确认未嵌入 Menlo 等未批准系统字体。
 - 当前 EPUB3 为 134,731,201 字节，SHA-256 为 `3e75f60fe0fdec9c3896f2fd38b3961546058806b91af320ad02d763dbf65567`，容器含 259 张 SVG 与 309 张 PNG；出版信息图进入容器且不依赖 JavaScript 渲染。MkDocs HTML、PDF 和 EPUB 已于 2026-08-13 从同一源码重新构建并通过出版审计，HTML 下载目录同步同批 PDF 与 EPUB。
 - P7 本地候选 EPUB3 为 13,443,800 字节，具备 nav、spine、严格 XHTML、跨文件片段和资源引用检查；Apple Books 实机与 Calibre 9.13.0 解析引擎复验通过，HTML 下载目录同时包含同次构建的 PDF 与 EPUB。
-- GitHub `main` 已合并 P0—P9 仓库范围成果；[GitHub Release v2026.8.1](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.1) 发布完整 HTML 压缩包、454 页 PDF、EPUB3、企业培训 PPTX、发行清单与 SHA-256。
+- GitHub `main` 已合并 P0—P9 仓库范围成果；[GitHub Release v2026.8.2](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.2) 发布含 260 张 Mermaid 工程图与 48 张出版信息图的完整 HTML 压缩包、558 页 PDF、EPUB3、企业培训 PPTX、发行清单与 SHA-256。
 - P7 的 macOS 实机、Calibre 引擎、390/768/1440px 视口与 12 页图稿联系表复验已完成；实体 iOS/Android、商业印刷样张和出版社终审仍由 P9 跟踪。
 
 ## 已完成批次与尚未完成边界
