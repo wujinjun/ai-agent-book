@@ -63,10 +63,10 @@ projects:
     domain_implementation: src/ai_agent_book/apps/code_review.py
     direct_tests: [tests/test_code_review_app.py, tests/test_coding_workspace.py]
     dockerfile: projects/05-code-review-agent/Dockerfile
-    persistence_recovery: Webhook 持久去重与报告恢复
-    side_effect_safety: Diff 预算、提交与报告哈希绑定批准
+    persistence_recovery: Webhook 持久去重，以及提交/报告绑定标记的远端评论查询恢复
+    side_effect_safety: Diff 预算、提交与报告哈希绑定批准、发布前既有评论查询
     external_adapter: mock_only
-    gaps: [GitHub App 安装鉴权, 多语言静态分析沙箱, 远程评论对账]
+    gaps: [GitHub App 安装鉴权, 多语言静态分析沙箱, 并发评论单写领取]
   - id: 6
     name: 自动办公 Agent
     maturity: service_template

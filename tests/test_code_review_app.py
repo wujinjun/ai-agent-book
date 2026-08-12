@@ -1,5 +1,6 @@
 import hashlib
 import hmac
+import json
 import subprocess
 from pathlib import Path
 
@@ -100,6 +101,8 @@ async def test_comment_approval_is_bound_to_commit_and_report() -> None:
 
     def handler(request: httpx.Request) -> httpx.Response:
         nonlocal posted_body
+        if request.method == "GET":
+            return httpx.Response(200, json=[])
         posted_body = str(request.read().decode())
         return httpx.Response(201, json={"html_url": "https://example.test/comment/1"})
 
@@ -138,4 +141,61 @@ async def test_comment_approval_is_bound_to_commit_and_report() -> None:
             )
 
     assert posted.status == "posted"
-    assert approval.report_sha256 in posted_body
+    assert "ai-agent-book-review" in posted_body
+
+
+@pytest.mark.asyncio
+async def test_existing_commit_bound_review_comment_is_not_posted_twice() -> None:
+    get_calls = 0
+    post_calls = 0
+    saved_body = ""
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal get_calls, post_calls, saved_body
+        if request.method == "GET":
+            get_calls += 1
+            comments = (
+                []
+                if not saved_body
+                else [{"body": saved_body, "html_url": "https://example.test/comment/1"}]
+            )
+            return httpx.Response(200, json=comments)
+        post_calls += 1
+        saved_body = json.loads(request.read())["body"]
+        return httpx.Response(201, json={"html_url": "https://example.test/comment/1"})
+
+    authority = ApprovalAuthority(b"0123456789abcdef")
+    approval = authority.issue(
+        owner="o",
+        repository="r",
+        pull_number=7,
+        commit_sha="abcdef1",
+        markdown="review",
+        now=100,
+    )
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+        github = GitHubCommentClient("token", client=client)
+        first = await github.publish_with_approval(
+            "o",
+            "r",
+            7,
+            "abcdef1",
+            "review",
+            approval=approval,
+            authority=authority,
+            now=120,
+        )
+        repeated = await github.publish_with_approval(
+            "o",
+            "r",
+            7,
+            "abcdef1",
+            "review",
+            approval=approval,
+            authority=authority,
+            now=120,
+        )
+
+    assert first.url == repeated.url == "https://example.test/comment/1"
+    assert get_calls == 2
+    assert post_calls == 1

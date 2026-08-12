@@ -87,7 +87,7 @@
 | 项目2 | `service_template` | Tool Loop、校验、并行、重试、审批；持久 Run 与幂等服务边界 | 真实天气、审批恢复专项链路 | P4 |
 | 项目3 | `service_template` | 官方 SDK 2.0.0 Tool/Resource/Prompt、stdio/HTTP；租户化服务边界 | OAuth、Origin、取消、超时和部署治理 | P4 |
 | 项目4 | `production_reference` | 四格式解析、pgvector、持久摄取 Worker、完整性指纹、版本索引、黄金发布门禁、原子切换、恢复、租户 API 与引用 | OCR、正式 Embedding/Reranker、规模压测与外部验证 | P4—P9 |
-| 项目5 | `service_template` | Diff、规则、语义 Review、报告、Diff 预算 Sandbox、Webhook HMAC/持久去重、绑定提交与报告哈希的限时审批、HTTP、权限与审计 | 真实 GitHub App 安装鉴权、多语言静态分析容器和远程评论查询去重 | P4 |
+| 项目5 | `service_template` | Diff、规则、语义 Review、报告、Diff 预算 Sandbox、Webhook HMAC/持久去重、绑定提交与报告哈希的限时审批、评论标记远端查询去重、HTTP、权限与审计 | 真实 GitHub App 安装鉴权、多语言静态分析容器和并发评论单写领取 | P4 |
 | 项目6 | `service_template` | Provider、日报、内容/目标绑定限时审批、持久租约 Outbox、幂等发布、确定失败重试、未知结果冻结、可选远端回执对账、审计与持久服务状态 | 真实账号 OAuth、真实供应商回执查询适配和限流联调 | P4 |
 | 项目7 | `service_template` | 多 Provider、指标、来源、事实/推断；持久服务状态 | 正式数据源、财报解析和时效评估 | P4 |
 | 项目8 | `production_reference` | LangGraph、RetryPolicy、Interrupt、持久 Run Journal、证据 Allowlist/哈希、租户 Worker、审批、跨进程确定性重放，以及报告发布 Outbox、稳定幂等键和回执恢复 | 真实搜索、原生数据库 Saver、真实 Publisher 幂等/未知结果对账与外部验证 | P4—P9 |

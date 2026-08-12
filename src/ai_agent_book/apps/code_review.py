@@ -443,7 +443,14 @@ class GitHubCommentClient:
             markdown=markdown,
             now=now,
         )
-        marker = f"<!-- ai-agent-book-review:{approval.report_sha256} -->"
+        marker_payload = f"{owner}/{repository}#{pull_number}:{commit_sha}:{approval.report_sha256}"
+        action_hash = hashlib.sha256(marker_payload.encode()).hexdigest()
+        marker = f"<!-- ai-agent-book-review:{action_hash} -->"
+        existing = await self.find_comment(
+            owner, repository, pull_number, marker=marker
+        )
+        if existing is not None:
+            return PublishResult(status="posted", url=existing)
         return await self.publish(
             owner,
             repository,
@@ -451,3 +458,40 @@ class GitHubCommentClient:
             f"{marker}\n{markdown}",
             approved=True,
         )
+
+    async def find_comment(
+        self,
+        owner: str,
+        repository: str,
+        pull_number: int,
+        *,
+        marker: str,
+        max_pages: int = 10,
+    ) -> str | None:
+        """按不可见动作标记查询既有评论；有界分页避免无限扫描。"""
+        owns_client = self.client is None
+        client = self.client or httpx.AsyncClient(timeout=10)
+        try:
+            for page in range(1, max_pages + 1):
+                response = await client.get(
+                    f"https://api.github.com/repos/{owner}/{repository}/issues/{pull_number}/comments",
+                    headers={
+                        "Authorization": f"Bearer {self.token}",
+                        "Accept": "application/vnd.github+json",
+                        "X-GitHub-Api-Version": "2022-11-28",
+                    },
+                    params={"per_page": 100, "page": page},
+                )
+                response.raise_for_status()
+                comments = response.json()
+                if not isinstance(comments, list):
+                    raise ValueError("GitHub comments response must be a list")
+                for comment in comments:
+                    if marker in str(comment.get("body", "")):
+                        return str(comment.get("html_url", ""))
+                if len(comments) < 100:
+                    return None
+            return None
+        finally:
+            if owns_client:
+                await client.aclose()

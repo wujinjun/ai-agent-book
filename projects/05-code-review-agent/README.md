@@ -83,6 +83,7 @@ docker run --rm ai-agent-book/project-5
 - `DiffPolicy` 对字节数、变更文件数和新增行数设置硬预算，在进入静态规则或 LLM Reviewer 前拒绝超大审查范围，避免成本失控和拒绝服务。
 - `WebhookDeliveryStore` 使用 GitHub Webhook HMAC-SHA256 签名验证请求，并把 delivery ID、载荷哈希和处理状态持久化；同一 delivery 重放不会重复触发 Review，若相同 ID 携带不同载荷则直接拒绝。
 - `ApprovalAuthority` 把人工批准绑定到仓库、PR、提交 SHA、Review 报告 SHA-256 和过期时间。Diff 或报告内容变化后，旧令牌不能用于发布；实际评论带稳定报告标记，便于后续查询与去重。
+- `GitHubCommentClient.publish_with_approval()` 在 POST 前以仓库、PR、提交 SHA 和报告哈希生成不可见动作标记，并有界分页查询已有评论。远端已成功而本地进程随后崩溃时，重试会返回既有评论 URL，不再重复 POST。查询与发布不是 GitHub 侧原子事务；并发发布仍需数据库单写领取或串行 Worker，不能把标记查询描述成 exactly-once。
 
 这些机制解决“同一个 Webhook 被多次投递”“审批后提交已经变化”“巨型 Diff 耗尽模型预算”等故障，但没有宣称实现完整 GitHub App。生产接入仍需安装级 Token、仓库 allowlist、权限最小化、Webhook IP/时间策略和评论查询接口；这些属于真实 GitHub 环境联调边界。
 
@@ -92,7 +93,7 @@ docker run --rm ai-agent-book/project-5
 PYTHONPATH=src .venv/bin/python -m pytest tests/test_code_review_app.py -q
 ```
 
-测试覆盖临时仓库 Diff、规则与报告、未审批零网络调用、审批绑定、Webhook 伪造签名、重复 delivery、冲突载荷和超预算 Diff。预期为 `5 passed`。
+测试覆盖临时仓库 Diff、规则与报告、未审批零网络调用、审批绑定、Webhook 伪造签名、重复 delivery、冲突载荷、超预算 Diff，以及评论标记远端查询去重。预期为 `6 passed`。
 
 ## 目录、配置与扩展
 
