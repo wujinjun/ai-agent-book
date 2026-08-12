@@ -2,6 +2,10 @@
 
 ## Unreleased - 2026-08-12
 
+- 深化第 7 章 Structured Output：增加 Candidate/Validated/Committed 事务边界、错误责任分类、Schema 兼容矩阵、与离线抽取器的能力边界对照及练习参考答案，正文增至约 8.4 千字符。
+- 深化第 31 章成本与性能：增加单位成功任务成本、关键路径、重试放大、权限版本缓存、Run deadline、性能实验矩阵和练习答案，正文增至约 9.2 千字符。
+- 新增第 12 个独立示例 Cost/Latency Lab；在全新 Python 3.12 venv 中通过离线入口、7 项 pytest、Ruff 与严格 mypy，不写死模型价格或伪造真实性能数据。
+
 - 完成出版信息图升级：A 级核心图 12/12、B 级增强图 20/20、全章与十项目覆盖图 16/16；本轮内容与项目增强后保留 240 张 Mermaid 作为精确工程图。
 - 为上下文、生成控制、Embedding、Prompt Injection、Structured Output、Tool 权限、规划、MCP Server、高级 RAG、向量索引、原生 Runtime、Agents SDK、Agent API、存储、部署、队列、评估、成本、Browser Agent 和技术选型增加出版级信息图。
 - 48 张信息图统一生成可编辑 SVG 与高分辨率 PNG，并补齐 manifest、SHA-256、来源、提示词台账、图号、长替代文本和图后解释；38 章和 10 个项目均有独立出版图。

@@ -17,6 +17,7 @@ EXPECTED_EXAMPLES = {
     "openai_agents_sdk",
     "pydanticai_service",
     "framework_comparison",
+    "cost_latency_lab",
 }
 REQUIRED_FIELDS = {
     "name",
@@ -39,7 +40,7 @@ def load_catalog() -> list[dict[str, object]]:
 
 def test_catalog_declares_exactly_the_planned_examples() -> None:
     examples = load_catalog()
-    assert len(examples) == 11
+    assert len(examples) == 12
     assert {entry["name"] for entry in examples} == EXPECTED_EXAMPLES
 
     for entry in examples:

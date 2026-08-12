@@ -47,6 +47,75 @@ class Invoice(BaseModel):
 
 工程抽取器应保存原文哈希、Schema 版本、模型版本、原始输出、验证错误与最终结果。重试只针对语法或可解释的字段错误，并设置次数上限；金额与币种等业务约束由确定性代码验证。部分解析仅用于界面预览，不能写入正式账务。
 
+### 从字段模型到可提交事务
+
+生产实现不能把 `model_validate()` 成功直接等同于业务提交。更稳妥的做法是把一次抽取拆成三个对象：`Candidate` 保存模型候选，`Validated` 表示结构与领域不变量已通过，`Committed` 才表示主体权限、外部事实和幂等写入全部成功。三个阶段即使拥有相同字段，也应具有不同类型或状态，防止未验收对象绕过流程。
+
+以事故抽取为例，`severity="high"` 属于 Schema 允许值，但模型可能误判事故等级；`affected_service="payment"` 也可能是一个合法字符串，却未必存在于当前租户的服务目录。Pydantic 能拒绝未知枚举、空字符串和多余字段，却无法从类型本身推导事实。工程代码应在结构校验之后查询权威目录，并把“资源不存在”映射为不可由模型猜测修复的业务错误。
+
+```python
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True, slots=True)
+class AcceptedIncident:
+    incident: Incident
+    tenant_id: str
+    source_hash: str
+    schema_version: str
+
+
+def accept_incident(
+    incident: Incident,
+    *,
+    tenant_id: str,
+    known_services: set[str],
+    source_hash: str,
+) -> AcceptedIncident:
+    if incident.affected_service not in known_services:
+        raise LookupError("unknown_service")
+    return AcceptedIncident(
+        incident=incident,
+        tenant_id=tenant_id,
+        source_hash=source_hash,
+        schema_version="incident.v1",
+    )
+```
+
+这里故意没有在服务不存在时要求模型“再猜一个”。权威目录缺少记录可能意味着输入错误、数据未同步或调用者无权查看，继续生成只会把业务拒绝伪装成格式修复。
+
+### 与离线示例逐步对照
+
+[`examples/structured_extractor/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/structured_extractor) 把 Provider 定义成只返回候选字典的端口。`Incident` 使用 `strict=True` 和 `extra="forbid"`：数字不会被悄悄转成严重等级，多余字段也不会被默默丢弃。`Extractor` 先执行教学级敏感模式门禁，然后在 `max_repairs + 1` 次总尝试内调用 Provider；每次只把稳定错误类别传回，而不泄漏原始输入和值。
+
+这种实现有意暴露两个边界。第一，当前 Fixture Provider 直接返回字典，尚未演示供应商字符串到 JSON 的解析层；在线 Adapter 应独立处理空响应、截断、非法 UTF-8、JSON 语法错误和 HTTP 超时。第二，示例只校验结构，没有查询服务目录，因此输出仍是“结构上可用的候选事故”，不是经过企业事实核验的正式记录。教材用这两个缺口提醒读者：端口测试通过不等于整条生产链路完成。
+
+### 错误分类与可观测字段
+
+错误应按处理责任分类，而不是都叫 `validation_failed`。
+
+| 分类 | 示例 | 是否交给模型重试 | 负责层 | 建议观测字段 |
+|---|---|---:|---|---|
+| 传输错误 | 超时、限流、连接断开 | 否，由客户端有限退避 | Provider Adapter | provider、status、attempt |
+| 语法错误 | JSON 未闭合、非法转义 | 可尝试一次确定性修复或模型修复 | Parser | finish_reason、byte_length |
+| Schema 错误 | 缺字段、类型或枚举错误 | 可在小预算内重试 | Validator | schema_version、path、code |
+| 领域冲突 | 结束早于开始、金额为负 | 通常拒绝；必要时要求用户补充 | Domain | invariant、source_id |
+| 外部事实 | ID 不存在、版本过期 | 不允许模型猜测 | Repository/Service | tenant、resource_version |
+| 授权拒绝 | 主体无权访问对象 | 绝不重试绕过 | Policy | principal、object、decision |
+
+Trace 默认记录错误代码、字段路径、Schema 与模型版本，不记录完整原文或敏感字段值。若需要保存原始候选用于受控诊断，应加密、限制保留时间、按租户授权并产生访问审计。
+
+### Schema 演进的兼容矩阵
+
+Schema 版本不是装饰字段。生产者升级前要判断旧消费者是否仍能处理新对象：新增可选字段通常向后兼容；新增必填字段会破坏旧数据重放；字段重命名同时破坏读写双方；枚举新增值对“穷尽匹配”的消费者也可能不兼容。推荐采用并行读、单版本写的迁移过程：先让消费者同时读取 v1/v2，再切换生产者写 v2，完成历史迁移与观测后才停止 v1。
+
+```text
+读取 v1 + v2 → 写入 v1 → 写入 v2 → 回填历史 → 停止 v1
+       兼容观察期      切换点        可回滚窗口
+```
+
+幂等键至少包含输入哈希、Schema 版本和抽取策略版本。同一文档用新 Schema 重跑应生成新结果版本，而不是错误命中旧缓存；同一版本的网络重试则应复用同一幂等键，避免重复提交。
+
 ## 常见误区、调试方法与工程实践
 
 误区：可解析 JSON 等于合法对象；自动补默认值总是安全；失败就无限重试。调试应区分语法错误、Schema 错误、业务错误和证据缺失，统计各字段失败率。Schema 演进需兼容策略，消费者不得假设新增字段永远存在。
@@ -151,6 +220,13 @@ Schema 演进要考虑生产者和消费者不同步。新增可选字段通常�
 测试应覆盖正确对象、非法 JSON、缺字段、超长字段、错误枚举、跨字段冲突、外部 ID 不存在和重试用尽。Mock 模型要返回预设原始字符串，以验证解析器真实处理失败，而不是直接返回已经构造好的 Pydantic 对象。
 
 Structured Output 把概率文本接到类型边界，但不提供真实性。练习：实现发票抽取模型、三类失败测试与有限重试；面试问题：JSON mode 与 JSON Schema 有什么差异？何时允许部分解析？延伸阅读：JSON Schema 规范与 Pydantic 当前文档。
+
+### 练习参考答案
+
+1. **发票抽取模型。** 使用 `ConfigDict(strict=True, extra="forbid")`；金额用十进制定点类型而非二进制浮点；币种使用受控枚举；发票日期与到期日由模型字段表达，`due_date >= invoice_date` 由领域校验器表达。供应商 ID 必须查询当前租户的供应商目录。
+2. **三类失败测试。** 语法层输入缺少闭合括号，断言 Parser 返回可修复错误；Schema 层输入缺字段或错误枚举，断言最多调用 Provider 两次；业务层使用不存在的供应商 ID，断言不再次调用模型并返回稳定的 `unknown_supplier`。
+3. **部分解析。** UI 可显示带 `draft` 标记的字段，但不得写入账务、调用支付 Tool 或生成审批令牌。连接完成后必须重新解析完整对象并执行整体校验，不能把多个字段级“局部通过”拼成正式对象。
+4. **面试题：JSON mode 与 JSON Schema。** JSON mode 主要提高语法上可解析 JSON 的概率；Schema 还约束字段、类型、枚举和必填项。两者都不能证明事实正确、调用者有权访问，或外部资源仍处于同一版本。
 
 本章代码目录为 [`examples/structured_extractor/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/structured_extractor)，使用 Pydantic 2.11.7 提供严格 Schema、Provider 端口、确定性 Fake、最多三次的有限修复、敏感输入门禁和不泄漏内部 ValidationError 的稳定公共错误。
 

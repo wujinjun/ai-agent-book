@@ -1,5 +1,5 @@
 schema_version: 1
-updated_at: "2026-08-07"
+updated_at: "2026-08-12"
 description: >
   P2 独立示例工程的事实源。complete 只能在目录契约、离线运行、直接测试和
   章节双向链接全部通过后改为 true；未完成项不会用空目录冒充交付。
@@ -92,4 +92,12 @@ examples:
     offline_command: python -m framework_comparison.main --fixture research
     test_command: python -m pytest -q
     dependency_group: isolated
+    complete: true
+  - name: cost_latency_lab
+    chapter: 31
+    package: cost_latency_lab
+    python: ">=3.12,<3.13"
+    offline_command: python -m cost_latency_lab.main --fixture baseline
+    test_command: python -m pytest -q
+    dependency_group: root
     complete: true
