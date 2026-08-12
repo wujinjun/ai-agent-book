@@ -1,5 +1,11 @@
 # 第22章：CrewAI、AutoGen 与其他 Multi-Agent 框架
 
+![任务先判断是否需要协作，再比较单 Agent、确定性工作流、Supervisor 和角色团队，协作通过类型化状态交换工件与证据，并受回合、成本、延迟、权限、死锁和终止门约束，最后与单 Agent 基线比较](../assets/infographics/png/multi-agent-framework-decision-infographic-2x.png)
+
+*图 22-A　Multi-Agent 框架的必要性与模式选择。*
+
+多 Agent 是一种分工与隔离方案，不是默认升级路径。只有任务成功率或独立审查质量相对单 Agent 基线有可测收益，且收益覆盖额外成本和协调风险时，角色协作才值得保留。
+
 最后核对日期：2026-08-07；CrewAI 1.15.12、AutoGen AgentChat 0.7.5 与 Semantic Kernel 1.44.1 已在独立 Python 3.12 环境安装实测。
 
 ## 导读、目标与前置知识

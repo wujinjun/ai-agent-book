@@ -1,5 +1,11 @@
 # 第21章：LangChain 与 LlamaIndex
 
+![业务问题和稳定领域接口之下并列组件编排、可恢复状态图与文档检索三类框架能力，经可替换适配器连接模型、向量库、工具和存储，并通过 Spike、回归数据集与迁移出口验证](../assets/infographics/png/framework-layer-boundaries-infographic-2x.png)
+
+*图 21-A　LangChain、LangGraph、LlamaIndex 与原生能力的分层边界。*
+
+三类框架解决的问题并不相同：组件抽象、可恢复编排和数据检索可以组合，却不应互相冒充。领域接口保持稳定，框架对象停留在适配层，才可能用真实数据做替换实验并控制锁定风险。
+
 最后核对日期：2026-08-07；LangChain 1.3.14（core 1.5.3）与 LlamaIndex Core 0.14.23 已在独立 Python 3.12 环境安装并完成同题检索实测。
 
 ## 导读、目标与前置知识

@@ -300,3 +300,52 @@ assets:
     generator: P5 training publication workflow
     rights_basis: original repository content; visible text uses the bundled SIL-OFL-1.1 Noto Sans SC; device substitution still requires final review
     external_content: false
+  - path: docs/assets/infographics/png/coding-agent-patch-transaction-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 0b118f2aa6be84632778f0e598d60fd232ab35de3c9d0e772ecd7b7219ba22aa
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/demo-to-product-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 07dc10daa487227ef44f21d95ca81e2244f10d53832cb41fc6cbbd1398def7d6
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/framework-layer-boundaries-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: b29c61420173ab6542611576c2731c7bef0a8d17cb3f4b381acd8f82e6c8fdc6
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/multi-agent-framework-decision-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 41323af5fc9547fde73dda111549f3a73112f151f456adea014cb80d7ee1bda4
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/multimodal-evidence-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 119e710293679ab8f06995a5073c3daf3d1230b4ac6878b44936950ac74caf20
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/pydanticai-type-contract-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: 748b814ace3439d948b15b0ff4728929d5c7379a25d50c922819a0504169827d
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false
+  - path: docs/assets/infographics/png/python-agent-engineering-infographic-2x.png
+    kind: generated_textbook_infographic
+    origin: repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay
+    generator: built-in imagegen + scripts/build_infographics.py
+    sha256: fcb52d16f7abb01032af189dba17cad0545c82209e06ff625eb106d76532307d
+    rights_basis: original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork
+    external_content: false

@@ -2,6 +2,12 @@
 
 最后核对日期：2026-08-07；本章核心代码已按官方 Dependencies、Tools、Output 与 Testing 文档和隔离安装的 `pydantic-ai-slim==2.25.0` 复验。
 
+![类型化请求进入 PydanticAI Agent，经模型适配、依赖注入和工具调用得到结构化输出，校验失败在预算内重试，最终进入 FastAPI、Fake 测试与 Trace 回归](../assets/infographics/png/pydanticai-type-contract-infographic-2x.png)
+
+*图 19-A　PydanticAI 的类型契约、依赖与校验边界。*
+
+图中五层分别对应请求契约、模型边界、外部依赖、结果校验和工程验证。类型系统能把错误提前暴露在应用边界，却不会自动证明外部事实正确，也不会替代主体授权；因此权限检查仍应位于领域服务或工具执行器中。
+
 ## 导读、目标与前置知识
 PydanticAI 强调类型安全、依赖注入、验证和模型抽象。本章目标是判断它在 Python 业务服务中的价值。前置知识为 Pydantic、async/await 与第17章。
 

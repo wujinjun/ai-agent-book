@@ -1,5 +1,5 @@
 schema_version: 1
-updated_at: 2026-08-11
+updated_at: 2026-08-12
 acceptance:
   technical_facts: required
   editable_semantic_text: required
@@ -334,3 +334,36 @@ pilots:
     html_review: pass
     pdf_review: pass_a4_contact_sheet
     epub_review: pass
+coverage_batch:
+  id: full-chapter-and-ten-project-coverage-2026-08-12
+  priority: C-publication
+  status: accepted
+  count: 16
+  semantic_ids:
+    - pydanticai-type-contract-infographic
+    - framework-layer-boundaries-infographic
+    - multi-agent-framework-decision-infographic
+    - python-agent-engineering-infographic
+    - coding-agent-patch-transaction-infographic
+    - multimodal-evidence-infographic
+    - demo-to-product-infographic
+    - project01-minimal-assistant-infographic
+    - project02-weather-tool-agent-infographic
+    - project03-mcp-local-agent-infographic
+    - project04-knowledge-agent-infographic
+    - project05-code-review-agent-infographic
+    - project06-office-agent-infographic
+    - project07-stock-research-agent-infographic
+    - project08-research-workflow-infographic
+    - project09-multi-agent-dev-infographic
+  base_generated: true
+  svg_composed: true
+  markdown_integrated: true
+  technical_review: pass
+  html_review: pass
+  pdf_review: pass_pages_259_280_296_447_467_492
+  epub_review: pass_publication_audit
+  notes: >-
+    38 个正文章节和 10 个完整项目均有独立出版图；48 条 manifest 记录的
+    source、SVG、PNG 与 SHA-256 由自动测试逐项验证。项目 1—9 总图位于各项目
+    README，不进入正式书稿导航；正式书稿新增 7 张章节图。

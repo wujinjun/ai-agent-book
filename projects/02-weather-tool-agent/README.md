@@ -1,5 +1,11 @@
 # 项目2：天气与工具调用 Agent
 
+![用户意图进入工具注册表，模型提出动作后由 Runtime 校验工具名参数 Schema 和依赖，天气位置与风险工具按权限执行，高风险动作经过人工确认，再施加超时重试幂等归并和步数成本终止](../../docs/assets/infographics/png/project02-weather-tool-agent-infographic-2x.png)
+
+*图 P2-A　天气 Tool Agent 的模型提议与运行时门禁。*
+
+图中模型没有执行权。所有工具调用先经过确定性校验和授权，高风险操作绑定人工确认；并行只用于相互独立的调用，重试则必须共享总预算并配合幂等策略。
+
 ## 需求、架构与数据流
 技术选型：Python 3.12、Pydantic 2、FastAPI、pytest 与 Docker；在线供应商通过适配器接入。
 

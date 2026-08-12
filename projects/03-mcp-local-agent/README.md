@@ -1,5 +1,11 @@
 # 项目3：MCP 本地工具 Agent
 
+![Host 内 Agent 连接 MCP Client，经 stdio 初始化和能力发现调用受限文件系统信息与数据库工具，每次调用受工作目录 SQL 白名单参数超时结果大小和 stderr 日志约束，最终支持取消关闭和协议测试](../../docs/assets/infographics/png/project03-mcp-local-agent-infographic-2x.png)
+
+*图 P3-A　本地 MCP Client、Server 与资源信任边界。*
+
+能力发现只说明 Server 声明了什么，不代表调用者获得了访问权限。文件根目录、数据库查询形态和结果大小由 Server 在模型之外强制执行，stdio 日志写 stderr，避免污染协议消息。
+
 ## 需求、架构与数据流
 技术选型：Python 3.12、Pydantic 2、FastAPI、pytest 与 Docker；在线供应商通过适配器接入。
 

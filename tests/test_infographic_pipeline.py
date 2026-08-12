@@ -1,3 +1,4 @@
+import hashlib
 import json
 from pathlib import Path
 
@@ -228,3 +229,32 @@ def test_b_level_infographics_are_integrated_and_high_resolution() -> None:
         assert "<desc" in svg.read_text(encoding="utf-8")
         with Image.open(ROOT / record["png_asset"]) as image:
             assert image.size == (1536, 2304)
+
+
+def test_every_chapter_and_project_has_a_publication_infographic() -> None:
+    chapters = sorted((ROOT / "docs").glob("part-*/ch*.md"))
+    projects = sorted((ROOT / "projects").glob("[0-9][0-9]-*/README.md"))
+    assert len(chapters) == 38
+    assert len(projects) == 10
+    marker = "assets/infographics/png/"
+    for source_path in [*chapters, *projects]:
+        source = source_path.read_text(encoding="utf-8")
+        assert marker in source, f"缺少出版级信息图：{source_path.relative_to(ROOT)}"
+
+
+def test_complete_infographic_manifest_assets_are_current() -> None:
+    manifest = json.loads((ROOT / "assets/infographics/manifest.json").read_text(encoding="utf-8"))
+    assert len(manifest) == 48
+    assert len({item["semantic_id"] for item in manifest}) == len(manifest)
+    for item in manifest:
+        source = ROOT / item["source_asset"]
+        svg = ROOT / item["svg_asset"]
+        png = ROOT / item["png_asset"]
+        assert source.is_file()
+        assert svg.is_file()
+        assert png.is_file()
+        assert item["width"] >= 1024
+        assert item["height"] >= 960
+        assert item["source_sha256"] == hashlib.sha256(source.read_bytes()).hexdigest()
+        assert item["svg_sha256"] == hashlib.sha256(svg.read_bytes()).hexdigest()
+        assert item["png_sha256"] == hashlib.sha256(png.read_bytes()).hexdigest()

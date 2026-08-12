@@ -4,11 +4,11 @@
   "status": "passed_with_manual_review_required",
   "pdf": {
     "path": "output/pdf/ai-agent-book-2026.pdf",
-    "sha256": "66662e9c4ada16400e435d6b8835be4d18f76cc901fe186275103410b7601180",
-    "bytes": 110067665,
-    "pages": 517,
+    "sha256": "2a6b735559f41594fe583198e4ed23bac096f93b2837030276f8c03658a85667",
+    "bytes": 177899054,
+    "pages": 535,
     "media_boxes": {
-      "594.96x841.92": 517
+      "594.96x841.92": 535
     },
     "cropbox_differs_from_mediabox_pages": 0,
     "font_resources": 1111,
@@ -20,17 +20,17 @@
     },
     "non_embedded_fonts": [],
     "unapproved_system_fonts": [],
-    "raster_image_xobjects": 34
+    "raster_image_xobjects": 50
   },
   "epub": {
     "path": "output/epub/ai-agent-book-2026.epub",
-    "sha256": "024b7afa235759e1147fbfce83d94284e5ba0112dceefc564a2594e047f929b8",
-    "bytes": 83195508,
+    "sha256": "d1ccb0b7e0d0ca3aee40e71807bd630cb52b9255938293b82b5e1f8e9d4f170a",
+    "bytes": 133515449,
     "archive_entries_by_suffix": {
       ".css": 1,
       ".ncx": 1,
       ".opf": 1,
-      ".png": 273,
+      ".png": 289,
       ".svg": 239,
       ".xhtml": 77,
       ".xml": 2,
@@ -85,10 +85,13 @@
       "docs/assets/infographics/png/agent-runtime-control-loop-infographic-2x.png",
       "docs/assets/infographics/png/agent-security-trust-boundary-infographic-2x.png",
       "docs/assets/infographics/png/browser-agent-safety-infographic-2x.png",
+      "docs/assets/infographics/png/coding-agent-patch-transaction-infographic-2x.png",
       "docs/assets/infographics/png/context-budget-memory-infographic-2x.png",
       "docs/assets/infographics/png/cost-quality-latency-infographic-2x.png",
+      "docs/assets/infographics/png/demo-to-product-infographic-2x.png",
       "docs/assets/infographics/png/embedding-retrieval-evidence-infographic-2x.png",
       "docs/assets/infographics/png/enterprise-agent-platform-infographic-2x.png",
+      "docs/assets/infographics/png/framework-layer-boundaries-infographic-2x.png",
       "docs/assets/infographics/png/framework-selection-map-infographic-2x.png",
       "docs/assets/infographics/png/generation-control-infographic-2x.png",
       "docs/assets/infographics/png/job-queue-reliability-infographic-2x.png",
@@ -98,11 +101,15 @@
       "docs/assets/infographics/png/mcp-server-lifecycle-infographic-2x.png",
       "docs/assets/infographics/png/memory-governed-lifecycle-infographic-2x.png",
       "docs/assets/infographics/png/multi-agent-coordination-infographic-2x.png",
+      "docs/assets/infographics/png/multi-agent-framework-decision-infographic-2x.png",
+      "docs/assets/infographics/png/multimodal-evidence-infographic-2x.png",
       "docs/assets/infographics/png/native-agent-runtime-infographic-2x.png",
       "docs/assets/infographics/png/openai-agents-sdk-concepts-infographic-2x.png",
       "docs/assets/infographics/png/planning-review-replan-infographic-2x.png",
       "docs/assets/infographics/png/project10-enterprise-deployment-infographic-2x.png",
       "docs/assets/infographics/png/prompt-context-injection-infographic-2x.png",
+      "docs/assets/infographics/png/pydanticai-type-contract-infographic-2x.png",
+      "docs/assets/infographics/png/python-agent-engineering-infographic-2x.png",
       "docs/assets/infographics/png/rag-evidence-pipeline-infographic-2x.png",
       "docs/assets/infographics/png/structured-output-validation-infographic-2x.png",
       "docs/assets/infographics/png/tool-permission-execution-infographic-2x.png",
@@ -324,6 +331,21 @@
         }
       },
       {
+        "path": "docs/assets/infographics/png/coding-agent-patch-transaction-infographic-2x.png",
+        "kind": "generated_textbook_infographic",
+        "origin": "repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay",
+        "generator": "built-in imagegen + scripts/build_infographics.py",
+        "sha256": "0b118f2aa6be84632778f0e598d60fd232ab35de3c9d0e772ecd7b7219ba22aa",
+        "rights_basis": "original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork",
+        "external_content": false,
+        "computed_sha256": "0b118f2aa6be84632778f0e598d60fd232ab35de3c9d0e772ecd7b7219ba22aa",
+        "bytes": 3047234,
+        "pixels": {
+          "width": 1536,
+          "height": 2304
+        }
+      },
+      {
         "path": "docs/assets/infographics/png/context-budget-memory-infographic-2x.png",
         "kind": "generated_textbook_infographic",
         "origin": "repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay",
@@ -354,6 +376,21 @@
         }
       },
       {
+        "path": "docs/assets/infographics/png/demo-to-product-infographic-2x.png",
+        "kind": "generated_textbook_infographic",
+        "origin": "repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay",
+        "generator": "built-in imagegen + scripts/build_infographics.py",
+        "sha256": "07dc10daa487227ef44f21d95ca81e2244f10d53832cb41fc6cbbd1398def7d6",
+        "rights_basis": "original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork",
+        "external_content": false,
+        "computed_sha256": "07dc10daa487227ef44f21d95ca81e2244f10d53832cb41fc6cbbd1398def7d6",
+        "bytes": 3221388,
+        "pixels": {
+          "width": 1536,
+          "height": 2304
+        }
+      },
+      {
         "path": "docs/assets/infographics/png/embedding-retrieval-evidence-infographic-2x.png",
         "kind": "generated_textbook_infographic",
         "origin": "repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay",
@@ -378,6 +415,21 @@
         "external_content": false,
         "computed_sha256": "ebdda8eca820ac81d7e1bd745a68fe997bb6b1f210818d175b03da92c5e0954b",
         "bytes": 1788954,
+        "pixels": {
+          "width": 1536,
+          "height": 2304
+        }
+      },
+      {
+        "path": "docs/assets/infographics/png/framework-layer-boundaries-infographic-2x.png",
+        "kind": "generated_textbook_infographic",
+        "origin": "repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay",
+        "generator": "built-in imagegen + scripts/build_infographics.py",
+        "sha256": "b29c61420173ab6542611576c2731c7bef0a8d17cb3f4b381acd8f82e6c8fdc6",
+        "rights_basis": "original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork",
+        "external_content": false,
+        "computed_sha256": "b29c61420173ab6542611576c2731c7bef0a8d17cb3f4b381acd8f82e6c8fdc6",
+        "bytes": 3059642,
         "pixels": {
           "width": 1536,
           "height": 2304
@@ -519,6 +571,36 @@
         }
       },
       {
+        "path": "docs/assets/infographics/png/multi-agent-framework-decision-infographic-2x.png",
+        "kind": "generated_textbook_infographic",
+        "origin": "repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay",
+        "generator": "built-in imagegen + scripts/build_infographics.py",
+        "sha256": "41323af5fc9547fde73dda111549f3a73112f151f456adea014cb80d7ee1bda4",
+        "rights_basis": "original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork",
+        "external_content": false,
+        "computed_sha256": "41323af5fc9547fde73dda111549f3a73112f151f456adea014cb80d7ee1bda4",
+        "bytes": 1934552,
+        "pixels": {
+          "width": 1536,
+          "height": 2304
+        }
+      },
+      {
+        "path": "docs/assets/infographics/png/multimodal-evidence-infographic-2x.png",
+        "kind": "generated_textbook_infographic",
+        "origin": "repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay",
+        "generator": "built-in imagegen + scripts/build_infographics.py",
+        "sha256": "119e710293679ab8f06995a5073c3daf3d1230b4ac6878b44936950ac74caf20",
+        "rights_basis": "original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork",
+        "external_content": false,
+        "computed_sha256": "119e710293679ab8f06995a5073c3daf3d1230b4ac6878b44936950ac74caf20",
+        "bytes": 3363570,
+        "pixels": {
+          "width": 1536,
+          "height": 2304
+        }
+      },
+      {
         "path": "docs/assets/infographics/png/native-agent-runtime-infographic-2x.png",
         "kind": "generated_textbook_infographic",
         "origin": "repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay",
@@ -588,6 +670,36 @@
         "external_content": false,
         "computed_sha256": "dca94a8db291b4bbf47bd53cc2fdca5939a798e0ab940363ac2b2c467d220d0a",
         "bytes": 2128143,
+        "pixels": {
+          "width": 1536,
+          "height": 2304
+        }
+      },
+      {
+        "path": "docs/assets/infographics/png/pydanticai-type-contract-infographic-2x.png",
+        "kind": "generated_textbook_infographic",
+        "origin": "repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay",
+        "generator": "built-in imagegen + scripts/build_infographics.py",
+        "sha256": "748b814ace3439d948b15b0ff4728929d5c7379a25d50c922819a0504169827d",
+        "rights_basis": "original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork",
+        "external_content": false,
+        "computed_sha256": "748b814ace3439d948b15b0ff4728929d5c7379a25d50c922819a0504169827d",
+        "bytes": 3488282,
+        "pixels": {
+          "width": 1536,
+          "height": 2304
+        }
+      },
+      {
+        "path": "docs/assets/infographics/png/python-agent-engineering-infographic-2x.png",
+        "kind": "generated_textbook_infographic",
+        "origin": "repository chapter logic with a built-in imagegen visual base and deterministic SVG/Pillow semantic overlay",
+        "generator": "built-in imagegen + scripts/build_infographics.py",
+        "sha256": "fcb52d16f7abb01032af189dba17cad0545c82209e06ff625eb106d76532307d",
+        "rights_basis": "original repository technical content; generated visual base reviewed to exclude third-party logos and copied artwork",
+        "external_content": false,
+        "computed_sha256": "fcb52d16f7abb01032af189dba17cad0545c82209e06ff625eb106d76532307d",
+        "bytes": 4113143,
         "pixels": {
           "width": 1536,
           "height": 2304

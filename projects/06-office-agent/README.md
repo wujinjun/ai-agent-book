@@ -1,5 +1,11 @@
 # 项目6：自动办公 Agent
 
+![邮件日历办公数据只读摄取后生成总结日报与外发草稿，审批同时绑定内容摘要接收目标主体和过期时间，持久 Outbox 使用租约有限重试与幂等键发布，重启后恢复且不重复外发并保留审计](../../docs/assets/infographics/png/project06-office-agent-infographic-2x.png)
+
+*图 P6-A　自动办公 Agent 的审批与持久 Outbox。*
+
+审批不能只绑定一句“允许发送”，而要绑定准确内容、目标、主体和时效。Outbox 负责跨进程恢复；下游幂等键与结果核对共同提供不重复发布的工程边界，而不是宣称网络世界存在无条件 exactly-once。
+
 ## 需求、架构与数据流
 技术选型：Python 3.12、Pydantic 2、FastAPI、pytest 与 Docker；在线供应商通过适配器接入。
 

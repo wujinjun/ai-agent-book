@@ -1,5 +1,11 @@
 # 项目9：Multi-Agent 软件开发团队
 
+![需求任务契约与验收条件驱动 Product Planner Coder Reviewer Tester 五种职责通过类型化共享状态交换工件证据，Coder 使用一次性 Git 工作区，独立评审测试并检测循环预算无进展，最后与单 Agent 基线比较质量收益和成本](../../docs/assets/infographics/png/project09-multi-agent-dev-infographic-2x.png)
+
+*图 P9-A　多 Agent 开发团队的共享状态、隔离工作区与验收。*
+
+角色不通过无界闲聊协作，而是读写带版本的 Artifact 与 Evidence。状态指纹重复、预算耗尽或连续无进展都会终止运行；只有相对单 Agent 基线产生可测质量收益，团队拓扑才值得保留。
+
 ## 需求、架构与数据流
 技术选型：Python 3.12、Pydantic 2、FastAPI、pytest 与 Docker；在线供应商通过适配器接入。
 

@@ -1749,6 +1749,280 @@ def build_b_infographic(semantic_id: str) -> InfographicRecord:
     )
 
 
+@dataclass(frozen=True, slots=True)
+class FiveStageSpec:
+    semantic_id: str
+    title: str
+    description: str
+    source_path: str
+    source_name: str
+    stages: tuple[str, str, str, str, str]
+
+
+def _five_stage_specs() -> dict[str, FiveStageSpec]:
+    """Publication overlays that complete chapter and project infographic coverage."""
+    specs = (
+        FiveStageSpec(
+            "pydanticai-type-contract-infographic",
+            "PydanticAI：类型契约贯穿请求链路",
+            "类型化输入、Agent、依赖、工具和输出形成可测试契约；权限与事实校验仍由领域服务负责，校验失败只在共享预算内有限重试。",
+            "docs/part-04-frameworks/ch19-pydanticai.md",
+            "pydanticai-type-contract-infographic-base.png",
+            (
+                "类型化请求契约",
+                "Agent · 模型适配边界",
+                "Dependencies · Tool · 外部服务",
+                "输出校验 · 有限重试 · 明确失败",
+                "FastAPI · Fake · Trace · 回归",
+            ),
+        ),
+        FiveStageSpec(
+            "framework-layer-boundaries-infographic",
+            "框架分层：按问题选择，不让框架侵入领域",
+            "稳定领域接口之下，LangChain 组织组件、LangGraph 管理可恢复状态、"
+            "LlamaIndex 组织文档检索；适配器连接基础能力并保留测试与迁移出口。",
+            "docs/part-04-frameworks/ch21-langchain-llamaindex.md",
+            "framework-layer-boundaries-infographic-base.png",
+            (
+                "业务问题 · 稳定领域接口",
+                "组件编排 · 状态图 · 文档检索",
+                "可替换 Adapter 边界",
+                "模型 · 向量库 · Tool · Storage",
+                "Spike · 回归数据集 · 迁移出口",
+            ),
+        ),
+        FiveStageSpec(
+            "multi-agent-framework-decision-infographic",
+            "Multi-Agent：先证明必要，再选择协作模式",
+            "任务先与单 Agent 和确定性工作流比较；确需多角色时，以类型化共享状态"
+            "交换工件，并用成本、权限、死锁和终止门约束协作。",
+            "docs/part-04-frameworks/ch22-multi-agent-frameworks.md",
+            "multi-agent-framework-decision-infographic-base.png",
+            (
+                "任务价值与必要性判断",
+                "单 Agent · Workflow · Supervisor · Role Team",
+                "Typed State · Artifact · Evidence",
+                "回合 · Token · 延迟 · 权限 · Deadlock",
+                "Baseline 对照 · 任务成功率 · 去留决策",
+            ),
+        ),
+        FiveStageSpec(
+            "python-agent-engineering-infographic",
+            "Python Agent：从环境到发布的质量流水线",
+            "Python 3.12 项目以锁定依赖和外置 Secret 起步，通过类型、依赖注入、"
+            "异步边界、Fake 和故障测试，最终由静态检查与测试门交付。",
+            "docs/part-05-engineering/ch23-python-engineering.md",
+            "python-agent-engineering-infographic-base.png",
+            (
+                "Python 3.12 · pyproject · 依赖锁定",
+                "Settings · Secret · 类型 · 依赖注入",
+                "async · httpx Timeout · Logging · Exception",
+                "Unit · Fake · Integration · Fault Injection",
+                "Ruff · Format · mypy · pytest · Build",
+            ),
+        ),
+        FiveStageSpec(
+            "coding-agent-patch-transaction-infographic",
+            "Coding Agent：隔离的补丁事务",
+            "Agent 只读理解源仓库，在一次性 Git 工作区应用受限补丁并运行有界测试；"
+            "失败销毁工作区，只有独立验收通过后才导出工件。",
+            "docs/part-07-advanced/ch33-agentic-coding.md",
+            "coding-agent-patch-transaction-infographic-base.png",
+            (
+                "只读 Repo Map · Search · Plan",
+                "受保护源仓库 → 一次性 Git 工作区",
+                "Path Allowlist · Size · apply --check",
+                "受限 Test · Timeout · 失败销毁",
+                "Reviewer Evidence → 导出 Patch / Commit",
+            ),
+        ),
+        FiveStageSpec(
+            "multimodal-evidence-infographic",
+            "多模态 Agent：统一证据，不丢定位与时间",
+            "图像、音频、视频和文档经模态处理后保留页码、区域、时间戳与来源，汇聚为统一证据对象，再进入检索、推断、引用与治理闭环。",
+            "docs/part-07-advanced/ch35-multimodal.md",
+            "multimodal-evidence-infographic-base.png",
+            (
+                "图像 · 音频 · 视频 · 复杂文档",
+                "OCR · 转写 · 帧采样 · 版面解析",
+                "Evidence Object：来源 · 页码 · 区域 · 时间",
+                "检索 · 关联 · 推断 · Tool · 未知边界",
+                "引用 · 人审 · 脱敏 · 成本质量评估",
+            ),
+        ),
+        FiveStageSpec(
+            "demo-to-product-infographic",
+            "从 Demo 到产品：可靠性交付闭环",
+            "产品先限定用户任务和不可做事项，再建设可中断体验、可靠状态与审批、"
+            "SLA 和治理指标，并通过真实反馈和回归持续发布。",
+            "docs/part-07-advanced/ch37-demo-to-product.md",
+            "demo-to-product-infographic-base.png",
+            (
+                "用户任务 · 产品边界 · 不可做事项",
+                "Streaming · Progress · Interrupt · Retry · Citation",
+                "State · Idempotency · Approval · Permission · Fallback",
+                "Quality · Cost · Latency · SLA · Trace · Security",
+                "Feedback · Eval · Canary · Migration · Upgrade",
+            ),
+        ),
+        FiveStageSpec(
+            "project01-minimal-assistant-infographic",
+            "项目 1：最小 AI Assistant",
+            "请求加载配置与历史，在上下文预算内调用模型并输出明确流式事件；用量、"
+            "延迟、日志和错误可观测，Fake 让离线测试无需付费 API。",
+            "projects/01-minimal-assistant/README.md",
+            "project01-minimal-assistant-infographic-base.png",
+            (
+                "请求 · Settings · Session",
+                "历史裁剪 · 上下文预算 · Model Adapter",
+                "Started · Delta · Completed · Error",
+                "Token · Cost · Latency · Structured Log",
+                "Fake Provider · Timeout · Test · Local Run",
+            ),
+        ),
+        FiveStageSpec(
+            "project02-weather-tool-agent-infographic",
+            "项目 2：天气与工具调用 Agent",
+            "模型提出工具动作，Runtime 负责注册表、Schema、权限和依赖校验；"
+            "高风险动作需人工确认，执行受超时、重试、幂等和终止预算约束。",
+            "projects/02-weather-tool-agent/README.md",
+            "project02-weather-tool-agent-infographic-base.png",
+            (
+                "用户意图 · Tool Registry",
+                "Action Proposal · Schema · Dependency",
+                "天气 · 位置 · 风险 Tool · Human Approval",
+                "Timeout · Retry · Idempotency · Merge",
+                "Observation → Model · Step / Cost / Done",
+            ),
+        ),
+        FiveStageSpec(
+            "project03-mcp-local-agent-infographic",
+            "项目 3：MCP 本地工具 Agent",
+            "Host 中的 Client 通过 stdio 管理 Server 生命周期，发现受限文件、系统和"
+            "数据库能力；每次调用仍受工作目录、SQL、参数、超时与结果边界约束。",
+            "projects/03-mcp-local-agent/README.md",
+            "project03-mcp-local-agent-infographic-base.png",
+            (
+                "Host · Agent · MCP Client",
+                "stdio · Initialize · Capability Discovery",
+                "File Scope · System Read · Parameterized DB",
+                "Allowlist · Validation · Timeout · stderr",
+                "Result · Cancel · Graceful Shutdown · Test",
+            ),
+        ),
+        FiveStageSpec(
+            "project04-knowledge-agent-infographic",
+            "项目 4：企业知识库 Agent",
+            "多格式文档经过解析质量、Chunk、元数据和 ACL 形成版本化索引；在线查询"
+            "先鉴权再混合检索和重排，回答保留引用并进入评估回归。",
+            "projects/04-knowledge-agent/README.md",
+            "project04-knowledge-agent-infographic-base.png",
+            (
+                "PDF · Word · PPT · Markdown",
+                "Parse · Layout · Chunk · Metadata · ACL",
+                "Embedding · Versioned pgvector · Rollback",
+                "Identity · Hybrid Search · Filter · Rerank",
+                "Cited Answer · Recall · MRR · Faithfulness",
+            ),
+        ),
+        FiveStageSpec(
+            "project05-code-review-agent-infographic",
+            "项目 5：代码 Review Agent",
+            "只读仓库与 Diff 经范围过滤和脱敏后，确定性规则、测试证据和模型审查"
+            "并行产出发现；合并报告默认离线，外部评论必须显式审批。",
+            "projects/05-code-review-agent/README.md",
+            "project05-code-review-agent-infographic-base.png",
+            (
+                "Read-only Repo · Base · PR Diff",
+                "Scope · Binary / Size Filter · Secret Redaction",
+                "Static Rules · Test Evidence · LLM Review",
+                "Dedup · Risk · Confidence · False-positive Control",
+                "Markdown / JSON · Approval · Idempotent PR Comment",
+            ),
+        ),
+        FiveStageSpec(
+            "project06-office-agent-infographic",
+            "项目 6：自动办公 Agent",
+            "邮件日历只读摄取后形成结构化草稿；审批绑定内容、目标、主体和时效，"
+            "持久 Outbox 用租约、有限重试与幂等键保证恢复而不重复外发。",
+            "projects/06-office-agent/README.md",
+            "project06-office-agent-infographic-base.png",
+            (
+                "Mail · Calendar · Office Data：只读",
+                "Summary · Daily Report · Outbound Draft",
+                "Approval：Content · Target · Principal · Expiry",
+                "Persistent Outbox · Lease · Retry · Idempotency",
+                "Publish Once · Restart Recovery · Audit",
+            ),
+        ),
+        FiveStageSpec(
+            "project07-stock-research-agent-infographic",
+            "项目 7：股票研究 Agent",
+            "行情、新闻、公告和财报绑定统一时点并经质量校验；报告严格区分确定性指标、事实、模型推断、风险和未知，保留来源且不提供确定性买卖建议。",
+            "projects/07-stock-research-agent/README.md",
+            "project07-stock-research-agent-infographic-base.png",
+            (
+                "行情 · 新闻 · 公告 · 财报 · 统一时点",
+                "时间 · 时区 · 缺失 · 数据质量",
+                "指标计算 · 行业事实 · 模型分析",
+                "事实与来源 · 推断 · 风险 · 未知",
+                "生成时间 · 截止时间 · 引用 · 非投资建议",
+            ),
+        ),
+        FiveStageSpec(
+            "project08-research-workflow-infographic",
+            "项目 8：LangGraph 研究工作流",
+            "任务经 Planner 形成依赖计划，研究节点更新类型化 State；Checkpoint 支持"
+            "有限重试和恢复，Reviewer 与人工中断控制返工，最终报告保留来源和运行证据。",
+            "projects/08-research-workflow/README.md",
+            "project08-research-workflow-infographic-base.png",
+            (
+                "任务契约 · Planner · Dependency Plan",
+                "Search · Read · Extract · Organize → State",
+                "Checkpoint · Retry · Resume · Idempotency",
+                "Reviewer · Local Rework · Replan · Human Interrupt",
+                "Cited Report · Trace · Cost · Version · Replay",
+            ),
+        ),
+        FiveStageSpec(
+            "project09-multi-agent-dev-infographic",
+            "项目 9：Multi-Agent 软件开发团队",
+            "五种职责通过类型化共享状态交换工件，不进行无界闲聊；代码只在一次性"
+            "工作区执行，独立评审测试和循环检测后，再与单 Agent baseline 比较收益。",
+            "projects/09-multi-agent-dev-team/README.md",
+            "project09-multi-agent-dev-infographic-base.png",
+            (
+                "需求 · Task Contract · Acceptance",
+                "Product · Planner · Coder · Reviewer · Tester",
+                "Typed State · Artifact · Evidence · Disposable Git",
+                "Independent Review · Test · Loop / Budget / No-progress",
+                "Single-Agent Baseline · Quality Gain · Cost Decision",
+            ),
+        ),
+    )
+    return {spec.semantic_id: spec for spec in specs}
+
+
+def build_five_stage_infographic(semantic_id: str) -> InfographicRecord:
+    spec = _five_stage_specs()[semantic_id]
+    stage_y = (180, 500, 810, 1110, 1400)
+    labels = [Label(512, 26, spec.title, 27, "bold", "#24476B", 3)]
+    labels.extend(
+        Label(512, y, stage, 18 if len(stage) > 42 else 20, "bold", "#24476B", 4)
+        for stage, y in zip(spec.stages, stage_y, strict=True)
+    )
+    return _build_portrait_infographic(
+        semantic_id=spec.semantic_id,
+        title=spec.title,
+        description=spec.description,
+        source_path=spec.source_path,
+        source_name=spec.source_name,
+        labels=labels,
+        arrows=[list(points) for points in _B_FLOW_ARROWS],
+        generated_at="2026-08-12",
+    )
+
+
 def write_manifest(records: list[InfographicRecord]) -> Path:
     output = ASSET_ROOT / "manifest.json"
     existing: dict[str, dict[str, object]] = {}
@@ -1789,6 +2063,7 @@ def main() -> int:
             "multi-agent",
             "project10",
             "b-all",
+            "coverage-all",
             "all",
         ),
         default="all",
@@ -1821,6 +2096,10 @@ def main() -> int:
         records.append(build_project10_infographic())
     if args.pilot in {"b-all", "all"}:
         records.extend(build_b_infographic(semantic_id) for semantic_id in _b_specs())
+    if args.pilot in {"coverage-all", "all"}:
+        records.extend(
+            build_five_stage_infographic(semantic_id) for semantic_id in _five_stage_specs()
+        )
     manifest = write_manifest(records)
     print(f"Built {len(records)} infographic(s); manifest: {manifest}")
     return 0

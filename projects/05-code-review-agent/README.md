@@ -1,5 +1,11 @@
 # 项目5：代码 Review Agent
 
+![只读仓库基线与 PR Diff 经范围二进制大文件过滤和 Secret 脱敏，静态规则测试证据与模型审查并行产出发现，经过去重风险置信度误报控制形成报告，显式审批后才可幂等发布 PR 评论](../../docs/assets/infographics/png/project05-code-review-agent-infographic-2x.png)
+
+*图 P5-A　Code Review Agent 的证据合并与外部发布门。*
+
+默认产物是本地 Markdown/JSON 报告，不是 GitHub 副作用。每条发现必须指向 Diff 范围和可检查证据；可选 PR 评论需要单独授权、人工确认与稳定幂等键。
+
 ## 需求、架构与数据流
 技术选型：Python 3.12、Pydantic 2、FastAPI、pytest 与 Docker；在线供应商通过适配器接入。
 

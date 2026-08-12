@@ -1,5 +1,11 @@
 # 项目4：企业知识库 Agent
 
+![PDF Word PPT Markdown 经过解析版面 Chunk 元数据 ACL 和质量报告形成版本化 pgvector 索引，用户身份进入混合检索权限过滤重排与压缩，最终生成带引用回答并用 Recall MRR Faithfulness 回归评估](../../docs/assets/infographics/png/project04-knowledge-agent-infographic-2x.png)
+
+*图 P4-A　企业知识库的摄取、检索、引用与评估闭环。*
+
+图把离线摄取质量和在线查询证据链放在同一视图中。索引必须绑定解析器、切分器和 Embedding 版本；权限过滤在召回阶段执行，引用则保留文档、页码和 Chunk 定位以支持复核。
+
 ## 需求、架构与数据流
 技术选型：Python 3.12、Pydantic 2、FastAPI、pytest 与 Docker；在线供应商通过适配器接入。
 

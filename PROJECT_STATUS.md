@@ -48,7 +48,7 @@ P9 当前状态为 `complete_repository_scope`。仓库证据分为个人系统�
 ## 出版完成度
 
 - 当前 HTML 全站共有 240 张 Mermaid 图，已经生成 SVG、2x PNG 和内容哈希清单；正式书稿排除网站首页，PDF/EPUB 收录其余 239 张。三种格式均使用预渲染资产，不依赖阅读器现场执行 Mermaid。
-- 出版级信息图采用三级视觉体系：A 级核心信息图 12/12、B 级增强信息图 20/20 已完成；32 张信息图均保留生成式无文字底稿、可编辑 SVG、高分辨率 PNG、中文语义层、图号、长替代文本、图后解释、来源与 SHA-256。240 张 Mermaid 继续作为 C 级精确工程图保留。
+- 出版级信息图采用分层视觉体系：A 级核心信息图 12/12、B 级增强信息图 20/20、全章与十项目覆盖图 16/16 已完成；48 张信息图均保留生成式无文字底稿、可编辑 SVG、高分辨率 PNG、中文语义层、图号、长替代文本、图后解释、来源与 SHA-256。38 个正文章节和 10 个项目均有独立出版图，240 张 Mermaid 继续作为精确工程图保留。
 - MkDocs HTML 严格构建、断链、缺图、alt、重复 ID 和残留 Mermaid 自动审计已建立。
 - 当前本地候选 PDF 为 517 页 A4、约 105 MiB；20 张 B 级信息图和本轮新增的项目 6、9 及第 33、35 章关系图均完成栅格化抽查，图片未裁切、未跨页且图题清晰。Noto Sans SC 与 Source Code Pro 固定到上游 commit 并携带 OFL，发行预检硬失败为 0。
 - 当前本地 EPUB3 约 79 MiB，20 张 B 级 PNG 均进入容器且不依赖 JavaScript 渲染；MkDocs HTML、PDF 和 EPUB 已于 2026-08-12 从同一源码重新构建并通过出版审计。
@@ -70,4 +70,4 @@ P9 当前状态为 `complete_repository_scope`。仓库证据分为个人系统�
 
 ## 当前验证证据
 
-2026-08-12 在 Python 3.12 环境重新运行 Ruff、269 项根级测试、MkDocs 严格构建、HTML/PDF/EPUB 出版审计、隐私审计、仓库卫生和视觉审计，全部通过。发行资产预检无硬失败，仍保留 6 项既有人工权利/设备复核提示。当前 32 张出版信息图及 240 张全站 Mermaid 图的 manifest、章节引用、PNG、SVG 和语义 ID 均有直接测试；正式书稿收录 239 张 Mermaid，A4 PDF 为 517 页。更早的十项目容器和隔离框架证据继续见 `notes/p9-project-runtime-qa.md`、`notes/distribution-asset-audit.json` 和 `notes/p9-acceptance.yml`。
+2026-08-12 在 Python 3.12 环境重新运行 Ruff、272 项根级测试、MkDocs 严格构建和 HTML/PDF/EPUB 出版审计，全部通过。发行资产预检无硬失败，仍保留 6 项既有人工权利/设备复核提示。当前 48 张出版信息图及 240 张全站 Mermaid 图的 manifest、章节引用、PNG、SVG 和 SHA-256 均有直接测试；38 个正文章节和 10 个项目均有独立出版图，正式书稿收录 239 张 Mermaid，A4 PDF 为 535 页。新增图页 259、280、296、447、467、492 已进行渲染抽检。更早的十项目容器和隔离框架证据继续见 `notes/p9-project-runtime-qa.md`、`notes/distribution-asset-audit.json` 和 `notes/p9-acceptance.yml`。

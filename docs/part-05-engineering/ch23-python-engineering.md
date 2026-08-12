@@ -1,5 +1,11 @@
 # 第23章：Python Agent 工程基础
 
+![Python 3.12 项目从 pyproject 和依赖锁定开始，经配置 Secret 类型依赖注入、异步 HTTP 超时日志异常、单元 Fake 集成与故障测试，进入 Ruff 格式化 mypy pytest 和构建发布门](../assets/infographics/png/python-agent-engineering-infographic-2x.png)
+
+*图 23-A　Python Agent 从环境到发布的工程质量流水线。*
+
+图中每一层都形成独立失败边界：配置错误不应拖到首次模型调用才暴露，网络重试不应侵入领域逻辑，外部服务应可由 Fake 替换，发布门则必须在同一 Python 3.12 目标环境中重复执行。
+
 最后核对日期：2026-07-11。
 
 ## 导读、目标与前置知识

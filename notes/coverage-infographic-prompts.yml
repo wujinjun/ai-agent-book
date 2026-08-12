@@ -1,0 +1,34 @@
+schema_version: 1
+generated_at: 2026-08-12
+mode: built-in imagegen
+use_case: infographic-diagram
+shared_asset_type: >-
+  出版级中文 AI Agent 工程教材信息图无文字底稿，供后续 SVG 中文语义层叠加。
+shared_style: >-
+  现代扁平矢量编辑插画，纵向 2:3，1024x1536，暖白纸张背景；深蓝表示模型、
+  Agent 与控制，青绿表示数据与证据，暖橙表示工具和外部动作，紫色表示状态与
+  工作流，红色仅表示审批、失败和风险。专业克制，A4 与灰度打印可辨。
+shared_constraints: >-
+  每张图不超过十二个主要视觉对象；保留充足中文标签空间；不要任何文字、字母、
+  数字、公式、代码、Logo、水印、品牌、人物、机器人、伪 UI 或霓虹效果；底稿不得
+  决定技术箭头、边界和术语，最终语义由 scripts/build_infographics.py 确定性叠加。
+assets:
+  - {id: pydanticai-type-contract-infographic, topic: "类型契约、依赖注入、工具、输出校验与有限重试"}
+  - {id: framework-layer-boundaries-infographic, topic: "LangChain、LangGraph、LlamaIndex 与原生能力分层"}
+  - {id: multi-agent-framework-decision-infographic, topic: "Multi-Agent 必要性、协作模式、共享状态、成本与终止"}
+  - {id: python-agent-engineering-infographic, topic: "Python 3.12 Agent 从环境到发布的质量流水线"}
+  - {id: coding-agent-patch-transaction-infographic, topic: "Coding Agent 一次性 Git 工作区与隔离补丁事务"}
+  - {id: multimodal-evidence-infographic, topic: "多模态证据对象、定位信息与时间完整性"}
+  - {id: demo-to-product-infographic, topic: "Agent 从 Demo 到产品的可靠性交付闭环"}
+  - {id: project01-minimal-assistant-infographic, topic: "请求、历史、流式事件、用量与 Fake 测试"}
+  - {id: project02-weather-tool-agent-infographic, topic: "工具提议、Schema、审批、重试、幂等与终止"}
+  - {id: project03-mcp-local-agent-infographic, topic: "MCP Client Server 生命周期与本地资源权限"}
+  - {id: project04-knowledge-agent-infographic, topic: "知识库摄取、pgvector、混合检索、引用与评估"}
+  - {id: project05-code-review-agent-infographic, topic: "Diff 范围、静态证据、LLM Review、风险与发布门"}
+  - {id: project06-office-agent-infographic, topic: "办公只读输入、内容绑定审批、Outbox 与幂等发布"}
+  - {id: project07-stock-research-agent-infographic, topic: "数据时点、事实、模型推断、来源与非投资建议"}
+  - {id: project08-research-workflow-infographic, topic: "LangGraph State、Checkpoint、Reviewer 与人工中断"}
+  - {id: project09-multi-agent-dev-infographic, topic: "共享状态、一次性工作区、独立验收与单 Agent 基线"}
+generator: built-in imagegen
+semantic_overlay: scripts/build_infographics.py
+manifest: assets/infographics/manifest.json

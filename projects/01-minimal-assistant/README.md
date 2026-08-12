@@ -1,5 +1,11 @@
 # 项目1：最小 AI Assistant
 
+![用户请求加载配置与会话，经历史裁剪和上下文预算进入模型适配器，流式输出开始增量完成或错误事件，并记录 Token 成本延迟日志，最后由 Fake 超时测试和本地运行验证](../../docs/assets/infographics/png/project01-minimal-assistant-infographic-2x.png)
+
+*图 P1-A　最小 Assistant 的请求、流式状态与用量证据。*
+
+这张总图先给出项目边界，后续 Mermaid 再精确描述时序与状态。对话历史只是本次请求的上下文来源；流必须有明确终止事件，在线供应商未返回 Usage 时应标记未知，而不是把估算值冒充账单值。
+
 ## 需求、架构与数据流
 技术选型：Python 3.12、Pydantic 2、FastAPI、pytest 与 Docker；在线供应商通过适配器接入。
 

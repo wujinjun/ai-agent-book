@@ -1,5 +1,11 @@
 # 项目8：LangGraph 研究工作流 Agent
 
+![任务契约经 Planner 形成依赖计划，Search Read Extract Organize 节点更新类型化 State，Checkpoint 支持失败有限重试恢复和幂等边界，Reviewer 决定通过返工或重规划并可人工中断，最终生成带来源可回放报告](../../docs/assets/infographics/png/project08-research-workflow-infographic-2x.png)
+
+*图 P8-A　LangGraph 研究工作流的状态、恢复与人工中断。*
+
+Checkpoint 保存的是可恢复状态，不会自动让外部副作用可重放；搜索写缓存、发布报告等动作仍需幂等键。Reviewer 只返工失败节点，避免每次校验失败都重跑整条链路。
+
 ## 需求、架构与数据流
 技术选型：Python 3.12、Pydantic 2、FastAPI、pytest 与 Docker；在线供应商通过适配器接入。
 
