@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import ast
+import hashlib
+import json
 from typing import Literal, Protocol
 
 from pydantic import BaseModel, Field
@@ -109,6 +111,13 @@ class TeamResult(BaseModel):
     estimated_tokens: int
 
 
+class BaselineComparison(BaseModel):
+    team: TeamResult
+    baseline: TeamResult
+    extra_messages: int
+    extra_estimated_tokens: int
+
+
 class DevelopmentTeam:
     """所有角色只通过 Coordinator 更新状态，不允许角色间自由对话。"""
 
@@ -127,6 +136,7 @@ class DevelopmentTeam:
         state = SharedState(requirement=requirement)
         messages: list[TeamMessage] = []
         estimated_tokens = 0
+        fingerprints: set[str] = set()
         for role in self.roles:
             if len(messages) >= self.max_messages:
                 return self._result(
@@ -139,6 +149,12 @@ class DevelopmentTeam:
                     "stopped", "token_budget_exceeded", messages, state, estimated_tokens
                 )
             state = state.model_copy(update={**output.updates, "version": state.version + 1})
+            fingerprint = self._fingerprint(state)
+            if fingerprint in fingerprints:
+                return self._result(
+                    "stopped", "no_progress_loop_detected", messages, state, estimated_tokens
+                )
+            fingerprints.add(fingerprint)
             estimated_tokens += next_tokens
             messages.append(
                 TeamMessage(
@@ -152,6 +168,44 @@ class DevelopmentTeam:
                 "completed", "tests_passed_and_reviewed", messages, state, estimated_tokens
             )
         return self._result("failed", "review_rejected", messages, state, estimated_tokens)
+
+    def run_baseline(self, requirement: str) -> TeamResult:
+        """同一任务的单 Agent 基线；用于证明额外角色确实带来独立价值。"""
+        state = SharedState(requirement=requirement)
+        product = ProductAgent().act(state)
+        planner = PlannerAgent().act(state)
+        coder = CoderAgent().act(state)
+        state = state.model_copy(
+            update={**product.updates, **planner.updates, **coder.updates, "version": 1}
+        )
+        tester = TesterAgent().act(state)
+        state = state.model_copy(update={**tester.updates, "version": 1})
+        reviewer = ReviewerAgent().act(state)
+        state = state.model_copy(update={**reviewer.updates, "version": 1})
+        content = "单 Agent 完成需求、计划、实现、测试和复核。"
+        tokens = max(1, len(content) // 2)
+        return self._result(
+            "completed" if state.tests_passed and state.review_approved else "failed",
+            "tests_passed_and_reviewed" if state.review_approved else "review_rejected",
+            [TeamMessage(role="coder", content=content, state_version=1)],
+            state,
+            tokens,
+        )
+
+    def compare_with_baseline(self, requirement: str) -> BaselineComparison:
+        team = self.run(requirement)
+        baseline = self.run_baseline(requirement)
+        return BaselineComparison(
+            team=team,
+            baseline=baseline,
+            extra_messages=len(team.messages) - len(baseline.messages),
+            extra_estimated_tokens=team.estimated_tokens - baseline.estimated_tokens,
+        )
+
+    @staticmethod
+    def _fingerprint(state: SharedState) -> str:
+        payload = state.model_dump(exclude={"version"}, mode="json")
+        return hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
 
     @staticmethod
     def _result(

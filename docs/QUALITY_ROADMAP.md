@@ -97,7 +97,7 @@
 - [ ] 项目 7：行情、公告、财报、新闻去重、来源时效和报告评估。
 - [x] 项目 8：实现 SQLite 持久 Run Journal、来源 Allowlist、证据哈希、租户 Worker、人工审批和重启后确定性重放恢复，并明确与原生持久 Saver 的边界。
 - [ ] 项目 8 后续外部联调：真实搜索/内容读取、数据库原生 LangGraph Checkpointer 与副作用幂等演练。
-- [ ] 项目 9：仓库工作区、补丁回滚、测试 Sandbox、死循环检测和单 Agent 基线。
+- [ ] 项目 9：已实现一次性本地 Git 克隆、补丁路径/规模策略、失败销毁回滚、白名单测试进程、状态指纹死循环检测和单 Agent 基线；真正禁网与资源隔离的 OCI/微虚拟机 Sandbox 及真实任务基准仍待外部验证。
 - [x] 项目 10：实现身份 Verifier 边界、本地签名 Token、数据库 RBAC、持久队列、工具/MCP/RAG 注册、Trace/Eval/指标、有限重试、租户 DLQ、重放、取消和 SQLite 一致性备份。
 - [ ] 项目 10 后续外部联调：真实 OIDC/JWKS、PostgreSQL RLS/迁移、独立 Worker、模型网关、管理前端和灾备演练。
 

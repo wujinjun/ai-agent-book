@@ -57,10 +57,28 @@ flowchart TD
 
 角色数量增加必须与单 Agent 基线比较质量、费用和尾延迟；无独立信息或权限边界的角色应删除。
 
+```mermaid
+%% id: project9-disposable-repository-workspace
+%% title: 一次性仓库工作区与失败回滚
+%% alt: 只读源仓库被本地克隆到一次性工作区，补丁先经过路径和大小策略及 git apply check，再运行白名单测试；失败销毁工作区，成功仅保留隔离副本供人工复核
+flowchart LR
+    Source["Source Git Repository<br/>不直接写入"] --> Clone["Disposable Local Clone"]
+    Patch["Generated Patch"] --> Policy{"路径 / 文件数 / 字节预算"}
+    Policy -->|拒绝| Destroy["Destroy Workspace"]
+    Policy -->|允许| Check["git apply --check"] --> Apply["Apply in Clone"]
+    Apply --> Test["Allowlisted Test Command<br/>timeout + bounded output"]
+    Test -->|失败| Destroy
+    Test -->|通过| Review["Keep Isolated Copy<br/>人工复核后另行合并"]
+```
+
+`RepositoryWorkspace` 不在用户源仓库中运行 `reset` 或回滚，而是克隆到源仓库之外。补丁路径禁止绝对路径和 `..`，并限制字节数与文件数；测试命令必须完整匹配白名单，具有超时、受控环境变量和输出上限。任何异常或测试失败都会删除整个隔离副本，因此测试生成的未跟踪文件也不会污染源仓库。
+
+这仍是教学用的**进程边界**，不是对恶意代码的操作系统安全证明。Python 测试仍可创建子进程、打开原始 Socket 或消耗大量内存；环境代理变量只能降低意外 HTTP 访问，不能替代网络 Namespace。执行不可信模型代码时，应把同一接口替换为禁网、非 Root、只读根文件系统、CPU/内存/PID/磁盘限额和短期凭证的容器或微虚拟机。
+
 `需求 → Product 验收条件 → Planner 计划 → Coder Artifact → Tester → Reviewer → 硬终止`。所有角色只能通过版本化共享状态通信，独立实现位于 `src/ai_agent_book/apps/multi_agent_team.py`，直接测试位于 `tests/test_multi_agent_team_app.py`。
 
 ## 运行、测试与部署
-CLI 用于观察领域事件；`api.py` 提供持久 Run、幂等、租户隔离、取消、SSE 回放、Trace 与指标：
+CLI 同时输出五角色结果与单 Agent 基线的消息/Token 差额；`api.py` 提供持久 Run、幂等、租户隔离、取消、SSE 回放、Trace 与指标：
 ```bash
 PYTHONPATH=src .venv/bin/python projects/09-multi-agent-dev-team/main.py
 PYTHONPATH=src DATABASE_PATH=.data/project-9.db .venv/bin/uvicorn --app-dir projects/09-multi-agent-dev-team api:app --port 8109
@@ -73,13 +91,14 @@ docker run --rm ai-agent-book/project-9
 
 ## 实现说明与验收
 
-`DevelopmentTeam` 包含 Product、Planner、Coder、Tester、Reviewer 五个独立角色，但禁止点对点自由闲聊；Coordinator 校验输出并将共享状态版本递增。消息数与估算 Token 都有硬预算，只有 `tests_passed` 与 `review_approved` 同时成立才成功终止。测试验证角色次序、版本、成本上限和预算提前停止，避免无效对话与死循环。
+`DevelopmentTeam` 包含 Product、Planner、Coder、Tester、Reviewer 五个独立角色，但禁止点对点自由闲聊；Coordinator 校验输出并将共享状态版本递增。消息数与估算 Token 都有硬预算；忽略版本号后的共享状态指纹若重复，会以 `no_progress_loop_detected` 终止。只有 `tests_passed` 与 `review_approved` 同时成立才成功终止。`run_baseline` 用同一需求生成单 Agent 对照，显式报告多角色新增的消息数和估算 Token，而不是预设 Multi-Agent 一定更好。
 
 ## 目录、配置与扩展
 
 ```text
 09-multi-agent-dev-team/  README.md  main.py  .env.example  Dockerfile  tests/
-src/ai_agent_book/apps/multi_agent_team.py  # 五角色与 Coordinator
+src/ai_agent_book/apps/multi_agent_team.py  # 五角色、Coordinator 与单 Agent 基线
+src/ai_agent_book/apps/coding_workspace.py  # 一次性 Git 克隆、补丁策略与测试边界
 ```
 
-默认 Artifact 在内存中生成并由 AST 检查，不执行不可信模型代码。常见问题是不断增加角色却没有独立信息或权限边界。扩展方向包括真正的临时 Git Worktree、容器 Sandbox、补丁应用、pytest Runner，以及与单 Agent 基线的质量/成本对照。
+默认 Artifact 仍由确定性角色生成；专项工作区可执行本地补丁与白名单检查，但不应直接接收不可信代码。常见问题是不断增加角色却没有独立信息或权限边界。后续外部边界是 OCI/gVisor/Firecracker 执行适配器、依赖供应链缓存、补丁审批签名，以及在真实任务集上比较成功率、成本和尾延迟；仓库内的一个固定任务只证明机制可运行，不证明五角色优于单 Agent。

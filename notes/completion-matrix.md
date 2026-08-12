@@ -91,7 +91,7 @@
 | 项目6 | `service_template` | Provider、日报、内容/目标绑定限时审批、持久租约 Outbox、幂等发布、失败恢复、审计与持久服务状态 | 真实账号 OAuth 适配、远端结果对账和供应商限流联调 | P4 |
 | 项目7 | `service_template` | 多 Provider、指标、来源、事实/推断；持久服务状态 | 正式数据源、财报解析和时效评估 | P4 |
 | 项目8 | `production_reference` | LangGraph、RetryPolicy、Interrupt、持久 Run Journal、证据 Allowlist/哈希、租户 Worker、审批与跨进程确定性重放恢复 | 真实搜索、原生数据库 Saver、副作用幂等与外部验证 | P4—P9 |
-| 项目9 | `service_template` | 五角色、共享状态、预算、终止；权限、取消与审计 | 仓库 Sandbox、补丁回滚、扩大单 Agent 基线 | P4 |
+| 项目9 | `service_template` | 五角色、版本共享状态、预算、指纹循环终止、单 Agent 基线、一次性 Git 克隆、补丁策略、失败销毁与白名单测试；权限、取消与审计 | OCI/微虚拟机强隔离、依赖供应链治理和真实任务基准 | P4 |
 | 项目10 | `production_reference` | 多租户 API、PostgreSQL/SQLite、Redis 恢复队列、Verifier/RBAC、Agent/Tool/MCP/RAG、Trace/Eval/指标、重试、DLQ、取消和一致性备份 | 真实 OIDC/JWKS、RLS、独立 Worker、管理前端与灾备演练 | P4—P9 |
 
 项目 4、8、10 已达到离线 `production_reference`，但没有项目标记为 `externally_validated`。外部状态必须有真实账号、远程系统或设备验收证据，不能仅根据 README 描述升级。
