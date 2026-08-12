@@ -17,11 +17,32 @@ REMOTE_IMAGE_RE = re.compile(r"!\[[^\]]*\]\(https?://", re.IGNORECASE)
 MARKETING_PATTERNS = ("业界领先", "颠覆性", "万能框架", "零成本上线")
 AMBIGUOUS_PATTERNS = ("API接口", "截止目前", "最新的最新")
 LAST_CHECKED_RE = re.compile(r"最后核对日期：(?P<date>\d{4}-\d{2}-\d{2})")
+PUBLISHED_MARKDOWN_GLOBS = (
+    "docs/**/*.md",
+    "projects/**/*.md",
+    "examples/**/*.md",
+)
 
 
 def _strip_code(source: str) -> str:
     parts = source.split("```")
     return "".join(parts[::2])
+
+
+def _fence_issues(source: str) -> list[str]:
+    """Return rendering issues for triple-backtick fenced blocks."""
+
+    issues: list[str] = []
+    inside = False
+    for line_number, line in enumerate(source.splitlines(), 1):
+        if not line.startswith("```"):
+            continue
+        if not inside and not line.removeprefix("```").strip():
+            issues.append(f"unlabelled_code_fence:{line_number}")
+        inside = not inside
+    if inside:
+        issues.append("unbalanced_code_fence")
+    return issues
 
 
 def audit(root: Path = ROOT) -> dict[str, Any]:
@@ -51,8 +72,8 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
         if len(configured) < 3 or any(item not in reference_ids for item in configured):
             issues.append({"path": relative, "issue": "invalid_citation_manifest"})
         citation_count += len(configured)
-        if source.count("```") % 2:
-            issues.append({"path": relative, "issue": "unbalanced_code_fence"})
+        for issue in _fence_issues(source):
+            issues.append({"path": relative, "issue": issue})
         if "\t" in source:
             issues.append({"path": relative, "issue": "tab_character"})
         if any(line.rstrip() != line for line in source.splitlines()):
@@ -68,6 +89,19 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
             relative = path.relative_to(root).as_posix()
             if not any(item["path"] == relative for item in issues):
                 issues.append({"path": relative, "issue": "remote_image_without_local_provenance"})
+
+    published_paths = {
+        path
+        for pattern in PUBLISHED_MARKDOWN_GLOBS
+        for path in root.glob(pattern)
+        if "superpowers" not in path.parts
+    }
+    chapter_set = set(chapters)
+    for path in sorted(published_paths - chapter_set):
+        source = path.read_text(encoding="utf-8")
+        relative = path.relative_to(root).as_posix()
+        for issue in _fence_issues(source):
+            issues.append({"path": relative, "issue": issue})
 
     return {
         "schema_version": 1,

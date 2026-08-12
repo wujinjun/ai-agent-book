@@ -4,7 +4,7 @@
 
 ## 原创与生成资产
 
-正文、练习、项目说明和 Mermaid 源图由本仓库维护。当前 manifest 中 240 张 SVG 与 2x PNG 由仓库内 Mermaid 源码确定性生成，`assets/diagrams/manifest.json` 保存源文件与内容哈希；它们不是从论文或博客复制的插图。培训幻灯片不包含外部照片、论文截图或厂商 Logo，缩略图由最终 PPTX 渲染生成。
+正文、练习、项目说明和 Mermaid 源图由本仓库维护。当前 manifest 中 260 张 SVG 与 PNG 由仓库内 Mermaid 源码确定性生成，`assets/diagrams/manifest.json` 保存源文件与内容哈希；它们不是从论文或博客复制的插图。48 张出版级信息图另保留生成式无文字底稿、可编辑 SVG 语义层、PNG、生成提示词、来源与哈希台账。培训幻灯片不包含外部照片、论文截图或厂商 Logo，缩略图由最终 PPTX 渲染生成。
 
 第 1、13、36 章的信息图样板使用内置图像生成工具制作无文字视觉底稿，再由 `scripts/build_infographics.py` 叠加仓库维护的准确中文、箭头和技术边界。提示词、底稿校验值、最终 SVG/PNG 校验值和三端复核状态分别记录在 `notes/infographic-prompts.yml`、`assets/infographics/manifest.json` 与 `notes/infographic-review.yml`。图稿不使用厂商 Logo、论文截图或第三方插画。
 

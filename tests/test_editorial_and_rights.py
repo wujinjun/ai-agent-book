@@ -58,6 +58,30 @@ def test_editorial_audit_rejects_future_last_checked_date(tmp_path: Path) -> Non
     assert any(item["issue"] == "future_last_checked_date" for item in report["issues"])
 
 
+def test_editorial_audit_rejects_unlabelled_project_code_fence(tmp_path: Path) -> None:
+    root = tmp_path
+    chapter = root / "docs/part-01-foundations/ch01.md"
+    chapter.parent.mkdir(parents=True)
+    chapter.write_text(
+        "# 章节\n\n最后核对日期：2026-01-01。\n"
+        "<!-- chapter-citations:start -->\n<!-- chapter-citations:end -->\n",
+        encoding="utf-8",
+    )
+    project = root / "projects/01-demo/README.md"
+    project.parent.mkdir(parents=True)
+    project.write_text("# Demo\n\n```\npython main.py\n```\n", encoding="utf-8")
+    (root / "notes").mkdir()
+    (root / "notes/references.yml").write_text("[]\n", encoding="utf-8")
+    (root / "notes/chapter-citations.yml").write_text("chapters: {}\n", encoding="utf-8")
+
+    report = audit(root)
+
+    assert {
+        "path": "projects/01-demo/README.md",
+        "issue": "unlabelled_code_fence:3",
+    } in report["issues"]
+
+
 def test_dual_license_and_commercial_boundary_are_explicit() -> None:
     license_notice = (ROOT / "LICENSE").read_text(encoding="utf-8")
     code_license = (ROOT / "LICENSE-CODE").read_text(encoding="utf-8")

@@ -81,7 +81,7 @@ def test_project_status_reports_maturity_by_evidence_level() -> None:
         "## 项目成熟度",
         "## 版本核查边界",
         "## 出版完成度",
-        "## 尚未完成",
+        "## 已完成批次与尚未完成边界",
     ):
         assert section in status
     assert "docs/QUALITY_ROADMAP.md" in status
