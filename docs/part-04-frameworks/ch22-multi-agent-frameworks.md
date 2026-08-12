@@ -161,10 +161,95 @@ flowchart LR
 
 调试保存消息拓扑、sender/recipient、任务 ID、Artifact 版本、工具 Trace 和终止原因。每个角色的 Prompt 单独测试，团队测试再覆盖通信。Reviewer 使用独立 rubric，但若与 Coder 是同一模型和证据，应承认其相关性。
 
+### 比较必须使用等价任务契约
+
+框架 Benchmark 很容易失真：一个候选使用真实 LLM，另一个使用确定性函数；一个允许四轮，另一个
+只有一轮；或不同实现拥有不同工具权限。公平 Spike 固定输入、Artifact Schema、Tool Policy、消息
+上限、终止条件和输出验收，再分别记录使用了哪些“原生框架原语”。
+
+本书的同题 Spike 有意不比较模型质量，因为三个候选全部使用确定性 Agent/Plugin。它证明的是状态、
+权限和终止接线：CrewAI 使用类型化 Flow，AutoGen 使用原生 AgentChat Team，Semantic Kernel 只使用
+Kernel/Plugin。后者不能据此宣称原生 Agent Orchestration 已验证。
+
+```mermaid
+%% id: framework-evidence-depth-layers
+%% title: Multi-Agent 框架证据深度分层
+%% alt: 从包可安装到原语接线契约故障恢复在线质量和生产规模逐层增强证据，低层通过不能替代高层
+flowchart TD
+    Install[版本可安装/导入] --> Primitive[指定框架原语实际调用]
+    Primitive --> Contract[权限、状态、消息和终止契约]
+    Contract --> Failure[崩溃、恢复、重放与并发]
+    Failure --> Online[真实模型质量/成本]
+    Online --> Scale[目标平台规模与运维]
+```
+
+当前证据停在不同层次必须逐项披露。把“包能导入”写成“生产可用”或把 Plugin 调用写成 Agent Team
+验证，都会误导选型。
+
+### 三个候选的状态与恢复边界
+
+CrewAI Flow 适合让显式 State 和事件拥有控制权；Crew 适合受限探索子任务。生产要确认 State 序列化、
+幂等恢复和外部副作用边界，而不是只看装饰器流程。AutoGen AgentChat 的 Agent/Team 有历史，保存
+Team State 时绑定租户与版本；复杂分布式需求才考虑 Core，不应因“多 Agent”默认引入事件 Runtime。
+
+Semantic Kernel 的 Kernel/Plugin 与企业 DI 集成自然，但当前 Spike 的 Runner 是教材自有编排器。
+原生 Orchestration 若处于 Experimental/Prerelease，采用时需隔离 Adapter、固定版本和准备替换方案。
+任何框架 Memory 都不能成为唯一业务状态；审批、幂等、副作用和 Job Checkpoint 归应用数据库。
+
+### 角色通信与上下文经济性
+
+每次角色通信都可能重复 System Prompt、工具描述、历史和 Artifact。自然语言转发大文件使 Token 成本
+按角色数放大，也会损失来源。正确做法是消息携带任务 ID、Artifact 引用、证据 ID、版本与精简摘要；
+接收方按权限读取所需内容。
+
+Reviewer 不需要 Coder 的完整思维过程，只需要任务契约、Patch、测试证据和风险 Rubric。Supervisor
+聚合结构化状态，避免让所有角色订阅所有消息。评估时计算“每个成功任务的物理模型调用数、重复
+上下文 Token 和无产出消息”，而不只计算角色数。
+
+### Framework Lock-in 与 Adapter
+
+业务层定义 `TaskContract`、`Artifact`、`Review` 和 `TerminationReason`，框架 Adapter 负责转换 Agent、
+Message、State 与 Tool。数据库不存框架私有对象的 Pickle；持久状态使用版本化应用 Schema。这样能在
+框架升级或回退单 Agent 时保留历史和 API。
+
+```python
+class TeamRuntime(Protocol):
+    async def run(
+        self,
+        contract: TaskContract,
+        *,
+        budget: RunBudget,
+    ) -> TeamResult: ...
+```
+
+Port 不应做成所有框架特性的最大公约数。若某候选的核心能力无法映射，应在 ADR 中明确专有扩展与
+退出成本，而不是伪装成完全可互换。
+
+### 版本升级与生产门禁
+
+候选升级在独立环境执行：重新安装固定版本、运行直接测试、生成源码哈希与证据，再比较 API/状态
+迁移。不能把 CrewAI、AutoGen、Semantic Kernel 和其他框架强行装进同一虚拟环境；传递依赖冲突会
+破坏可复现性。
+
+生产门禁继续加入真实模型黄金集、故障恢复、多租户、Trace、预算与 Sandbox。原生 Code Executor
+即使使用容器，也需网络、挂载、资源和 Secret 隔离；进程或容器边界不自动等于安全 Sandbox。
+
+### 练习参考答案与面试要点
+
+1. **两种团队方案。** 固定同一任务、模型、工具、预算和 Rubric，与单 Agent 比较成功率、权限违规、
+   P95、单位成功成本和终止；无净收益则回退。
+2. **状态/历史。** Shared State 是版本化事实和 Artifact，消息历史是通信记录；后者不能用 Last Message
+   替代权威状态。
+3. **实验性能力。** 隔离 Adapter、固定版本、直接测试、限制发布范围并准备替代路径；状态使用应用
+   Schema，避免无法迁移。
+4. **无效对话。** 任务去重、Artifact 增量、状态指纹、消息上限和 Deadline 由 Runtime 强制，不依赖
+   Agent 自觉说“结束”。
+
 ### 常见误区与安全
 
 常见误区包括角色越多越好、群聊产生的共识等于事实、多个同模型 Agent 等于独立专家，以及框架 Memory 自动保持一致。外部动作仍需 Policy/审批，Agent 凭证最小化，消息不转发 secret，代码执行使用 Sandbox。若单 Agent + tools 达到相同成功率，应选择更简单方案。
-总结：Multi-Agent 框架放大协作能力，也放大消息、状态、成本和安全复杂度。练习：用单 Agent 和两种团队方案完成同一任务，证明净收益，否则回退。面试：共享状态和消息历史如何区分？如何避免无效对话？实验性框架能力如何进入生产？延伸阅读：[CrewAI](https://docs.crewai.com/)、[AutoGen](https://microsoft.github.io/autogen/stable/)、[Semantic Kernel Agent Orchestration](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-orchestration/) 官方文档。代码目录：`projects/09-multi-agent-dev-team/`。
+总结：Multi-Agent 框架放大协作能力，也放大消息、状态、成本和安全复杂度。选型必须披露证据深度并
+相对单 Agent 证明净收益。延伸阅读：[CrewAI](https://docs.crewai.com/)、[AutoGen](https://microsoft.github.io/autogen/stable/)、[Semantic Kernel Agent Orchestration](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-orchestration/)；代码目录为项目 9 与 `examples/framework_comparison/multi_agent_spike/`。
 
 ## 本章引用
 <!-- chapter-citations:start -->

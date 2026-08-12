@@ -66,6 +66,7 @@ P9 当前状态为 `complete_repository_scope`。仓库证据分为个人系统�
 - 第 4、23 章分别深化至约 9.0 千和 10.4 千字符：生成机制补齐稳定 Softmax、过滤顺序差异、可重复性分层、Finish Reason 与 Sampling Lab 证据边界；Python 工程补齐共享 Deadline、结构化并发、取消传播、资源生命周期、Protocol/Adapter 错误契约和测试替身选择。
 - 第 26、32 章分别深化至约 9.2 千和 8.7 千字符：部署补齐镜像供应链、Digest/SBOM、Secret 轮换、滚动排空、Expand/Migrate/Contract 与故障注入；Multi-Agent 补齐任务契约、消息幂等、Blackboard 并发冲突、状态指纹终止和单 Agent 净收益门禁。
 - 第 3、18 章分别深化至约 9.4 千和 10.0 千字符：Transformer 补齐 Mask 组合、真实复杂度、KV Cache 容量/并发与注意力解释边界；Agents SDK 补齐版本证据链、应用 Runtime 边界、工具事务、Handoff/Guardrail 并发窗口、Session 与 MCP 数据边界。`openai-agents==0.18.3` 已再次在全新 Python 3.12 环境安装并通过离线入口、6 项测试、Ruff 与严格 mypy。
+- 第 19、22 章分别深化至约 9.1 千和 9.7 千字符：PydanticAI 补齐类型证据边界、Capability 依赖、ModelRetry 放大、离线/在线证据分层与 FastAPI 错误映射；Multi-Agent 框架补齐等价任务契约、证据深度、状态恢复、上下文经济性、Adapter 锁定风险和独立环境升级门禁。
 - P3 核心范围已完成：版本敏感框架与官方 MCP SDK 均有固定版本和直接实测；真实 Provider、完整 RAG ADR 与升级回归属于后续外部验证。
 - P4 核心成熟度目标已完成：十个项目均达到 `service_template`，项目 4、8、10 达到离线 `production_reference`；各项目的真实供应商、规模、灾备与安全验证继续按明确清单跟踪。
 - P5 已完成仓库交付：讲师手册、学员实验手册、12 个核心实验、题库、综合考试、评分标准、五类企业案例、三个工作坊、离线 Fixture、环境初始化脚本和 16 页培训幻灯片均已落盘并通过自动门禁；真实班级试讲和学习效果评估进入 P9。
