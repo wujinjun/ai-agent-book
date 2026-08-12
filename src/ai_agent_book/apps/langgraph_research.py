@@ -40,6 +40,10 @@ class SearchProvider(Protocol):
     def search(self, topic: str) -> list[Evidence]: ...
 
 
+class ReportPublisher(Protocol):
+    def publish(self, report: str, *, idempotency_key: str) -> str: ...
+
+
 class FixtureSearchProvider:
     def __init__(self, evidence: list[Evidence], *, failures_before_success: int = 0) -> None:
         self.evidence = evidence
@@ -189,6 +193,16 @@ class DurableResearchRun(BaseModel):
     error_type: str | None = None
 
 
+class PublicationRecord(BaseModel):
+    run_id: str
+    tenant_id: str
+    status: Literal["pending", "publishing", "published", "failed"]
+    report_hash: str
+    idempotency_key: str
+    receipt: str = ""
+    attempts: int = Field(ge=0)
+
+
 class DurableResearchService:
     """Persisted run journal around LangGraph using deterministic replay.
 
@@ -246,6 +260,18 @@ class DurableResearchService:
                     event_type TEXT NOT NULL,
                     created_at TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS report_publications (
+                    run_id TEXT PRIMARY KEY,
+                    tenant_id TEXT NOT NULL,
+                    status TEXT NOT NULL,
+                    report_hash TEXT NOT NULL,
+                    idempotency_key TEXT NOT NULL UNIQUE,
+                    receipt TEXT NOT NULL DEFAULT '',
+                    attempts INTEGER NOT NULL DEFAULT 0,
+                    updated_at TEXT NOT NULL
+                );
+                CREATE INDEX IF NOT EXISTS idx_publication_queue
+                    ON report_publications(tenant_id,status,updated_at);
                 """
             )
 
@@ -424,6 +450,105 @@ class DurableResearchService:
             row = db.execute("SELECT * FROM research_runs WHERE run_id=?", (run_id,)).fetchone()
             assert row is not None
             return self._record(row)
+
+    @staticmethod
+    def _publication(row: sqlite3.Row) -> PublicationRecord:
+        return PublicationRecord(
+            run_id=row["run_id"],
+            tenant_id=row["tenant_id"],
+            status=row["status"],
+            report_hash=row["report_hash"],
+            idempotency_key=row["idempotency_key"],
+            receipt=row["receipt"],
+            attempts=row["attempts"],
+        )
+
+    def enqueue_publication(self, tenant_id: str, run_id: str) -> PublicationRecord:
+        run = self.get(tenant_id, run_id)
+        if run.status != "completed" or not run.report:
+            raise ValueError("only completed reports can be published")
+        report_hash = sha256(run.report.encode()).hexdigest()
+        idempotency_key = f"research-report:{tenant_id}:{run_id}:{report_hash}"
+        with self._connect() as db:
+            db.execute(
+                """INSERT OR IGNORE INTO report_publications
+                   (run_id,tenant_id,status,report_hash,idempotency_key,updated_at)
+                   VALUES (?,?,'pending',?,?,?)""",
+                (run_id, tenant_id, report_hash, idempotency_key, self._now()),
+            )
+            row = db.execute(
+                "SELECT * FROM report_publications WHERE tenant_id=? AND run_id=?",
+                (tenant_id, run_id),
+            ).fetchone()
+            assert row is not None
+            if row["report_hash"] != report_hash:
+                raise ValueError("published report content no longer matches completed run")
+            return self._publication(row)
+
+    def recover_publications(self) -> int:
+        """崩溃时不知道远端是否已成功，因此保留同一幂等键再次对账调用。"""
+        with self._connect() as db:
+            rows = db.execute(
+                "SELECT run_id FROM report_publications WHERE status='publishing'"
+            ).fetchall()
+            db.execute(
+                """UPDATE report_publications SET status='pending',updated_at=?
+                   WHERE status='publishing'""",
+                (self._now(),),
+            )
+        return len(rows)
+
+    def publish_next(
+        self,
+        *,
+        tenant_id: str,
+        publisher: ReportPublisher,
+    ) -> PublicationRecord | None:
+        with self._connect() as db:
+            row = db.execute(
+                """SELECT p.*,r.report FROM report_publications p
+                   JOIN research_runs r ON r.run_id=p.run_id
+                   WHERE p.tenant_id=? AND p.status='pending'
+                   ORDER BY p.updated_at LIMIT 1""",
+                (tenant_id,),
+            ).fetchone()
+            if row is None:
+                return None
+            report = str(row["report"])
+            if sha256(report.encode()).hexdigest() != row["report_hash"]:
+                raise ValueError("report digest mismatch before publication")
+            claimed = db.execute(
+                """UPDATE report_publications
+                   SET status='publishing',attempts=attempts+1,updated_at=?
+                   WHERE run_id=? AND status='pending'""",
+                (self._now(), row["run_id"]),
+            )
+            if claimed.rowcount != 1:
+                return None
+        try:
+            receipt = publisher.publish(report, idempotency_key=str(row["idempotency_key"]))
+        except Exception:
+            with self._connect() as db:
+                db.execute(
+                    """UPDATE report_publications SET status='pending',updated_at=?
+                       WHERE run_id=? AND status='publishing'""",
+                    (self._now(), row["run_id"]),
+                )
+            raise
+        with self._connect() as db:
+            completed = db.execute(
+                """UPDATE report_publications
+                   SET status='published',receipt=?,updated_at=?
+                   WHERE run_id=? AND status='publishing'""",
+                (receipt, self._now(), row["run_id"]),
+            )
+            if completed.rowcount != 1:
+                raise RuntimeError("publication claim was lost before receipt commit")
+            current = db.execute(
+                "SELECT * FROM report_publications WHERE run_id=?", (row["run_id"],)
+            ).fetchone()
+            assert current is not None
+            return self._publication(current)
 
 
 class ResearchCreate(BaseModel):

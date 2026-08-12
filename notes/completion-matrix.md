@@ -90,7 +90,7 @@
 | 项目5 | `service_template` | Diff、规则、语义 Review、报告、Diff 预算 Sandbox、Webhook HMAC/持久去重、绑定提交与报告哈希的限时审批、HTTP、权限与审计 | 真实 GitHub App 安装鉴权、多语言静态分析容器和远程评论查询去重 | P4 |
 | 项目6 | `service_template` | Provider、日报、内容/目标绑定限时审批、持久租约 Outbox、幂等发布、失败恢复、审计与持久服务状态 | 真实账号 OAuth 适配、远端结果对账和供应商限流联调 | P4 |
 | 项目7 | `service_template` | 多 Provider、指标、来源、事实/推断；持久服务状态 | 正式数据源、财报解析和时效评估 | P4 |
-| 项目8 | `production_reference` | LangGraph、RetryPolicy、Interrupt、持久 Run Journal、证据 Allowlist/哈希、租户 Worker、审批与跨进程确定性重放恢复 | 真实搜索、原生数据库 Saver、副作用幂等与外部验证 | P4—P9 |
+| 项目8 | `production_reference` | LangGraph、RetryPolicy、Interrupt、持久 Run Journal、证据 Allowlist/哈希、租户 Worker、审批、跨进程确定性重放，以及报告发布 Outbox、稳定幂等键和回执恢复 | 真实搜索、原生数据库 Saver、真实 Publisher 幂等/未知结果对账与外部验证 | P4—P9 |
 | 项目9 | `service_template` | 五角色、版本共享状态、预算、指纹循环终止、单 Agent 基线、一次性 Git 克隆、补丁策略、失败销毁与白名单测试；权限、取消与审计 | OCI/微虚拟机强隔离、依赖供应链治理和真实任务基准 | P4 |
 | 项目10 | `production_reference` | 多租户 API、PostgreSQL/SQLite、Redis 恢复队列、Verifier/RBAC、租户限定 Worker、短事务租约、心跳、崩溃恢复、协作式运行中取消、内容绑定一次性 DLQ 重放批准、Trace/Eval/指标和一致性备份 | 真实 OIDC/JWKS、RLS、独立 Worker Deployment、管理前端、OpenTelemetry 与灾备演练 | P4—P9 |
 

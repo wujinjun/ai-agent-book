@@ -36,6 +36,16 @@ def _service(path: Path) -> DurableResearchService:
     )
 
 
+class IdempotentPublisher:
+    def __init__(self) -> None:
+        self.receipts: dict[str, str] = {}
+        self.calls: list[str] = []
+
+    def publish(self, report: str, *, idempotency_key: str) -> str:
+        self.calls.append(idempotency_key)
+        return self.receipts.setdefault(idempotency_key, f"receipt:{len(report)}")
+
+
 def test_run_pauses_and_resumes_after_service_restart(tmp_path: Path) -> None:
     database = tmp_path / "research.db"
     service = _service(database)
@@ -124,3 +134,47 @@ def test_durable_research_api_enforces_roles_and_completes(tmp_path: Path) -> No
     assert completed.json()["status"] == "completed"
     denied = {**headers, "X-Roles": "project:run"}
     assert client.post("/v1/research/worker/process-one", headers=denied).status_code == 403
+
+
+def test_report_publication_outbox_is_idempotent_across_crash_recovery(tmp_path: Path) -> None:
+    service = _service(tmp_path / "research.db")
+    run = service.submit("topic", _evidence(), tenant_id="a")
+    service.process_next(tenant_id="a")
+    completed = service.approve("a", run.run_id, approved=True)
+    pending = service.enqueue_publication("a", completed.run_id)
+    publisher = IdempotentPublisher()
+
+    # 模拟远端已接受，但本地进程在写回 receipt 前崩溃。
+    expected_receipt = publisher.publish(completed.report, idempotency_key=pending.idempotency_key)
+    with service._connect() as db:
+        db.execute(
+            "UPDATE report_publications SET status='publishing' WHERE run_id=?",
+            (run.run_id,),
+        )
+
+    restarted = _service(tmp_path / "research.db")
+    assert restarted.recover_publications() == 1
+    published = restarted.publish_next(tenant_id="a", publisher=publisher)
+
+    assert published is not None and published.status == "published"
+    assert published.receipt == expected_receipt
+    assert publisher.calls == [pending.idempotency_key, pending.idempotency_key]
+    assert len(publisher.receipts) == 1
+
+
+def test_publication_rejects_report_tampering_before_provider_call(tmp_path: Path) -> None:
+    service = _service(tmp_path / "research.db")
+    run = service.submit("topic", _evidence(), tenant_id="a")
+    service.process_next(tenant_id="a")
+    completed = service.approve("a", run.run_id, approved=True)
+    service.enqueue_publication("a", completed.run_id)
+    with service._connect() as db:
+        db.execute(
+            "UPDATE research_runs SET report='tampered' WHERE run_id=?", (run.run_id,)
+        )
+    publisher = IdempotentPublisher()
+
+    with pytest.raises(ValueError, match="digest mismatch"):
+        service.publish_next(tenant_id="a", publisher=publisher)
+
+    assert publisher.calls == []

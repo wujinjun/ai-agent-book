@@ -99,10 +99,10 @@ projects:
     domain_implementation: src/ai_agent_book/apps/langgraph_research.py
     direct_tests: [tests/test_langgraph_research_app.py, tests/test_durable_research_service.py]
     dockerfile: projects/08-research-workflow/Dockerfile
-    persistence_recovery: 持久 Run Journal、证据哈希与跨进程确定性重放
-    side_effect_safety: 证据 Allowlist、人工中断与只读恢复
+    persistence_recovery: 持久 Run Journal、证据哈希、跨进程确定性重放与报告发布 Outbox
+    side_effect_safety: 证据 Allowlist、人工中断、报告哈希和稳定幂等键回执恢复
     external_adapter: langgraph_offline
-    gaps: [真实搜索, 数据库 Checkpointer, 外部写操作幂等]
+    gaps: [真实搜索, 数据库 Checkpointer, 真实 Publisher 幂等与未知结果对账]
   - id: 9
     name: Multi-Agent 软件开发团队
     maturity: service_template

@@ -4,7 +4,7 @@
 
 *图 P8-A　LangGraph 研究工作流的状态、恢复与人工中断。*
 
-Checkpoint 保存的是可恢复状态，不会自动让外部副作用可重放；搜索写缓存、发布报告等动作仍需幂等键。Reviewer 只返工失败节点，避免每次校验失败都重跑整条链路。
+Checkpoint 保存的是可恢复状态，不会自动让外部副作用可重放；搜索写缓存、发布报告等动作仍需幂等键。项目中的报告发布因此使用独立持久 Outbox，而不是把“发布”直接塞进会被重放的图节点。Reviewer 只返工失败节点，避免每次校验失败都重跑整条链路。
 
 ## 需求、架构与数据流
 技术选型：Python 3.12、Pydantic 2、FastAPI、pytest 与 Docker；在线供应商通过适配器接入。
@@ -117,3 +117,33 @@ sequenceDiagram
 ```
 
 这种方案适用于重放安全的只读步骤。若图包含不可重复的外部写操作，必须改用支持事务 Checkpoint 的持久 Saver，并为每个副作用保存幂等回执；不能依赖重放侥幸不重复执行。
+
+## 外部副作用：报告发布 Outbox
+
+`DurableResearchService.enqueue_publication()` 只接受已完成且报告非空的 Run。它把 `tenant_id + run_id + report_hash` 组成稳定幂等键，并在调用外部 Publisher 前持久化 `pending` 记录。Worker 原子领取后在数据库事务外发布，再保存远端回执。若远端已成功而进程尚未保存回执就崩溃，恢复程序把 `publishing` 改回 `pending`，并用同一幂等键重试。
+
+```mermaid
+%% id: project8-report-publication-outbox
+%% title: 报告发布 Outbox 与未知结果恢复
+%% alt: 完成报告先按内容哈希写入持久 Outbox，Worker 用稳定幂等键调用 Publisher，崩溃后复用同一键对账重试并保存回执
+sequenceDiagram
+    participant G as Research Graph
+    participant O as Publication Outbox
+    participant W as Publisher Worker
+    participant P as External Publisher
+    G->>O: completed report + report_hash + idempotency_key
+    W->>O: claim pending -> publishing
+    W->>P: publish(report, same key)
+    alt receipt committed
+        P-->>W: stable receipt
+        W->>O: published + receipt
+    else crash after remote success
+        P-->>W: accepted
+        Note over W,O: local receipt not committed
+        W->>O: recover publishing -> pending
+        W->>P: retry with same key
+        P-->>W: same receipt, no duplicate
+    end
+```
+
+这一保证依赖 Provider 对幂等键的真实支持。若 Provider 不支持幂等键或无法查询远端状态，崩溃窗口中的结果只能标记为 `unknown` 并转人工对账，不能通过数据库事务得到 exactly-once。测试还会在 Provider 调用前校验报告哈希，防止完成后的内容被篡改再发布。
