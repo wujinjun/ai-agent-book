@@ -158,7 +158,99 @@ def sample(logits: dict[str, float], temperature: float, seed: int) -> str:
 
 调试时保存模型标识、参数、输入摘要、结束原因和 Usage。空输出先查内容安全与停止原因；重复文本检查输出上限和提示重复；JSON 截断检查长度与流状态；事实错误回到证据链，而不是继续调随机参数。
 
-总结：生成是反复计算分布、选择 Token 和检查终止的过程。练习：为代码生成、营销创意和发票抽取分别设计参数与指标；扩展采样器加入 Top-p；解释流式 JSON 为什么难以完整校验。面试问题：Temperature 与 Top-p 分别改变什么？为什么长度结束必须视为潜在失败？结构化输出保证了什么、没有保证什么？
+### 从 Logit 到概率的数值稳定
+
+模型先产生未归一化 Logit。Softmax 把它们转为和为 1 的分布，但直接计算 `exp(logit)` 可能溢出；
+工程实现通常先减去最大 Logit。减去同一个常数不会改变概率比值：
+
+```python
+from math import exp, isfinite
+
+
+def stable_softmax(logits: list[float]) -> list[float]:
+    if not logits or not all(isfinite(value) for value in logits):
+        raise ValueError("logits must be finite and non-empty")
+    maximum = max(logits)
+    weights = [exp(value - maximum) for value in logits]
+    total = sum(weights)
+    return [weight / total for weight in weights]
+```
+
+Temperature 大于零时通常通过 `logit / temperature` 缩放。Temperature 趋近零会让最大项占优，但 API
+对 `0` 的定义可能是贪心、特殊分支或不允许；不能把教材公式直接外推为所有供应商接口语义。若多个
+Token Logit 完全相同，即使贪心也需要 Tie-break 规则，分布式实现或版本变化仍可能产生差异。
+
+### Top-k 与 Top-p 的顺序属于实现语义
+
+当两个过滤器同时启用时，先 Top-k 再 Top-p 与先 Top-p 再 Top-k 可能留下不同候选。教材的
+Sampling Lab 明确规定“Temperature → Top-k → Softmax → Top-p”，只为让实验可复现，不声称所有
+平台采用此顺序。比较两家服务时若只看参数名称相同，很容易把实现差异误判为模型能力差异。
+
+Top-p 的最小集合通常先按概率降序，再保留累计概率达到阈值的候选；至少保留一个 Token。边界上的
+等概率项、浮点舍入和是否包含越过阈值的 Token 都可能因实现不同而变化。工程测试应验证供应商承诺
+的行为或任务结果，不能对未公开内部排序做脆弱断言。
+
+```mermaid
+%% id: decoding-filter-order-comparison
+%% title: 采样过滤顺序会改变候选集合
+%% alt: 同一 Logit 分布分别经过先 Top-k 后 Top-p 和先 Top-p 后 Top-k 两条路径，可能产生不同候选集合，因此实验必须记录实现与顺序
+flowchart LR
+    Logits[同一 Logit 分布] --> K[先 Top-k] --> KP[再 Top-p] --> A[候选集合 A]
+    Logits --> P[先 Top-p] --> PK[再 Top-k] --> B[候选集合 B]
+    A --> Compare[记录实现、参数和任务指标]
+    B --> Compare
+```
+
+图中的差异说明参数只是解码策略的一部分。供应商未承诺 Logprob 或过滤细节时，应把系统当黑盒，
+通过固定任务集比较最终质量、长度、延迟和成本。
+
+### 可重复性的分层定义
+
+“相同输入得到相同输出”至少有三种强度：
+
+| 层次 | 可控制条件 | 合理断言 |
+|---|---|---|
+| 本地算法单测 | 固定代码、词表、随机源与 Python 版本 | Token 序列完全一致 |
+| 固定供应商快照 | 固定模型快照、参数、Seed 和区域 | 通常高度相似；以供应商承诺为准 |
+| 可变托管别名 | 后端、量化、路由或安全系统可能更新 | Schema、事实和任务指标稳定 |
+
+生产回归优先验证业务不变量：结构可解析、引用支持事实、禁止动作未发生、结束原因合法。全文 Golden
+仍可用于确定性 Fixture，但不宜作为所有在线模型升级的唯一门禁。Seed 是实验元数据，不是分布式系统
+的一致性协议。
+
+### Finish Reason 是结果契约的一部分
+
+应用需要区分自然结束、Stop、长度截断、内容策略、工具调用、取消和上游错误。具体枚举由 Provider
+Adapter 映射成领域状态。达到最大长度时，即使字符串恰好能解析 JSON，也应谨慎对待：末尾字段、
+引用或免责声明可能缺失。工具调用只有在参数完整、Schema 和授权全部通过后才能执行。
+
+Stop Sequence 匹配还可能跨 Token 边界，因此不能用“最后一个 Token 等于停止串”模拟所有真实行为。
+用户可控文本若能注入协议停止串，应使用结构化通道、转义或不可由用户伪造的帧边界。流式消费者
+必须等终态事件后提交候选，连接 EOF 只说明传输结束，不说明模型正常完成。
+
+### Sampling Lab 的证据边界
+
+[`examples/sampling_lab/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/sampling_lab)
+对四项玩具词表运行 500 个固定 Seed，生成 CSV 与 Markdown 频率报告，并测试非法 Temperature、Top-p、
+Top-k、非有限 Logit、Stop Token 和长度上限。它证明解码控制逻辑和报告可重复，不证明哪组参数会让
+真实语言任务更正确。
+
+将真实 Provider 接入时，应保留同一任务 Dataset，但不得在平台不返回 Logprob 时伪造概率分布。
+在线实验还要记录 Model Snapshot、区域、Finish Reason、Usage 和日期；安全过滤或服务端路由可能使
+同一 Seed 不再逐 Token 一致。
+
+### 练习参考答案与面试要点
+
+1. **发票抽取。** 使用低随机性、结构化输出和长度余量，指标为字段准确率、Schema 有效率和拒答；
+   Temperature 不能替代票据证据校验。
+2. **营销候选。** 允许适度多样性并一次生成多个候选，用人工/品牌 Rubric、重复率、成本评价；高温
+   不是创造力的充分条件。
+3. **代码生成。** 参数只是起点，真正门禁是编译、测试、安全扫描和 Patch 范围；截断输出不得应用。
+4. **面试要点。** Temperature 改变整个分布的相对尖锐程度，Top-p 动态裁剪累计概率候选；长度结束
+   表示结果可能不完整；结构化输出保证形状，不保证字段事实、权限或业务合法性。
+
+总结：生成是反复计算分布、选择 Token 和检查终止的过程。可靠工程需要记录过滤语义、结束原因和
+版本，并把候选结果放在结构、事实、权限与业务门禁之后，而不是把随机参数当质量开关。
 
 延伸阅读：Holtzman et al., *The Curious Case of Neural Text Degeneration*；目标供应商当前的解码、流式与结构化输出官方文档。本章代码目录为 [`examples/sampling_lab/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/sampling_lab)，包含固定 Logit Provider、Temperature/top-k/top-p、带种子采样、停止条件测试，以及可重复生成的 CSV/Markdown 经验频率报告；它不冒充真实 LLM 评测。
 

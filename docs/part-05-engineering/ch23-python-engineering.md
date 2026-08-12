@@ -161,10 +161,148 @@ Python DI 可以是显式构造器，不必先引入容器。Service 接收 Prot
 
 Ruff 负责格式和静态规则，mypy strict 检查类型，pytest 执行行为。CI 先快速 lint/type/unit，再 integration/eval。覆盖率是线索，不是目标；权限拒绝和恢复路径比简单 getter 更重要。
 
+### 共享 Deadline 与超时传播
+
+为每一层重新设置 30 秒超时会让三层调用最坏运行 90 秒。入口应生成绝对 Deadline，子调用计算剩余
+预算，并为清理和状态提交保留余量。连接、读取和总任务超时仍需分开：连接失败可快速重试，读取超时
+后的外部写则可能处于未知状态。
+
+```python
+import asyncio
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class Deadline:
+    expires_at: float
+
+    def remaining(self) -> float:
+        value = self.expires_at - asyncio.get_running_loop().time()
+        if value <= 0:
+            raise TimeoutError("run deadline exhausted")
+        return value
+
+
+async def call_tool(tool: ToolPort, request: ToolRequest, deadline: Deadline) -> ToolResult:
+    async with asyncio.timeout(min(10.0, deadline.remaining())):
+        return await tool.execute(request)
+```
+
+`asyncio.timeout()` 超时会通过取消当前任务实现，因此清理代码必须正确处理取消。业务层把 Provider
+Timeout 映射成稳定领域错误，但不要吞掉调用方取消后继续执行。若 Adapter 对外部写收到取消，仍需
+按幂等键核对远端状态。
+
+### 结构化并发、取消与异常组
+
+`TaskGroup` 让并发子任务具有共同生命周期：一个子任务失败时，其余任务被取消，退出上下文后抛出
+异常组。只读且互相独立的检索可以使用这种 Fail-fast；若希望收集部分结果，需要显式捕获每个任务
+的领域结果，而不是让异常不受控传播。具有顺序依赖或外部副作用的 Tool 不应为了降低延迟盲目并行。
+
+```python
+async def retrieve_all(
+    query: str,
+    retrievers: tuple[RetrieverPort, ...],
+) -> list[Evidence]:
+    tasks: list[asyncio.Task[list[Evidence]]] = []
+    async with asyncio.TaskGroup() as group:
+        for retriever in retrievers:
+            tasks.append(group.create_task(retriever.search(query)))
+    return [item for task in tasks for item in task.result()]
+```
+
+如果任何 Retriever 失败，这个版本整体失败。容忍部分失败时，Adapter 返回类型化 `Success | Failure`
+并由策略决定最少证据数；不能用 `except Exception: return []` 把基础设施故障伪装成“没有资料”。
+
+```mermaid
+%% id: python-structured-concurrency-failure
+%% title: Agent 中的结构化并发与失败传播
+%% alt: 父 Run 在 TaskGroup 中启动独立只读子任务，一个失败触发同组取消并回到父级分类，外部副作用任务不进入无约束并行
+flowchart TD
+    Run[父 Run + Deadline] --> Group[TaskGroup]
+    Group --> R1[Retriever A 只读]
+    Group --> R2[Retriever B 只读]
+    Group --> R3[Retriever C 只读]
+    R2 -->|异常| Cancel[取消同组未完成任务]
+    Cancel --> Classify[父级分类：失败/部分结果/重试]
+    Effect[外部写 Tool] -.按顺序、审批与幂等执行.-> Run
+```
+
+图中结构化并发保证父任务离开作用域时没有“孤儿协程”。用 `asyncio.create_task()` 后丢弃引用会造成
+异常无人读取、请求结束后继续计费或应用关闭时资源泄漏。
+
+### 资源生命周期与 Graceful Shutdown
+
+数据库池、HTTP Client、Telemetry Exporter 和后台 Worker 都应由应用生命周期持有。启动阶段完成
+配置验证和依赖探测；关闭阶段先停止接收新请求，再给运行任务有限 Drain 时间，保存 Checkpoint，
+最后关闭连接池。每次 Tool 调用新建 `AsyncClient` 会失去连接复用并耗尽 Socket。
+
+`async with` 适合局部资源，应用级资源使用 FastAPI Lifespan 或组合式容器。关闭不能无限等待供应商；
+设置 Shutdown Deadline，并让未完成持久 Job 由租约恢复。单元测试断言 Fake Client 的 `aclose()`
+被调用，集成测试在 SIGTERM/进程重建后验证任务状态。
+
+### Protocol、Adapter 与错误代数
+
+领域层依赖最小 Protocol，而不是具体 SDK 类型。Adapter 负责把供应商流事件、Usage、错误和 Finish
+Reason 转成稳定领域模型；版本敏感代码集中在这一层。这样框架升级时，不必修改规划、权限和状态机。
+
+```python
+from typing import Protocol
+
+
+class ModelPort(Protocol):
+    async def generate(self, request: ModelRequest, deadline: Deadline) -> ModelResult: ...
+
+
+class ModelError(Exception):
+    retryable: bool = False
+
+
+class ModelRateLimited(ModelError):
+    retryable = True
+
+
+class ModelPolicyRejected(ModelError):
+    retryable = False
+```
+
+错误类型应表达调用者可以采取的动作，但“可重试”仍受幂等、Attempt 和总 Deadline 限制。不要把 SDK
+原始异常穿过所有层，也不要依据错误字符串匹配业务分支。未知异常在 Adapter 边界保留 `raise ... from`
+因果链，并向外返回脱敏稳定 Code。
+
+### 配置、Secret 与启动门禁
+
+配置解析一次并冻结。URL、超时、模型策略和 Feature Flag 可以进入 Settings；Secret 使用专门类型或
+Secret Store 引用，`repr` 和日志必须隐藏。测试启动失败路径：缺少 Key、无效 URL、负超时和不兼容
+Feature 组合应在服务接收流量前失败，而不是首次用户请求才暴露。
+
+环境变量不是动态配置系统。需要运行时调整的预算或路由规则应有版本、审批、审计和原子发布；每个
+Run 记录实际配置版本。直接在多实例 `.env` 中手工改 Prompt 会导致实例行为漂移。
+
+### 测试替身的选择
+
+Stub 返回固定值；Fake 实现简化但真实的状态语义；Mock 验证交互；Spy 记录调用。Agent Runtime 通常
+更适合 Fake Model/Tool/Clock，因为测试关心多轮状态和失败恢复，而不是 SDK 内部方法调用次数。
+HTTP Adapter 可用 `httpx.MockTransport` 做契约测试，断言请求 Header、Timeout、Schema 和错误映射。
+
+在线 Provider Test 单独运行，设置预算和最小数据，只验证官方接口兼容；它不能替代离线确定性测试，
+离线 Fake 也不能证明在线服务当前可用。两类证据在状态报告中分开记录。
+
+### 练习参考答案与面试要点
+
+1. **同步客户端改造。** 应创建应用级 `AsyncClient`、注入 Adapter、设置分项 Timeout 和共享 Deadline，
+   并在 Lifespan 关闭；测试超时映射、调用方取消和连接关闭。
+2. **协程与线程。** 原生异步 I/O 用协程；无法替换的阻塞 I/O 放受限线程池；CPU 密集计算用进程或
+   Worker。线程不会自动让不可重入 SDK 安全。
+3. **Pydantic 边界。** JSON、配置、Tool 参数和外部响应进入系统时验证；领域内部保持明确类型，
+   Validator 不做网络 I/O，授权仍由 Service 完成。
+4. **`Any` 风险。** 它使类型错误、字段漂移和错误分支推迟到运行期，Fake 也难表达完整契约；应在
+   Adapter 立刻转换为领域类型。
+
 ### 常见误区、调试与安全
 
 常见误区：所有函数都 async、用 Pydantic 替代领域建模、Mock 每个内部方法、在日志打印完整请求。调试先复现环境与依赖版本，检查未关闭客户端、event loop 阻塞和异常链。供应链使用固定源、依赖扫描和最小包，开发工具不进入运行镜像。
-总结：Python 工程质量来自明确边界和可复现工具链。练习：把同步 API 客户端改为复用的异步依赖并写超时/取消测试。面试：协程与线程如何选择？Pydantic 校验在哪个边界？为什么 `dict[str, Any]` 会侵蚀 Agent 可测性？延伸阅读：Python 3.12、Pydantic、httpx、pytest、Ruff 与 mypy 官方文档。代码目录：仓库根 `src/` 与 `tests/`。
+总结：Python 工程质量来自明确边界、结构化并发、资源生命周期和可复现工具链。延伸阅读包括
+Python 3.12、Pydantic、httpx、pytest、Ruff 与 mypy 官方文档；代码目录为仓库根 `src/` 与 `tests/`。
 
 ## 本章引用
 <!-- chapter-citations:start -->
