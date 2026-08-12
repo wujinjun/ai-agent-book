@@ -1,0 +1,14 @@
+%% id: multimodal-evidence-validation-loop
+%% title: 多模态证据解析、验证与回溯闭环
+%% alt: 原始媒体经内容哈希和恶意文件检查进入版本化处理器，派生证据经过坐标时间码置信度和权限门禁；低质量重新处理或人工复核，回答引用可回溯到原媒体片段
+flowchart TD
+    Upload[Original media] --> Scan[Type malware size hash]
+    Scan --> Processor[Versioned OCR ASR Vision]
+    Processor --> Derived[Derived evidence]
+    Derived --> Gate{"location + confidence + ACL"}
+    Gate -->|low quality| Reparse[Reprocess with alternate settings]
+    Reparse --> Human[Human reviews original region]
+    Gate -->|accepted| Index[Versioned multimodal index]
+    Index --> Answer[Answer with citation]
+    Answer --> Verify[Open original page box or time range]
+    Verify -->|mismatch| Diagnose[Parse retrieve or generation error]

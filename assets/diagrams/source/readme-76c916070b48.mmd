@@ -1,0 +1,11 @@
+%% id: project6-office-approval-flow
+%% title: 自动办公 Agent 审批数据流
+%% alt: 邮件与日历只读数据生成摘要草稿，草稿经绑定内容的人工审批后才能外部发布并写审计
+flowchart LR
+    Mail["Mail Read"] --> Summary --> Draft
+    Calendar["Calendar Read"] --> Draft
+    Draft --> Approval{"Human Approval"}
+    Approval -->|拒绝| Audit
+    Approval -->|绑定草稿和目标的限时令牌| Outbox["Durable Outbox"]
+    Outbox -->|幂等键| Send["External Write"] --> Audit
+    Send -->|失败可恢复| Outbox

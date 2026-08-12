@@ -1,0 +1,13 @@
+%% id: coding-agent-patch-transaction
+%% title: Coding Agent 补丁事务与证据边界
+%% alt: 源仓库只读克隆后，候选补丁经过静态策略、git apply 预检、应用和测试，失败销毁整个副本，成功保留隔离副本供人工检查，源仓库始终不变
+flowchart TD
+    Source["Source repository<br/>read-only intent"] --> Clone[Disposable clone]
+    Candidate[Candidate patch] --> Static{"path / bytes / files"}
+    Static -->|reject| Evidence[Structured failure evidence]
+    Static --> Check[git apply --check] --> Apply[Apply in clone]
+    Apply --> Test[Allowlisted test + timeout]
+    Test -->|fail or crash| Destroy[Destroy clone]
+    Test -->|pass| Inspect[Diff and evidence review]
+    Inspect -->|approved separately| Merge[External merge boundary]
+    Source -.never reset.-> Evidence

@@ -3,6 +3,9 @@
 正文中的短代码用于解释单一原理，本目录索引对应可以单独安装、运行和测试的工程示例。示例默认采用确定性的 Fixture 或 Fake 适配器，不要求付费 API，也不会在未说明时访问网络。在线供应商适配器只作为可选路径，并要求通过环境变量注入密钥、设置超时与预算。
 
 ```mermaid
+%% id: example-offline-verification-chain
+%% title: 独立示例离线验证证据链
+%% alt: 章节原理进入示例契约，离线 Fixture 和可选在线适配器分别接受成功失败测试，最终形成可复现实验与预期输出
 flowchart LR
     Chapter["章节原理与内联代码"] --> Contract["示例工程契约"]
     Contract --> Offline["离线 Fixture / Fake"]

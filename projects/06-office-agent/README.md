@@ -67,8 +67,8 @@ stateDiagram-v2
     pending --> delivering: 原子 claim + lease
     delivering --> published: 记录外部 ID
     delivering --> failed: 超时或 HTTP 错误
-    failed --> delivering: 同一幂等键重试
-    delivering --> delivering: 活跃租约拒绝并发发送
+    failed --> delivering: 预算内重试
+    delivering --> delivering: 活跃租约拒绝并发
     failed --> [*]: 达到重试预算后人工处理
     published --> published: 重复请求返回已有结果
 ```

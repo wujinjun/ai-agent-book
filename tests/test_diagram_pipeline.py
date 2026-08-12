@@ -57,6 +57,16 @@ def test_manifest_records_portable_assets(tmp_path: Path) -> None:
     assert payload[0]["png_path"].endswith(".png")
 
 
+def test_publication_semantic_ids_are_globally_unique() -> None:
+    root = Path(__file__).parents[1]
+    payload = json.loads(
+        (root / "assets/diagrams/manifest.json").read_text(encoding="utf-8")
+    )
+    semantic_ids = [item["semantic_id"] for item in payload]
+
+    assert len(semantic_ids) == len(set(semantic_ids))
+
+
 def test_semantic_metadata_controls_caption_alt_and_review_id() -> None:
     source = """# Runtime
 

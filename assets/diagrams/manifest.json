@@ -14,14 +14,14 @@
   {
     "source_path": "docs/training/index.md",
     "index": 1,
-    "semantic_id": "index-diagram-1",
-    "title": "企业培训版入口 图 1",
-    "alt": "企业培训版入口 图 1",
-    "diagram_id": "index-e8770fecc3e2",
-    "source": "flowchart LR\n    A[课前诊断] --> B[概念讲授]\n    B --> C[受控演示]\n    C --> D[学员实验]\n    D --> E[证据提交]\n    E --> F[Rubric 评分]\n    F --> G{达到门槛?}\n    G -- 否 --> H[针对性补练]\n    H --> D\n    G -- 是 --> I[综合项目与复盘]\n",
-    "source_asset": "source/index-e8770fecc3e2.mmd",
-    "svg_path": "svg/index-e8770fecc3e2.svg",
-    "png_path": "png/index-e8770fecc3e2.png"
+    "semantic_id": "training-learning-evidence-loop",
+    "title": "企业培训学习与证据闭环",
+    "alt": "课前诊断经过概念讲授、受控演示、学员实验、证据提交和评分；未达标则补练，达标进入综合项目与复盘",
+    "diagram_id": "index-26de4bd638af",
+    "source": "%% id: training-learning-evidence-loop\n%% title: 企业培训学习与证据闭环\n%% alt: 课前诊断经过概念讲授、受控演示、学员实验、证据提交和评分；未达标则补练，达标进入综合项目与复盘\nflowchart LR\n    A[课前诊断] --> B[概念讲授]\n    B --> C[受控演示]\n    C --> D[学员实验]\n    D --> E[证据提交]\n    E --> F[Rubric 评分]\n    F --> G{达到门槛?}\n    G -- 否 --> H[针对性补练]\n    H --> D\n    G -- 是 --> I[综合项目与复盘]\n",
+    "source_asset": "source/index-26de4bd638af.mmd",
+    "svg_path": "svg/index-26de4bd638af.svg",
+    "png_path": "png/index-26de4bd638af.png"
   },
   {
     "source_path": "docs/training/instructor-guide.md",
@@ -2201,11 +2201,11 @@
     "semantic_id": "project6-office-approval-flow",
     "title": "自动办公 Agent 审批数据流",
     "alt": "邮件与日历只读数据生成摘要草稿，草稿经绑定内容的人工审批后才能外部发布并写审计",
-    "diagram_id": "readme-adeaab748e23",
-    "source": "%% id: project6-office-approval-flow\n%% title: 自动办公 Agent 审批数据流\n%% alt: 邮件与日历只读数据生成摘要草稿，草稿经绑定内容的人工审批后才能外部发布并写审计\nflowchart LR\n    Mail[\"Mail Read\"] --> Summary --> Draft\n    Calendar[\"Calendar Read\"] --> Draft\n    Draft --> Approval{\"Human Approval\"}\n    Approval -->|拒绝| Audit\n    Approval -->|绑定草稿的令牌| Send[\"External Write\"] --> Audit\n",
-    "source_asset": "source/readme-adeaab748e23.mmd",
-    "svg_path": "svg/readme-adeaab748e23.svg",
-    "png_path": "png/readme-adeaab748e23.png"
+    "diagram_id": "readme-76c916070b48",
+    "source": "%% id: project6-office-approval-flow\n%% title: 自动办公 Agent 审批数据流\n%% alt: 邮件与日历只读数据生成摘要草稿，草稿经绑定内容的人工审批后才能外部发布并写审计\nflowchart LR\n    Mail[\"Mail Read\"] --> Summary --> Draft\n    Calendar[\"Calendar Read\"] --> Draft\n    Draft --> Approval{\"Human Approval\"}\n    Approval -->|拒绝| Audit\n    Approval -->|绑定草稿和目标的限时令牌| Outbox[\"Durable Outbox\"]\n    Outbox -->|幂等键| Send[\"External Write\"] --> Audit\n    Send -->|失败可恢复| Outbox\n",
+    "source_asset": "source/readme-76c916070b48.mmd",
+    "svg_path": "svg/readme-76c916070b48.svg",
+    "png_path": "png/readme-76c916070b48.png"
   },
   {
     "source_path": "projects/06-office-agent/README.md",
@@ -2230,6 +2230,18 @@
     "source_asset": "source/readme-ed1d585e7aaa.mmd",
     "svg_path": "svg/readme-ed1d585e7aaa.svg",
     "png_path": "png/readme-ed1d585e7aaa.png"
+  },
+  {
+    "source_path": "projects/06-office-agent/README.md",
+    "index": 4,
+    "semantic_id": "project6-durable-outbox-state",
+    "title": "自动办公 Outbox 状态与故障恢复",
+    "alt": "通过审批的投递进入 pending，经租约声明进入 delivering，成功后 published；失败进入 failed，可在次数预算内重新声明，超过预算进入人工处理",
+    "diagram_id": "readme-657076680e22",
+    "source": "%% id: project6-durable-outbox-state\n%% title: 自动办公 Outbox 状态与故障恢复\n%% alt: 通过审批的投递进入 pending，经租约声明进入 delivering，成功后 published；失败进入 failed，可在次数预算内重新声明，超过预算进入人工处理\nstateDiagram-v2\n    [*] --> pending: 内容与目标获批\n    pending --> delivering: 原子 claim + lease\n    delivering --> published: 记录外部 ID\n    delivering --> failed: 超时或 HTTP 错误\n    failed --> delivering: 预算内重试\n    delivering --> delivering: 活跃租约拒绝并发\n    failed --> [*]: 达到重试预算后人工处理\n    published --> published: 重复请求返回已有结果\n",
+    "source_asset": "source/readme-657076680e22.mmd",
+    "svg_path": "svg/readme-657076680e22.svg",
+    "png_path": "png/readme-657076680e22.png"
   },
   {
     "source_path": "projects/07-stock-research-agent/README.md",
@@ -2352,6 +2364,18 @@
     "png_path": "png/readme-defb86c79f73.png"
   },
   {
+    "source_path": "projects/09-multi-agent-dev-team/README.md",
+    "index": 4,
+    "semantic_id": "project9-disposable-repository-workspace",
+    "title": "一次性仓库工作区与失败回滚",
+    "alt": "只读源仓库被本地克隆到一次性工作区，补丁先经过路径和大小策略及 git apply check，再运行白名单测试；失败销毁工作区，成功仅保留隔离副本供人工复核",
+    "diagram_id": "readme-45aa1241d05e",
+    "source": "%% id: project9-disposable-repository-workspace\n%% title: 一次性仓库工作区与失败回滚\n%% alt: 只读源仓库被本地克隆到一次性工作区，补丁先经过路径和大小策略及 git apply check，再运行白名单测试；失败销毁工作区，成功仅保留隔离副本供人工复核\nflowchart TD\n    Source[\"Source Git Repository<br/>不直接写入\"] --> Clone[\"Disposable Local Clone\"]\n    Patch[\"Generated Patch\"] --> Policy{\"路径 / 文件数 / 字节预算\"}\n    Clone --> Policy\n    Policy -->|拒绝| Destroy[\"Destroy Workspace\"]\n    Policy -->|允许| Check[\"git apply --check\"] --> Apply[\"Apply in Clone\"]\n    Apply --> Test[\"Allowlisted Test Command<br/>timeout + bounded output\"]\n    Test -->|失败| Destroy\n    Test -->|通过| Review[\"Keep Isolated Copy<br/>人工复核后另行合并\"]\n",
+    "source_asset": "source/readme-45aa1241d05e.mmd",
+    "svg_path": "svg/readme-45aa1241d05e.svg",
+    "png_path": "png/readme-45aa1241d05e.png"
+  },
+  {
     "source_path": "projects/10-enterprise-platform/README.md",
     "index": 1,
     "semantic_id": "project10-enterprise-platform-topology",
@@ -2381,11 +2405,11 @@
     "semantic_id": "project10-tenant-run-sequence",
     "title": "多租户 Run 创建与执行时序",
     "alt": "用户请求经 API 验证租户权限后先提交 PostgreSQL Run 再通知 Redis，Worker 读取权威状态并执行隔离的 RAG 工具与 Trace",
-    "diagram_id": "readme-b74659536dc2",
-    "source": "%% id: project10-tenant-run-sequence\n%% title: 多租户 Run 创建与执行时序\n%% alt: 用户请求经 API 验证租户权限后先提交 PostgreSQL Run 再通知 Redis，Worker 读取权威状态并执行隔离的 RAG 工具与 Trace\nsequenceDiagram\n    participant U as Tenant User\n    participant A as FastAPI\n    participant D as PostgreSQL\n    participant Q as Redis Wakeup\n    participant W as Worker Runtime\n    U->>A: create run + identity\n    A->>A: tenant and object authorization\n    A->>D: commit queued run and versions\n    A->>Q: publish run_id wakeup\n    W->>D: lease authoritative run\n    W->>W: tenant-scoped RAG tools model\n    W->>D: events trace evaluation final state\n    A-->>U: status and authorized result\n",
-    "source_asset": "source/readme-b74659536dc2.mmd",
-    "svg_path": "svg/readme-b74659536dc2.svg",
-    "png_path": "png/readme-b74659536dc2.png"
+    "diagram_id": "readme-f5626ce424cc",
+    "source": "%% id: project10-tenant-run-sequence\n%% title: 多租户 Run 创建与执行时序\n%% alt: 用户请求经 API 验证租户权限后先提交 PostgreSQL Run 再通知 Redis，Worker 读取权威状态并执行隔离的 RAG 工具与 Trace\nsequenceDiagram\n    participant U as Tenant User\n    participant A as FastAPI\n    participant D as PostgreSQL\n    participant Q as Redis Wakeup\n    participant W as Worker Runtime\n    U->>A: create run + identity\n    A->>A: tenant and object authorization\n    A->>D: commit queued run and versions\n    A->>Q: publish run_id wakeup\n    W->>D: claim tenant-scoped run + worker lease\n    D-->>W: commit short claim transaction\n    W->>W: tenant-scoped RAG tools model\n    W->>D: complete only with same worker_id\n    A-->>U: status and authorized result\n",
+    "source_asset": "source/readme-f5626ce424cc.mmd",
+    "svg_path": "svg/readme-f5626ce424cc.svg",
+    "png_path": "png/readme-f5626ce424cc.png"
   },
   {
     "source_path": "projects/10-enterprise-platform/README.md",
@@ -2520,6 +2544,18 @@
     "png_path": "png/ch33-agentic-coding-4af9dc8d94f7.png"
   },
   {
+    "source_path": "docs/part-07-advanced/ch33-agentic-coding.md",
+    "index": 5,
+    "semantic_id": "coding-agent-patch-transaction",
+    "title": "Coding Agent 补丁事务与证据边界",
+    "alt": "源仓库只读克隆后，候选补丁经过静态策略、git apply 预检、应用和测试，失败销毁整个副本，成功保留隔离副本供人工检查，源仓库始终不变",
+    "diagram_id": "ch33-agentic-coding-e1bb4534a484",
+    "source": "%% id: coding-agent-patch-transaction\n%% title: Coding Agent 补丁事务与证据边界\n%% alt: 源仓库只读克隆后，候选补丁经过静态策略、git apply 预检、应用和测试，失败销毁整个副本，成功保留隔离副本供人工检查，源仓库始终不变\nflowchart TD\n    Source[\"Source repository<br/>read-only intent\"] --> Clone[Disposable clone]\n    Candidate[Candidate patch] --> Static{\"path / bytes / files\"}\n    Static -->|reject| Evidence[Structured failure evidence]\n    Static --> Check[git apply --check] --> Apply[Apply in clone]\n    Apply --> Test[Allowlisted test + timeout]\n    Test -->|fail or crash| Destroy[Destroy clone]\n    Test -->|pass| Inspect[Diff and evidence review]\n    Inspect -->|approved separately| Merge[External merge boundary]\n    Source -.never reset.-> Evidence\n",
+    "source_asset": "source/ch33-agentic-coding-e1bb4534a484.mmd",
+    "svg_path": "svg/ch33-agentic-coding-e1bb4534a484.svg",
+    "png_path": "png/ch33-agentic-coding-e1bb4534a484.png"
+  },
+  {
     "source_path": "docs/part-07-advanced/ch34-browser-computer-use.md",
     "index": 1,
     "semantic_id": "browser-agent-observe-act-loop",
@@ -2614,6 +2650,18 @@
     "source_asset": "source/ch35-multimodal-0e7a1a1d9f3a.mmd",
     "svg_path": "svg/ch35-multimodal-0e7a1a1d9f3a.svg",
     "png_path": "png/ch35-multimodal-0e7a1a1d9f3a.png"
+  },
+  {
+    "source_path": "docs/part-07-advanced/ch35-multimodal.md",
+    "index": 5,
+    "semantic_id": "multimodal-evidence-validation-loop",
+    "title": "多模态证据解析、验证与回溯闭环",
+    "alt": "原始媒体经内容哈希和恶意文件检查进入版本化处理器，派生证据经过坐标时间码置信度和权限门禁；低质量重新处理或人工复核，回答引用可回溯到原媒体片段",
+    "diagram_id": "ch35-multimodal-de95b4ba109f",
+    "source": "%% id: multimodal-evidence-validation-loop\n%% title: 多模态证据解析、验证与回溯闭环\n%% alt: 原始媒体经内容哈希和恶意文件检查进入版本化处理器，派生证据经过坐标时间码置信度和权限门禁；低质量重新处理或人工复核，回答引用可回溯到原媒体片段\nflowchart TD\n    Upload[Original media] --> Scan[Type malware size hash]\n    Scan --> Processor[Versioned OCR ASR Vision]\n    Processor --> Derived[Derived evidence]\n    Derived --> Gate{\"location + confidence + ACL\"}\n    Gate -->|low quality| Reparse[Reprocess with alternate settings]\n    Reparse --> Human[Human reviews original region]\n    Gate -->|accepted| Index[Versioned multimodal index]\n    Index --> Answer[Answer with citation]\n    Answer --> Verify[Open original page box or time range]\n    Verify -->|mismatch| Diagnose[Parse retrieve or generation error]\n",
+    "source_asset": "source/ch35-multimodal-de95b4ba109f.mmd",
+    "svg_path": "svg/ch35-multimodal-de95b4ba109f.svg",
+    "png_path": "png/ch35-multimodal-de95b4ba109f.png"
   },
   {
     "source_path": "docs/part-07-advanced/ch36-architecture.md",
@@ -2810,14 +2858,14 @@
   {
     "source_path": "docs/examples/index.md",
     "index": 1,
-    "semantic_id": "index-diagram-1",
-    "title": "独立示例工程 图 1",
-    "alt": "独立示例工程 图 1",
-    "diagram_id": "index-a8d167436656",
-    "source": "flowchart LR\n    Chapter[\"章节原理与内联代码\"] --> Contract[\"示例工程契约\"]\n    Contract --> Offline[\"离线 Fixture / Fake\"]\n    Contract --> Online[\"可选在线 Adapter\"]\n    Offline --> Tests[\"成功与失败路径测试\"]\n    Online --> Tests\n    Tests --> Evidence[\"可复现实验与预期输出\"]\n",
-    "source_asset": "source/index-a8d167436656.mmd",
-    "svg_path": "svg/index-a8d167436656.svg",
-    "png_path": "png/index-a8d167436656.png"
+    "semantic_id": "example-offline-verification-chain",
+    "title": "独立示例离线验证证据链",
+    "alt": "章节原理进入示例契约，离线 Fixture 和可选在线适配器分别接受成功失败测试，最终形成可复现实验与预期输出",
+    "diagram_id": "index-e0686c59c075",
+    "source": "%% id: example-offline-verification-chain\n%% title: 独立示例离线验证证据链\n%% alt: 章节原理进入示例契约，离线 Fixture 和可选在线适配器分别接受成功失败测试，最终形成可复现实验与预期输出\nflowchart LR\n    Chapter[\"章节原理与内联代码\"] --> Contract[\"示例工程契约\"]\n    Contract --> Offline[\"离线 Fixture / Fake\"]\n    Contract --> Online[\"可选在线 Adapter\"]\n    Offline --> Tests[\"成功与失败路径测试\"]\n    Online --> Tests\n    Tests --> Evidence[\"可复现实验与预期输出\"]\n",
+    "source_asset": "source/index-e0686c59c075.mmd",
+    "svg_path": "svg/index-e0686c59c075.svg",
+    "png_path": "png/index-e0686c59c075.png"
   },
   {
     "source_path": "docs/final-acceptance.md",

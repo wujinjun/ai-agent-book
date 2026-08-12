@@ -61,9 +61,10 @@ flowchart TD
 %% id: project9-disposable-repository-workspace
 %% title: 一次性仓库工作区与失败回滚
 %% alt: 只读源仓库被本地克隆到一次性工作区，补丁先经过路径和大小策略及 git apply check，再运行白名单测试；失败销毁工作区，成功仅保留隔离副本供人工复核
-flowchart LR
+flowchart TD
     Source["Source Git Repository<br/>不直接写入"] --> Clone["Disposable Local Clone"]
     Patch["Generated Patch"] --> Policy{"路径 / 文件数 / 字节预算"}
+    Clone --> Policy
     Policy -->|拒绝| Destroy["Destroy Workspace"]
     Policy -->|允许| Check["git apply --check"] --> Apply["Apply in Clone"]
     Apply --> Test["Allowlisted Test Command<br/>timeout + bounded output"]

@@ -4,19 +4,19 @@
   "status": "passed_with_manual_review_required",
   "pdf": {
     "path": "output/pdf/ai-agent-book-2026.pdf",
-    "sha256": "852f6906937c7e7f571e691539ade2e4b6ab7f011435ed1dd49c16e7893529bb",
-    "bytes": 109768963,
-    "pages": 506,
+    "sha256": "66662e9c4ada16400e435d6b8835be4d18f76cc901fe186275103410b7601180",
+    "bytes": 110067665,
+    "pages": 517,
     "media_boxes": {
-      "594.96x841.92": 506
+      "594.96x841.92": 517
     },
     "cropbox_differs_from_mediabox_pages": 0,
-    "font_resources": 1073,
+    "font_resources": 1111,
     "font_types": {
-      "/Type3": 1073
+      "/Type3": 1111
     },
     "named_font_subsets": {
-      "type3-outline": 1073
+      "type3-outline": 1111
     },
     "non_embedded_fonts": [],
     "unapproved_system_fonts": [],
@@ -24,14 +24,14 @@
   },
   "epub": {
     "path": "output/epub/ai-agent-book-2026.epub",
-    "sha256": "f068445f8018ac604c9365b86fec8c880aed3d26b5c0729654765b2152c9b6ae",
-    "bytes": 82793407,
+    "sha256": "024b7afa235759e1147fbfce83d94284e5ba0112dceefc564a2594e047f929b8",
+    "bytes": 83195508,
     "archive_entries_by_suffix": {
       ".css": 1,
       ".ncx": 1,
       ".opf": 1,
-      ".png": 269,
-      ".svg": 235,
+      ".png": 273,
+      ".svg": 239,
       ".xhtml": 77,
       ".xml": 2,
       "no_suffix": 1
@@ -120,8 +120,8 @@
         "generator": "scripts/build_diagrams.py",
         "rights_basis": "original repository content rendered by the declared build tool",
         "external_content": false,
-        "computed_sha256": "2d4f482af5914a3ddc46825cbddf0ddaeba1e7840a194d3040ea525842dec93d",
-        "bytes": 276973
+        "computed_sha256": "e86aaa6d3aa35432de8bebe76c6327a2e126bc87ea39db712d7cb08b9e0c0442",
+        "bytes": 283799
       },
       {
         "path": "assets/fonts/noto-sans-sc/NotoSansSC-Bold.otf",
