@@ -182,8 +182,6 @@ def package_release(
         downloads.mkdir(parents=True, exist_ok=True)
         shutil.copy2(pdf_output, downloads / "ai-agent-book-2026.pdf")
         shutil.copy2(epub_output, downloads / "ai-agent-book-2026.epub")
-        shutil.copy2(pdf_output, staging / pdf_output.name)
-        shutil.copy2(epub_output, staging / epub_output.name)
         shutil.copy2(pptx_output, staging / pptx_output.name)
         shutil.copy2(notes_output, staging / notes_output.name)
         shutil.copy2(manifest_output, staging / manifest_output.name)

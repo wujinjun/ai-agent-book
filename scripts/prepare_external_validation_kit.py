@@ -126,21 +126,16 @@ def _verify_release_bundle(manifest_path: Path, document: dict[str, Any]) -> tup
         raise RuntimeError("release HTML bundle SHA-256 mismatch")
     if entries.get(manifest_path.name) != sha256(manifest_path):
         raise RuntimeError("release manifest SHA-256 mismatch in checksum file")
+    verified_artifacts = _verify_artifacts(manifest_path, document)
+    for artifact in verified_artifacts:
+        if entries.get(artifact.name) != sha256(artifact):
+            raise RuntimeError(
+                f"release artifact SHA-256 mismatch in checksum file: {artifact.name}"
+            )
     with zipfile.ZipFile(archive) as bundle:
         names = bundle.namelist()
         if not any(name.endswith("/html/index.html") for name in names):
             raise RuntimeError("release HTML bundle has no html/index.html")
-        for item in document["artifacts"]:
-            filename = str(item["file"])
-            matches = [name for name in names if name.endswith(f"/{filename}")]
-            if len(matches) != 1:
-                raise RuntimeError(f"release bundle must contain one {filename}")
-            payload = bundle.read(matches[0])
-            if (
-                len(payload) != item["bytes"]
-                or hashlib.sha256(payload).hexdigest() != item["sha256"]
-            ):
-                raise RuntimeError(f"release bundle artifact mismatch: {filename}")
     return archive, checksums
 
 

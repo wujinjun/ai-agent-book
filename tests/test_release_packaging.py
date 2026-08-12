@@ -54,8 +54,8 @@ def test_release_package_contains_site_editions_notes_and_valid_checksums(
         bundled_pdf = bundle.read("ai-agent-book-v1.2.3/html/downloads/ai-agent-book-2026.pdf")
         bundled_epub = bundle.read("ai-agent-book-v1.2.3/html/downloads/ai-agent-book-2026.epub")
     assert "ai-agent-book-v1.2.3/html/index.html" in names
-    assert f"ai-agent-book-v1.2.3/{pdf.name}" in names
-    assert f"ai-agent-book-v1.2.3/{epub.name}" in names
+    assert f"ai-agent-book-v1.2.3/{pdf.name}" not in names
+    assert f"ai-agent-book-v1.2.3/{epub.name}" not in names
     assert f"ai-agent-book-v1.2.3/{pptx.name}" in names
     assert f"ai-agent-book-v1.2.3/{release_manifest.name}" in names
     assert bundled_pdf == b"pdf"
