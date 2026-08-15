@@ -1,0 +1,19 @@
+%% id: project2-textbook-runtime-architecture
+%% title: 天气 Tool Agent 运行时架构
+%% alt: Planner 产生 ToolCall，ToolAgent 根据 Registry 风险和 Approval 决定暂停或并行执行，最终返回 Observation
+flowchart TB
+    Prompt["用户任务"] --> Planner["Planner Port"]
+    Planner --> Calls["ToolCall[]"]
+    Calls --> Limit{"调用数 ≤ max_calls?"}
+    Limit -->|否| Failed["failed"]
+    Limit -->|是| Risk["Registry 风险检查"]
+    Risk -->|存在未批准写操作| Pending["approval_required"]
+    Risk -->|均可执行| Execute["并行执行"]
+    Approval["ApprovalDecision(call_id)"] --> Risk
+    Execute --> Weather["WeatherService"]
+    Execute --> Calculator["AST Calculator"]
+    Execute --> Alert["Mock Alert"]
+    Weather --> Obs["ToolObservation[]"]
+    Calculator --> Obs
+    Alert --> Obs
+    Obs --> Result["completed / failed"]

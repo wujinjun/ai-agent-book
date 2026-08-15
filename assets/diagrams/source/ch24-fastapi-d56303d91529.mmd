@@ -1,0 +1,12 @@
+%% id: fastapi-agent-service-architecture
+%% title: FastAPI Agent 服务架构
+%% alt: 客户端经鉴权进入 FastAPI，短任务直接执行长任务进入队列，并通过 SSE 接收 Agent 事件
+flowchart TB
+    Client["HTTP Client"] --> Auth["认证与对象授权"]
+    Auth --> API["FastAPI"]
+    API --> Route{"能在网关超时内完成?"}
+    Route -->|是| Agent["同步执行"]
+    Route -->|否| Queue["持久 Run + Worker"]
+    Queue --> Agent
+    Agent --> Events["SSE 事件或 Run 状态"]
+    Events --> Client

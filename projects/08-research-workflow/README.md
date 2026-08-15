@@ -1,6 +1,8 @@
 # 项目8：LangGraph 研究工作流 Agent
 
-![任务契约经 Planner 形成依赖计划，Search Read Extract Organize 节点更新类型化 State，Checkpoint 支持失败有限重试恢复和幂等边界，Reviewer 决定通过返工或重规划并可人工中断，最终生成带来源可回放报告](../../docs/assets/infographics/png/project08-research-workflow-infographic-2x.png)
+![任务契约经 Planner 形成依赖计划，研究节点更新类型化 State 并写入 Checkpoint](../../docs/assets/infographics/png/project08-research-workflow-infographic-a-2x.png)
+
+![Checkpoint 支持恢复，Reviewer 与人工中断控制返工和继续，最终报告保留运行证据](../../docs/assets/infographics/png/project08-research-workflow-infographic-b-2x.png)
 
 *图 P8-A　LangGraph 研究工作流的状态、恢复与人工中断。*
 

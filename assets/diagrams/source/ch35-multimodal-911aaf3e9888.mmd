@@ -1,0 +1,12 @@
+%% id: multimodal-rag-main-pipeline
+%% title: 多模态 RAG 主链路
+%% alt: 图像音频视频文档经解码 OCR ASR 抽帧形成文本视觉元数据后检索生成并定位引用
+flowchart TB
+    Media["Image / Audio / Video / Documents"] --> Parse["解码 / OCR / ASR / 抽帧"]
+    Parse --> Units["可定位证据单元<br/>page / region / timestamp / frame"]
+    Units --> Index["文本、视觉向量与元数据索引"]
+    Query["多模态查询"] --> Retrieve["权限过滤 + 混合检索"]
+    Index --> Retrieve
+    Retrieve --> Model["多模态模型或组合工作流"]
+    Model --> Validate["证据支持与定位校验"]
+    Validate --> Citation["页码 / 区域 / 时间戳引用"]

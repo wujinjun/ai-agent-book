@@ -1,0 +1,10 @@
+%% id: docker-multistage-security-build
+%% title: Docker 多阶段安全构建
+%% alt: 固定基础镜像在 Builder 安装锁定依赖并生成 wheel，Runtime 仅复制产物以非 root 和只读文件系统运行
+flowchart TB
+    Base[固定 digest 的 Python 3.12] --> Builder[Builder 安装锁定依赖]
+    Source[源码与 pyproject] --> Builder
+    Builder --> Wheel[wheel 与依赖产物]
+    Wheel --> Runtime[最小 Runtime 镜像]
+    Runtime --> NonRoot[非 root 用户]
+    NonRoot --> ReadOnly[只读根文件系统与临时卷]

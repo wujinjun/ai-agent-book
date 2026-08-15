@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import html
 import posixpath
 import re
 import shutil
@@ -26,6 +27,7 @@ from ai_agent_book.diagram_pipeline import extract_diagrams, replace_mermaid  # 
 
 BOOK_NAME = "ai-agent-book-2026"
 REPOSITORY_BLOB_URL = "https://github.com/wujinjun/ai-agent-book/blob/main"
+EPUB_CROSS_DOCUMENT_MARKER = "--epub-xref--"
 MARKDOWN_LINK_PATTERN = re.compile(
     r"(?P<prefix>!?\[[^\]]*\]\()"
     r"(?P<target><[^>]+>|[^)\s]+)"
@@ -95,7 +97,16 @@ def rewrite_publication_links(
                 raise RuntimeError(f"出版图片不存在：{source_path.as_posix()} -> {target}")
             rewritten = local_path.as_posix()
         elif local_path in document_ids:
-            rewritten = f"#{fragment}" if fragment else f"#{document_ids[local_path]}"
+            if fragment and source_path == Path("docs/book-index.md"):
+                # The full-book index intentionally links to many repeated
+                # heading IDs (for example ``id__2``). Preserve the owning
+                # source document until EPUB post-processing so Pandoc's
+                # chapter split cannot make those links ambiguous.
+                rewritten = (
+                    f"#{document_ids[local_path]}{EPUB_CROSS_DOCUMENT_MARKER}{fragment}"
+                )
+            else:
+                rewritten = f"#{fragment}" if fragment else f"#{document_ids[local_path]}"
         elif (root / local_path).exists():
             rewritten = f"{REPOSITORY_BLOB_URL}/{local_path.as_posix()}"
             if fragment:
@@ -168,6 +179,7 @@ def compose_book(root: Path, output: Path) -> Path:
         entry
         for entry in load_publication_entries(root / "mkdocs.yml")
         if entry.path not in {Path("docs/index.md"), Path("docs/project-status.md")}
+        and entry.path.parts[:2] != ("docs", "training")
     ]
     document_ids = {entry.path: _document_id(entry.path) for entry in entries}
     if len(set(document_ids.values())) != len(document_ids):
@@ -182,6 +194,13 @@ def compose_book(root: Path, output: Path) -> Path:
             root=root,
         )
         markdown = add_document_anchor(markdown, document_ids[entry.path])
+        if entry.path.match("docs/part-*/index.md"):
+            markdown = re.sub(
+                r'^(# .+?\n)',
+                r'\1\n<div class="part-opener-marker"></div>\n',
+                markdown,
+                count=1,
+            )
         diagrams = extract_diagrams(entry.path, markdown)
         sections.append(replace_mermaid(markdown, diagrams, Path("assets/diagrams")))
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -214,10 +233,15 @@ def _run(command: list[str], *, timeout: int = 600) -> None:
 def build_epub(pandoc: str, source: Path) -> Path:
     output = ROOT / f"output/epub/{BOOK_NAME}.epub"
     output.parent.mkdir(parents=True, exist_ok=True)
+    epub_source = ROOT / "output/intermediate/book-epub.md"
+    epub_source.write_text(
+        prepare_epub_markdown(source.read_text(encoding="utf-8"), root=ROOT),
+        encoding="utf-8",
+    )
     _run(
         [
             pandoc,
-            str(source),
+            str(epub_source),
             "--from=gfm+raw_html",
             "--to=epub3",
             "--standalone",
@@ -236,27 +260,45 @@ def build_epub(pandoc: str, source: Path) -> Path:
 
 
 def inject_epub_svg_fallbacks(epub_path: Path, root: Path) -> Path:
-    """Repair split-document links and embed SVG publication sources.
+    """Repair split-document links and replace diagram PNG fallbacks with SVG.
 
     Pandoc accepts one composed Markdown source, then splits EPUB output into
     multiple XHTML documents. Fragment-only links therefore need to be
-    redirected to the XHTML file that owns the target ID. The same pass embeds
-    the original SVG beside Pandoc's PNG fallback for capable readers.
+    redirected to the XHTML file that owns the target ID. EPUB 3 supports SVG,
+    so the same pass embeds the deterministic SVG and removes Pandoc's duplicate
+    raster fallback. Information graphics remain optimized PNG assets.
     """
 
     source_pattern = re.compile(r'srcset="assets/diagrams/svg/(?P<name>[^"/]+\.svg)"')
+    picture_pattern = re.compile(
+        r'<picture>\s*<source\b[^>]*srcset="assets/diagrams/svg/'
+        r'(?P<name>[^"/]+\.svg)"[^>]*/?>\s*<img(?P<attrs>[^>]*)/?>\s*</picture>',
+        re.DOTALL,
+    )
     with zipfile.ZipFile(epub_path) as archive:
         infos = archive.infolist()
         content = {info.filename: archive.read(info.filename) for info in infos}
 
     ids_by_document: dict[str, set[str]] = {}
+    headings_by_document: dict[str, dict[str, str]] = {}
     locations_by_id: dict[str, str] = {}
     duplicate_ids: set[str] = set()
     for name, payload in content.items():
         if not name.endswith(".xhtml"):
             continue
-        document_ids = set(re.findall(r'\bid=["\'](?P<id>[^"\']+)["\']', payload.decode("utf-8")))
+        document_text = payload.decode("utf-8")
+        document_ids = set(re.findall(r'\bid=["\'](?P<id>[^"\']+)["\']', document_text))
         ids_by_document[name] = document_ids
+        heading_ids: dict[str, str] = {}
+        for heading in re.finditer(
+            r'<section\s+id="(?P<id>[^"]+)"\s+class="level[1-6]">\s*'
+            r'<h[1-6]>(?P<title>.*?)</h[1-6]>',
+            document_text,
+            flags=re.DOTALL,
+        ):
+            title = html.unescape(re.sub(r"<[^>]+>", "", heading.group("title"))).strip()
+            heading_ids.setdefault(title, heading.group("id"))
+        headings_by_document[name] = heading_ids
         for document_id in document_ids:
             if document_id in locations_by_id:
                 duplicate_ids.add(document_id)
@@ -266,10 +308,42 @@ def inject_epub_svg_fallbacks(epub_path: Path, root: Path) -> Path:
         locations_by_id.pop(document_id, None)
 
     svg_names: set[str] = set()
+    raster_fallbacks: set[str] = set()
     for name, payload in list(content.items()):
         if not name.endswith(".xhtml"):
             continue
         text = payload.decode("utf-8")
+
+        def replace_cross_document_link(
+            match: re.Match[str], current_name: str = name
+        ) -> str:
+            document_id = match.group("document")
+            fragment = match.group("fragment")
+            target_name = locations_by_id.get(document_id)
+            if target_name is None:
+                return match.group(0)
+            label = match.group("label")
+            label_text = html.unescape(re.sub(r"<[^>]+>", "", label)).strip()
+            heading_title = label_text.rsplit(" · ", 1)[-1]
+            target_fragment = (
+                fragment
+                if fragment in ids_by_document.get(target_name, set())
+                else headings_by_document.get(target_name, {}).get(heading_title, document_id)
+            )
+            relative = posixpath.relpath(target_name, posixpath.dirname(current_name))
+            return (
+                f'<a{match.group("before")}href="{relative}#{target_fragment}"'
+                f'{match.group("after")}>{label}</a>'
+            )
+
+        text = re.sub(
+            rf'<a(?P<before>[^>]*?)href="#(?P<document>doc-[^"#]+?)'
+            rf'{re.escape(EPUB_CROSS_DOCUMENT_MARKER)}(?P<fragment>[^"#]+)"'
+            r'(?P<after>[^>]*)>(?P<label>.*?)</a>',
+            replace_cross_document_link,
+            text,
+            flags=re.DOTALL,
+        )
 
         def replace_fragment_link(match: re.Match[str], current_name: str = name) -> str:
             fragment = match.group("fragment")
@@ -287,6 +361,28 @@ def inject_epub_svg_fallbacks(epub_path: Path, root: Path) -> Path:
             text,
         )
 
+        def replace_picture(match: re.Match[str]) -> str:
+            svg_name = match.group("name")
+            svg_names.add(svg_name)
+            attrs = match.group("attrs")
+            raster = re.search(r'\bsrc="\.\./media/(?P<name>[^"/]+)"', attrs)
+            if raster is not None:
+                raster_fallbacks.add(raster.group("name"))
+            attrs = re.sub(r'\s+src="[^"]+"', "", attrs)
+            return f'<img{attrs} src="../media/{svg_name}"/>'
+
+        text = picture_pattern.sub(replace_picture, text)
+
+        # Pandoc emits bare tables in EPUB XHTML. Wrapping them gives narrow
+        # readers an independent horizontal scroll area instead of compressing
+        # four or more columns into one-character-wide cells.
+        text = re.sub(
+            r"(?<!<div class=\"table-wrapper\">)(<table\b[^>]*>.*?</table>)",
+            r'<div class="table-wrapper">\1</div>',
+            text,
+            flags=re.DOTALL,
+        )
+
         def replace_source(match: re.Match[str]) -> str:
             svg_name = match.group("name")
             svg_names.add(svg_name)
@@ -302,6 +398,14 @@ def inject_epub_svg_fallbacks(epub_path: Path, root: Path) -> Path:
 
     opf_name = "EPUB/content.opf"
     opf = content[opf_name].decode("utf-8")
+    for fallback in sorted(raster_fallbacks):
+        content.pop(f"EPUB/media/{fallback}", None)
+        opf = re.sub(
+            rf'^\s*<item\b[^>]*href="media/{re.escape(fallback)}"[^>]*/>\s*$\n?',
+            "",
+            opf,
+            flags=re.MULTILINE,
+        )
     items: list[str] = []
     for svg_name in sorted(svg_names):
         source = root / "assets/diagrams/svg" / svg_name
@@ -319,7 +423,8 @@ def inject_epub_svg_fallbacks(epub_path: Path, root: Path) -> Path:
     temporary = epub_path.with_suffix(".tmp.epub")
     with zipfile.ZipFile(temporary, "w") as output:
         for info in infos:
-            output.writestr(info, content.pop(info.filename))
+            if info.filename in content:
+                output.writestr(info, content.pop(info.filename))
         for name, payload in sorted(content.items()):
             output.writestr(name, payload, compress_type=zipfile.ZIP_DEFLATED)
     temporary.replace(epub_path)
@@ -340,9 +445,8 @@ def build_print_html(pandoc: str, source: Path) -> Path:
             "--from=gfm+raw_html",
             "--to=html5",
             "--standalone",
-            "--embed-resources",
             "--toc",
-            "--toc-depth=2",
+            "--toc-depth=1",
             "--section-divs",
             f"--resource-path={ROOT}",
             f"--metadata-file={ROOT / 'templates/pandoc/metadata.yaml'}",
@@ -351,6 +455,19 @@ def build_print_html(pandoc: str, source: Path) -> Path:
             str(output),
         ]
     )
+    html = output.read_text(encoding="utf-8")
+    html = html.replace(
+        "<head>",
+        f'<head>\n  <base href="{ROOT.resolve().as_uri()}/">',
+        1,
+    )
+    html = html.replace(
+        '<h1 class="title">AI Agent 从零到实战：原理、工程与项目（2026版）</h1>',
+        '<h1 class="title"><span class="title-main">AI Agent 从零到实战</span>'
+        '<span class="title-detail">原理、工程与项目（2026版）</span></h1>',
+        1,
+    )
+    output.write_text(html, encoding="utf-8")
     shutil.copytree(
         ROOT / "assets/diagrams/svg",
         output.parent / "assets/diagrams/svg",
@@ -369,6 +486,33 @@ INFOGRAPHIC_PNG_RE = re.compile(
 )
 
 
+def prepare_epub_markdown(markdown: str, *, root: Path) -> str:
+    """Use EPUB-specific, bounded PNGs while keeping engineering diagrams vector."""
+
+    def replace_infographic(match: re.Match[str]) -> str:
+        source = root / f"assets/infographics/png/{match.group('name')}-2x.png"
+        target = root / (
+            f"output/intermediate/epub-infographics-1100/{match.group('name')}.png"
+        )
+        if not source.is_file():
+            raise RuntimeError(f"EPUB 信息图 PNG 不存在：{source}")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.is_file() or target.stat().st_mtime_ns < source.stat().st_mtime_ns:
+            _run(
+                [
+                    "sips",
+                    "--resampleHeightWidthMax",
+                    "1100",
+                    str(source),
+                    "--out",
+                    str(target),
+                ]
+            )
+        return target.relative_to(root).as_posix()
+
+    return INFOGRAPHIC_PNG_RE.sub(replace_infographic, markdown)
+
+
 def prepare_print_markdown(markdown: str, *, root: Path) -> str:
     """Prefer vector assets in the PDF-only source to keep Chrome memory bounded."""
 
@@ -381,23 +525,36 @@ def prepare_print_markdown(markdown: str, *, root: Path) -> str:
     def replace_infographic(match: re.Match[str]) -> str:
         source = root / f"assets/infographics/png/{match.group('name')}-2x.png"
         target = root / f"output/intermediate/infographics/{match.group('name')}-print.png"
+        size_marker = target.with_suffix(".max960")
         if not source.is_file():
             raise RuntimeError(f"打印版信息图 PNG 不存在：{source}")
         target.parent.mkdir(parents=True, exist_ok=True)
-        if not target.is_file() or target.stat().st_mtime_ns < source.stat().st_mtime_ns:
+        if (
+            not target.is_file()
+            or not size_marker.is_file()
+            or target.stat().st_mtime_ns < source.stat().st_mtime_ns
+        ):
             _run(
                 [
                     "sips",
-                    "--resampleHeightWidth",
-                    "768",
-                    "1152",
+                    "--resampleHeightWidthMax",
+                    "960",
                     str(source),
                     "--out",
                     str(target),
                 ]
             )
+            size_marker.write_text("max-dimension=960\n", encoding="utf-8")
         return target.relative_to(root).as_posix()
 
+    # The print source remains one HTML document, so only the original heading
+    # fragment is required. EPUB retains the compound marker until its XHTML
+    # chapter locations are known.
+    markdown = re.sub(
+        rf"#doc-[a-z0-9-]+{re.escape(EPUB_CROSS_DOCUMENT_MARKER)}(?P<fragment>[a-zA-Z0-9_.:-]+)",
+        r"#\g<fragment>",
+        markdown,
+    )
     vectorized = MERMAID_PICTURE_RE.sub(replace_mermaid_picture, markdown)
     return INFOGRAPHIC_PNG_RE.sub(replace_infographic, vectorized)
 

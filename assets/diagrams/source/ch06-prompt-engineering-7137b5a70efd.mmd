@@ -1,0 +1,12 @@
+%% id: prompt-injection-defense-layers
+%% title: Prompt Injection 攻击路径与纵深防御
+%% alt: 外部恶意内容经过上下文进入模型后仍需经过输出校验、授权和工具隔离才能产生副作用
+flowchart TB
+    Attack[网页邮件文档中的恶意指令] --> Context[不可信上下文]
+    Context --> Model[模型决策]
+    Model --> Validate[结构与业务校验]
+    Validate --> Authorize[主体与资源授权]
+    Authorize --> Sandbox[工具白名单与沙箱]
+    Sandbox --> Effect[外部副作用]
+    Policy[系统策略] -.约束.-> Model
+    Approval[人工审批] -.高风险门禁.-> Effect

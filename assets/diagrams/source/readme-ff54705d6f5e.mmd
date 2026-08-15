@@ -1,0 +1,12 @@
+%% id: project4-versioned-ingestion-architecture
+%% title: 知识库版本化摄取架构
+%% alt: 原始文档存储后由受限解析器生成带位置 Chunk，Embedding Worker 写候选 pgvector 索引并评估切换
+flowchart TB
+    Upload[受限文件上传] --> Raw[原始文件 hash 与 ACL]
+    Raw --> Parser[PDF Office Markdown Parser]
+    Parser --> Chunk[位置化 Chunk 与版本]
+    Chunk --> Embed[Embedding Worker]
+    Embed --> Candidate[候选 pgvector 索引]
+    Candidate --> Eval{Recall 引用 ACL 评估}
+    Eval -->|通过| Active[切换 active index]
+    Eval -->|失败| Keep[保留旧索引]

@@ -1,0 +1,10 @@
+%% id: tokenizer-context-budget-pipeline
+%% title: Tokenizer 与上下文预算链路
+%% alt: 消息工具和检索材料先编码为 Token ID，再由预算策略决定保留压缩或截断，模型逐 Token 输出
+flowchart TB
+    Text["消息、工具、检索材料"] --> Tok["Tokenizer"]
+    Tok --> IDs["Token ID 序列"]
+    IDs --> Budget{"上下文预算"}
+    Budget -->|保留| Model["模型推理"]
+    Budget -->|超限| Policy["截断、摘要或检索"]
+    Model --> Out["逐 Token 输出"]

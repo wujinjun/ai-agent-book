@@ -8,13 +8,19 @@
 
 前置知识为第2—3章；核心示例使用固定 logits，避免把供应商特定接口混入稳定原理。
 
+关于截断采样与文本退化的讨论主要依据 [Holtzman 等人的研究](../references.md#ref-holtzman2020)。供应商对 `temperature`、`top_p`、随机种子和结构化输出的支持会变化，本章只讲稳定机制，具体参数仍须按目标 API 的当前兼容性说明核对。
+
 下图把模型内部的概率选择与应用外部的可靠性控制分开：采样参数改变候选 Token 的选择分布，长度、停止和流式配置约束一次生成过程；JSON 或 Pydantic 对象只有通过完整校验后，才能成为下游可消费的数据。
 
-![模型 logits 形成候选 Token 概率分布，经 Temperature Top-p Top-k 采样，再受长度停止流式边界和结构化输出校验约束](../assets/infographics/png/generation-control-infographic-2x.png)
+![模型 logits 形成候选 Token 概率分布，再由 Temperature、Top-p 和 Top-k 改变候选分布](../assets/infographics/png/generation-control-infographic-a-2x.png)
 
-*图 4-A：从概率分布到可靠生成结果的控制面。采样参数影响随机性，不提供事实正确性、安全性或业务合法性保证。*
+*图 4-A：概率分布与采样参数。Temperature 改变分布形状，Top-p 与 Top-k 缩小候选集合；三者不负责事实校验。*
 
-图 4-A 的结构化输出门禁位于生成之后。即使模型返回了外观正确的 JSON，运行时仍要完成语法、Schema 和业务规则校验，并把重试限制在可修复错误与明确预算之内。
+![采样之后的生成还受随机种子、最大长度、停止条件和流式协议约束，结构化结果需经语法与 Schema 校验并以有限重试或明确失败结束](../assets/infographics/png/generation-control-infographic-b-2x.png)
+
+*图 4-B：运行边界与结构化结果。解码参数、协议终态和业务校验属于不同控制层，不能用“低 Temperature”替代输出验证。*
+
+图 4-B 的结构化输出门禁位于生成之后。即使模型返回了外观正确的 JSON，运行时仍要完成语法、Schema 和业务规则校验，并把重试限制在可修复错误与明确预算之内。
 
 ## 概率分布与采样
 
@@ -194,7 +200,7 @@ Top-p 的最小集合通常先按概率降序，再保留累计概率达到阈�
 %% id: decoding-filter-order-comparison
 %% title: 采样过滤顺序会改变候选集合
 %% alt: 同一 Logit 分布分别经过先 Top-k 后 Top-p 和先 Top-p 后 Top-k 两条路径，可能产生不同候选集合，因此实验必须记录实现与顺序
-flowchart LR
+flowchart TB
     Logits[同一 Logit 分布] --> K[先 Top-k] --> KP[再 Top-p] --> A[候选集合 A]
     Logits --> P[先 Top-p] --> PK[再 Top-k] --> B[候选集合 B]
     A --> Compare[记录实现、参数和任务指标]
@@ -239,20 +245,42 @@ Top-k、非有限 Logit、Stop Token 和长度上限。它证明解码控制逻�
 在线实验还要记录 Model Snapshot、区域、Finish Reason、Usage 和日期；安全过滤或服务端路由可能使
 同一 Seed 不再逐 Token 一致。
 
-### 练习参考答案与面试要点
+## 本章总结
 
-1. **发票抽取。** 使用低随机性、结构化输出和长度余量，指标为字段准确率、Schema 有效率和拒答；
-   Temperature 不能替代票据证据校验。
-2. **营销候选。** 允许适度多样性并一次生成多个候选，用人工/品牌 Rubric、重复率、成本评价；高温
-   不是创造力的充分条件。
-3. **代码生成。** 参数只是起点，真正门禁是编译、测试、安全扫描和 Patch 范围；截断输出不得应用。
-4. **面试要点。** Temperature 改变整个分布的相对尖锐程度，Top-p 动态裁剪累计概率候选；长度结束
-   表示结果可能不完整；结构化输出保证形状，不保证字段事实、权限或业务合法性。
+生成是反复计算概率分布、选择 Token 和检查终止条件的过程。Temperature、Top-p 与 Top-k 改变候选分布，不直接校验事实；最大长度、Stop、流式事件和结构化输出又属于不同的运行控制层。可靠工程需要记录模型与参数版本、过滤顺序、结束原因和 Usage，并把候选结果放在结构、事实、权限与业务门禁之后。下一章将介绍 Embedding，把“生成序列”扩展为“表示和检索外部语义对象”。
 
-总结：生成是反复计算分布、选择 Token 和检查终止的过程。可靠工程需要记录过滤语义、结束原因和
-版本，并把候选结果放在结构、事实、权限与业务门禁之后，而不是把随机参数当质量开关。
+## 课后练习
 
-延伸阅读：Holtzman et al., *The Curious Case of Neural Text Degeneration*；目标供应商当前的解码、流式与结构化输出官方文档。本章代码目录为 [`examples/sampling_lab/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/sampling_lab)，包含固定 Logit Provider、Temperature/top-k/top-p、带种子采样、停止条件测试，以及可重复生成的 CSV/Markdown 经验频率报告；它不冒充真实 LLM 评测。
+### 设计题
+
+1. 为发票抽取任务选择生成参数和结果门禁，输出参数表及字段准确率、Schema 有效率和拒答率指标。
+2. 为营销文案候选设计兼顾多样性与品牌约束的生成实验，说明为什么提高 Temperature 不能替代评价 Rubric。
+
+### 编码题
+
+3. 为代码生成增加结束原因检查。输入包括正常结束、长度截断和策略拒绝；输出为可提交或不可提交的类型化状态；检查标准是截断结果永远不会进入应用 Patch 步骤。
+
+### 概念题
+
+4. 比较 Temperature 与 Top-p 对候选分布的影响，并解释结构化输出、长度限制和事实校验为何属于不同控制层。
+
+### 故障实验
+
+让流式连接在 JSON 最后一个字段前断开，记录传输 EOF 与模型正常完成的差异，验证消费者只有收到合法终态后才提交结果。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. Temperature 与 Top-p 分别怎样改变候选分布？
+2. 为什么结构化输出通过 Schema 校验后仍可能包含错误事实？
+3. 流式连接断开与模型正常停止应如何区分？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 Holtzman 等人的 *The Curious Case of Neural Text Degeneration*，以及目标供应商当前的解码、流式和结构化输出官方文档。本章代码目录为 [`examples/sampling_lab/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/sampling_lab)，其中的固定 Logit Provider 和频率报告只验证采样控制，不冒充真实 LLM 质量评测。
 
 ## 本章引用
 <!-- chapter-citations:start -->

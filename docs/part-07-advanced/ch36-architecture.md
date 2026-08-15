@@ -10,6 +10,8 @@ Agent 架构的难点不是把模型、工具和向量库画在一张图里，�
 
 完成本章后，读者应能判断何时采用模块化单体或微服务；区分 Agent Runtime、Workflow Engine 与任务队列；设计 Tool Registry、Model Gateway、Memory、Evaluation 和 Observability 服务；用 ADR 记录架构决策。前置知识包括 HTTP、数据库事务、消息队列、容器与第 9、25、28 章。
 
+质量属性的分类可参考 [ISO/IEC 25010](../references.md#ref-iso25010)，风险治理可参考 [NIST AI RMF](../references.md#ref-nist-ai-rmf)。参考架构只提供边界词汇；最终服务拆分必须由团队规模、故障隔离、数据所有权和可观测证据共同决定。
+
 ## 核心概念：先确定边界，再选择部署形态
 
 模块是职责边界，进程是部署边界，服务是组织与故障边界，三者并不等价。一个模块化单体可以拥有清楚的端口、适配器和依赖方向；一个拆成十个容器的系统也可能因为共享数据库和循环调用而成为“分布式单体”。
@@ -306,24 +308,39 @@ flowchart TD
 
 ## 本章总结
 
-Agent 架构的可维护性来自明确职责、可恢复状态、受控副作用和端到端证据链。部署形态应服从故障域与组织需求，不能反过来决定业务边界。
+Agent 架构的可维护性来自明确职责、可恢复状态、受控副作用和端到端证据链。部署形态应服从故障域与组织需求，不能反过来决定业务边界。下一章将从技术结构转向产品承诺，讨论如何把这些边界转化为可靠体验、SLO 与升级机制。
 
-## 课后练习、面试问题与延伸阅读
+## 面试问题与延伸阅读
 
-1. 把项目 10 分别画成模块化单体与微服务方案，并写出拆分触发条件。
-2. 为 `ToolCompleted` 设计可兼容演进的事件 Schema 和去重策略。
-3. 面试问题：何时拆分 Model Gateway？Workflow Engine、Queue 与 Runtime 有何不同？如何避免分布式单体？
-4. 延伸阅读：领域驱动设计、Transactional Outbox、状态机、工作流引擎、OpenTelemetry 与零信任服务架构。
+面试问题：何时拆分 Model Gateway？Workflow Engine、Queue 与 Runtime 有何不同？如何避免分布式单体？
+
+延伸阅读：领域驱动设计、Transactional Outbox、状态机、工作流引擎、OpenTelemetry 与零信任服务架构。
 
 本章对应代码目录：`projects/10-enterprise-platform/`。
 
-## 练习参考答案
+## 课后练习
 
-1. 项目 10 的模块化单体方案保留一个 API 与 Worker 代码库、模块私有表和事务 Outbox；微服务方案可先只拆 Parser。拆分条件包括 Parser 资源峰值持续破坏 API SLO、需要更强文件沙箱且接口/数据所有权稳定。保留单体 Parser Adapter 作为回滚路径。
-2. `ToolCompleted` 事件包含 event ID、run ID、tool call ID、工具版本、状态、结果引用、耗时和 aggregate version，不广播敏感参数正文。消费者以 `(consumer, event_id)` 去重，新字段可选并向后兼容，破坏性变化发布新事件版本。
-3. Model Gateway 在多团队需要统一配额/凭证、独立扩缩与发布，且其故障需要隔离时拆分。若只是一个应用调用两个模型，模块内 Adapter 往往足够。
-4. Workflow Engine 保存长流程节点、定时器、中断和恢复；Queue 负责可靠交付；Runtime 执行一次 Agent 决策循环。三者可以同进程，但状态契约不能混为一个 Job JSON。
-5. 避免分布式单体需要服务拥有自己的数据、接口向后兼容、调用链不过度同步、失败可独立处理并有端到端 Trace。若服务必须同时部署、共享表和互相循环调用，拆分没有获得真正自治。
+### 设计题
+
+1. 为项目 10 分别设计模块化单体与“只拆 Parser”的微服务方案，写出拆分触发条件、数据所有权和回滚路径。
+2. 定义 `ToolCompleted` 事件契约，包含 Event/Run/Tool Call ID、工具版本、结果引用、耗时和 Aggregate Version，并说明兼容演进方式。
+3. 判断 Model Gateway 何时应成为独立服务，何时只需模块内 Adapter。
+
+### 概念题
+
+4. 比较 Workflow Engine、Queue 与 Agent Runtime 的状态责任，说明它们为什么不能合并为一个无结构 Job JSON。
+
+### 故障实验
+
+5. 审查一个“服务共享数据库、同步循环调用且必须同时发布”的架构，指出分布式单体症状并提出最小回退方案。
+
+### 编码题
+
+为事件消费者实现 `(consumer, event_id)` 幂等去重。输入为乱序和重复 Event；输出为一次业务状态更新；检查标准是重放不会重复副作用。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
 
 ## 本章引用
 <!-- chapter-citations:start -->

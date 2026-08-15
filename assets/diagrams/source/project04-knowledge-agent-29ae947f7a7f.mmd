@@ -1,0 +1,12 @@
+%% id: project4-textbook-parser-boundary
+%% title: 不可信文档解析和质量门禁
+%% alt: 上传文件先做类型大小和解压限制，再在隔离解析器中产生位置化页面与质量报告，失败文档不进入索引
+flowchart LR
+    Upload["Uploaded File"] --> Validate["类型 / 大小 / Hash / ACL"]
+    Validate --> Sandbox["受限 Parser Worker"]
+    Sandbox --> Pages["ParsedPage + Location"]
+    Sandbox --> Report["Quality Report"]
+    Pages --> Chunk["Structure-aware Chunking"]
+    Report --> Accept{"质量达标?"}
+    Accept -->|否| Reject["拒绝或人工处理"]
+    Accept -->|是| Chunk

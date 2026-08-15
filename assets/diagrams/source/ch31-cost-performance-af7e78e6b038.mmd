@@ -1,0 +1,11 @@
+%% id: agent-task-cost-budget-flow
+%% title: Agent 任务成本与预算扣减
+%% alt: 请求的上下文生成工具和评审分别累计成本，并在接近任务预算时进入可解释降级路径
+flowchart TB
+    Request --> Context["input tokens"] --> Model["generation/reasoning"] --> Tools --> Review
+    Context --> Cost
+    Model --> Cost
+    Tools --> Cost
+    Review --> Cost
+    Cost --> Budget{"task budget"}
+    Budget -->|near limit| Degrade

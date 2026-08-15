@@ -1,0 +1,10 @@
+%% id: telemetry-failure-isolation
+%% title: Telemetry 故障隔离与降级
+%% alt: 应用将日志指标和 Trace 写入有界异步管线，Collector 或后端异常时丢弃低优先级遥测并自监控，关键审计走独立持久通道且核心任务继续
+flowchart TB
+    App[Agent Runtime] --> Buffer[有界 Batch Buffer]
+    Buffer --> Collector --> Backend
+    Collector -->|超时/限流| Drop[丢弃低优先级 Telemetry]
+    Drop --> Self[telemetry_dropped_total]
+    App --> Audit[独立持久 Audit 通道]
+    Backend -.不可用不阻塞.-> App

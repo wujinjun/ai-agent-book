@@ -1,0 +1,11 @@
+%% id: deployment-schema-expand-contract
+%% title: 滚动发布中的 Expand/Migrate/Contract
+%% alt: 先扩展兼容 Schema，再部署新旧兼容代码和回填，验证后切换读取，观察期结束才删除旧字段，回滚始终保留旧路径
+flowchart TB
+    Expand["Expand<br/>先增加兼容 Schema"] --> Compat["部署新旧结构均兼容的代码"]
+    Compat --> Backfill["受控回填并校验"]
+    Backfill --> Switch["切换读写指针"]
+    Switch --> Observe{"观察窗口稳定?"}
+    Observe -->|否| Rollback["回滚应用，继续保留旧结构"]
+    Rollback --> Compat
+    Observe -->|是| Contract["Contract<br/>删除旧结构"]

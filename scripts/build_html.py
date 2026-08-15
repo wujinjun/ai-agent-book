@@ -28,6 +28,21 @@ def prepare_html_sources(root: Path, destination: Path) -> Path:
     internal_notes = destination / "superpowers"
     if internal_notes.exists():
         shutil.rmtree(internal_notes)
+    # The public reading edition contains the book, not maintainer acceptance
+    # records or instructor-only training material. Keeping those pages out of
+    # the copied source tree also prevents unnav'd maintenance pages from being
+    # indexed by search engines as if they were chapters.
+    for relative in (
+        Path("training"),
+        Path("final-acceptance.md"),
+        Path("QUALITY_ROADMAP.md"),
+        Path("project-status.md"),
+    ):
+        candidate = destination / relative
+        if candidate.is_dir():
+            shutil.rmtree(candidate)
+        elif candidate.exists():
+            candidate.unlink()
 
     diagrams_source = root / "assets/diagrams"
     diagrams_target = destination / "assets/diagrams"
@@ -36,6 +51,12 @@ def prepare_html_sources(root: Path, destination: Path) -> Path:
     shutil.copytree(diagrams_source, diagrams_target, dirs_exist_ok=True)
 
     for entry in load_publication_entries(root / "mkdocs.yml"):
+        if entry.path.parts[:2] == ("docs", "training") or entry.path in {
+            Path("docs/final-acceptance.md"),
+            Path("docs/QUALITY_ROADMAP.md"),
+            Path("docs/project-status.md"),
+        }:
+            continue
         original = root / entry.path
         if entry.path.parts[0] == "docs":
             relative_output = entry.path.relative_to("docs")
@@ -69,6 +90,13 @@ def write_build_config(root: Path, docs_dir: Path, output: Path) -> Path:
     config = config.replace(
         "custom_dir: overrides",
         f"custom_dir: {(root / 'overrides').as_posix()}",
+        1,
+    )
+    config = config.replace(
+        "  - 企业培训配套资源:\n"
+        "      - 培训入口: training/index.md\n"
+        "      - 幻灯片说明: training/slides.md\n",
+        "",
         1,
     )
     project_lines = ["  - 第六篇 完整项目实战:", "      - 导读: part-06-projects/index.md"]

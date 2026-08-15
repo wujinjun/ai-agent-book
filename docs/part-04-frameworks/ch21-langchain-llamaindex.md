@@ -1,17 +1,22 @@
 # 第21章：LangChain 与 LlamaIndex
 
+最后核对日期：2026-08-07。
+
+!!! info "版本证据"
+    LangChain 1.3.14（core 1.5.3）与 LlamaIndex Core 0.14.23 已在独立 Python 3.12 环境按同题检索契约复核。框架对象停留在 Adapter 内，正文结论不外推到其他版本。
+
+## 导读、目标与前置知识
+LangChain 提供模型、Prompt、Tool、Retriever 和 Parser 等组合抽象；LangGraph 承载有状态编排。LlamaIndex 聚焦 Document、Node、Index、Retriever 与 Query Engine。本章比较其适用场景与锁定风险。
+
+学习目标是以同一 RAG 示例比较原生、LangChain 与 LlamaIndex。前置知识为第13、17、20章。
+
+框架抽象与当前支持范围分别按 [LangChain 官方文档](../references.md#ref-langchain-docs)和 [LlamaIndex 官方文档](../references.md#ref-llamaindex-docs)核对。正文的比较结论来自同题任务与稳定领域接口，不把官方功能清单直接等同于生产适用性。
+
 ![业务问题和稳定领域接口之下并列组件编排、可恢复状态图与文档检索三类框架能力，经可替换适配器连接模型、向量库、工具和存储，并通过 Spike、回归数据集与迁移出口验证](../assets/infographics/png/framework-layer-boundaries-infographic-2x.png)
 
 *图 21-A　LangChain、LangGraph、LlamaIndex 与原生能力的分层边界。*
 
 三类框架解决的问题并不相同：组件抽象、可恢复编排和数据检索可以组合，却不应互相冒充。领域接口保持稳定，框架对象停留在适配层，才可能用真实数据做替换实验并控制锁定风险。
-
-最后核对日期：2026-08-07；LangChain 1.3.14（core 1.5.3）与 LlamaIndex Core 0.14.23 已在独立 Python 3.12 环境安装并完成同题检索实测。
-
-## 导读、目标与前置知识
-LangChain 提供模型、Prompt、Tool、Retriever 和 Parser 等组合抽象；LangGraph承载有状态编排。LlamaIndex 聚焦 Document、Node、Index、Retriever 与 Query Engine。本章比较其适用场景与锁定风险。
-
-学习目标是以同一 RAG 示例比较原生、LangChain 与 LlamaIndex。前置知识为第13、17、20章。
 
 ## 核心原理与架构
 
@@ -21,7 +26,7 @@ LangChain、LlamaIndex 与 LangGraph 覆盖不同抽象层。下图给出一种�
 %% id: langchain-llamaindex-langgraph-layers
 %% title: LangChain、LlamaIndex 与 LangGraph 分层关系
 %% alt: LlamaIndex 负责摄取索引检索，LangChain 组合模型工具解析器，LangGraph 管理状态工作流
-flowchart LR
+flowchart TB
     Data --> Llama["LlamaIndex: ingest/index/retrieve"] --> Context
     Prompt --> Chain["LangChain: model/tool/parser composition"]
     Context --> Chain --> Graph["LangGraph: state/workflow"]
@@ -66,7 +71,7 @@ flowchart TB
 ## 误区、调试、实践与安全
 不要因教程方便就引入全套框架，不要混用多个过时链式 API。调试先看框架实际发送的请求、召回候选和回调事件。框架组件仍需权限过滤、超时和数据治理。
 
-## 总结、练习、面试与阅读
+## 组合框架与领域边界的深化设计
 
 ### LangChain 的历史定位与当前边界
 
@@ -136,7 +141,7 @@ LlamaIndex 连接器很多，版本和依赖拆分也频繁。项目固定只需
 %% id: langchain-llamaindex-rag-acl-spike
 %% title: LangChain 与 LlamaIndex 同题 ACL 检索证据链
 %% alt: 同一Fixture分别进入两个隔离框架环境，先执行租户过滤再计算相似度和拒答阈值，最后汇总带源码哈希的统一证据
-flowchart LR
+flowchart TB
     Spec["同一 Documents / Query / ACL / Golden"] --> LC["LangChain 1.3.14"]
     Spec --> LI["LlamaIndex Core 0.14.23"]
     LC --> Filter["Tenant Filter"]
@@ -204,7 +209,7 @@ Adapter 从 Node/NodeWithScore 提取同样字段；缺失 ID、版本或位置�
 %% id: rag-framework-score-normalization-boundary
 %% title: 框架检索分数的归一化边界
 %% alt: LangChain 与 LlamaIndex 返回各自原始命中，Adapter 保留分数语义和来源并转换为领域 Hit，再用各自校准阈值和统一引用验证
-flowchart LR
+flowchart TB
     LC[LangChain raw Document/score] --> LCA[LC Adapter]
     LI[LlamaIndex raw Node/score] --> LIA[LI Adapter]
     LCA --> Hit[Domain RetrievalHit + score_kind]
@@ -243,21 +248,45 @@ Filter、排序、阈值、Callback、异步取消和依赖闭包。`evidence.js
 和 API 无需迁移，说明边界健康；若历史记录存满框架 Pickle 或内部 ID，锁定已发生。ADR 应记录采用
 理由、专有能力、替代实现、迁移成本和复审日期。
 
-### 练习参考答案与面试要点
+## 本章总结
 
-1. **扩展 Spike。** 在两个隔离环境接入同一真实 Embedding Fixture，生成过滤后的 Exact Truth；测
-   Recall@k、MRR、P95、引用完整率和零泄漏，并记录硬件与源码哈希。
-2. **LangChain/LangGraph。** 前者提供组件与高层 Agent 接口，后者负责显式状态与可恢复工作流；当前
-   LangChain Agent 可构建于 LangGraph 之上，二者不是简单竞争关系。
-3. **Node 不作领域模型。** 它是框架内部摄取/检索单元，字段与生命周期会变化；企业的 Document ID、
-   ACL、版本和位置必须独立保存。
-4. **Retriever/Query Engine。** Retriever 返回相关证据；Query Engine 还可能做改写、后处理与生成。
-   生产排障常需要保留分层边界。
+LangChain 提供模型、工具、Middleware 和高层 Agent 组合，LangGraph 负责显式状态与可恢复工作流；LlamaIndex 以 Document、Node、Index、Retriever 和 Query Engine 组织数据应用。框架提供组合与集成，不替代数据质量、权限、评分语义和评估。领域层应保存自己的 Document ID、ACL、版本、位置和分数类型。下一章将把比较范围扩展到角色式 Multi-Agent 框架，并要求它们相对单 Agent 基线证明净收益。
 
-总结：框架提供组合与集成，不替代数据质量、权限、评分语义和评估。延伸阅读：
-[LangChain Agents](https://docs.langchain.com/oss/python/langchain/agents)、Structured Output 与
-[LlamaIndex Framework](https://developers.llamaindex.ai/python/framework/) 官方文档。本章代码目录为
-[`examples/framework_comparison/rag_spike/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/framework_comparison/rag_spike)。
+## 课后练习
+
+### 编码题
+
+1. 在两个隔离环境接入同一真实 Embedding Fixture，生成过滤后的 Exact Truth，并比较 Recall@k、MRR、P95、引用完整率和零泄漏。
+
+输入为同一版本语料和查询集；输出为统一指标表；检查标准是框架 Adapter 之外的评估契约相同。
+
+### 概念题
+
+2. 画出 LangChain、LangGraph 与应用 Runtime 的关系，说明它们为什么不是简单竞争关系。
+
+### 设计题
+
+3. 设计领域 `RetrievalHit`，把 LangChain Document 和 LlamaIndex Node 转换到统一契约，并对缺失来源 Fail Closed。
+4. 把 Query Engine 拆成 Retriever、Context Assembly、Generation 和 Citation Validation 四个可观测阶段。
+
+### 故障实验
+
+让一个 Adapter 返回缺失租户或来源字段的候选，验证统一契约拒绝进入生成阶段并在 Trace 中记录安全错误码。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. LangChain 与 LangGraph 的关系是什么？
+2. 为什么框架 Node 不应直接成为企业领域模型？
+3. Retriever 与 Query Engine 有什么区别？
+4. 不同框架返回的分数为什么不能直接共用阈值？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 [LangChain Agents](https://docs.langchain.com/oss/python/langchain/agents)、Structured Output 与 [LlamaIndex Framework](https://developers.llamaindex.ai/python/framework/) 官方文档。本章代码目录为 [`examples/framework_comparison/rag_spike/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/framework_comparison/rag_spike)。
 
 ## 本章引用
 <!-- chapter-citations:start -->

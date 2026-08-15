@@ -1,17 +1,19 @@
 # 第33章：Agentic Coding
 
-![Coding Agent 只读构建仓库地图和计划，从受保护源仓库创建一次性 Git 工作区，经路径白名单、补丁大小、apply check、受限测试和超时校验，失败销毁工作区，独立评审通过后才导出补丁](../assets/infographics/png/coding-agent-patch-transaction-infographic-2x.png)
-
-*图 33-A　Coding Agent 的隔离补丁事务。*
-
-源仓库始终不是模型的直接写入目标。一次性工作区将补丁验证和测试失败变成可丢弃事务，但进程级隔离仍不等于针对恶意代码的完整操作系统沙箱；生产环境还需容器、虚拟机、网络和资源策略。
-
 最后核对日期：2026-08-12。本章工作区代码已在 Python 3.12 下完成补丁策略、失败销毁、命令白名单和源仓库不变测试；操作系统级 Sandbox 仍作为明确外部边界。
 
 ## 导读、目标与前置知识
 Coding Agent 需要 Repo Map、搜索、计划、Patch、测试、Review、Sandbox、Terminal、Git 和长任务恢复。本章从软件工程闭环而非代码生成单点理解它。
 
 学习目标是完成从失败测试到受审 Patch 的闭环。前置知识为 Git、测试和第23、30章。
+
+真实仓库级修复能力的代表性评测可参见 [SWE-bench](../references.md#ref-jimenez2024swebench)，软件供应链证据分层可参见 [SLSA](../references.md#ref-slsa)。基准任务成功不等于生产环境具备命令隔离、秘密保护或变更授权。
+
+![Coding Agent 只读构建仓库地图和计划，从受保护源仓库创建一次性 Git 工作区，经路径白名单、补丁大小、apply check、受限测试和超时校验，失败销毁工作区，独立评审通过后才导出补丁](../assets/infographics/png/coding-agent-patch-transaction-infographic-2x.png)
+
+*图 33-A　Coding Agent 的隔离补丁事务。*
+
+源仓库始终不是模型的直接写入目标。一次性工作区将补丁验证和测试失败变成可丢弃事务，但进程级隔离仍不等于针对恶意代码的完整操作系统沙箱；生产环境还需容器、虚拟机、网络和资源策略。
 
 ## 工作流
 
@@ -21,10 +23,14 @@ Coding Agent 的完成条件是产生受审 Patch 和验证证据。主图把仓
 %% id: coding-agent-patch-verification-loop
 %% title: Coding Agent Patch 验证闭环
 %% alt: 目标经仓库地图搜索计划最小 Patch 测试和评审，失败返回检查，通过后交付可读 Diff
-flowchart LR
-    Goal --> Inspect["Repo map/search"] --> Plan --> Patch --> Test --> Review
-    Review -->|失败| Inspect
-    Review -->|通过| Diff["Human-readable diff"]
+flowchart TB
+    Goal["目标与验收条件"] --> Inspect["Repo Map / Code Search"]
+    Inspect --> Plan["最小修改计划"]
+    Plan --> Patch["生成并检查 Patch"]
+    Patch --> Test["受限环境执行测试"]
+    Test --> Review["独立 Review"]
+    Review -->|失败且预算剩余| Inspect
+    Review -->|通过| Diff["可读 Diff + 测试证据"]
 ```
 
 每一轮修改都从仓库事实开始，以验证结果结束；若失败，回到相关代码和测试重新定位，而不是重复生成更大的 Patch。
@@ -70,7 +76,7 @@ Checkpoint 保存事实引用和产物哈希，不保存“应该已经完成”
 ## 误区、调试、实践与安全
 生成代码不是完成；测试绿不证明需求全覆盖；Repo Map 不能替代读取目标文件。Terminal 使用 allowlist/sandbox，破坏性命令审批，秘密不进入模型。调试从原始失败和 diff 开始。
 
-## 总结、练习、面试与阅读
+## 仓库级 Coding Agent 的深化设计
 
 ### Coding Agent 的核心结构
 
@@ -219,14 +225,43 @@ Multi-Agent 软件团队只有在角色具备独立信息、工具或权限时�
 
 为了避免选择性报告，同一任务应记录所有失败尝试，成功判定由独立验证器读取仓库与测试，而不是由 Coder 或 Reviewer 自报。若五角色与单 Agent 成功率接近，而五角色成本和尾延迟显著更高，工程结论应是减少角色。角色数量不是成熟度指标。
 
-## 练习参考答案
+## 本章总结
 
-1. **为什么不在用户仓库里用 `reset --hard` 回滚？** 因为无法证明未提交文件和用户改动都属于 Agent；销毁一次性副本不会触碰源工作树，恢复边界更清楚。
-2. **命令白名单为何不能替代 Sandbox？** 白名单只约束启动入口，被允许的解释器或测试程序仍可访问文件、网络和进程；必须用操作系统边界限制运行后的能力。
-3. **如何定义“有进展”？** 至少应出现新的可验证 Artifact、不同的测试证据或明确缩小的失败集合；仅版本号、措辞或时间戳变化不算进展。
-4. **何时使用多个 Agent？** 当不同角色需要独立权限、并行读取互不依赖的信息，或 Reviewer 使用与 Coder 不同的证据和门禁时；若只是转述同一上下文，应使用单 Agent 工作流。
+Coding Agent 的核心循环是读取规则、建立 Repo Map、搜索证据、规划最小 Patch、执行验证并审查 Diff。模型提出修改，文件系统、Git、Sandbox 和测试提供事实。长任务需要 Checkpoint，脏工作树必须保留用户改动，终端命令和网络权限应最小化。下一章将把相似的观察—动作—恢复循环应用到不断变化的浏览器和桌面界面。
 
-总结：Coding Agent 的价值来自闭环证据，而不只是生成速度。练习：实现搜索—失败测试—补丁—回归—Review 闭环。面试：如何保护脏工作树？怎样证明修复覆盖原始缺陷？何时使用 worktree？延伸阅读：Git、pytest、语言服务器、Sandbox 与安全供应链资料。代码目录：项目5、9。
+## 课后练习
+
+### 概念题
+
+1. 为什么 Coding Agent 不应在用户源工作树中用 `git reset --hard` 作为回滚手段？给出一次性副本的替代边界。
+2. 为什么命令白名单不能替代操作系统 Sandbox？以允许执行 `pytest` 为例说明风险。
+
+### 设计题
+
+3. 定义 Coding Agent 的“有进展”状态，区分可验证 Artifact、测试证据、失败集合缩小与纯措辞变化。
+4. 为一个仓库任务判断单 Agent、确定性 Workflow 与 Multi-Agent 的选择，只有在权限、独立信息或并行收益成立时才允许增加角色。
+
+### 编码题
+
+输入一个基准 Commit 和候选 Patch，输出 Patch 哈希、改动文件、允许范围与 `git apply --check` 结果；检查标准是不修改源工作树且报告可复放。
+
+### 故障实验
+
+让测试进程超时并留下子进程，记录普通父进程终止的局限，再给出容器级 PID、网络、CPU、内存和文件系统隔离方案。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. Repo Map、代码搜索与测试证据分别解决什么问题？
+2. 为什么一次性工作区仍不能替代操作系统 Sandbox？
+3. 长任务中的“有进展”应如何用 Artifact 与失败集合定义？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 SWE-bench、SLSA、Git 对象模型、沙箱和软件供应链安全。本章代码实验位于 Coding Agent 对应示例目录，重点是最小 Patch、源工作树保护和可复放验证。
 
 ## 本章引用
 <!-- chapter-citations:start -->

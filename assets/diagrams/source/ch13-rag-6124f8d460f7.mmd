@@ -1,0 +1,12 @@
+%% id: rag-index-version-release
+%% title: RAG 索引版本构建与切换
+%% alt: 文档快照绑定解析切分和 Embedding 版本构建候选索引，评估通过后原子切换并可回滚
+flowchart TB
+    Snapshot[文档与权限快照] --> Parse[解析器版本]
+    Parse --> Chunk[切分器版本]
+    Chunk --> Embed[Embedding 模型与维度]
+    Embed --> Candidate[候选索引版本]
+    Candidate --> Eval{黄金集与安全评估}
+    Eval -->|通过| Switch[原子切换 active index]
+    Eval -->|失败| Reject[保留旧索引]
+    Switch --> Rollback[监控异常时回滚]

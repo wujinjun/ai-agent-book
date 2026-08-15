@@ -1,0 +1,15 @@
+%% id: project5-textbook-review-pipeline
+%% title: 代码审查证据管线
+%% alt: 受限 Diff 分别进入静态规则与结构化语义 Reviewer，经过去重排序形成报告，审批后才进入 GitHub
+flowchart TB
+    Repo["只读 Git 仓库"] --> Policy{"Diff Policy"}
+    Policy -->|超预算| Reject["拒绝并缩小范围"]
+    Policy -->|允许| Parse["解析新增行"]
+    Parse --> Static["确定性规则"]
+    Parse --> Semantic["SemanticReviewer 端口"]
+    Static --> Merge["去重与风险排序"]
+    Semantic --> Merge
+    Merge --> Report["Markdown / JSON 报告"]
+    Report --> Local["默认本地交付"]
+    Report --> Approval{"提交与内容绑定审批"}
+    Approval -->|通过| GitHub["幂等发布评论"]

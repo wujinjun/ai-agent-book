@@ -1,0 +1,7 @@
+%% id: rag-end-to-end-pipeline
+%% title: RAG 摄取、检索、生成与引用主链路
+%% alt: 原始文档经解析切分索引后支持问题检索重排上下文生成和引用校验
+flowchart TB
+    Source["原始文档"] --> Parse["解析/清洗"] --> Chunk["切分/元数据"] --> Index["索引"]
+    Q["问题"] --> Retrieve["检索"] --> Rerank["重排"] --> Context["带引用上下文"] --> LLM["生成"] --> Check["引用校验"]
+    Index --> Retrieve

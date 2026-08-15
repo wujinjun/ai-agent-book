@@ -1,0 +1,12 @@
+%% id: project10-textbook-capability-gate
+%% title: 平台能力调用门禁
+%% alt: Agent 候选能力调用依次经过版本允许列表租户策略用户权限参数预算和审批，调用结果写 Trace 和审计
+flowchart LR
+    Call["Candidate Tool / MCP / RAG Call"] --> Version{"Agent version allows?"}
+    Version --> Tenant{"Tenant policy allows?"}
+    Tenant --> Role{"Principal authorized?"}
+    Role --> Schema{"Arguments valid?"}
+    Schema --> Budget{"Budget available?"}
+    Budget --> Approval{"Approval required?"}
+    Approval --> Invoke["Invoke Adapter"]
+    Invoke --> Trace["Trace + result classification"]

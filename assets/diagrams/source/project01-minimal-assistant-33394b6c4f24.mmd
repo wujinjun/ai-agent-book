@@ -1,0 +1,22 @@
+%% id: project1-textbook-request-sequence
+%% title: 对话请求与流式保存时序
+%% alt: 用户消息先写入会话，再加载历史调用模型；增量立即返回，只有无错误结束后才保存完整助手消息
+sequenceDiagram
+    participant U as User
+    participant S as AssistantService
+    participant H as ConversationStore
+    participant M as ChatModel
+    U->>S: chat(prompt, session_id)
+    S->>S: reject blank prompt
+    S->>H: append user message
+    S->>H: load session history
+    S->>M: stream(messages)
+    loop each event
+        M-->>S: delta / usage / error
+        S-->>U: yield event
+    end
+    alt received text and no error
+        S->>H: append complete assistant message
+    else failed or no answer
+        S->>H: do not persist assistant answer
+    end

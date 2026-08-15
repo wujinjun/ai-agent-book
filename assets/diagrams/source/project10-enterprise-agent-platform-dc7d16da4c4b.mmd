@@ -1,0 +1,19 @@
+%% id: project10-textbook-control-data-plane
+%% title: 企业 Agent 平台控制面与数据面
+%% alt: 控制面发布 Agent Tool Prompt Policy 版本，数据面以租户 Session 和 Run 执行并生成 Trace Evaluation Audit 和 Usage
+flowchart TB
+    subgraph Control["控制面"]
+        Admin["Admin API"] --> Registry["Agent / Tool / MCP Registry"]
+        Admin --> Policy["Tenant Policy / Quota"]
+        Admin --> Versions["Prompt / Workflow / Model Versions"]
+    end
+    subgraph Data["数据面"]
+        User["Tenant User"] --> Session["Session / Run"]
+        Session --> Queue["Durable Queue"]
+        Queue --> Runtime["Agent Runtime"]
+        Runtime --> Capabilities["Model / Tool / MCP / RAG"]
+    end
+    Registry --> Runtime
+    Policy --> Runtime
+    Versions --> Runtime
+    Runtime --> Evidence["Trace / Evaluation / Audit / Usage"]

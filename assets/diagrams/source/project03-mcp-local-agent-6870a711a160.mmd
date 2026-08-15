@@ -1,0 +1,12 @@
+%% id: project3-textbook-host-boundary
+%% title: MCP Host、Client、Server 与本地资源边界
+%% alt: Host 选择并配置 MCP Client，Client 经 Transport 连接 Server，Server 在独立策略下访问受限文件、系统信息和目录数据库
+flowchart TB
+    Agent["Agent / Host"] --> Select["Server 与工具选择策略"]
+    Select --> Client["MCPClient"]
+    Client --> Transport["In-process / stdio / HTTP Transport"]
+    Transport --> Server["MCP Server"]
+    Server --> Policy["参数 + 路径 + 查询策略"]
+    Policy --> Files["Allowed Root"]
+    Policy --> System["System Field Allowlist"]
+    Policy --> Catalog["Parameterized Catalog"]

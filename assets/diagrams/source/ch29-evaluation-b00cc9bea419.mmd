@@ -1,0 +1,6 @@
+%% id: agent-evaluation-release-loop
+%% title: Agent 评估发布与失败回流闭环
+%% alt: 变更经离线单元黄金集安全评估灰度和 A B 后发布，线上失败样本回流版本化数据集
+flowchart TB
+    Change --> Offline["unit + golden eval"] --> Safety --> Canary --> AB["A/B or shadow"] --> Release
+    AB --> Monitor["online outcomes"] --> Dataset["new failure cases"] --> Offline

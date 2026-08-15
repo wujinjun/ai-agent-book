@@ -7,6 +7,8 @@
 
 学习目标是实现一个核心任务 API 示例，并解释每种实时协议的边界。前置知识为第23章。
 
+框架用法按 [FastAPI 官方文档](../references.md#ref-fastapi-docs)核对；错误对象、SSE 与 WebSocket 的协议语义分别依据 [RFC 9457](../references.md#ref-rfc9457)、[HTML Living Standard 的 SSE 章节](../references.md#ref-html-sse)和 [RFC 6455](../references.md#ref-rfc6455)。框架便捷函数不能改变底层连接方向与重连语义。
+
 Agent API 需要根据任务寿命和交互方向选择传输，而不是把所有请求都做成长连接。主图并列同步响应、SSE、WebSocket 和异步 Job，并把长任务的权威状态与客户端连接分离。
 
 ![Agent 请求经认证租户限流和校验后选择同步响应 SSE WebSocket 或异步 Job，长任务写入权威状态并由队列 Worker 执行，同时支持重连取消超时背压与审计](../assets/infographics/png/agent-api-transport-infographic-2x.png)
@@ -23,9 +25,15 @@ Agent API 既要处理短请求，也要把长任务转成可观察资源。主�
 %% id: fastapi-agent-service-architecture
 %% title: FastAPI Agent 服务架构
 %% alt: 客户端经鉴权进入 FastAPI，短任务直接执行长任务进入队列，并通过 SSE 接收 Agent 事件
-flowchart LR
-    Client --> Auth --> API["FastAPI"] --> Queue["短任务直跑/长任务入队"] --> Agent
-    Agent --> SSE["SSE 事件"] --> Client
+flowchart TB
+    Client["HTTP Client"] --> Auth["认证与对象授权"]
+    Auth --> API["FastAPI"]
+    API --> Route{"能在网关超时内完成?"}
+    Route -->|是| Agent["同步执行"]
+    Route -->|否| Queue["持久 Run + Worker"]
+    Queue --> Agent
+    Agent --> Events["SSE 事件或 Run 状态"]
+    Events --> Client
 ```
 
 协议选择取决于交互方向和持久性，而不是“实时”两个字。SSE 适合单向事件，WebSocket 适合双向控制，轮询仍是可靠降级方案。
@@ -50,14 +58,14 @@ flowchart TD
 %% id: fastapi-request-security-lifecycle
 %% title: FastAPI 请求安全生命周期
 %% alt: 请求经身份认证租户与对象授权限流输入校验后创建幂等 Run，输出再经 Schema 和脱敏处理
-flowchart LR
-    Input[HTTP 请求] --> AuthN[身份认证]
-    AuthN --> AuthZ[租户与对象授权]
-    AuthZ --> Rate[限流与配额]
-    Rate --> Validate[Schema 文件和大小校验]
-    Validate --> Idempotency[幂等创建 Run]
-    Idempotency --> Execute[执行或入队]
-    Execute --> Output[输出校验与脱敏]
+flowchart TB
+    Input["HTTP 请求"] --> AuthN["身份认证"]
+    AuthN --> AuthZ["租户与对象授权"]
+    AuthZ --> Rate["限流与配额"]
+    Rate --> Validate["Schema / 文件 / 大小校验"]
+    Validate --> Idempotency["幂等创建 Run"]
+    Idempotency --> Execute["短任务执行或长任务入队"]
+    Execute --> Output["响应 Schema / 脱敏 / 审计"]
 ```
 
 鉴权后仍需对象级授权，文件名与 MIME 仍不可信。内部异常映射成稳定错误模型，调用栈只保留在受控日志。
@@ -69,7 +77,7 @@ flowchart LR
 ## 误区、调试、实践与安全
 不要在 async 路由中调用阻塞 SDK；不要把内部异常栈返回客户；不要信任文件名和 MIME。调试记录断连、首事件延迟和队列时间。鉴权之后仍需对象级授权。
 
-## 总结、练习、面试与阅读
+## Agent API 与流式传输的深化设计
 
 ### REST 资源与 Agent API
 
@@ -243,20 +251,45 @@ Live Tail，也尚未实现事件保留过期、Heartbeat 和慢消费者背压�
 
 常见误区：用 WebSocket 表示“高级”、把长任务放 BackgroundTasks、只做路由鉴权、信任 MIME、返回内部异常。安全上设置 CORS allowlist、HTTPS、安全 header、请求大小、超时、限流和审计；OpenAPI 文档不应暴露内部管理接口给未授权网络。
 
-### 练习参考答案与面试要点
+## 本章总结
 
-1. **可恢复 SSE。** 事件表以 Run 内 Sequence 排序；Endpoint 做对象授权、保留窗口检查和增量读取；
-   客户端保存最后处理成功的 ID。慢消费者超限断开，重连后不重复应用旧事件。
-2. **取消竞争。** 同时注入客户端断开、Cancel 请求和 Worker 完成。断开不自动删除 Run，取消写入
-   意图，最终状态由条件更新决定；已完成副作用保留审计。
-3. **协议选择。** 单向进度使用 SSE，频繁双向音频/控制使用 WebSocket，无持续事件则 202 + 轮询；
-   所有协议都以持久 Run 为事实来源。
-4. **鉴权分层。** Authentication 产生 Principal；Authorization 依次检查租户、对象、动作和字段。
-   通过登录不能自动读取任意 Run，404/403 策略还需避免资源枚举。
+Agent API 需要把短请求、长任务、流事件、取消、幂等创建和稳定错误协议分开建模。SSE 适合单向事件流，WebSocket 适合真正双向会话，但两者都不能代替持久 Job 状态。断连是传输事件，不自动表示任务取消。下一章将讨论会话、Checkpoint、Memory、审计与业务状态分别应保存在哪里。
 
-总结：Agent API 的核心是任务状态、事件游标和明确的断线/取消语义，而不只是聊天端点。延伸阅读包括
-FastAPI、Starlette、OAuth/OIDC、RFC 9457、SSE 与 WebSocket 规范；代码目录为
-[`projects/10-enterprise-platform/`](https://github.com/wujinjun/ai-agent-book/tree/main/projects/10-enterprise-platform)。
+## 课后练习
+
+### 设计题
+
+1. 设计支持断线恢复的 SSE 事件协议，给出 Sequence、保留窗口、对象授权、Heartbeat 与慢消费者规则。
+
+### 故障实验
+
+2. 同时注入客户端断开、取消请求和 Worker 完成，记录最终状态竞争，证明传输断开不等于任务取消。
+
+### 设计题
+
+3. 比较 SSE、WebSocket 与 `202 + 轮询`，为单向进度、双向音频和无持续事件三类场景选择协议。
+
+### 编码题
+
+为创建 Run 的 Endpoint 实现幂等键与稳定错误响应。输入包含同键同请求、同键不同请求和无权限对象；输出符合 OpenAPI 的 2xx/4xx 结果；检查标准是客户端无需解析中文消息。
+
+### 概念题
+
+4. 解释 Authentication、租户授权、对象授权、动作授权和字段过滤之间的顺序，以及为何登录成功不代表可以读取任意 Run。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. SSE、WebSocket 与 `202 + 轮询`分别适合什么任务？
+2. 为什么客户端断线不等于持久任务取消？
+3. Authentication、对象授权和字段过滤为什么必须分层？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 FastAPI、HTTP Semantics、Problem Details、SSE 与 WebSocket 官方规范。本章服务化示例分布在十个项目的 API 入口中，阅读时应优先比较请求契约、取消和错误模型，而不是框架装饰器数量。
 
 ## 本章引用
 <!-- chapter-citations:start -->

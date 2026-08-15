@@ -15,7 +15,7 @@
 %% id: project6-office-approval-flow
 %% title: 自动办公 Agent 审批数据流
 %% alt: 邮件与日历只读数据生成摘要草稿，草稿经绑定内容的人工审批后才能外部发布并写审计
-flowchart LR
+flowchart TB
     Mail["Mail Read"] --> Summary --> Draft
     Calendar["Calendar Read"] --> Draft
     Draft --> Approval{"Human Approval"}
@@ -31,14 +31,15 @@ flowchart LR
 %% id: project6-provider-workflow-architecture
 %% title: 自动办公 Provider 与工作流架构
 %% alt: Mail Calendar Provider 经过时间窗口和隐私过滤进入 OfficeWorkflow，产生日报并由 Approval Service 控制 Webhook 发布
-flowchart LR
-    Mail[Mail Provider] --> Filter[时间窗口与字段最小化]
-    Calendar[Calendar Provider] --> Filter
-    Filter --> Workflow[OfficeWorkflow]
-    Workflow --> Draft[日报与动作草稿]
-    Draft --> Approval[Approval Service]
-    Approval --> Publisher[Webhook Notion 或飞书 Adapter]
-    Workflow --> Audit[JSONL Audit]
+flowchart TB
+    Mail["Mail Provider"] --> Filter["时间窗口与字段最小化"]
+    Calendar["Calendar Provider"] --> Filter
+    Filter --> Workflow["OfficeWorkflow"]
+    Workflow --> Draft["日报与动作草稿"]
+    Draft --> Approval{"Approval Service"}
+    Approval -->|通过| Publisher["Webhook / Office Adapter"]
+    Approval -->|拒绝| Audit["Audit Log"]
+    Workflow --> Audit
     Publisher --> Audit
 ```
 

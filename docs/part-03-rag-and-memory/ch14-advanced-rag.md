@@ -7,6 +7,8 @@
 
 学习目标是理解每项技术的核心机制、替代方案和评估成本，并能拒绝没有基线证据的复杂化。前置知识为第13章。
 
+本章对 Self-RAG、Corrective RAG、Graph RAG 与树式检索的描述分别对应 [Self-RAG](../references.md#ref-asai2023selfrag)、[CRAG](../references.md#ref-yan2024crag)、[GraphRAG](../references.md#ref-edge2024graphrag)和 [RAPTOR](../references.md#ref-sarthi2024raptor)。这些名称代表不同研究机制，不能当作可随意叠加的产品功能标签。
+
 高级 RAG 不应从技术名词出发，而应从可观测失败出发。主图先区分没有召回、排名偏低、冲突过期、上下文噪声和回答不忠实，再把每种故障映射到不同纠错策略。
 
 ![查询分类后选择切分过滤多查询混合检索和重排能力，并按无召回排名低冲突过期上下文噪声或回答不忠实选择对应纠错策略](../assets/infographics/png/advanced-rag-diagnostic-infographic-2x.png)
@@ -132,7 +134,7 @@ def reciprocal_rank(run: RetrievalRun, relevant_ids: set[str]) -> float:
 %% id: advanced-rag-ablation-ladder
 %% title: 高级 RAG 逐项消融阶梯
 %% alt: 所有方案共享语料查询和评估器，从稠密基线依次增加Parent Child、Multi Query、Hybrid、Reranking和压缩，每步比较质量延迟成本
-flowchart LR
+flowchart TB
     Data["固定语料 + 查询集 + ACL"] --> B0["B0 结构切分 + Dense"]
     B0 --> B1["B1 + Parent-Child"]
     B1 --> B2["B2 + Multi-Query"]
@@ -224,7 +226,7 @@ Agentic RAG 的失败恢复不能无限换数据源。Router 只能选择当前�
 
 安全回归包括：所有 Multi-Query 使用相同 ACL；Parent 回取不越权；Reranker 与压缩器看不到不必要的 PII；外部网页指令不改变 Router；图遍历始终带租户条件；缓存键包含策略、索引和权限版本。
 
-## 误区、安全、总结与练习
+## 高级检索策略的适用边界
 
 ### Parent-Child 与语义切分
 
@@ -272,15 +274,50 @@ Graph RAG 将实体、关系、社区或事件图与文本证据结合，适合�
 高级链路每增加一步，都要提供可关闭开关与独立指标。离线实验固定语料与查询，按策略比较 Recall@k、nDCG、回答正确、Faithfulness、引用、P95 延迟和费用。显著性不足时保留简单基线。线上监控改写漂移、无结果、重复检索和压缩比例。
 
 外部网页、图谱描述和压缩摘要都是不可信数据。查询改写不能扩大用户权限，Multi-Query 每个查询都使用同一 ACL，Graph 遍历不能跨租户边，Agentic Router 不能选择未授权数据源。
-常见误区：高级链路必然优于基线；LLM-as-Judge 可替代人工；图数据库自动等于 Graph RAG。总结：高级 RAG 必须由具体失败和评估证据驱动。练习：对比基线、混合和重排三组实验，并为一次查询漂移写回归测试。面试：查询改写如何导致漂移？何时不使用 Graph RAG？Reranker 与生成 Judge 的职责有何差异？延伸阅读：RRF、Corrective RAG、Self-RAG、Graph RAG 论文及所用检索器官方文档。代码目录：`projects/04-knowledge-agent/`。
+常见误区包括：高级链路必然优于基线、LLM-as-Judge 可以替代人工、使用图数据库就自动得到 Graph RAG。每增加一步，都必须对应一个已观察到的失败模式，并能通过消融实验单独证明净收益。
 
-## 练习参考答案
+## 本章总结
 
-1. 基线、Hybrid 和 Rerank 实验必须固定语料、查询、ACL、Chunk、Embedding、top-k 与生成配置；每次只改变指定策略，报告 Recall/MRR、Faithfulness、P95 和总成本。若 Hybrid 提升编号查询但损害其他查询，可以按查询类型条件启用。
-2. 查询漂移回归样本可用“查找 2025 年制度，但不要包含已废止版本”。断言每条改写都保留时间与否定约束，检索候选版本合法；仅比较改写文本相似度不足以证明没有漂移。
-3. Graph RAG 不适合关系简单、主要按段落检索、缺乏可靠实体消歧或更新频繁但无图治理能力的语料。向量或混合检索若已满足指标，引入图只会增加构建、版本和调试成本。
-4. Reranker 判断 query-document 相关性并改善候选顺序；生成 Judge 评价最终主张是否正确或忠于证据。二者输入、失败位置和评价目标不同，不能用 Judge 掩盖初检漏召回。
-5. 发布高级策略需要预先定义净收益阈值，例如 Recall 或任务成功提升，同时 P95、成本、安全和拒答准确率不越界。统计不稳定或只改善单个演示查询时，保留基线并继续收集样本。
+高级 RAG 不是技术清单，而是一组针对召回不足、排序噪声、上下文过长、证据冲突和来源异构的可选控制阶段。Query Rewriting 必须冻结实体、时间、否定和权限约束；Reranker 只改进相关性排序；Context Compression 必须保留证据位置与关键限定；Corrective、Self-RAG 和 Agentic RAG 都需要轮次、预算和新增证据终止条件。下一章将从组织知识转向跨会话的个体状态，讨论 Memory 的写入、检索、纠错和遗忘。
+
+## 课后练习
+
+### 编码题
+
+1. 固定语料、查询、ACL、Chunk、Embedding、top-k 和生成配置，对比基线、Hybrid 与 Rerank，报告 Recall/MRR、Faithfulness、P95 和总成本。
+
+输入为版本化查询集与相关性标注；输出为可复现消融表；检查标准是一次只改变一个策略变量。
+
+### 故障实验
+
+2. 使用“查找 2025 年制度，但不要包含已废止版本”构造查询漂移回归，断言每条改写保留时间和否定约束。
+
+### 概念题
+
+3. 为一组关系简单的文档判断是否需要 Graph RAG，并写出不采用它的证据。
+
+### 故障实验
+
+4. 为 Corrective RAG 设计无新增证据和预算耗尽两类停止条件。
+
+### 设计题
+
+5. 为高级策略发布定义净收益阈值，同时约束质量、延迟、成本、安全和拒答准确率。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. 查询改写如何造成语义和权限漂移？
+2. Reranker 与生成 Judge 的职责有何不同？
+3. 什么情况下不应使用 Graph RAG？
+4. 为什么 Multi-Query 的每个子查询都必须执行同一 ACL？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 RRF、Corrective RAG、Self-RAG、Graph RAG、RAPTOR 论文及所用检索器官方文档。本章代码目录为 `projects/04-knowledge-agent/`。
 
 ## 本章引用
 <!-- chapter-citations:start -->

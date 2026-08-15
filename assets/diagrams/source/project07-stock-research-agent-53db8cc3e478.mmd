@@ -1,0 +1,15 @@
+%% id: project7-textbook-research-pipeline
+%% title: 股票研究证据流水线
+%% alt: 行情新闻公告分别经时间来源与质量校验进入事实层，确定性指标和显式模型推断分栏后生成带引用和免责声明的报告
+flowchart TB
+    Market["MarketProvider"] --> Validate["时区 / OHLC / 缺失 / 复权策略"]
+    News["NewsProvider"] --> Provenance["published_at / fetched_at / URL"]
+    Disclosure["DisclosureProvider"] --> Provenance
+    Validate --> Facts["Typed Facts"]
+    Provenance --> Facts
+    Facts --> Indicators["SMA / Return / RSI"]
+    Facts --> Inference["显式标记的模型推断"]
+    Indicators --> Report["ResearchReport"]
+    Inference --> Report
+    Facts --> Report
+    Report --> Gate{"引用、时点、免责声明校验"}

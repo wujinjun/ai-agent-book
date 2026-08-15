@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="836" viewBox="0 700 1024 836" role="img" aria-labelledby="title desc">
+<title id="title">Agent 数据：按语义选择权威存储</title>
+<desc id="desc">业务事实、工件、向量、缓存和审计按一致性与生命周期映射到不同存储；下半部分说明权威状态、可重建派生数据以及迁移、删除和恢复闭环。</desc>
+<defs><marker id="flat-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#486985"/></marker></defs>
+<rect x="0" y="0" width="1024" height="1536" fill="#F7F4EE"/>
+<g font-family="Noto Sans SC, Source Han Sans SC, sans-serif">
+<text text-anchor="middle" font-size="29" font-weight="700" fill="#24476B"><tspan x="512" y="48.0">Agent 数据：按语义选择权威存储</tspan></text>
+<rect x="48" y="112" width="202" height="76" rx="18" fill="#E8EEF4" stroke="#24476B" stroke-width="3"/>
+<text text-anchor="middle" font-size="17" font-weight="700" fill="#24476B"><tspan x="149" y="157.0">租户 / 用户</tspan></text>
+<rect x="290" y="112" width="202" height="76" rx="18" fill="#E8F3F0" stroke="#178F82" stroke-width="3"/>
+<text text-anchor="middle" font-size="17" font-weight="700" fill="#178F82"><tspan x="391" y="157.0">会话 / Run</tspan></text>
+<rect x="532" y="112" width="202" height="76" rx="18" fill="#F7EBDD" stroke="#D9782D" stroke-width="3"/>
+<text text-anchor="middle" font-size="17" font-weight="700" fill="#D9782D"><tspan x="633" y="157.0">Artifact</tspan></text>
+<rect x="774" y="112" width="202" height="76" rx="18" fill="#EFE9F6" stroke="#7656A5" stroke-width="3"/>
+<text text-anchor="middle" font-size="17" font-weight="700" fill="#7656A5"><tspan x="875" y="157.0">Memory</tspan></text>
+<rect x="48" y="224" width="202" height="76" rx="18" fill="#E8F3F0" stroke="#178F82" stroke-width="3"/>
+<text text-anchor="middle" font-size="17" font-weight="700" fill="#178F82"><tspan x="149" y="269.0">Vector</tspan></text>
+<rect x="290" y="224" width="202" height="76" rx="18" fill="#F7E5E4" stroke="#B94A48" stroke-width="3"/>
+<text text-anchor="middle" font-size="17" font-weight="700" fill="#B94A48"><tspan x="391" y="269.0">Cache</tspan></text>
+<rect x="532" y="224" width="202" height="76" rx="18" fill="#F7EBDD" stroke="#D9782D" stroke-width="3"/>
+<text text-anchor="middle" font-size="17" font-weight="700" fill="#D9782D"><tspan x="633" y="269.0">Audit</tspan></text>
+<rect x="774" y="224" width="202" height="76" rx="18" fill="#E8EEF4" stroke="#24476B" stroke-width="3"/>
+<text text-anchor="middle" font-size="17" font-weight="700" fill="#24476B"><tspan x="875" y="269.0">Checkpoint</tspan></text>
+<polyline points="512,318 512,352" fill="none" stroke="#486985" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#flat-arrow)"/>
+<rect x="55" y="372" width="162" height="196" rx="18" fill="#E8EEF4" stroke="#24476B" stroke-width="3"/>
+<text text-anchor="middle" font-size="18" font-weight="700" fill="#24476B"><tspan x="136" y="423.0">PostgreSQL</tspan></text>
+<text text-anchor="middle" font-size="14" font-weight="500" fill="#203449"><tspan x="136" y="484.3">权威事务与</tspan><tspan x="136" y="501.8">幂等记录</tspan></text>
+<rect x="247" y="372" width="162" height="196" rx="18" fill="#F7EBDD" stroke="#D9782D" stroke-width="3"/>
+<text text-anchor="middle" font-size="18" font-weight="700" fill="#D9782D"><tspan x="328" y="423.0">对象存储</tspan></text>
+<text text-anchor="middle" font-size="14" font-weight="500" fill="#203449"><tspan x="328" y="484.3">文档与</tspan><tspan x="328" y="501.8">大工件</tspan></text>
+<rect x="439" y="372" width="162" height="196" rx="18" fill="#E8F3F0" stroke="#178F82" stroke-width="3"/>
+<text text-anchor="middle" font-size="18" font-weight="700" fill="#178F82"><tspan x="520" y="423.0">向量索引</tspan></text>
+<text text-anchor="middle" font-size="14" font-weight="500" fill="#203449"><tspan x="520" y="484.3">Chunk 与</tspan><tspan x="520" y="501.8">元数据</tspan></text>
+<rect x="631" y="372" width="162" height="196" rx="18" fill="#F7E5E4" stroke="#B94A48" stroke-width="3"/>
+<text text-anchor="middle" font-size="18" font-weight="700" fill="#B94A48"><tspan x="712" y="423.0">Redis</tspan></text>
+<text text-anchor="middle" font-size="14" font-weight="500" fill="#203449"><tspan x="712" y="484.3">缓存与</tspan><tspan x="712" y="501.8">唤醒信号</tspan></text>
+<rect x="823" y="372" width="162" height="196" rx="18" fill="#EFE9F6" stroke="#7656A5" stroke-width="3"/>
+<text text-anchor="middle" font-size="18" font-weight="700" fill="#7656A5"><tspan x="904" y="423.0">审计存储</tspan></text>
+<text text-anchor="middle" font-size="14" font-weight="500" fill="#203449"><tspan x="904" y="493.0">追加写治理证据</tspan></text>
+<text text-anchor="middle" font-size="18" font-weight="700" fill="#486985"><tspan x="512" y="650.0">映射依据：一致性 · 查询方式 · 保留周期 · 可重建性</tspan></text>
+<text text-anchor="middle" font-size="25" font-weight="700" fill="#24476B"><tspan x="512" y="754.0">权威状态与派生数据分离</tspan></text>
+<rect x="72" y="812" width="270" height="190" rx="18" fill="#E8EEF4" stroke="#24476B" stroke-width="3"/>
+<text text-anchor="middle" font-size="20" font-weight="700" fill="#24476B"><tspan x="207" y="865.0">权威事实</tspan></text>
+<text text-anchor="middle" font-size="16" font-weight="500" fill="#203449"><tspan x="207" y="933.1">租户 · Run · 权限</tspan><tspan x="207" y="953.1">幂等键 · Outbox</tspan></text>
+<rect x="377" y="812" width="270" height="190" rx="18" fill="#E8F3F0" stroke="#178F82" stroke-width="3"/>
+<text text-anchor="middle" font-size="20" font-weight="700" fill="#178F82"><tspan x="512" y="865.0">可重建派生</tspan></text>
+<text text-anchor="middle" font-size="16" font-weight="500" fill="#203449"><tspan x="512" y="933.1">缓存 · 向量 · 摘要</tspan><tspan x="512" y="953.1">索引 · 唤醒信号</tspan></text>
+<rect x="682" y="812" width="270" height="190" rx="18" fill="#EFE9F6" stroke="#7656A5" stroke-width="3"/>
+<text text-anchor="middle" font-size="20" font-weight="700" fill="#7656A5"><tspan x="817" y="865.0">治理证据</tspan></text>
+<text text-anchor="middle" font-size="16" font-weight="500" fill="#203449"><tspan x="817" y="933.1">审计 · 版本 · 删除</tspan><tspan x="817" y="953.1">备份 · 恢复记录</tspan></text>
+<rect x="42" y="1110" width="142" height="74" rx="12" fill="#FFFDF8" stroke="#486985" stroke-width="2"/>
+<text text-anchor="middle" font-size="15" font-weight="700" fill="#24476B"><tspan x="113" y="1154.0">版本迁移</tspan></text>
+<polyline points="184,1147 202,1147" fill="none" stroke="#486985" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#flat-arrow)"/>
+<rect x="206" y="1110" width="142" height="74" rx="12" fill="#FFFDF8" stroke="#486985" stroke-width="2"/>
+<text text-anchor="middle" font-size="15" font-weight="700" fill="#24476B"><tspan x="277" y="1154.0">Checkpoint</tspan></text>
+<polyline points="348,1147 366,1147" fill="none" stroke="#486985" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#flat-arrow)"/>
+<rect x="370" y="1110" width="142" height="74" rx="12" fill="#FFFDF8" stroke="#486985" stroke-width="2"/>
+<text text-anchor="middle" font-size="15" font-weight="700" fill="#24476B"><tspan x="441" y="1154.0">租户删除</tspan></text>
+<polyline points="512,1147 530,1147" fill="none" stroke="#486985" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#flat-arrow)"/>
+<rect x="534" y="1110" width="142" height="74" rx="12" fill="#FFFDF8" stroke="#486985" stroke-width="2"/>
+<text text-anchor="middle" font-size="15" font-weight="700" fill="#24476B"><tspan x="605" y="1154.0">备份</tspan></text>
+<polyline points="676,1147 694,1147" fill="none" stroke="#486985" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#flat-arrow)"/>
+<rect x="698" y="1110" width="142" height="74" rx="12" fill="#FFFDF8" stroke="#486985" stroke-width="2"/>
+<text text-anchor="middle" font-size="15" font-weight="700" fill="#24476B"><tspan x="769" y="1154.0">恢复演练</tspan></text>
+<polyline points="840,1147 858,1147" fill="none" stroke="#486985" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#flat-arrow)"/>
+<rect x="862" y="1110" width="142" height="74" rx="12" fill="#FFFDF8" stroke="#486985" stroke-width="2"/>
+<text text-anchor="middle" font-size="15" font-weight="700" fill="#24476B"><tspan x="933" y="1154.0">回滚核验</tspan></text>
+<rect x="96" y="1300" width="832" height="120" rx="18" fill="#F7E5E4" stroke="#B94A48" stroke-width="3"/>
+<text text-anchor="middle" font-size="20" font-weight="700" fill="#B94A48"><tspan x="512" y="1344.0">恢复验收门</tspan></text>
+<text text-anchor="middle" font-size="17" font-weight="700" fill="#203449"><tspan x="512" y="1388.0">缓存可重建 · Schema 可回滚 · 删除已传播 · 备份可恢复</tspan></text>
+</g></svg>

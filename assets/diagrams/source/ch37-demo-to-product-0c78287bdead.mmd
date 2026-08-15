@@ -1,0 +1,10 @@
+%% id: agent-product-metric-tree
+%% title: Agent 产品价值指标树
+%% alt: 用户任务成功分为任务有效性与可持续交付两组，再分别下钻到覆盖率正确性可用性和效率及其诊断指标
+flowchart TD
+    Value[用户任务成功] --> Effective[任务有效性]
+    Value --> Sustainable[可持续交付]
+    Effective --> Coverage["覆盖率<br/>可回答率 · 正确拒答率"]
+    Effective --> Correctness["正确性与证据<br/>引用支持率 · 工具结果准确率"]
+    Sustainable --> Reliability["可用性与恢复<br/>终态收敛率 · 故障恢复率"]
+    Sustainable --> Efficiency["时间与成本<br/>完成时间 · 单位成功成本 · 人工接管时长"]

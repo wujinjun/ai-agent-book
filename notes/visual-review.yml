@@ -313,7 +313,7 @@ files:
     requirements:
       - {id: agent-evaluation-pyramid-overview, section: 评估金字塔, relation: hierarchy, disposition: diagram}
       - {id: agent-evaluation-metric-map, section: 评估金字塔, relation: hierarchy, disposition: diagram}
-      - {id: agent-test-pyramid-detailed, section: 测试层级, relation: hierarchy, disposition: diagram}
+      - {id: eval-case-to-release-evidence, section: 评估数据集、Judge 与指标, relation: flow, disposition: diagram}
       - {id: agent-evaluation-release-loop, section: Regression A B 与发布门禁, relation: flow, disposition: diagram}
   docs/part-05-engineering/ch30-security.md:
     group: part-05

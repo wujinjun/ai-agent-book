@@ -1,0 +1,13 @@
+%% id: project9-textbook-workspace-boundary
+%% title: 一次性 Git 工作区边界
+%% alt: 只读源仓库克隆到临时工作区，补丁经路径大小和文件数策略检查后应用，白名单测试通过才保留副本，否则整体销毁
+flowchart TD
+    Source["只读源仓库"] --> Clone["一次性本地 Clone"]
+    Patch["Generated Patch"] --> Policy{"路径 / 字节 / 文件数"}
+    Clone --> Policy
+    Policy -->|拒绝| Destroy["销毁工作区"]
+    Policy -->|允许| Check["git apply --check"]
+    Check --> Apply["apply in clone"]
+    Apply --> Test["allowlisted command + timeout"]
+    Test -->|失败| Destroy
+    Test -->|通过| Keep["保留隔离副本供人工复核"]

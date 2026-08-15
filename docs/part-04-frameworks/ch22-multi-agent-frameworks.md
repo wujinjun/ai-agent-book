@@ -1,17 +1,22 @@
 # 第22章：CrewAI、AutoGen 与其他 Multi-Agent 框架
 
-![任务先判断是否需要协作，再比较单 Agent、确定性工作流、Supervisor 和角色团队，协作通过类型化状态交换工件与证据，并受回合、成本、延迟、权限、死锁和终止门约束，最后与单 Agent 基线比较](../assets/infographics/png/multi-agent-framework-decision-infographic-2x.png)
+最后核对日期：2026-08-07。
 
-*图 22-A　Multi-Agent 框架的必要性与模式选择。*
-
-多 Agent 是一种分工与隔离方案，不是默认升级路径。只有任务成功率或独立审查质量相对单 Agent 基线有可测收益，且收益覆盖额外成本和协调风险时，角色协作才值得保留。
-
-最后核对日期：2026-08-07；CrewAI 1.15.12、AutoGen AgentChat 0.7.5 与 Semantic Kernel 1.44.1 已在独立 Python 3.12 环境安装实测。
+!!! info "版本证据"
+    CrewAI 1.15.12、AutoGen AgentChat 0.7.5 与 Semantic Kernel 1.44.1 已在独立 Python 3.12 环境按统一协作契约复核。框架功能、许可证和支持状态仍须在选型当天重新确认。
 
 ## 导读、目标与前置知识
 本章比较 CrewAI、AutoGen、Semantic Kernel 等角色协作与任务编排方案，重点是通信、成本、调试和“不使用 Multi-Agent”的判断。
 
 学习目标是为真实任务选择或拒绝 Multi-Agent 框架。前置知识为第9、10、20章。
+
+各框架能力以 [CrewAI](../references.md#ref-crewai-docs)、[AutoGen](../references.md#ref-autogen-docs)和 [Semantic Kernel](../references.md#ref-semantic-kernel-docs)官方文档为准；AutoGen 的研究背景另见 [AutoGen 论文](../references.md#ref-wu2023autogen)。角色数量、对话轮数与质量之间不存在可直接外推的单调关系。
+
+![任务先判断是否需要协作，再比较单 Agent、确定性工作流、Supervisor 和角色团队，协作通过类型化状态交换工件与证据，并受回合、成本、延迟、权限、死锁和终止门约束，最后与单 Agent 基线比较](../assets/infographics/png/multi-agent-framework-decision-infographic-2x.png)
+
+*图 22-A　Multi-Agent 框架的必要性与模式选择。*
+
+多 Agent 是一种分工与隔离方案，不是默认升级路径。只有任务成功率或独立审查质量相对单 Agent 基线有可测收益，且收益覆盖额外成本和协调风险时，角色协作才值得保留。
 
 ## 核心原理与架构
 
@@ -72,7 +77,7 @@ flowchart LR
 ## 误区、调试、实践与安全
 更多角色不等于更聪明；“辩论”可能放大共同错误；自然语言聊天难以保证状态一致。调试通信图、重复调用和终止原因。不同 Agent 使用最小权限，Reviewer 不持有执行密钥。
 
-## 总结、练习、面试与阅读
+## Multi-Agent 框架选型的深化设计
 
 ### Multi-Agent 框架解决的问题
 
@@ -88,11 +93,13 @@ Agent 配置角色、目标和 tools，Task 定义目标与 expected output，Pr
 %% id: crewai-flow-crew-boundary
 %% title: CrewAI Flow 与 Crew 的组合边界
 %% alt: 确定性 Flow 在受控节点调用探索型 Research Crew，并校验其 Artifact 后推进下一状态
-flowchart LR
-    Event --> Flow["CrewAI Flow: deterministic state"]
-    Flow --> ResearchCrew["Crew: exploratory subtask"]
-    ResearchCrew --> Artifact
-    Artifact --> Validate --> Next
+flowchart TB
+    Event["业务事件"] --> Flow["CrewAI Flow<br/>确定性状态与终止权"]
+    Flow --> ResearchCrew["Crew<br/>受限探索子任务"]
+    ResearchCrew --> Artifact["结构化 Artifact"]
+    Artifact --> Validate{"Schema、证据与策略通过?"}
+    Validate -->|否| Stop["拒绝或返工"]
+    Validate -->|是| Next["推进下一状态"]
 ```
 
 生产形态通常由 Flow 持有状态和终止权，只把开放探索子任务交给 Crew，返回的 Artifact 仍需确定性校验。
@@ -234,22 +241,49 @@ Port 不应做成所有框架特性的最大公约数。若某候选的核心能
 生产门禁继续加入真实模型黄金集、故障恢复、多租户、Trace、预算与 Sandbox。原生 Code Executor
 即使使用容器，也需网络、挂载、资源和 Secret 隔离；进程或容器边界不自动等于安全 Sandbox。
 
-### 练习参考答案与面试要点
-
-1. **两种团队方案。** 固定同一任务、模型、工具、预算和 Rubric，与单 Agent 比较成功率、权限违规、
-   P95、单位成功成本和终止；无净收益则回退。
-2. **状态/历史。** Shared State 是版本化事实和 Artifact，消息历史是通信记录；后者不能用 Last Message
-   替代权威状态。
-3. **实验性能力。** 隔离 Adapter、固定版本、直接测试、限制发布范围并准备替代路径；状态使用应用
-   Schema，避免无法迁移。
-4. **无效对话。** 任务去重、Artifact 增量、状态指纹、消息上限和 Deadline 由 Runtime 强制，不依赖
-   Agent 自觉说“结束”。
-
 ### 常见误区与安全
 
 常见误区包括角色越多越好、群聊产生的共识等于事实、多个同模型 Agent 等于独立专家，以及框架 Memory 自动保持一致。外部动作仍需 Policy/审批，Agent 凭证最小化，消息不转发 secret，代码执行使用 Sandbox。若单 Agent + tools 达到相同成功率，应选择更简单方案。
-总结：Multi-Agent 框架放大协作能力，也放大消息、状态、成本和安全复杂度。选型必须披露证据深度并
-相对单 Agent 证明净收益。延伸阅读：[CrewAI](https://docs.crewai.com/)、[AutoGen](https://microsoft.github.io/autogen/stable/)、[Semantic Kernel Agent Orchestration](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-orchestration/)；代码目录为项目 9 与 `examples/framework_comparison/multi_agent_spike/`。
+## 本章总结
+
+Multi-Agent 框架放大协作能力，也放大消息、状态、成本和安全复杂度。角色名称本身不创造能力；共享状态必须是版本化事实和 Artifact，消息历史只是通信记录；终止、预算、权限和恢复由 Runtime 强制。任何候选都应相对单 Agent + tools 基线证明净收益。下一篇将不再讨论框架接口，而是转向 Python、API、存储、部署、队列、观测、评估、安全与成本等生产工程。
+
+## 课后练习
+
+### 设计题
+
+1. 固定任务、模型、工具、预算和 Rubric，比较两种团队方案与单 Agent 的成功率、权限违规、P95、单位成功成本和终止率。
+2. 为 Multi-Agent 系统分别设计 Shared State 与消息历史 Schema，说明为什么 Last Message 不能成为权威状态。
+3. 为一项实验性编排能力设计隔离 Adapter、固定版本、限制发布范围和替代路径。
+
+### 编码题
+
+4. 使用任务去重、Artifact 增量、状态指纹、消息上限和 Deadline 防止无效对话。
+
+输入为重复任务与只改措辞的消息序列；输出为确定性停止原因；检查标准是终止不依赖模型自报完成。
+
+### 概念题
+
+说明角色式协作只有在权限、上下文、能力或并行隔离存在时才可能产生净收益。
+
+### 故障实验
+
+让两个 Agent 互相请求对方先完成，构造循环等待并验证 Supervisor 能检测、保存状态和终止。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. 什么时候多个 Agent 比单 Agent 更有价值？
+2. CrewAI、AutoGen 和 Semantic Kernel 的核心抽象有什么差异？
+3. 为什么多个同模型 Agent 不等于多个独立专家？
+4. 如何控制 Multi-Agent 的消息成本和终止？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 [CrewAI](https://docs.crewai.com/)、[AutoGen](https://microsoft.github.io/autogen/stable/) 和 [Semantic Kernel Agent Orchestration](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-orchestration/)。代码目录为项目9与 `examples/framework_comparison/multi_agent_spike/`。
 
 ## 本章引用
 <!-- chapter-citations:start -->

@@ -1,0 +1,13 @@
+%% id: project4-textbook-index-release-state
+%% title: 候选索引发布与回滚状态机
+%% alt: 摄取任务排队运行并产生候选，评估达标后原子激活，不达标拒绝；新版本激活后旧版本归档并可在完整性校验后回滚
+stateDiagram-v2
+    [*] --> Queued
+    Queued --> Running
+    Running --> Queued: worker restart recovery
+    Running --> Failed: parse or integrity failure
+    Running --> Candidate
+    Candidate --> Rejected: gate failed
+    Candidate --> Active: gate passed
+    Active --> Archived: newer version activated
+    Archived --> Active: authorized rollback

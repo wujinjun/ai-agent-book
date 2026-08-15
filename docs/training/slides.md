@@ -11,7 +11,7 @@
 建议讲师按模块选取页面：课程与能力地图、LLM/上下文、Tool Calling/Runtime、MCP/RAG/Memory、工程化、安全评估、框架选型、项目工作坊和结课要求。每 15—20 分钟至少切换一次活动形态，不连续播放超过 12 页而不安排检查题或实验。
 
 ```mermaid
-flowchart LR
+flowchart TB
     S[幻灯片建立共同模型] --> B[教材补足严谨细节]
     B --> L[实验产生运行证据]
     L --> R[Rubric 形成反馈]

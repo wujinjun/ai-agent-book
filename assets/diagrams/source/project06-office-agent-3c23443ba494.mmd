@@ -1,0 +1,14 @@
+%% id: project6-textbook-boundary-architecture
+%% title: 自动办公读取、生成与写入边界
+%% alt: 邮件日历 Provider 的只读数据进入工作流生成草稿，审批服务验证内容后写入 Outbox，由 Publisher 发布并记录审计
+flowchart TB
+    Mail["MailProvider"] --> Minimize["时间窗 / 字段最小化"]
+    Calendar["CalendarProvider"] --> Minimize
+    Minimize --> Workflow["OfficeWorkflow"]
+    Workflow --> Draft["DailyReport + digest"]
+    Draft --> Approval{"Human Approval"}
+    Approval -->|拒绝或过期| Audit["Audit Log"]
+    Approval -->|通过| Outbox[("ApprovalOutboxStore")]
+    Outbox --> Publisher["Publisher Adapter"]
+    Publisher --> Target["Webhook / Office Platform"]
+    Publisher --> Audit

@@ -1,0 +1,18 @@
+%% id: project2-textbook-approval-sequence
+%% title: 写工具审批与恢复时序
+%% alt: 第一次运行检测到写工具并暂停，人工批准特定 call_id 后再次运行，只有相同调用获得执行
+sequenceDiagram
+    participant C as Client
+    participant A as ToolAgent
+    participant P as Planner
+    participant T as Alert Tool
+    C->>A: run(prompt)
+    A->>P: plan(prompt)
+    P-->>A: calls including alert-7
+    A-->>C: approval_required(alert-7, arguments)
+    C->>A: run(prompt, approval=alert-7)
+    A->>P: plan(prompt)
+    P-->>A: same calls
+    A->>T: execute alert-7
+    T-->>A: observation
+    A-->>C: completed

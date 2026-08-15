@@ -1,0 +1,14 @@
+%% id: project8-textbook-state-graph
+%% title: 研究工作流状态图
+%% alt: Plan 进入 Search 和 Read，Reviewer 证据不足时回到 Search，证据充足后人工审批，批准写报告，拒绝取消
+stateDiagram-v2
+    [*] --> Plan
+    Plan --> Search
+    Search --> Read
+    Read --> Review
+    Review --> Search: evidence gap and rounds remain
+    Review --> Failed: gap and budget exhausted
+    Review --> Approval: sufficient evidence
+    Approval --> Write: approved
+    Approval --> Cancelled: rejected
+    Write --> Completed

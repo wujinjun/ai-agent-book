@@ -1,0 +1,14 @@
+%% id: project8-textbook-recovery-decision
+%% title: 研究节点失败决策
+%% alt: 失败按暂时错误来源不可读证据不足和安全违规分类，分别有限重试替换来源补证或停止
+flowchart TD
+    Failure["节点失败"] --> Kind{"错误类别"}
+    Kind -->|暂时网络错误| Retry{"重试预算?"}
+    Retry -->|有| Same["重试同节点"]
+    Retry -->|无| Stop["失败并保留证据"]
+    Kind -->|来源不可读| Alternate["替换为 Allowlist 来源"]
+    Kind -->|证据不足| Gap["Reviewer 结构化缺口"]
+    Gap --> Rounds{"研究轮数?"}
+    Rounds -->|有| Search["补充搜索"]
+    Rounds -->|无| Stop
+    Kind -->|注入或越权| Security["立即停止并审计"]

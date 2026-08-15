@@ -15,7 +15,7 @@
 %% id: project7-stock-research-evidence-flow
 %% title: 股票研究事实与推断数据流
 %% alt: 带时间的行情公告新闻进入事实层和指标计算，模型推断单独标注后汇入含来源与免责声明的报告
-flowchart LR
+flowchart TB
     Market["Market Data + as_of"] --> Facts
     Filings["Filings / News + source"] --> Facts
     Facts --> Indicators --> Inference["显式标注推断"]

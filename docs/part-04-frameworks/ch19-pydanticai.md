@@ -1,17 +1,22 @@
 # 第19章：PydanticAI
 
-最后核对日期：2026-08-07；本章核心代码已按官方 Dependencies、Tools、Output 与 Testing 文档和隔离安装的 `pydantic-ai-slim==2.25.0` 复验。
+最后核对日期：2026-08-07。
+
+!!! info "版本证据"
+    本章核心代码按官方 Dependencies、Tools、Output 与 Testing 文档核对，并以隔离安装的 `pydantic-ai-slim==2.25.0` 复验。示例接口只对该锁定版本负责。
+
+## 导读、目标与前置知识
+PydanticAI 强调类型安全、依赖注入、验证和模型抽象。本章目标是判断它在 Python 业务服务中的价值。前置知识为 Pydantic、async/await 与第17章。
+
+学习目标是实现类型化工具与输出，并在无在线模型的测试中验证控制边界。
+
+Dependencies、Tool 与测试写法分别以 [PydanticAI 总体文档](../references.md#ref-pydanticai-docs)、[Function Tools](../references.md#ref-pydanticai-tools)和 [Testing](../references.md#ref-pydanticai-testing)为依据。类型安全只约束数据形状与依赖边界，不自动证明事实、权限或副作用正确。
 
 ![类型化请求进入 PydanticAI Agent，经模型适配、依赖注入和工具调用得到结构化输出，校验失败在预算内重试，最终进入 FastAPI、Fake 测试与 Trace 回归](../assets/infographics/png/pydanticai-type-contract-infographic-2x.png)
 
 *图 19-A　PydanticAI 的类型契约、依赖与校验边界。*
 
 图中五层分别对应请求契约、模型边界、外部依赖、结果校验和工程验证。类型系统能把错误提前暴露在应用边界，却不会自动证明外部事实正确，也不会替代主体授权；因此权限检查仍应位于领域服务或工具执行器中。
-
-## 导读、目标与前置知识
-PydanticAI 强调类型安全、依赖注入、验证和模型抽象。本章目标是判断它在 Python 业务服务中的价值。前置知识为 Pydantic、async/await 与第17章。
-
-学习目标是实现类型化工具与输出，并在无在线模型的测试中验证控制边界。
 
 ## 核心原理与架构
 Agent 的依赖对象承载数据库、身份和服务客户端；Tool 通过类型注解生成 Schema；输出模型形成验证边界；失败可在有限范围内反馈模型重试。模型抽象便于测试和供应商替换，但不同模型能力仍不完全等价。
@@ -76,7 +81,7 @@ sequenceDiagram
 ## 误区、调试、实践与安全
 类型安全不等于事实正确；依赖注入不应把管理员客户端交给所有工具；模型抽象不能抹平供应商差异。调试同时查看验证错误和原始模型事件。生产固定版本并建立回归集。
 
-## 总结、练习、面试与阅读
+## 类型化 Agent 边界的深化设计
 
 ### 类型安全与 Dependency Injection
 
@@ -192,7 +197,7 @@ FastAPI dependency 构造当前主体与 Repository，路由调用异步 `agent.
 %% id: pydanticai-capability-dependencies
 %% title: 类型化依赖与最小权限 Capability
 %% alt: 已认证主体经依赖工厂得到租户限定 Repository 和受预算 HTTP Client，PydanticAI Tool 只能调用这些窄能力，原始凭证不进入模型
-flowchart LR
+flowchart TB
     Principal[已认证 Principal] --> Factory[Dependency Factory]
     Factory --> Repo[租户限定 TicketRepository]
     Factory --> Client[受预算 Tool Client]
@@ -237,23 +242,51 @@ Timeout 映射成稳定 API Code。测试断言错误响应不含内部异常。
 升级 PydanticAI 时可以重写接线而不迁移业务历史。Provider Fallback 也必须经过 Capability、数据地域、
 成本和契约门禁，不能只替换 Model String。
 
-### 练习参考答案与面试要点
-
-1. **依赖类型。** 包含 Principal 派生的 Tenant Repository、受预算 Client 和 Trace Context，不包含
-   管理员连接；Fake Repository 构造两个租户验证越权拒绝。
-2. **TestModel/FunctionModel。** 前者适合类型与工具可达性，后者适合精确参数、重试和错误轨迹；真实
-   模型质量仍需在线黄金集。
-3. **输出与业务校验。** Pydantic 检查形状，Output Validator 检查纯关系，Service 检查权限与当前
-   状态，Repository 用事务提交。
-4. **选型。** 类型化短服务、少量工具和 Python/FastAPI 团队适合；长时、持久、分支复杂且需人工恢复
-   的流程还要 Workflow/Durable Runtime。
-
 ### 常见误区、调试与安全
 
 常见误区是把类型安全等同于事实安全、把依赖注入当权限系统、让所有验证错误无限反馈模型。调试查看模型消息、工具调用、validation error 与 Usage，并区分框架、供应商和领域错误。安全上依赖最小权限、工具验证主体、输出再鉴权、测试禁止真实模型请求。
-总结：PydanticAI 擅长把类型、依赖、工具和输出放进 Python 工程边界，但类型不替代事实、权限、事务
-和持久工作流。延伸阅读：[Dependencies](https://pydantic.dev/docs/ai/core-concepts/dependencies/)、[Tools](https://pydantic.dev/docs/ai/tools-toolsets/tools/)、[Output](https://pydantic.dev/docs/ai/core-concepts/output/)与[Testing](https://pydantic.dev/docs/ai/guides/testing/)。本章代码目录为
-[`examples/pydanticai_service/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/pydanticai_service)。
+## 本章总结
+
+PydanticAI 擅长把类型、依赖、工具和输出放进 Python 工程边界，但类型不替代事实、权限、事务和持久工作流。Dependencies 应是按主体构造的最小 Capability 容器；Output Validator 适合纯关系约束；授权和提交仍由领域服务与 Repository 负责；ModelRetry 只能处理模型可修复错误。下一章将进入显式状态图，处理长流程、Checkpoint、人工中断和恢复。
+
+## 课后练习
+
+### 设计题
+
+1. 设计只包含租户 Repository、受预算 Client 和 Trace Context 的依赖类型，禁止注入管理员连接。
+
+### 编码题
+
+2. 分别使用 TestModel 和 FunctionModel 设计类型可达性与精确重试轨迹测试，并说明它们不能证明什么。
+
+输入为固定模型输出序列；输出为校验/重试事件；检查标准是调用次数和错误分类可精确断言。
+
+### 设计题
+
+3. 把输出验证拆分为 Pydantic 形状、纯关系 Validator、Service 权限与 Repository 事务四层。
+
+### 概念题
+
+4. 为类型化短服务和长时持久工作流分别判断 PydanticAI 是否足够，并写出补充 Runtime 需求。
+
+### 故障实验
+
+把管理员 Repository 错误注入普通 Agent，构造跨租户读取测试，验证依赖容器和 Repository 两层均失败关闭。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. 类型安全为什么不等于事实和权限安全？
+2. Dependency Injection 与授权系统有什么区别？
+3. ModelRetry 适合哪些错误，为什么可能放大调用？
+4. TestModel、FunctionModel 和真实模型黄金集分别提供什么证据？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 [Dependencies](https://pydantic.dev/docs/ai/core-concepts/dependencies/)、[Tools](https://pydantic.dev/docs/ai/tools-toolsets/tools/)、[Output](https://pydantic.dev/docs/ai/core-concepts/output/) 与 [Testing](https://pydantic.dev/docs/ai/guides/testing/)。本章代码目录为 [`examples/pydanticai_service/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/pydanticai_service)。
 
 ## 本章引用
 <!-- chapter-citations:start -->

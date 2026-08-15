@@ -7,17 +7,23 @@
 
 学习目标是理解核心安全边界并为一个工具示例建立威胁模型。前置知识为第8—9、11和23章。
 
+威胁分类以 [OWASP LLM Top 10](../references.md#ref-owasp-llm-top10)和 [OWASP Agentic Top 10](../references.md#ref-owasp-agentic-top10)为主要检查表，风险治理框架参见 [NIST AI RMF](../references.md#ref-nist-ai-rmf)及其 [生成式 AI Profile](../references.md#ref-nist-genai-profile)。这些清单需要结合本系统的主体、资产和数据流重新建模。
+
 ## 威胁模型
 
 Agent 安全的核心是把模型视为不可信决策组件，把不可绕过的 Policy 放在工具和数据前。主图展示最小纵深防御链。
 
 下面的信息图从不可信输入一路展开到工具、数据与外部副作用。模型即使受到 Prompt Injection 影响，也必须连续跨越来源隔离、对象授权、参数与网络 allowlist、Sandbox、审批绑定和执行前重校验；右侧 Secret、最小权限、预算终止和租户边界始终由模型外系统强制执行。
 
-![网页邮件文档文件等不可信内容经过来源隔离、主体对象授权、Tool 参数网络文件 allowlist、Sandbox、审批和执行前校验，访问受限工具敏感数据外部动作并产生审计安全测试告警事件响应证据](../assets/infographics/png/agent-security-trust-boundary-infographic-2x.png)
+![网页邮件文档文件等不可信内容先与模型决策区隔离，再经过来源标记、主体对象授权、Tool 参数网络文件 Allowlist、Sandbox、审批和执行前校验](../assets/infographics/png/agent-security-trust-boundary-infographic-a-2x.png)
 
-*图 30-A：Agent 安全的不可绕过纵深防御。纵向门禁表示动作执行前必须依次满足的条件，右侧轨道表示贯穿所有步骤的信任边界；任何一层都不能用 System Prompt 或模型口头拒绝替代。*
+*图 30-A：不可信输入与纵深防御。每层控制解决不同失败，不能因存在 Sandbox 就跳过身份和参数授权。*
 
-图 30-A 的工程目标不是保证模型永远识别恶意内容，而是让一次攻击必须同时突破多个相互独立的控制。审计、安全测试和事件响应放在底部并不表示它们只在事后工作：策略拒绝、审批结果和 Sandbox 违规都应实时产生可关联证据。
+![通过纵深防御的调用仍只能访问受限工具敏感数据或外部动作，并必须产生不可篡改审计安全测试告警和事件响应证据](../assets/infographics/png/agent-security-trust-boundary-infographic-b-2x.png)
+
+*图 30-B：受保护资源与运营证据。最小权限、预算终止和租户边界贯穿所有层，而不是一个末端过滤器。*
+
+图 30-A 与图 30-B 的工程目标不是保证模型永远识别恶意内容，而是让一次攻击必须同时突破多个相互独立的控制。审计、安全测试和事件响应放在底部并不表示它们只在事后工作：策略拒绝、审批结果和 Sandbox 违规都应实时产生可关联证据。
 
 ```mermaid
 %% id: agent-security-policy-boundary
@@ -129,7 +135,7 @@ def validate_approval(
 %% id: code-review-agent-threat-boundaries
 %% title: 代码 Review Agent 的资产与信任边界
 %% alt: 不可信PR代码依赖和网页进入只读沙箱，模型提议评论或修复动作，Policy和审批控制GitHub写入并保护源码Secret和审计
-flowchart LR
+flowchart TB
     PR["不可信 PR / Diff / 评论"] --> Fetch["只读仓库读取器"]
     Web["不可信文档 / 依赖页面"] --> Sandbox["网络受限沙箱"]
     Fetch --> Sandbox
@@ -234,7 +240,7 @@ Sandbox 文档应写出假设：隔离单位是容器、微虚拟机还是远程
 ## 误区、调试与实践
 System Prompt 不是安全边界；内容过滤不等于权限；Sandbox 不是一个布尔开关。进行注入语料、越权、跨租户、路径穿越、SSRF、秘密泄露和审批绕过测试。审计日志追加写且与普通调试日志分离。
 
-## 总结、练习、面试与阅读
+## Agent 威胁与控制面的深化设计
 
 ### 资产、主体与信任边界
 
@@ -318,13 +324,45 @@ Audit Log 记录主体、动作、资源、Policy、批准、时间、结果和 
 事件响应能立即禁用工具、轮换 key、停止 Agent、保全 Audit、通知用户和回滚版本。安全告警关联 run 与主体。常见误区是把 System Prompt、模型拒答或单个过滤器称为 Guardrail 全部。
 总结：Agent 安全依赖不可绕过的最小权限、隔离、审批和审计。练习：为代码 Review Agent 做 STRIDE 威胁模型并实现两条越权测试。面试：为什么 Guardrail 不能替代授权？如何防止间接注入导致数据外泄？Sandbox 还需要哪些运行限制？延伸阅读：OWASP LLM Top 10、MCP Security、OAuth 和容器隔离资料。代码目录：所有项目，重点项目3、6、10。
 
-## 练习参考答案
+## 本章总结
 
-1. STRIDE 可分别检查身份伪造、数据篡改、抵赖、信息泄漏、拒绝服务和权限提升。代码 Review Agent 的两条硬测试可以是：Fake Model 请求读取另一仓库文件时 Policy 拒绝；批准只读报告后，模型改为发布 PR 评论时原批准失效。
-2. Guardrail 可能是概率模型或可绕过的应用逻辑，授权必须由资源服务按主体、对象和动作强制执行。即使模型输出完全恶意，授权层也应阻止访问。
-3. 防间接注入导致外泄要把内容标为不可信、最小化模型可见数据、隔离 Secret、限制工具与 egress、对写动作审批绑定、对返回和日志脱敏，并用恶意 Fixture 验证每层。
-4. Sandbox 至少限制用户、文件挂载、网络、CPU、内存、时间、进程数和 syscall，禁止宿主 socket 与长期 Secret；输出 Artifact 经过扫描和大小限制。还要记录共享内核等残余风险。
-5. SSRF 测试覆盖 loopback、private、link-local、IPv6、整数/混合编码 IP、DNS rebinding、重定向后越界、代理环境和云 metadata。域名 allowlist 与解析后 IP 校验缺一不可。
+Agent 安全不是在输出端增加一个 Guardrail，而是从资产、主体、信任边界和攻击路径出发实施纵深防御。Prompt Injection 只有在越过授权和工具边界后才产生高风险副作用；SSRF、数据外泄、权限扩大和代码执行需要确定性控制、最小权限、Sandbox、审批与审计共同阻断。下一章将讨论在保持这些正确性边界的前提下优化成本和性能。
+
+## 课后练习
+
+### 设计题
+
+1. 使用 STRIDE 为代码 Review Agent 建立威胁模型，并写出两条模型恶意时仍必须失败关闭的硬测试。
+
+### 概念题
+
+2. 解释 Guardrail 与资源授权的差别，以及为什么概率型拒绝不能替代确定性权限检查。
+
+### 设计题
+
+3. 设计阻止间接 Prompt Injection 导致数据外泄的纵深防御，覆盖上下文分层、Secret、工具、Egress、审批、输出与日志。
+
+### 编码题
+
+4. 为执行 Sandbox 写出资源与权限策略。输入为合法测试和尝试访问宿主文件/网络的恶意 Fixture；输出为允许/拒绝证据；检查标准是宿主 Socket、凭证和用户目录不可见。
+
+### 故障实验
+
+5. 构造 SSRF 测试集，覆盖 Loopback、Private、Link-local、IPv6、混合编码 IP、DNS Rebinding、重定向和云 Metadata，并记录每个拒绝层。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. 为什么 Guardrail 不能替代资源授权？
+2. 间接 Prompt Injection 如何跨越检索内容影响高权限工具？
+3. Sandbox 还需要哪些进程、网络和文件系统限制？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 OWASP LLM/Agentic/API Security Top 10、NIST AI RMF、MITRE ATLAS 与目标平台的身份和审计规范。项目3、5、6与10提供不同信任边界案例。
 
 ## 本章引用
 <!-- chapter-citations:start -->

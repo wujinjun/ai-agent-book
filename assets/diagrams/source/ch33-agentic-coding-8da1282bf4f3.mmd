@@ -1,0 +1,11 @@
+%% id: coding-agent-patch-verification-loop
+%% title: Coding Agent Patch 验证闭环
+%% alt: 目标经仓库地图搜索计划最小 Patch 测试和评审，失败返回检查，通过后交付可读 Diff
+flowchart TB
+    Goal["目标与验收条件"] --> Inspect["Repo Map / Code Search"]
+    Inspect --> Plan["最小修改计划"]
+    Plan --> Patch["生成并检查 Patch"]
+    Patch --> Test["受限环境执行测试"]
+    Test --> Review["独立 Review"]
+    Review -->|失败且预算剩余| Inspect
+    Review -->|通过| Diff["可读 Diff + 测试证据"]

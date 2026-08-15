@@ -1,11 +1,16 @@
 # 第20章：LangGraph
 
-最后核对日期：2026-07-11；依据官方文档核对，并在 Python 3.12.13、`langgraph==1.2.9` 上运行项目 8 的 StateGraph、RetryPolicy、InMemorySaver、interrupt 与 Command 恢复测试。
+最后核对日期：2026-08-06。
+
+!!! info "版本证据"
+    本章依据官方文档核对，并在 Python 3.12.13、`langgraph==1.2.9` 上复核 StateGraph、RetryPolicy、InMemorySaver、interrupt 与 Command 恢复语义。持久化后端和流式事件仍须按实际部署版本验证。
 
 ## 导读、目标与前置知识
 LangGraph 用 State、Node、Edge 和 Checkpoint 表达可恢复工作流。本章学习条件边、Reducer、Persistence、Interrupt、Human-in-the-Loop、Subgraph、Retry、Time Travel、Streaming 与 Multi-Agent。
 
 学习目标是能设计、实现和测试一个带持久化与人工中断的图。前置知识为第9—10、17章。
+
+State、Node 与 Edge 的总体语义参见 [LangGraph Overview](../references.md#ref-langgraph-overview)，Checkpoint 与恢复语义参见 [Persistence](../references.md#ref-langgraph-persistence)，历史状态回放参见 [Time Travel](../references.md#ref-langgraph-time-travel)。具体 Python 接口只对章首锁定版本负责。
 
 ## 原理与状态图
 
@@ -40,7 +45,7 @@ State 是显式 Schema；Node 接收状态并返回更新；Reducer 决定并行
 %% id: langgraph-state-update-reducer-flow
 %% title: LangGraph 并行状态更新与 Reducer
 %% alt: 两个并行 Node 返回局部更新后由字段 Reducer 追加去重或拒绝冲突并写入下一状态快照
-flowchart LR
+flowchart TB
     State[输入 StateSnapshot] --> A[Node A]
     State --> B[Node B]
     A --> UA[局部更新 A]
@@ -176,7 +181,7 @@ Time Travel 基于 Checkpoint replay 或 fork。调用旧 Checkpoint 后，之�
 %% id: langgraph-time-travel-reexecution
 %% title: LangGraph Time Travel 的重执行边界
 %% alt: 选择历史Checkpoint后，其前序快照保留，后续模型工具interrupt重新执行并形成新分支，外部副作用不会自动撤销
-flowchart LR
+flowchart TB
     A["Checkpoint A"] --> B["Node B 已执行"] --> C["Checkpoint C"] --> D["外部动作 D"]
     A --> Fork["从 A replay / fork"]
     Fork --> B2["Node B 重新执行"] --> C2["新 Checkpoint"] --> D2["动作可能再次触发"]
@@ -207,7 +212,7 @@ flowchart LR
 ## 误区、调试、实践与安全
 图不保证确定性；Checkpoint 不自动解决外部副作用；Time Travel 不能安全重放付款。调试查看每个节点前后状态与路由条件。State 避免存不可序列化客户端和秘密。
 
-## 总结、练习、面试与阅读
+## 可恢复状态图的深化设计
 
 ### State、Node、Edge 与 Reducer
 
@@ -302,16 +307,48 @@ Multi-Agent 在图中通常表现为 Supervisor 路由 Node、Agent-as-Node 或 
 
 调试查看 Node 前后 State、Edge 选择、checkpoint history、interrupt 和异常。测试将 Node 当普通函数单测，再用内存 checkpointer 验证路由、恢复、并行 Reducer 和副作用幂等。生产还测数据库 checkpointer、并发 thread 和迁移。
 
-LangGraph 适合状态复杂、需恢复、HITL 或多分支的长流程；简单一次调用或两步固定 Chain 不必引入。State 不保存凭证，checkpoint 加密并按租户授权，Time Travel/状态编辑进入审计。
-总结：LangGraph 把控制流和持久状态显式化，但不能自动解决副作用与业务权限。练习：构建带人工批准、checkpoint 和 retry 的三节点图。面试：Reducer 解决什么冲突？Checkpoint 与业务事务有何差异？Time Travel 为什么可能重复动作？延伸阅读：[Graph API](https://docs.langchain.com/oss/python/langgraph/graph-api)、[Persistence](https://docs.langchain.com/oss/python/langgraph/persistence)、[Interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts)与 Subgraphs 官方文档。代码目录：`projects/08-research-workflow/`。
+LangGraph 适合状态复杂、需恢复、HITL 或多分支的长流程；简单一次调用或两步固定 Chain 不必引入。State 不保存凭证，Checkpoint 加密并按租户授权，Time Travel 和状态编辑进入审计。
 
-## 练习参考答案
+## 本章总结
 
-1. 三节点图可设 `prepare -> approval -> execute`。编译时配置 Checkpointer；approval 调用 `interrupt`；API 用相同 `thread_id` 和 `Command(resume=...)` 恢复；execute 用 action ID 幂等。测试批准、拒绝、过期、重启恢复和重复 resume。
-2. Reducer 解决同一 super-step 多个局部更新如何合并的问题。它必须符合业务语义并对并行顺序稳定；单值字段若不允许多写者，应拒绝冲突而不是随意选择最后结果。
-3. Checkpoint 保存图状态快照，不覆盖外部系统事务。邮件已经发送但 Checkpoint 未保存时，恢复会重跑节点；需要 outbox、幂等键、状态核实或补偿流程。
-4. Time Travel 会从选定 Checkpoint 之后重新执行模型、API 与 interrupt，因此可能再次产生动作。它创建 replay 或 fork，不会撤销已经发生的副作用。
-5. `InMemorySaver` 只用于测试；生产 Checkpointer 要验证持久性、并发隔离、Schema 迁移、加密、TTL、备份恢复和租户授权，并明确 `thread_id` 的生命周期。
+LangGraph 把控制流和持久状态显式化，但不能自动解决外部副作用与业务权限。Reducer 定义并行更新的合并语义；Checkpoint 保存图状态而非外部事务；Interrupt 需要可验证恢复载荷；Time Travel 会重新执行选定快照之后的节点。下一章将比较更高层的 LangChain 组合抽象和 LlamaIndex 数据抽象，以及如何避免框架对象进入领域核心。
+
+## 课后练习
+
+### 编码题
+
+1. 构建 `prepare → approval → execute` 三节点图，加入 Checkpoint、Interrupt、恢复和执行幂等。
+2. 为并行节点设计 Reducer，并证明结果不依赖完成顺序。
+
+输入为不同完成顺序的节点结果；输出为同一归并 State；检查标准是 Reducer 满足结合、交换和幂等要求。
+
+### 故障实验
+
+3. 模拟邮件已发送但 Checkpoint 未保存的崩溃，设计 outbox、状态核实或补偿策略。
+4. 设计一次 Time Travel/Fork 调试，明确哪些节点会重新执行以及如何防止副作用。
+
+### 设计题
+
+5. 为生产 Checkpointer 列出持久性、并发、迁移、加密、TTL、备份和租户授权要求。
+
+### 概念题
+
+解释 Node、Edge、Reducer、Checkpoint 与 Interrupt 分别解决状态机的哪个问题。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. Reducer 解决什么问题？
+2. Checkpoint 与业务事务有什么区别？
+3. Interrupt 为什么不能只接收一段“批准”文本？
+4. Time Travel 为什么可能重复外部动作？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 [Graph API](https://docs.langchain.com/oss/python/langgraph/graph-api)、[Persistence](https://docs.langchain.com/oss/python/langgraph/persistence)、[Interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts) 与 Subgraphs 官方文档。代码目录为 `projects/08-research-workflow/`。
 
 ## 本章引用
 <!-- chapter-citations:start -->

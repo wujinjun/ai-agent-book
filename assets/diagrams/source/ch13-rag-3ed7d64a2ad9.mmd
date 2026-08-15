@@ -1,0 +1,16 @@
+%% id: rag-ingestion-quality-gates
+%% title: RAG 摄取质量门禁与证据可追踪性
+%% alt: 文档经过病毒检查解析结构校验切分引用定位和权限校验后才构建候选索引，失败项进入隔离队列
+flowchart TB
+    Upload["原始文件 + 来源 + 权限"] --> Scan["类型 / 病毒 / 大小检查"]
+    Scan --> Parse["解析 + OCR"]
+    Parse --> Quality{"页数 / 标题 / 表格 / 置信度"}
+    Quality -->|失败| Quarantine["隔离队列 + 人工复核"]
+    Quality -->|通过| Chunk["结构感知 Chunking"]
+    Chunk --> Locate{"每块可回到原文位置？"}
+    Locate -->|否| Quarantine
+    Locate -->|是| ACL["权限与租户快照"]
+    ACL --> Index["候选索引版本"]
+    Index --> Eval{"召回 / 引用 / ACL 门禁"}
+    Eval -->|通过| Active["原子切换活动索引"]
+    Eval -->|失败| Quarantine

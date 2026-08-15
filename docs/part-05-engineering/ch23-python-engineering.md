@@ -1,17 +1,21 @@
 # 第23章：Python Agent 工程基础
 
-![Python 3.12 项目从 pyproject 和依赖锁定开始，经配置 Secret 类型依赖注入、异步 HTTP 超时日志异常、单元 Fake 集成与故障测试，进入 Ruff 格式化 mypy pytest 和构建发布门](../assets/infographics/png/python-agent-engineering-infographic-2x.png)
-
-*图 23-A　Python Agent 从环境到发布的工程质量流水线。*
-
-图中每一层都形成独立失败边界：配置错误不应拖到首次模型调用才暴露，网络重试不应侵入领域逻辑，外部服务应可由 Fake 替换，发布门则必须在同一 Python 3.12 目标环境中重复执行。
-
 最后核对日期：2026-07-11。
 
 ## 导读、目标与前置知识
 本章建立 Python 3.12 项目、类型、Pydantic、异步、httpx、依赖注入、配置、日志、异常、pytest、Mock 与质量工具的共同底座。
 
 学习目标是能从零搭建可复现、类型安全、异步且受测的 Agent 工程。前置知识为基础 Python。
+
+项目元数据、异步语义和 HTTP 客户端边界分别参考 [PEP 621](../references.md#ref-pep621)、[Python 3.12 asyncio](../references.md#ref-python-asyncio)与 [HTTPX 官方文档](../references.md#ref-httpx-docs)。依赖版本仍以仓库锁定文件为准，文档只定义应保持稳定的工程契约。
+
+**能力主线位置：** 已验证的 Agent/框架原型 → 本章建立 Python 3.12 工程契约 → 第24—31章逐步增加 API、状态、部署、队列、观测、评估、安全与成本治理。
+
+![Python 3.12 项目从 pyproject 和依赖锁定开始，经配置 Secret 类型依赖注入、异步 HTTP 超时日志异常、单元 Fake 集成与故障测试，进入 Ruff 格式化 mypy pytest 和构建发布门](../assets/infographics/png/python-agent-engineering-infographic-2x.png)
+
+*图 23-A　Python Agent 从环境到发布的工程质量流水线。*
+
+图中每一层都形成独立失败边界：配置错误不应拖到首次模型调用才暴露，网络重试不应侵入领域逻辑，外部服务应可由 Fake 替换，发布门则必须在同一 Python 3.12 目标环境中重复执行。
 
 ## 核心原理与工程结构
 ```text
@@ -28,7 +32,7 @@ pyproject.toml    依赖、构建和工具配置
 ## 误区、调试、实践与安全
 误区：所有函数都 async；捕获 `Exception` 后继续；`.env` 提交仓库；Mock 实现细节而非行为。调试打开 asyncio debug、设置请求超时、检查未关闭客户端。Ruff、mypy 和 pytest 在 CI 同时运行。
 
-## 总结、练习、面试与阅读
+## Python Agent 工程基线的深化设计
 
 ### Python 3.12 环境与项目结构
 
@@ -72,7 +76,7 @@ sequenceDiagram
 %% id: python-dependency-configuration-boundaries
 %% title: 配置、依赖注入与 Secret 边界
 %% alt: 环境配置经 Pydantic Settings 校验后构造最小权限客户端并注入服务，Secret 不进入领域模型和日志
-flowchart LR
+flowchart TB
     Env[环境变量与 Secret Store] --> Settings[Pydantic Settings 校验]
     Settings --> Factory[依赖工厂]
     Factory --> ModelClient[模型客户端]
@@ -287,22 +291,45 @@ HTTP Adapter 可用 `httpx.MockTransport` 做契约测试，断言请求 Header�
 在线 Provider Test 单独运行，设置预算和最小数据，只验证官方接口兼容；它不能替代离线确定性测试，
 离线 Fake 也不能证明在线服务当前可用。两类证据在状态报告中分开记录。
 
-### 练习参考答案与面试要点
+## 常见误区、调试与安全
 
-1. **同步客户端改造。** 应创建应用级 `AsyncClient`、注入 Adapter、设置分项 Timeout 和共享 Deadline，
-   并在 Lifespan 关闭；测试超时映射、调用方取消和连接关闭。
-2. **协程与线程。** 原生异步 I/O 用协程；无法替换的阻塞 I/O 放受限线程池；CPU 密集计算用进程或
-   Worker。线程不会自动让不可重入 SDK 安全。
-3. **Pydantic 边界。** JSON、配置、Tool 参数和外部响应进入系统时验证；领域内部保持明确类型，
-   Validator 不做网络 I/O，授权仍由 Service 完成。
-4. **`Any` 风险。** 它使类型错误、字段漂移和错误分支推迟到运行期，Fake 也难表达完整契约；应在
-   Adapter 立刻转换为领域类型。
+常见误区包括把所有函数都改成 async、用 Pydantic 替代领域建模、Mock 每个内部方法，以及在日志打印完整请求。调试应先复现环境与依赖版本，再检查未关闭客户端、Event Loop 阻塞和异常链。供应链使用固定源、依赖扫描和最小包，开发工具不进入运行镜像。
 
-### 常见误区、调试与安全
+## 本章总结
 
-常见误区：所有函数都 async、用 Pydantic 替代领域建模、Mock 每个内部方法、在日志打印完整请求。调试先复现环境与依赖版本，检查未关闭客户端、event loop 阻塞和异常链。供应链使用固定源、依赖扫描和最小包，开发工具不进入运行镜像。
-总结：Python 工程质量来自明确边界、结构化并发、资源生命周期和可复现工具链。延伸阅读包括
-Python 3.12、Pydantic、httpx、pytest、Ruff 与 mypy 官方文档；代码目录为仓库根 `src/` 与 `tests/`。
+Python Agent 工程的可靠性来自明确的项目边界、类型契约、异步资源生命周期、统一 Deadline、可分类错误和可替换依赖。虚拟环境与依赖锁保证可复现，Protocol 与 Adapter 隔离外部系统，结构化并发和优雅关闭保证取消能够传播。下一章将在这些 Python 工程边界上建立 FastAPI 服务接口。
+
+## 课后练习
+
+### 编码题
+
+1. 把一个“每次请求新建同步 HTTP Client”的模型 Adapter 改为应用级 `httpx.AsyncClient`。输入为成功、超时和取消 Fixture；输出为类型化结果；检查标准是 Deadline 能传播且 Lifespan 结束后客户端已关闭。
+
+### 概念题
+
+2. 分别说明原生异步 I/O、不可替换的阻塞 I/O 和 CPU 密集计算应使用协程、受限线程池还是进程/Worker，并解释选择依据。
+
+### 设计题
+
+3. 标出配置、外部 JSON、Tool 参数、领域对象和数据库记录中应使用 Pydantic 的边界，说明 Validator 为什么不应执行网络 I/O 或授权。
+
+### 故障实验
+
+4. 将一个关键领域类型临时改为 `Any`，让字段漂移穿过 Adapter，在调用深处触发错误。输出故障链与修复后的类型契约；检查标准是错误回到系统边界即可被检测。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. 为什么 Agent 服务需要统一 Deadline，而不是给每个下游独立设置完整超时？
+2. Protocol、Adapter 与 Pydantic Model 分别解决什么问题？
+3. 哪些异步任务必须由结构化并发或持久 Worker 管理？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 Python 3.12、Pydantic、httpx、pytest、Ruff 与 mypy 官方文档；代码目录为仓库根 `src/` 与 `tests/`。
 
 ## 本章引用
 <!-- chapter-citations:start -->

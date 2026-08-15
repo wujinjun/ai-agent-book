@@ -7,6 +7,8 @@
 
 学习目标是构建核心观测示例，并能从一次失败 run 定位模型、工具或检索问题。前置知识为第17、23章。
 
+Trace、Span 与上下文传播的语义以 [OpenTelemetry Specification](../references.md#ref-otel-spec)和 [W3C Trace Context](../references.md#ref-w3c-trace-context)为依据。Prompt、工具参数和检索片段可能包含敏感数据，采集范围还必须服从目标模型平台的当前数据控制说明。
+
 ## 观测模型
 
 一次 Agent Run 会跨越模型、工具和评估步骤。主图以 Trace 层级连接这些事件，并为成本和延迟归因提供共同标识。
@@ -57,7 +59,7 @@ flowchart TD
 ## 误区、调试、实践与安全
 不要默认记录完整 Prompt、秘密或 PII；不要只看平均延迟；不要用 Trace 代替审计。采用采样、字段 allowlist、脱敏和保留期。线上调试先定位异常 run，再重放脱敏输入到隔离环境。
 
-## 总结、练习、面试与阅读
+## Agent 可观测证据链的深化设计
 
 ### Logs、Metrics、Traces 的分工
 
@@ -213,7 +215,7 @@ Exporter 超时、Collector 背压或后端限额不应阻塞核心 Agent。SDK 
 %% id: telemetry-failure-isolation
 %% title: Telemetry 故障隔离与降级
 %% alt: 应用将日志指标和 Trace 写入有界异步管线，Collector 或后端异常时丢弃低优先级遥测并自监控，关键审计走独立持久通道且核心任务继续
-flowchart LR
+flowchart TB
     App[Agent Runtime] --> Buffer[有界 Batch Buffer]
     Buffer --> Collector --> Backend
     Collector -->|超时/限流| Drop[丢弃低优先级 Telemetry]
@@ -253,20 +255,42 @@ Collector 故障注入或生产价格表。
 
 常见误区：只装一个平台就可观测、平均延迟代表体验、Trace 可以替代审计、先全量采集以后再脱敏。测试日志字段、Trace parent、敏感信息扫描、Usage/Cost 计算和 exporter 故障；观测后端不可用时业务应降级而非停止核心任务。
 
-### 练习参考答案与面试要点
+## 本章总结
 
-1. **Tool Loop Span。** 根 Run 下每次逻辑工具调用建父 Span，每个物理 Attempt 建子 Span；记录工具名、
-   Attempt、耗时、错误码和参数哈希，不记录 Secret。并行调用是兄弟 Span。
-2. **P95 测试。** 固定窗口和样本定义，使用直方图或可合并分布；分别观察队列、首事件和总时长。
-   三个样本算出的 P95 只适合代码测试，不足以作生产 SLO 结论。
-3. **敏感字段测试。** 构造 Authorization、Cookie、邮箱、数据库 URI 与 Prompt Fixture，断言日志、
-   Span 和 Metrics 均无原文；Debug Capture 需要显式权限和短 TTL。
-4. **面试要点。** Trace 可采样并解释因果，Audit 记录受保护动作且强调完整性；成本按 Run 归因后
-   除以成功任务数；Metrics Label 不能带 Run ID，因为高基数会造成存储与查询爆炸。
+Observability 的目标是用 Logs、Metrics 和 Traces 解释一次任务为何成功、失败、变慢或变贵。Run、Turn、Tool、Retrieval 和 Job 需要稳定关联标识；Token 与 Cost 需要价格和模型版本；采样 Trace 不能替代不可采样 Audit。Telemetry 自身也会失败并需要背压与降级。下一章将在这些证据之上建立可重复的 Agent Evaluation。
 
-总结：可观测性必须用明确 SLI 解释质量、成本和失败路径，同时尊重隐私并能在后端故障时安全降级。
-延伸阅读包括 OpenTelemetry、W3C Trace Context、所选观测平台和隐私日志规范；代码目录为
-[`projects/10-enterprise-platform/`](https://github.com/wujinjun/ai-agent-book/tree/main/projects/10-enterprise-platform)。
+## 课后练习
+
+### 设计题
+
+1. 为一次包含并行工具与重试的 Tool Loop 设计 Span 树，标出逻辑调用、物理 Attempt、参数哈希、错误码与 Audit Event 的边界。
+
+### 编码题
+
+2. 用固定样本实现 P50/P95 计算，并解释为什么三个样本的 P95 不能直接作为生产 SLO。输入为延迟 Fixture；输出为统计报告；检查标准是窗口与样本定义可追溯。
+3. 构造 Authorization、Cookie、邮箱、数据库 URI 和敏感 Prompt Fixture，断言日志、Span 与 Metrics 不出现原文。
+
+### 概念题
+
+4. 比较 Trace 与 Audit 的完整性要求，并解释为什么成本应按成功任务归因、Metrics Label 不应包含 Run ID。
+
+### 故障实验
+
+关闭 Collector 或让 Exporter 持续超时，验证核心任务不被阻塞、低优先级 Telemetry 有界丢弃且关键审计仍进入独立通道。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. Trace 与 Audit 为什么不能共用同一种采样策略？
+2. 一次逻辑 Tool Call 与多个物理 Attempt 应如何建模？
+3. 为什么成本应按成功任务归因，而不是只统计总 Token？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 OpenTelemetry、W3C Trace Context、结构化日志和隐私脱敏。项目8与10提供跨工作流、队列和工具的 Trace 语境。
 
 ## 本章引用
 <!-- chapter-citations:start -->

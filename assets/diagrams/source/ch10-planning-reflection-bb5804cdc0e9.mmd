@@ -1,0 +1,13 @@
+%% id: planning-task-dependency-dag
+%% title: 研究任务依赖 DAG
+%% alt: 问题定义后搜索与资料读取形成证据表，冲突核对完成后才能撰写和评审报告
+flowchart TB
+    Define[定义问题与验收] --> SearchA[搜索来源 A]
+    Define --> SearchB[搜索来源 B]
+    SearchA --> ReadA[读取与摘录]
+    SearchB --> ReadB[读取与摘录]
+    ReadA --> Evidence[结构化证据表]
+    ReadB --> Evidence
+    Evidence --> Conflict[冲突核对]
+    Conflict --> Draft[撰写报告]
+    Draft --> Review[独立评审]

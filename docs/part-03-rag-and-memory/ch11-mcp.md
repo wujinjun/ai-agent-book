@@ -1,9 +1,16 @@
 # 第11章：MCP 基础
 
-最后核对日期：2026-08-07；本章按 MCP 2026-07-28 与官方 Python SDK `mcp==2.0.0` 核对，并单独说明 2025-11-25 客户端的迁移差异。
+最后核对日期：2026-08-07。
+
+!!! info "版本证据"
+    协议概念按 MCP 2026-07-28 与官方 Python SDK `mcp==2.0.0` 核对；正文单独说明 2025-11-25 客户端的迁移差异。读者应把协议版本、SDK 包版本和宿主产品支持状态分别核对。
 
 ## 章节导读、学习目标与前置知识
 MCP 用统一协议连接模型应用与上下文能力。本章目标是区分 Client、Server、Tool、Resource、Prompt、Transport 和生命周期。前置知识为第8章。
+
+本章的角色、能力发现与生命周期定义以 [MCP 架构说明](../references.md#ref-mcp-architecture)和 [MCP 正式规范](../references.md#ref-mcp-spec-2025-11-25)为依据；远程授权边界另以 [MCP Authorization](../references.md#ref-mcp-auth)为准。协议概念与某个 SDK 的便捷接口必须分开阅读。
+
+**能力主线位置：** Tool Calling 的应用内注册表 → 本章建立跨进程/远程能力协议 → 第12章实现 Server，第13—16章接入受治理的知识、记忆和向量检索。
 
 ## 核心概念、原理与架构图
 
@@ -107,15 +114,14 @@ sequenceDiagram
 %% title: stdio 与 Streamable HTTP 信任边界
 %% alt: 对比本地子进程 stdio 的进程权限边界和远程 HTTP 的网络认证 Origin 与令牌边界
 flowchart TB
-    subgraph Local[stdio 本地边界]
-        Host[Host 进程] --> Child[受限 Server 子进程]
-        Child --> FS[允许的文件与环境]
-    end
-    subgraph Remote[Streamable HTTP 远程边界]
-        Client[远程 Client] --> TLS[TLS 与 Origin 校验]
-        TLS --> Auth[认证与 token audience]
-        Auth --> Server[远程 MCP Server]
-    end
+    Local["stdio：本地进程边界"] --> Host["Host 进程"]
+    Host --> Child["受限 Server 子进程"]
+    Child --> FS["允许的文件与环境"]
+    FS -.信任边界不同.-> Remote["Streamable HTTP：远程网络边界"]
+    Remote --> Client["远程 Client"]
+    Client --> TLS["TLS 与 Origin 校验"]
+    TLS --> Auth["认证与 Token Audience"]
+    Auth --> Server["远程 MCP Server"]
 ```
 
 stdio 依赖子进程继承权限和 stdout 协议纯净性；远程传输增加网络暴露、身份验证、令牌目标和连接限流等控制。
@@ -124,12 +130,20 @@ stdio 依赖子进程继承权限和 stdout 协议纯净性；远程传输增加
 %% id: mcp-rest-function-calling-relationship
 %% title: MCP、REST 与 Function Calling 的分工
 %% alt: 模型通过 Function Calling 提出动作，Host 使用 MCP 发现调用能力，MCP Adapter 复用 REST 业务服务
-flowchart LR
-    Model[模型] -->|Function Calling 提议| Host[Agent Host 与 Policy]
-    Host -->|MCP 发现和调用| Adapter[MCP Server Adapter]
-    Adapter -->|受控 API 请求| REST[既有 REST 业务服务]
-    REST --> DB[(权威数据与业务规则)]
-    DB --> REST --> Adapter --> Host --> Model
+sequenceDiagram
+    participant M as 模型
+    participant H as Agent Host + Policy
+    participant A as MCP Server Adapter
+    participant R as REST 业务服务
+    participant D as 权威数据库
+    M->>H: Function Calling 提议
+    H->>A: MCP 能力发现与调用
+    A->>R: 受控 API 请求
+    R->>D: 执行业务规则与读写
+    D-->>R: 权威结果
+    R-->>A: API 响应
+    A-->>H: MCP Observation
+    H-->>M: 受策略过滤的工具结果
 ```
 
 Function Calling 是模型输出机制，MCP 是上下文能力协议，REST 是通用服务接口。组合使用时，既有业务鉴权和审计不应被 Adapter 绕过。
@@ -223,7 +237,7 @@ def validate_tool_envelope(
 %% id: enterprise-mcp-request-trust-flow
 %% title: 企业 MCP 请求的身份、路由与授权链路
 %% alt: Client携带当前协议和身份向Gateway发请求，Gateway校验路由头和令牌，MCP Adapter再次授权并调用既有REST服务
-flowchart LR
+flowchart TB
     Client["MCP Client"] -->|"版本 + 客户端元数据 + token"| Gateway["API Gateway"]
     Gateway --> Header["头/正文一致性<br/>Origin / 限流"]
     Header --> Adapter["MCP Adapter"]
@@ -284,17 +298,43 @@ stdio 最常见的故障是普通 `print` 污染 stdout。保留子进程的原�
 
 安全测试还应覆盖恶意工具描述、Resource 中的间接注入、超大结果、URI 路径穿越、跨租户显式句柄、MRTR 审批参数被替换，以及旧版兼容路径绕过当前授权。能力发现和调用必须分别鉴权，因为目录可见不等于执行获准。
 
-## 总结、练习、面试与延伸阅读
+## 本章总结
 
-MCP 统一连接，不决定业务权限。练习：为文件 Server 写威胁模型，并分别画出旧版初始化和当前无状态关闭时序；为同一知识查询分别设计 REST 与 MCP 接口。面试：Resource 与 Tool 如何选择？stdio 与 Streamable HTTP 的信任边界有何不同？能力发现为什么不等于授权？延伸阅读：[MCP 2026-07-28 基础协议](https://modelcontextprotocol.io/specification/2026-07-28/basic/index)、[当前传输规范](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports)、[Server 原语](https://modelcontextprotocol.io/specification/2026-07-28/server/index)与[官方 Python SDK](https://github.com/modelcontextprotocol/python-sdk)。代码目录：`projects/03-mcp-local-agent/`，当前 SDK 切片位于 `projects/03-mcp-local-agent/official_sdk/`。
+MCP 统一连接与能力发现，但不决定业务权限。Host、Client 与 Server 分别承担应用控制、协议适配和能力执行职责；Resource、Tool 与 Prompt 依据控制权和语义选择；stdio 与 Streamable HTTP 又具有不同的进程、身份和传输边界。能力可见始终不等于当前主体获准调用。下一章将把这些协议边界落实到可测试、可部署的 MCP Server。
 
-## 练习参考答案
+## 课后练习
 
-1. 文件 Server 的信任边界包括 Host 与子进程、允许根目录、符号链接解析、环境变量、协议 stdout、日志 stderr 和用户身份。威胁模型至少覆盖路径越界、软链接逃逸、日志泄密、结果注入、跨租户句柄和超大文件。Server 应在规范化路径后再次检查其位于允许根目录内。
-2. 旧版时序从 `initialize`、响应和 `notifications/initialized` 开始，再列能力与调用；当前时序可选 `server/discover`，随后每个请求携带版本、客户端身份和能力元数据，结束时关闭 HTTP 请求或 stdio 进程。二者都没有“初始化后自动获得业务权限”的含义。
-3. REST 接口面向固定服务调用者，例如 `GET /documents/{id}`；MCP Adapter 可以把搜索暴露为 Tool、已知文档暴露为 Resource，并提供模型可理解的 Schema。Adapter 继续调用 REST 的鉴权服务，不复制一套数据库直连权限。
-4. Resource 适合应用选择并装配的可寻址上下文，Tool 适合模型根据任务提出的动作，Prompt 适合用户显式选择的模板。这个控制模型是默认交互语义，不是绝对安全等级。
-5. Streamable HTTP 比 stdio 多出网络身份、Origin、TLS、Gateway、令牌 audience、跨实例路由和限流边界；stdio 则更依赖子进程继承权限、命令配置和 stdout 纯净性。两者都必须在 Server 内重新做资源授权。
+### 设计题
+
+1. 为只读文件 MCP Server 绘制信任边界和威胁模型，至少覆盖进程继承权限、允许根目录、符号链接、日志与结果注入。
+2. 分别画出旧版初始化序列与当前远程传输的请求/关闭序列，标明能力协商与业务授权的不同责任。
+
+### 编码题
+
+3. 为同一知识查询分别定义 REST Endpoint 与 MCP Tool/Resource Schema。输入为文档 ID 和自然语言查询；输出为两套接口契约；检查标准是 MCP Adapter 不复制底层业务授权。
+
+### 概念题
+
+4. 说明 Resource、Tool 与 Prompt 的控制模型及其适用边界。
+5. 比较 stdio 与 Streamable HTTP 新增或转移了哪些身份、Origin、TLS、进程和日志风险。
+
+### 故障实验
+
+向 Server 发送已发现但当前主体无权访问的 Resource URI，验证能力发现成功而资源访问仍被拒绝，并确认错误信息不泄露路径。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. Resource 与 Tool 应如何选择？
+2. stdio 与 Streamable HTTP 的信任边界有何不同？
+3. 为什么能力发现不等于业务授权？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 MCP 当前基础协议、传输规范、Server 原语与官方 Python SDK。代码目录为 `projects/03-mcp-local-agent/`，当前 SDK 切片位于 `projects/03-mcp-local-agent/official_sdk/`。
 
 ## 本章引用
 <!-- chapter-citations:start -->

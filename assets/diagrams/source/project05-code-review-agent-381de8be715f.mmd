@@ -1,0 +1,10 @@
+%% id: project5-textbook-finding-lifecycle
+%% title: Finding 生命周期
+%% alt: 候选发现经定位、去重、风险校准和证据检查后进入报告，证据不足则降级或丢弃
+flowchart TB
+    Candidate["候选 Finding"] --> Locate{"位于当前 Diff?"}
+    Locate -->|否| Drop["不作为行级发现"]
+    Locate -->|是| Dedup["rule + file + line 去重"]
+    Dedup --> Evidence{"证据可复核?"}
+    Evidence -->|否| Downgrade["降级为提示或丢弃"]
+    Evidence -->|是| Rank["风险排序"] --> Report["Review 报告"]

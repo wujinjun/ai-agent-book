@@ -1,0 +1,11 @@
+%% id: python-dependency-configuration-boundaries
+%% title: 配置、依赖注入与 Secret 边界
+%% alt: 环境配置经 Pydantic Settings 校验后构造最小权限客户端并注入服务，Secret 不进入领域模型和日志
+flowchart TB
+    Env[环境变量与 Secret Store] --> Settings[Pydantic Settings 校验]
+    Settings --> Factory[依赖工厂]
+    Factory --> ModelClient[模型客户端]
+    Factory --> ToolClient[工具客户端]
+    ModelClient --> Service[领域服务]
+    ToolClient --> Service
+    Service --> Log[结构化日志字段白名单]

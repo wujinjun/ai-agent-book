@@ -7,6 +7,8 @@ Agent 输出非确定且包含工具和检索，单元测试不足。本章建�
 
 学习目标是掌握核心评估设计，并实现一个可重复的黄金数据集示例。前置知识为第13、17、28章。
 
+RAG 自动评估与 Agent 基准可分别参见 [RAGAS](../references.md#ref-es2023ragas)和 [AgentBench](../references.md#ref-liu2023agentbench)；平台化评估接口参见 [OpenAI Evals](../references.md#ref-openai-evals)。这些资料提供方法和工具，不会自动给出本书各项目的业务成功定义。
+
 Agent Evaluation 必须从任务成功定义开始，并沿模型、工具、检索、证据和系统运行链路分解。主图把测试层级、指标层级、Judge 校准和持续回归连接成一条可重放流水线。
 
 ![任务契约和 Golden Dataset 驱动单元集成端到端与人工评审，并分别度量结构化输出 Tool Retrieval Faithfulness 任务成功成本延迟，经过 Judge 校准和回归门](../assets/infographics/png/agent-evaluation-pipeline-infographic-2x.png)
@@ -37,11 +39,11 @@ flowchart TB
 %% title: Agent 分层评估指标图
 %% alt: 任务成功由工具准确率检索召回引用忠实度安全拒绝成本延迟等分层指标共同解释
 flowchart TB
-    Success[Task Success Rate] --> Tool[工具选择与参数准确率]
-    Success --> Retrieval[Recall nDCG 与权限过滤]
-    Success --> Answer[正确性 Faithfulness 与 Citation]
-    Success --> Safety[注入拒绝 越权与审批]
-    Success --> Efficiency[Token 成本 P95 延迟]
+    Success["主指标：Task Success Rate"] --> Action["行动层诊断<br/>工具选择、参数、终止"]
+    Action --> Evidence["证据层诊断<br/>Recall、nDCG、权限过滤"]
+    Evidence --> Answer["回答层诊断<br/>正确性、Faithfulness、Citation"]
+    Answer --> Safety["治理层诊断<br/>注入拒绝、越权、审批"]
+    Safety --> Efficiency["效率层诊断<br/>Token 成本、P95 延迟"]
 ```
 
 主指标应连接业务完成，分层指标用于解释失败位置。任何单一 Judge 分数都不能替代工具、安全和权限的确定性断言。
@@ -227,7 +229,7 @@ A/B 和 Shadow 不能绕过安全门禁。Shadow 候选不执行真实写工具�
 ## 误区、调试、实践与安全
 不要只测“回答像不像”，不要用生产敏感数据未经脱敏评测，不把一次随机结果当回归。保存模型、Prompt、数据和工具版本，重复采样报告置信区间。A/B 先定义护栏指标和停止条件。
 
-## 总结、练习、面试与阅读
+## Agent 评估体系的深化设计
 
 ### 为什么 Agent 难以测试
 
@@ -237,20 +239,7 @@ Agent 同时包含非确定模型、外部工具、检索、状态和多步决�
 
 Unit Test 覆盖参数校验、Policy、状态转移、Reducer、重试和成本计算，全部离线确定。Integration Test 验证模型协议、工具 Adapter、数据库、向量库和队列契约。E2E 使用真实部署与少量代表任务，检查从 API 到结果、Trace 与审计。
 
-```mermaid
-%% id: agent-test-pyramid-detailed
-%% title: Agent 单元、集成与 E2E 测试边界
-%% alt: Schema Policy State Budget 位于单元层，模型工具检索存储位于集成层，部署工作流位于 E2E 层
-flowchart TB
-    E2E["E2E: deployed workflow"]
-    Integration["Integration: model/tool/retrieval/storage"]
-    Unit["Unit: schema/policy/state/budget"]
-    Unit --> Integration --> E2E
-```
-
-在线模型测试单独标记并固定预算；普通 CI 使用 Fake 与 Mock 验证控制流，避免随机性掩盖确定性回归。
-
-测试金字塔中 Unit 多且快，E2E 少且高价值。在线模型测试单独标记，默认 CI 不因密钥缺失失败；发布门禁环境才执行固定预算的在线集。
+章首的图 29-B 已给出三层测试金字塔：Unit 覆盖 Schema、Policy、State 和预算等确定性不变量；Integration 覆盖模型、工具、检索和存储契约；E2E 只保留少量已部署关键路径。在线模型测试单独标记并固定预算，普通 CI 使用 Fake 与 Mock 验证控制流，避免随机性掩盖确定性回归。发布门禁环境才执行固定预算的在线集。
 
 ### Golden Dataset
 
@@ -298,7 +287,7 @@ Hallucination 不是单一二元标签。区分与来源矛盾、无来源新增
 %% id: agent-evaluation-release-loop
 %% title: Agent 评估发布与失败回流闭环
 %% alt: 变更经离线单元黄金集安全评估灰度和 A B 后发布，线上失败样本回流版本化数据集
-flowchart LR
+flowchart TB
     Change --> Offline["unit + golden eval"] --> Safety --> Canary --> AB["A/B or shadow"] --> Release
     AB --> Monitor["online outcomes"] --> Dataset["new failure cases"] --> Offline
 ```
@@ -314,13 +303,45 @@ A/B 预先定义主指标、护栏、样本量和停止条件。用户体验实�
 常见误区是只看几条 demo、把 Judge 当真理、用测试集调到满分、只测最终文本。安全评估包含 Prompt Injection、数据外泄、工具滥用、跨租户和审批绕过。评估平台本身限制数据访问和保留。
 总结：Agent Evaluation 是分层、版本化、与业务结果连接的工程系统。练习：为项目2建立20条黄金集与工具准确率指标。面试：Agent 成功率如何定义？Judge 偏差怎么校准？Faithfulness 与事实正确性有何区别？延伸阅读：RAG/Agent evaluation 论文、OpenTelemetry Trace 与所用评估平台官方文档。代码目录：`tests/evals/` 与项目4、8、10。
 
-## 练习参考答案
+## 本章总结
 
-1. 项目 2 的 20 条黄金集至少覆盖普通城市、中文/英文别名、缺参、非法参数、工具超时、上游错误、无工具问题、未知工具提议、重复调用、最大步数、需要审批和拒绝审批。每条固定天气 Fixture 与时间。
-2. Agent 成功率是满足业务验收、权限、安全、预算和终止要求的任务比例，不等于模型输出“完成”。高风险任务应独立分层，不能由大量简单任务稀释。
-3. Judge 校准使用人工双标注与裁决集，计算一致率、precision、recall 和混淆矩阵，并检查位置、长度、风格与模型同源偏差。校准不佳时不能作为唯一门禁。
-4. Faithfulness 判断回答是否受给定证据支持；事实正确性判断主张是否符合真实世界或权威数据。错误证据可以产生忠于证据但事实错误的答案，因此两者必须分开。
-5. 回归阈值在运行前记录，对关键安全项使用零容忍或明确硬门禁，对随机指标比较区间和分层差异。候选失败时报告哪条阈值触发，而不是人工挑选有利结果。
+Agent Evaluation 必须把任务结果、工具行为、检索证据、成本和安全分层评价。Golden Dataset 需要版本和覆盖边界，LLM-as-Judge 需要用人工样本校准，发布门禁应使用置信区间和失败类别而不是单点平均分。评估流水线只有绑定模型、Prompt、工具、数据和代码版本，才能承担回归判断。下一章将把安全攻击和控制证据纳入系统级验收。
+
+## 课后练习
+
+### 设计题
+
+1. 为项目 2 建立 20 条黄金集，覆盖普通请求、缺参、非法参数、超时、未知工具、审批、重复调用和最大步数，并为每条固定 Fixture 与成功标准。
+
+### 概念题
+
+2. 定义 Agent 任务成功率，说明为什么模型输出“完成”以及简单样本平均值都不能替代业务成功。
+
+### 编码题
+
+3. 使用人工双标注集校准 LLM-as-Judge，输出一致率、Precision、Recall 和混淆矩阵；检查标准是 Judge 不能成为未经校准的唯一门禁。
+
+### 概念题
+
+4. 比较 Faithfulness 与事实正确性，构造一个“忠于错误证据但事实不正确”的例子。
+
+### 故障实验
+
+5. 在运行候选版本前固定回归阈值，再注入一项安全回归，验证流水线不会因整体平均分上升而放行。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. Agent 任务成功率应如何定义？
+2. LLM-as-Judge 的偏差怎样用人工样本校准？
+3. Faithfulness 与事实正确性有什么区别？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 RAGAS、AgentBench、NIST AI RMF 与目标平台的评估接口。本章评估模式在项目4、8与10中用于检索、工作流和平台发布门禁。
 
 ## 本章引用
 <!-- chapter-citations:start -->

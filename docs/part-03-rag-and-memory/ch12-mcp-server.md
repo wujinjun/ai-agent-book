@@ -1,11 +1,16 @@
 # 第12章：MCP Server 实战
 
-最后核对日期：2026-08-07；协议概念按 MCP 2026-07-28 核对，官方 Python SDK 接口已用隔离安装的 `mcp==2.0.0` 复核。
+最后核对日期：2026-08-07。
+
+!!! info "版本证据"
+    协议概念按 MCP 2026-07-28 核对，官方 Python SDK 接口已用隔离安装的 `mcp==2.0.0` 复核。示例签名只对该锁定版本负责。
 
 ## 导读、目标与前置知识
 本章把 MCP 概念落到可测试 Server，覆盖 Tool、Resource、验证、日志、文件、数据库、外部数据、部署与权限。前置知识为第11、23章。
 
 学习目标是能够实现并测试一个最小示例，再把它扩展为具备策略、可观测和部署边界的完整工程。
+
+示例接口只对本章锁定版本负责；能力语义以 [MCP 规范](../references.md#ref-mcp-spec-2025-11-25)为准，Python 写法以 [官方 Python SDK](../references.md#ref-mcp-python-sdk)为准，远程部署的主体与授权不能从本地 `stdio` 示例外推。
 
 下面的信息图将 MCP Server 的生命周期、能力模型和生产安全边界合并展示。能力发现只说明 Client 知道服务器提供什么，并不授予当前主体执行这些能力的权限。
 
@@ -75,13 +80,17 @@ flowchart TD
 %% id: mcp-server-test-deploy-gates
 %% title: MCP Server 测试与部署门禁
 %% alt: Server 从单元协议安全和负载测试进入容器加固灰度发布与线上观测的质量门禁
-flowchart LR
-    Unit[领域与 Policy 单元测试] --> Protocol[协议互操作测试]
-    Protocol --> Security[越权路径注入 SSRF 测试]
-    Security --> Load[并发取消重启测试]
-    Load --> Harden[非 root 只读文件系统 Secret]
-    Harden --> Canary[兼容 Client 灰度]
-    Canary --> Observe[指标 Trace 与回滚]
+flowchart TB
+    subgraph Verify["发布前验证"]
+        Unit["领域与 Policy 单元测试"] --> Protocol["协议互操作测试"]
+        Protocol --> Security["越权 / 路径注入 / SSRF"]
+        Security --> Load["并发 / 取消 / 重启"]
+    end
+    subgraph Release["部署与运营"]
+        Harden["非 Root / 只读文件系统 / Secret"] --> Canary["兼容 Client 灰度"]
+        Canary --> Observe["指标 / Trace / 回滚"]
+    end
+    Load --> Harden
 ```
 
 部署验收必须同时证明协议兼容和最小权限。只通过 happy-path 的 `tools/call` 不能作为生产发布证据。
@@ -330,17 +339,43 @@ Streamable HTTP 的每条消息是独立 POST，请求正文携带当前协议�
 
 Server 不信任 Client 已完成授权，Client 也不信任 Server 返回内容。凭证使用最小 scope，远程调用验证资源 audience，长任务 ID 绑定授权上下文并设置 TTL。高风险动作在 Server 与 Host 两侧都可阻断，形成纵深防御。
 
-## 总结、练习、面试与延伸阅读
+## 本章总结
 
-练习：实现只读文件 Resource、软链接越界测试和结果大小上限；为数据库工具设计五条 allowlist 查询；为远程 Server 设计 token audience 与 Origin 测试。面试：MCP Server 为什么仍需业务鉴权？stdio 日志写哪里？工具超时后为何不能直接重试写动作？延伸阅读：[MCP 2026-07-28 Tools](https://modelcontextprotocol.io/specification/2026-07-28/server/tools)、[Resources](https://modelcontextprotocol.io/specification/2026-07-28/server/resources)、[传输](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports)与[官方 Python SDK](https://github.com/modelcontextprotocol/python-sdk)。代码目录：`projects/03-mcp-local-agent/official_sdk/`。
+MCP Server 是受控能力适配器，不是通用文件、SQL 或网络代理。生产实现需要严格 Schema、资源范围、服务端授权、错误分类、超时、日志分流和优雅关闭；远程传输还必须增加令牌、Origin、TLS 与 Gateway 边界。工具超时后的未知状态必须先对账，再决定是否重试。下一章转向知识证据，建立从文档摄取到带引用回答的 RAG 链路。
 
-## 练习参考答案
+## 课后练习
 
-1. 只读文件 Resource 接收逻辑 URI，映射到固定根目录，执行 `resolve()` 后验证最终路径仍位于根内，并限制普通文件、大小与编码。测试必须包含父目录、绝对路径和软链接越界；错误响应不暴露真实根路径。
-2. 数据库 allowlist 可以是 `get_order(order_id)`、`list_open_incidents(service, limit)`、`get_device_status(device_id)`、`search_articles(query, product, limit)` 和 `list_recent_audits(subject, since, limit)`。每项使用参数化 SQL、只读账号、租户条件、字段 allowlist、行数和超时限制，不接受自由 SQL。
-3. token 测试覆盖缺失、过期、错误 issuer、错误 audience、scope 不足和跨租户资源；Origin 测试覆盖允许源、恶意源、缺失源的明确策略与本地 DNS rebinding 场景。Gateway 通过后，Server 仍应逐资源授权。
-4. stdout 只能承载协议消息，日志写 stderr；但 stderr 仍需脱敏。集成测试逐行解析 stdout，并确认启动、异常和关闭日志不会混入。
-5. 写工具超时只表示调用方未收到确认，动作可能已经成功。Server 或 Host 必须凭幂等键、outbox 记录或外部操作 ID 做状态核实；无法确认时进入人工处理，不能直接重试。
+### 编码题
+
+1. 实现只读文件 Resource。输入为逻辑 URI；输出为受大小限制的文本；检查标准包含父目录、绝对路径、编码错误和软链接越界测试。
+2. 为数据库 Tool 设计五条业务查询 allowlist，给出 Pydantic 参数模型、参数化 SQL、最大行数和超时，不允许自由 SQL。
+
+### 故障实验
+
+3. 为远程 Server 构造缺失/错误 audience、过期 Token、Scope 不足、恶意 Origin 和本地 DNS Rebinding 测试，记录各层拒绝位置。
+4. 故意把启动日志写入 stdout，证明协议解析失败；修复为 stdout 仅协议、stderr 脱敏日志，并加入集成测试。
+
+### 设计题
+
+5. 设计一个写 Tool 超时后的对账与幂等恢复流程，明确何时可重试、何时进入未知状态和人工处理。
+
+### 概念题
+
+解释为什么 Gateway 已完成身份验证后，MCP Server 仍必须按主体、租户、资源和动作重新授权。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. Gateway 已认证后，MCP Server 为什么仍需业务授权？
+2. stdio Server 的协议输出和日志分别应写到哪里？
+3. 写 Tool 超时后为什么不能直接重试？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 MCP 当前 Tools、Resources、传输规范与官方 Python SDK。代码目录为 `projects/03-mcp-local-agent/official_sdk/`。
 
 ## 本章引用
 <!-- chapter-citations:start -->

@@ -105,6 +105,11 @@ body {
   line-height: 1.2;
 }
 
+.md-typeset h1 + blockquote,
+.md-typeset h1 + p {
+  margin-top: -0.6rem;
+}
+
 .md-typeset h2 {
   margin-top: 2.8rem;
   padding-top: 0.4rem;
@@ -165,6 +170,10 @@ body {
   font-size: 0.72rem;
 }
 
+.md-typeset__table {
+  width: 100%;
+}
+
 /* Material 默认用负边距把表格扩展到正文之外。在 721—960 px 的平板
    断点上，这会产生约 15 px 的整页横向滚动。保留表格自身的横向滚动，
    但让外层始终受正文栏宽度约束。 */
@@ -216,7 +225,8 @@ body {
 }
 
 .book-diagram img,
-.md-typeset .mermaid svg {
+.md-typeset .mermaid svg,
+.md-typeset img[src*="/infographics/"] {
   display: block;
   width: 100%;
   max-width: 100%;
@@ -271,6 +281,13 @@ body {
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+.book-lightbox__content {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  overscroll-behavior: contain;
 }
 
 .book-lightbox__close {
@@ -329,9 +346,54 @@ body {
   }
 
   .md-typeset table:not([class]) {
-    display: block;
+    min-width: 31rem;
+    white-space: normal;
+  }
+
+  .md-typeset__scrollwrap {
     overflow-x: auto;
-    white-space: nowrap;
+    overscroll-behavior-inline: contain;
+  }
+
+  .md-typeset table:not([class]) th:first-child,
+  .md-typeset table:not([class]) td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--md-default-bg-color);
+    box-shadow: 1px 0 0 var(--book-border);
+  }
+
+  .md-typeset table:not([class]) th:first-child {
+    background: var(--book-surface-strong);
+  }
+
+  .md-typeset pre > code {
+    font-size: 0.74rem;
+  }
+
+  .md-typeset .mermaid,
+  .md-typeset figure.book-diagram {
+    margin-inline: -0.25rem;
+    width: calc(100% + 0.5rem);
+    padding: 0.55rem;
+  }
+
+  .md-typeset img[src*="/infographics/"] {
+    width: calc(100% + 0.5rem);
+    max-width: calc(100% + 0.5rem);
+    margin-inline: -0.25rem;
+  }
+
+  .book-lightbox {
+    padding: 2.5rem 0.65rem 0.65rem;
+  }
+
+  .book-lightbox img,
+  .book-lightbox svg {
+    width: 48rem;
+    max-width: none;
+    height: auto;
   }
 }
 

@@ -1,0 +1,14 @@
+%% id: project6-textbook-outbox-state
+%% title: 自动办公 Outbox 故障恢复状态机
+%% alt: pending 被带租约领取为 delivering，成功转 published，确定失败有限重试，歧义失败转 unknown 等待回执查询或人工处理
+stateDiagram-v2
+    [*] --> pending: approved draft
+    pending --> delivering: atomic claim + lease
+    delivering --> published: receipt committed
+    delivering --> failed: definitely not delivered
+    failed --> delivering: attempts remain
+    delivering --> unknown: outcome ambiguous
+    unknown --> published: reconciler found receipt
+    unknown --> manual: cannot reconcile
+    failed --> manual: retry budget exhausted
+    published --> published: duplicate request

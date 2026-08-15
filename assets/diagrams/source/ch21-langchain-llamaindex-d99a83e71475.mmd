@@ -1,0 +1,10 @@
+%% id: rag-framework-score-normalization-boundary
+%% title: 框架检索分数的归一化边界
+%% alt: LangChain 与 LlamaIndex 返回各自原始命中，Adapter 保留分数语义和来源并转换为领域 Hit，再用各自校准阈值和统一引用验证
+flowchart TB
+    LC[LangChain raw Document/score] --> LCA[LC Adapter]
+    LI[LlamaIndex raw Node/score] --> LIA[LI Adapter]
+    LCA --> Hit[Domain RetrievalHit + score_kind]
+    LIA --> Hit
+    Hit --> Threshold[按实现版本校准阈值]
+    Threshold --> Citation[统一 ACL 与引用验证]

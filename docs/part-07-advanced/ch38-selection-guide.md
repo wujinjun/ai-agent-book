@@ -1,6 +1,9 @@
 # 第38章：技术选型指南
 
-最后核对日期：2026-08-07。OpenAI Agents SDK 0.18.3、PydanticAI 2.25.0、LangChain 1.3.14、LlamaIndex Core 0.14.23、CrewAI 1.15.12、AutoGen AgentChat 0.7.5 与 Semantic Kernel 1.44.1 已隔离实跑；社区活跃度、许可证、API 和支持状态仍必须在决策当天复核。
+最后核对日期：2026-08-07。
+
+!!! info "版本证据"
+    OpenAI Agents SDK 0.18.3、PydanticAI 2.25.0、LangChain 1.3.14、LlamaIndex Core 0.14.23、CrewAI 1.15.12、AutoGen AgentChat 0.7.5 与 Semantic Kernel 1.44.1 已按本书统一任务契约复核。社区活跃度、许可证、API 和支持状态仍必须在决策当天重新确认。
 
 ## 章节导读
 
@@ -10,13 +13,19 @@
 
 完成本章后，读者应能把任务状态、团队能力和非功能需求转化为选型标准，用同一垂直切片验证候选方案，识别框架锁定，并通过 ADR 记录结论。前置知识是第 17—22 章以及测试、可观测与安全章节。
 
+候选能力只按各项目当前官方资料核对：包括 [OpenAI Agents SDK](../references.md#ref-openai-agents-guide)、[PydanticAI](../references.md#ref-pydanticai-docs)、[LangGraph](../references.md#ref-langgraph-overview)、[LangChain](../references.md#ref-langchain-docs)、[LlamaIndex](../references.md#ref-llamaindex-docs)、[CrewAI](../references.md#ref-crewai-docs)、[AutoGen](../references.md#ref-autogen-docs)与 [Semantic Kernel](../references.md#ref-semantic-kernel-docs)。表格中的生产判断来自本书的统一评价维度，不是官方背书。
+
 技术选型不是框架排行榜。下图先根据任务确定性、恢复需求、类型安全、RAG 深度、协作、MCP、团队能力和锁定风险建立需求画像，再从原生 API 渐进增加 SDK、图工作流、数据框架或 Multi-Agent。
 
-![Agent 技术选型从需求雷达进入原生 API 类型安全 SDK 图式工作流 RAG 数据框架和 Multi-Agent 五条路线，经能力矩阵和五级渐进阶梯，最终由 Spike 数据集故障注入迁移出口与 TCO 验证](../assets/infographics/png/framework-selection-map-infographic-2x.png)
+![Agent 技术选型先把确定性恢复类型 RAG 协作 MCP 和锁定等需求画像映射到原生 API 类型安全 SDK 图式工作流 RAG 数据框架与 Multi-Agent 路线](../assets/infographics/png/framework-selection-map-infographic-a-2x.png)
 
-*图 38-A：从问题形态到渐进架构的技术选型地图。五条路线不是优劣排名，复杂度只应在可验证收益出现后增加。*
+*图 38-A：从问题画像到候选路线。框架名称不能替代需求约束，候选集合应先由硬条件缩小。*
 
-图 38-A 的升级顺序可以减少框架锁定：先证明原生闭环和测试契约；只有出现跨步骤恢复状态、复杂数据摄取或真实独立责任与并行收益时，才引入相应抽象。最终决策应由小型 Spike 和 Golden Dataset 证据支持。
+![候选路线经能力矩阵和渐进架构比较，最终以同题 Spike 黄金数据集故障注入迁移出口与 TCO 形成可复审决策](../assets/infographics/png/framework-selection-map-infographic-b-2x.png)
+
+*图 38-B：从比较证据到 ADR。评分只是决策输入，Spike、退出路径和复审日期才让选择可以回滚。*
+
+图 38-B 的升级顺序可以减少框架锁定：先证明原生闭环和测试契约；只有出现跨步骤恢复状态、复杂数据摄取或真实独立责任与并行收益时，才引入相应抽象。最终决策应由小型 Spike 和 Golden Dataset 证据支持。
 
 ## 核心概念：先识别问题形态
 
@@ -189,14 +198,15 @@ flowchart LR
 %% id: framework-selection-evidence-funnel
 %% title: 框架选型证据漏斗
 %% alt: 所有候选先经过硬约束过滤，再做官方文档与本地版本核查，对证据不足且接近者执行同一Spike，最后加权评价并形成可回滚ADR
-flowchart LR
-    Candidates["候选框架集合"] --> Hard["硬约束过滤"]
-    Hard --> Verify["官方文档 + 安装版本核查"]
-    Verify --> Unknown["标记证据等级与不确定性"]
-    Unknown --> Shortlist["最多两个接近候选"]
+flowchart TB
+    Candidates["候选框架集合"] --> Hard{"满足硬约束?"}
+    Hard -->|否| Eliminate["淘汰并记录原因"]
+    Hard -->|是| Verify["官方文档 + 本地安装版本核查"]
+    Verify --> Evidence["标记证据等级与不确定性"]
+    Evidence --> Shortlist["最多两个接近候选"]
     Shortlist --> Spike["同一垂直切片 Spike"]
     Spike --> Score["加权评价 + 敏感性分析"]
-    Score --> ADR["决策 / 风险 / 回滚 / 复审"]
+    Score --> ADR["ADR：决策、风险、回滚、复审日期"]
 ```
 
 证据等级可以分为：本仓库安装并测试、官方文档确认但未本地执行、仅需人工核查。功能清单中“支持持久化”若没有跑过重启恢复，只能记为文档证据，不能与实测等价。
@@ -306,24 +316,39 @@ def weighted_score(criteria: list[CriterionScore]) -> float:
 
 ## 本章总结
 
-没有对所有团队最优的 Agent 框架。高质量选型从问题形态出发，以相同垂直切片和故障注入收集证据，通过边界隔离降低迁移成本，并设置明确的复审条件。
+没有对所有团队最优的 Agent 框架。高质量选型从问题形态出发，以相同垂直切片和故障注入收集证据，通过边界隔离降低迁移成本，并设置明确的复审条件。本章之后的书末材料提供练习答案、术语、参考文献和索引，后记则把学习与产品迭代收束为持续证据循环。
 
-## 课后练习、面试问题与延伸阅读
+## 面试问题与延伸阅读
 
-1. 为项目 8 选择两个候选方案，定义带权评价矩阵并完成 ADR。
-2. 找出当前项目中三处框架类型渗透，并设计最小适配边界。
-3. 面试问题：如何降低框架锁定？何时拒绝 Multi-Agent？社区活跃度如何核实？
-4. 延伸阅读：各框架官方文档与变更日志、Architecture Decision Records、契约测试、可逆架构决策。
+面试问题：如何降低框架锁定？何时拒绝 Multi-Agent？社区活跃度如何核实？
+
+延伸阅读：各框架官方文档与变更日志、Architecture Decision Records、契约测试、可逆架构决策。
 
 本章对应代码目录：可运行工作流位于 `projects/08-research-workflow/`；统一研究/RAG 对照与受限 Multi-Agent 同题实测位于 `examples/framework_comparison/` 和 `examples/framework_comparison/multi_agent_spike/`。
 
-## 练习参考答案
+## 课后练习
 
-1. 项目 8 可比较原生 Runtime 与 LangGraph。硬约束设人工中断、重启恢复、离线测试和 Policy 插入；权重在评分前确定。用同一 Fixture 与失败注入完成 Spike，把测试、Trace 和状态导出作为 ADR 证据。
-2. 常见渗透点包括业务函数直接接收框架 Message、数据库保存框架 Checkpoint 对象、前端消费框架 Stream Event。分别用领域 `Message/RunState/Event` 与 Adapter 映射隔离，保留契约测试。
-3. 降低框架锁定不是追求零依赖，而是让 Tool、RunState、Citation、Policy 和错误分类由业务拥有，框架集中在 Adapter，状态可导出，黄金集能跨实现运行，并预先演练回滚。
-4. 当角色没有不同权限、工具、上下文或独立验收责任时，应拒绝 Multi-Agent；普通函数、Router 或 Reviewer Node 更便宜且易终止。角色数量不是选型加分项。
-5. 社区活跃度在决策当天从官方仓库核对发布频率、维护者响应、支持/弃用政策、安全公告、许可证和路线图，并记录链接与日期。Star 与下载量只能作为背景，不能替代维护承诺。
+### 设计题
+
+1. 为项目 8 比较原生 Runtime 与 LangGraph。先固定人工中断、重启恢复、离线测试和 Policy 插入等硬约束，再用同一 Fixture 产出 ADR。
+2. 找出业务函数、持久状态和前端事件中三个典型框架渗透点，并用领域模型与 Adapter 隔离。
+3. 制定降低框架锁定的方案，覆盖 Tool、RunState、Citation、Policy、错误分类、状态导出和跨实现黄金集。
+
+### 概念题
+
+4. 什么情况下应明确拒绝 Multi-Agent？解释角色数量为什么不是框架选型加分项。
+
+### 故障实验
+
+5. 对一个候选框架做版本风险复核：记录官方发布频率、弃用政策、安全公告、许可证和核对日期，并构造一次 Adapter 回退演练。
+
+### 编码题
+
+输入同一任务的两种框架实现 Trace，输出统一 Run/Tool/Event 领域记录；检查标准是评估器无需依赖任何框架专有类型。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
 
 ## 本章引用
 <!-- chapter-citations:start -->

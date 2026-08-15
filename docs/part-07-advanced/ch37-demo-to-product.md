@@ -1,11 +1,5 @@
 # 第37章：从 Demo 到产品
 
-![Agent 产品从用户任务和不可做事项出发，依次建设流式进度中断重试引用体验、状态幂等审批权限降级可靠性、质量成本延迟 SLA Trace 安全治理，并通过反馈评估灰度迁移与升级形成闭环](../assets/infographics/png/demo-to-product-infographic-2x.png)
-
-*图 37-A　Agent 从 Demo 到产品的可靠性交付闭环。*
-
-Demo 证明某条路径曾经成功，产品则必须定义取消、失败、恢复、审批、降级和维护。图中由上到下从产品边界进入用户体验、运行可靠性和运营治理，再由真实反馈回到评估与发布，形成长期可维护的交付循环。
-
 最后核对日期：2026-07-11。
 
 ## 章节导读
@@ -15,6 +9,14 @@ Demo 证明某条路径“能够运行”，产品则承诺在真实用户、脏
 ## 学习目标与前置知识
 
 完成本章后，读者应能把模型演示转化为可验证的用户结果，定义产品边界和 SLO，设计 Streaming、中断、重试、人工审批与降级体验，并建立模型升级的评估和回滚机制。前置知识包括 Agent Runtime、Evaluation、Observability、安全和部署。
+
+本章用 [ISO/IEC 25010](../references.md#ref-iso25010)帮助拆分可靠性、可维护性等质量属性，并用 [NIST AI RMF 生成式 AI Profile](../references.md#ref-nist-genai-profile)校对风险治理维度。SLO、成本阈值和人工接管规则仍必须由具体产品场景定义。
+
+![Agent 产品从用户任务和不可做事项出发，依次建设流式进度中断重试引用体验、状态幂等审批权限降级可靠性、质量成本延迟 SLA Trace 安全治理，并通过反馈评估灰度迁移与升级形成闭环](../assets/infographics/png/demo-to-product-infographic-2x.png)
+
+*图 37-A　Agent 从 Demo 到产品的可靠性交付闭环。*
+
+Demo 证明某条路径曾经成功，产品则必须定义取消、失败、恢复、审批、降级和维护。图中由上到下从产品边界进入用户体验、运行可靠性和运营治理，再由真实反馈回到评估与发布，形成长期可维护的交付循环。
 
 ## 核心概念：结果契约
 
@@ -26,15 +28,18 @@ Demo 证明某条路径“能够运行”，产品则承诺在真实用户、脏
 %% id: agent-product-feedback-release-loop
 %% title: Agent 产品反馈与发布闭环
 %% alt: 用户问题转化为结果边界契约，经交互 Runtime 产生答案引用状态，并将反馈进入评估灰度发布和回滚
-flowchart LR
+flowchart TB
     Need["用户问题"] --> Contract["结果与边界契约"]
-    Contract --> UX["交互与控制"]
+    Contract --> UX["交互、进度与用户控制"]
     UX --> Runtime["Agent Runtime"]
-    Runtime --> Evidence["答案 / 引用 / 状态"]
-    Evidence --> Feedback["用户与线上反馈"]
+    Runtime --> Evidence["答案 / 引用 / 状态 / 成本"]
+    Evidence --> Feedback["用户反馈与线上结果"]
     Feedback --> Eval["离线评估与回归"]
-    Eval --> Release["灰度发布 / 回滚"]
-    Release --> UX
+    Eval --> Gate{"达到发布门禁?"}
+    Gate -->|否| Runtime
+    Gate -->|是| Release["灰度发布"]
+    Release --> Observe["监控与回滚阈值"]
+    Observe --> UX
 ```
 
 “不做什么”同样属于契约。股票研究 Agent 可以汇总事实与推断，但不承诺收益，不自动交易；代码 Review Agent 可以提出风险，但不绕过仓库保护规则直接合并。
@@ -43,15 +48,14 @@ flowchart LR
 %% id: agent-product-readiness-gates
 %% title: Agent 从 Demo 到产品的就绪门禁
 %% alt: Demo 依次证明用户价值可靠性权限安全可观测评估成本 SLA 运维和回滚后才具备产品发布条件
-flowchart LR
-    Demo[可运行 Demo] --> Value[真实用户任务与边界]
-    Value --> Reliability[失败恢复与幂等]
-    Reliability --> Security[权限审批与隐私]
-    Security --> Observe[Trace Metrics Audit]
-    Observe --> Eval[黄金集与线上结果]
-    Eval --> Economics[成本预算与容量]
-    Economics --> Operations[SLA 值班升级回滚]
-    Operations --> Product[可持续产品]
+flowchart TB
+    Demo["可运行 Demo"] --> Value["1 用户价值<br/>真实任务与产品边界"]
+    Value --> Reliability["2 可靠性<br/>失败恢复与幂等"]
+    Reliability --> Security["3 治理<br/>权限、审批与隐私"]
+    Security --> Evidence["4 运营证据<br/>Trace、Metrics、Audit、Eval"]
+    Evidence --> Economics["5 经济性<br/>成本预算与容量"]
+    Economics --> Operations["6 可运营性<br/>SLA、值班、升级与回滚"]
+    Operations --> Product["可持续产品"]
 ```
 
 任何缺失门禁都应明确记录为产品风险，而不是用模型演示效果代替。尤其是回滚和数据删除需要真实演练。
@@ -214,21 +218,14 @@ flowchart TB
 ```mermaid
 %% id: agent-product-metric-tree
 %% title: Agent 产品价值指标树
-%% alt: 用户任务成功由覆盖率正确性可用性和效率共同决定，并分别下钻到拒答引用工具成功延迟成本与人工接管
+%% alt: 用户任务成功分为任务有效性与可持续交付两组，再分别下钻到覆盖率正确性可用性和效率及其诊断指标
 flowchart TD
-    Value[用户任务成功] --> Coverage[覆盖率]
-    Value --> Correctness[正确性与证据]
-    Value --> Reliability[可用性与恢复]
-    Value --> Efficiency[时间与成本]
-    Coverage --> Answered[可回答率]
-    Coverage --> Abstain[正确拒答率]
-    Correctness --> Citation[引用支持率]
-    Correctness --> Tool[工具结果准确率]
-    Reliability --> Terminal[终态收敛率]
-    Reliability --> Recovery[故障恢复率]
-    Efficiency --> Latency[任务完成时间]
-    Efficiency --> UnitCost[单位成功成本]
-    Efficiency --> Human[人工接管时长]
+    Value[用户任务成功] --> Effective[任务有效性]
+    Value --> Sustainable[可持续交付]
+    Effective --> Coverage["覆盖率<br/>可回答率 · 正确拒答率"]
+    Effective --> Correctness["正确性与证据<br/>引用支持率 · 工具结果准确率"]
+    Sustainable --> Reliability["可用性与恢复<br/>终态收敛率 · 故障恢复率"]
+    Sustainable --> Efficiency["时间与成本<br/>完成时间 · 单位成功成本 · 人工接管时长"]
 ```
 
 指标之间存在权衡。提高拒答阈值可能改善事实准确率却降低覆盖；增加 Reviewer 可能提升质量却增加
@@ -299,23 +296,43 @@ flowchart TD
 
 ## 本章总结
 
-从 Demo 到产品的关键是建立结果契约和持续验证闭环。模型只是系统中的非确定性依赖，真正的产品能力来自可控制、可观察、可恢复、可升级以及对失败诚实表达。
+从 Demo 到产品的关键是建立结果契约和持续验证闭环。模型只是系统中的非确定性依赖，真正的产品能力来自可控制、可观察、可恢复、可升级以及对失败诚实表达。下一章将用同一套质量、恢复与锁定约束收束全书的技术选型方法。
 
-## 课后练习、面试问题与延伸阅读
+## 课后练习
 
-1. **企业知识库边界。** 参考答案应写明允许的数据源、授权主体、带引用结果、证据不足拒答、延迟
-   目标口径、文档更新所有者和只读降级；“回答所有公司问题”不是合格边界。
-2. **SSE 协议。** 事件含 Run 内 Sequence、Schema Version 和明确终态；重连按游标回放。显示连接
-   断开不自动删除 Run，取消是单独授权动作。
-3. **灰度设计。** 固定租户分桶，记录模型/Prompt/索引/策略版本；先影子比较再小流量，设质量、
-   安全、成本和 P99 停止条件，并演练回滚。
-4. **面试要点。** 不确定性通过来源、数据时间、假设、置信边界和拒答表达，不展示隐藏思维；上游
-   故障是否计入 SLA 由合同口径决定，但内部端到端 SLO 不能假装依赖不存在。
-5. 延伸阅读：SRE、Error Budget、渐进式交付、Human-in-the-Loop 设计、AI 风险管理和服务设计。
+### 设计题
+
+1. 为企业知识库 Agent 写一页产品边界，明确允许的数据源、授权主体、带引用结果、证据不足拒答、延迟口径、文档更新所有者和只读降级。
+
+### 编码题
+
+2. 定义可恢复 SSE 事件协议。输入为乱序、重复和断线重连 Fixture；输出为单调 Run 内 Sequence、Schema Version 与明确终态；检查标准是重连不重复应用事件且断线不自动取消 Run。
+
+### 设计题
+
+3. 为模型、Prompt、索引和策略联合升级设计灰度发布：固定租户分桶、先影子比较、再小流量，并设置质量、安全、单位成功成本和 P99 停止条件。
+
+### 概念题
+
+4. 产品应如何表达来源、数据时间、假设、置信边界和拒答，而不把隐藏思维过程当作“可解释性”？
+
+### 故障实验
+
+5. 注入模型供应商完全不可用和部分限流两类故障，分别计算用户合同 SLA 与内部端到端 SLO，并验证只读缓存、异步受理或明确拒绝等降级路径。
+
+## 面试问题与延伸阅读
+
+面试问题：上游供应商故障是否计入 SLA？如何把一次成功演示转化为可维护的产品能力？
+
+延伸阅读：SRE、Error Budget、渐进式交付、Human-in-the-Loop 设计、AI 风险管理和服务设计。
 
 本章对应代码目录：
 [`projects/04-knowledge-agent/`](https://github.com/wujinjun/ai-agent-book/tree/main/projects/04-knowledge-agent)、
 [`projects/10-enterprise-platform/`](https://github.com/wujinjun/ai-agent-book/tree/main/projects/10-enterprise-platform)。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
 
 ## 本章引用
 <!-- chapter-citations:start -->

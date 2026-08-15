@@ -1,0 +1,18 @@
+%% id: project8-textbook-publication-outbox
+%% title: 报告发布的持久 Outbox
+%% alt: 完成报告按租户运行和报告哈希创建 Outbox，Worker 带稳定幂等键发布，崩溃后查询或复用同一键恢复
+sequenceDiagram
+    participant G as Graph Service
+    participant O as Publication Outbox
+    participant W as Worker
+    participant P as Publisher
+    G->>O: tenant + run_id + report_hash
+    W->>O: claim pending with lease
+    W->>P: publish(report, idempotency_key)
+    alt receipt returned
+        P-->>W: stable receipt
+        W->>O: mark published
+    else outcome unknown
+        W->>O: mark unknown
+        W->>P: reconcile by key
+    end

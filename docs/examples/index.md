@@ -6,7 +6,7 @@
 %% id: example-offline-verification-chain
 %% title: 独立示例离线验证证据链
 %% alt: 章节原理进入示例契约，离线 Fixture 和可选在线适配器分别接受成功失败测试，最终形成可复现实验与预期输出
-flowchart LR
+flowchart TB
     Chapter["章节原理与内联代码"] --> Contract["示例工程契约"]
     Contract --> Offline["离线 Fixture / Fake"]
     Contract --> Online["可选在线 Adapter"]

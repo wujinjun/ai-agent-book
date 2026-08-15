@@ -10,7 +10,6 @@ theme:
   custom_dir: overrides
   language: zh
   features:
-    - navigation.tabs
     - navigation.sections
     - navigation.indexes
     - content.code.copy
@@ -27,9 +26,9 @@ theme:
       primary: black
       accent: light blue
 extra_css:
-  - assets/stylesheets/extra.css
+  - assets/stylesheets/extra.css?v=20260815b
 extra_javascript:
-  - assets/javascripts/reader.js
+  - assets/javascripts/reader.js?v=20260815a
 markdown_extensions:
   - admonition
   - attr_list
@@ -52,17 +51,6 @@ nav:
   - 版本与发行信息: edition.md
   - 前言: preface.md
   - 学习指南: learning-guide.md
-  - 企业培训版:
-      - 培训入口: training/index.md
-      - 讲师手册: training/instructor-guide.md
-      - 学员实验手册: training/student-lab-manual.md
-      - 评分标准: training/assessment-rubric.md
-      - 章节题库与考试: training/question-bank.md
-      - 企业案例: training/enterprise-cases.md
-      - 工作坊: training/workshops.md
-      - 离线培训包: training/offline-training-pack.md
-      - 常见学员错误: training/common-mistakes.md
-      - 幻灯片说明: training/slides.md
   - 第一篇 LLM 与 AI Agent 基础:
       - 导读: part-01-foundations/index.md
       - 第1章 什么是大语言模型: part-01-foundations/ch01-what-is-llm.md
@@ -104,7 +92,18 @@ nav:
       - 第29章 Agent Evaluation: part-05-engineering/ch29-evaluation.md
       - 第30章 安全与 Guardrails: part-05-engineering/ch30-security.md
       - 第31章 成本与性能: part-05-engineering/ch31-cost-performance.md
-  - 第六篇 完整项目实战: part-06-projects/index.md
+  - 第六篇 完整项目实战:
+      - 导读: part-06-projects/index.md
+      - 项目1 最小 AI Assistant: part-06-projects/project01-minimal-assistant.md
+      - 项目2 天气与工具调用 Agent: part-06-projects/project02-weather-tool-agent.md
+      - 项目3 MCP 本地工具 Agent: part-06-projects/project03-mcp-local-agent.md
+      - 项目4 企业知识库 Agent: part-06-projects/project04-knowledge-agent.md
+      - 项目5 代码 Review Agent: part-06-projects/project05-code-review-agent.md
+      - 项目6 自动办公 Agent: part-06-projects/project06-office-agent.md
+      - 项目7 股票研究 Agent: part-06-projects/project07-stock-research-agent.md
+      - 项目8 LangGraph 研究工作流 Agent: part-06-projects/project08-langgraph-research-agent.md
+      - 项目9 Multi-Agent 软件开发团队: part-06-projects/project09-multi-agent-dev-team.md
+      - 项目10 企业级 Agent 平台: part-06-projects/project10-enterprise-agent-platform.md
   - 第七篇 高级主题:
       - 导读: part-07-advanced/index.md
       - 第32章 Multi-Agent 原理: part-07-advanced/ch32-multi-agent-principles.md
@@ -114,10 +113,12 @@ nav:
       - 第36章 Agent 架构设计: part-07-advanced/ch36-architecture.md
       - 第37章 从 Demo 到产品: part-07-advanced/ch37-demo-to-product.md
       - 第38章 技术选型: part-07-advanced/ch38-selection-guide.md
+  - 后记: afterword.md
   - 独立示例: examples/index.md
-  - 全书索引: book-index.md
+  - 课后练习参考答案: exercise-answers.md
   - 术语表: glossary.md
   - 参考资料: references.md
-  - 质量路线图: QUALITY_ROADMAP.md
-  - 最终验收状态: final-acceptance.md
-  - 项目状态: project-status.md
+  - 全书索引: book-index.md
+  - 企业培训配套资源:
+      - 培训入口: training/index.md
+      - 幻灯片说明: training/slides.md

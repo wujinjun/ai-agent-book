@@ -1,0 +1,12 @@
+%% id: project2-parallel-tool-plan
+%% title: 天气 Agent 多工具并行计划
+%% alt: Planner 生成天气计算与告警调用，只读天气和计算可并行，外部告警等待结果与人工审批
+flowchart TB
+    Request[用户任务] --> Planner[ToolCall Planner]
+    Planner --> Weather[天气查询]
+    Planner --> Calc[安全计算器]
+    Weather --> Join[Observation 汇总]
+    Calc --> Join
+    Join --> Alert{是否需要外部告警}
+    Alert -->|否| Answer[最终回答]
+    Alert -->|是| Approval[绑定 call_id 的人工审批] --> Send[告警工具]

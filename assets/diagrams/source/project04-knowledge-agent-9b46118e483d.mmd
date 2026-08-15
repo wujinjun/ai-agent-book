@@ -1,0 +1,14 @@
+%% id: project4-textbook-query-pipeline
+%% title: 企业知识库查询与拒答链路
+%% alt: 主体查询先做租户和 ACL 过滤，再进行稀疏稠密检索、融合重排和证据充分性判断，最后生成带引用回答或拒答
+flowchart TB
+    Query["Principal + Query"] --> ACL["Tenant / ACL"]
+    ACL --> Sparse["Sparse"]
+    ACL --> Dense["Dense"]
+    Sparse --> Fuse["Fusion"]
+    Dense --> Fuse
+    Fuse --> Rerank["Reranker"]
+    Rerank --> Enough{"证据充分?"}
+    Enough -->|否| Refuse["证据不足，拒答"]
+    Enough -->|是| Generate["Answer from Context"]
+    Generate --> Validate["Citation Validation"]

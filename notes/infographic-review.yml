@@ -1,5 +1,5 @@
 schema_version: 1
-updated_at: 2026-08-13
+updated_at: 2026-08-15
 acceptance:
   technical_facts: required
   editable_semantic_text: required
@@ -18,6 +18,28 @@ current_release_review:
   html_review: pass
   pdf_review: pass_after_print_path_and_font_fix
   epub_review: pass_publication_audit
+current_remediation:
+  date: 2026-08-15
+  status: in_progress
+  engineering_diagrams: 254
+  engineering_ratio_gt_10: 0
+  engineering_ratio_gt_6: 0
+  split_infographics:
+    - generation-control-infographic
+    - vector-index-migration-infographic
+    - multimodal-evidence-infographic
+    - project08-research-workflow-infographic
+    - project09-multi-agent-dev-infographic
+    - agent-security-trust-boundary-infographic
+    - framework-selection-map-infographic
+    - agent-data-storage-infographic
+    - tool-permission-execution-infographic
+  publication_infographics_in_use: 57
+  contact_sheets: {engineering: 13, infographics: 5}
+  notes: >-
+    九张高密度纵向信息图已各拆为 A/B 两张非破坏性 SVG/PNG 资产，正文改用拆分版并增加独立图题。
+    第25章存储 A/B 图和第26章部署图已由装饰性 3D/等距样式重绘为平面技术图；原图保留用于历史兼容。
+    HTML、PDF 与 EPUB 将在本轮内容冻结后统一重建并复验。
 pilots:
   - id: llm-product-agent-system-infographic
     priority: A

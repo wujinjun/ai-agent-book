@@ -1,0 +1,7 @@
+flowchart LR
+    Problem[真实问题与边界] --> Baseline[可测试基线]
+    Baseline --> Integrate[接入模型与工具]
+    Integrate --> Evaluate[评估与故障注入]
+    Evaluate --> Observe[Trace 与人工复盘]
+    Observe --> Simplify[修正或简化架构]
+    Simplify --> Problem

@@ -1,0 +1,10 @@
+%% id: project3-textbook-path-security
+%% title: MCP 文件读取的路径安全检查
+%% alt: 逻辑相对路径与授权根目录组合并解析，只有最终路径仍位于根目录且满足类型大小策略才允许读取
+flowchart LR
+    Input["relative path"] --> Join["allowed_root / path"]
+    Join --> Resolve["resolve symlink and .."]
+    Resolve --> Inside{"仍在授权根目录?"}
+    Inside -->|否| Deny["拒绝 + 安全错误"]
+    Inside -->|是| Rules["类型 / 大小 / 编码"]
+    Rules --> Read["只读内容"]

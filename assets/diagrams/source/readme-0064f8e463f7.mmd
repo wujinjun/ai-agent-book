@@ -1,0 +1,10 @@
+%% id: project2-weather-tool-validation-loop
+%% title: 天气 Agent 参数校验与重试闭环
+%% alt: 用户请求经 Runtime 和参数 Schema 进入天气服务，瞬时错误在预算内重试并返回来源与尝试次数
+flowchart TB
+    User --> Runtime --> Schema{"参数有效？"}
+    Schema -->|否| Repair["有限修复"]
+    Schema -->|是| Weather["WeatherService"]
+    Weather --> Retry{"瞬时错误？"}
+    Retry -->|是且预算内| Weather
+    Retry -->|否| Result["来源 + attempts"]

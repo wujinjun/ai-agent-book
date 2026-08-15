@@ -15,7 +15,7 @@
 %% id: project2-weather-tool-validation-loop
 %% title: 天气 Agent 参数校验与重试闭环
 %% alt: 用户请求经 Runtime 和参数 Schema 进入天气服务，瞬时错误在预算内重试并返回来源与尝试次数
-flowchart LR
+flowchart TB
     User --> Runtime --> Schema{"参数有效？"}
     Schema -->|否| Repair["有限修复"]
     Schema -->|是| Weather["WeatherService"]
@@ -30,7 +30,7 @@ flowchart LR
 %% id: project2-parallel-tool-plan
 %% title: 天气 Agent 多工具并行计划
 %% alt: Planner 生成天气计算与告警调用，只读天气和计算可并行，外部告警等待结果与人工审批
-flowchart LR
+flowchart TB
     Request[用户任务] --> Planner[ToolCall Planner]
     Planner --> Weather[天气查询]
     Planner --> Calc[安全计算器]

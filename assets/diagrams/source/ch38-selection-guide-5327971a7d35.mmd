@@ -1,0 +1,12 @@
+%% id: framework-selection-evidence-funnel
+%% title: 框架选型证据漏斗
+%% alt: 所有候选先经过硬约束过滤，再做官方文档与本地版本核查，对证据不足且接近者执行同一Spike，最后加权评价并形成可回滚ADR
+flowchart TB
+    Candidates["候选框架集合"] --> Hard{"满足硬约束?"}
+    Hard -->|否| Eliminate["淘汰并记录原因"]
+    Hard -->|是| Verify["官方文档 + 本地安装版本核查"]
+    Verify --> Evidence["标记证据等级与不确定性"]
+    Evidence --> Shortlist["最多两个接近候选"]
+    Shortlist --> Spike["同一垂直切片 Spike"]
+    Spike --> Score["加权评价 + 敏感性分析"]
+    Score --> ADR["ADR：决策、风险、回滚、复审日期"]

@@ -1,0 +1,12 @@
+%% id: project1-textbook-stream-state
+%% title: 最小流式响应状态机
+%% alt: 请求进入 Streaming，随后只能进入 Completed、Failed 或 Cancelled，任何截断连接都不能当作正常完成
+stateDiagram-v2
+    [*] --> Accepted
+    Accepted --> Streaming
+    Streaming --> Completed: complete + usage known/unknown
+    Streaming --> Failed: provider or protocol error
+    Streaming --> Cancelled: caller cancelled
+    Completed --> [*]
+    Failed --> [*]
+    Cancelled --> [*]

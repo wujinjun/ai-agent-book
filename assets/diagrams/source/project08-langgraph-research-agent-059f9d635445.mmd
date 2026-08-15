@@ -1,0 +1,13 @@
+%% id: project8-textbook-interrupt-sequence
+%% title: Checkpoint 与人工批准恢复时序
+%% alt: 图在审批节点保存 State 并中断，人工决定通过同一 thread_id 恢复，恢复前重新校验证据哈希和预算
+sequenceDiagram
+    participant G as Research Graph
+    participant C as Checkpointer
+    participant H as Human
+    G->>C: save state for thread_id
+    G-->>H: interrupt with topic and evidence summary
+    H-->>G: Command(resume=decision), same thread_id
+    G->>C: load checkpoint
+    G->>G: revalidate evidence digest, policy, budget
+    G-->>H: report or cancellation

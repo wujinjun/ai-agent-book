@@ -1,0 +1,11 @@
+%% id: project10-textbook-authorization-gate
+%% title: 多租户对象授权门
+%% alt: Bearer Token 经身份验证得到租户用户角色，请求对象从数据库加载后检查租户所有权和动作权限，通过后才执行
+flowchart LR
+    Token["Bearer Token"] --> Verify["IdentityVerifier"]
+    Verify --> Principal["tenant_id + user_id + role"]
+    Request["object_id + action"] --> Load["Load object from DB"]
+    Principal --> Authorize{"tenant match + role policy"}
+    Load --> Authorize
+    Authorize -->|否| Deny["403 + audit"]
+    Authorize -->|是| Execute["perform action"]

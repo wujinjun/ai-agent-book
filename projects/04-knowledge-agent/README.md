@@ -15,11 +15,18 @@
 %% id: project4-knowledge-rag-pipeline
 %% title: 企业知识库摄取与查询管线
 %% alt: PDF Office Markdown 经解析切分索引后，查询经过租户权限过滤检索重排生成带页码引用的回答
-flowchart LR
-    Files["PDF / Office / Markdown"] --> Parse --> Chunk --> Index
-    Query --> ACL["Tenant / ACL Filter"] --> Retrieve --> Rerank
+flowchart TB
+    subgraph Ingest["离线摄取"]
+        Files["PDF / Office / Markdown"] --> Parse["受限解析"]
+        Parse --> Chunk["位置化 Chunk"] --> Index["版本化索引"]
+    end
+    subgraph Online["在线查询"]
+        Query["Principal + Query"] --> ACL["Tenant / ACL Filter"]
+        ACL --> Retrieve["混合检索"] --> Rerank
+        Rerank --> Answer["Grounded Answer"]
+        Answer --> Citation["document + page + score"]
+    end
     Index --> Retrieve
-    Rerank --> Answer["Grounded Answer"] --> Citation["document + page + score"]
 ```
 
 实现文档导入、切分、Embedding 接口、检索、重排、引用和评估。 离线模式使用确定性 Mock，使无 API Key 也能运行和测试；在线服务通过适配器替换，领域结果保持稳定 Schema。
@@ -28,7 +35,7 @@ flowchart LR
 %% id: project4-versioned-ingestion-architecture
 %% title: 知识库版本化摄取架构
 %% alt: 原始文档存储后由受限解析器生成带位置 Chunk，Embedding Worker 写候选 pgvector 索引并评估切换
-flowchart LR
+flowchart TB
     Upload[受限文件上传] --> Raw[原始文件 hash 与 ACL]
     Raw --> Parser[PDF Office Markdown Parser]
     Parser --> Chunk[位置化 Chunk 与版本]

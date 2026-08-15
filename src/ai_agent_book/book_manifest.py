@@ -65,11 +65,28 @@ def load_book_entries(config_path: Path) -> list[BookEntry]:
 
 
 def load_publication_entries(config_path: Path) -> list[BookEntry]:
-    """Return book navigation with all ten project READMEs inserted after Part VI."""
+    """Return the canonical publication order without duplicating project content.
+
+    Newer editions contain ten reader-facing project chapters in ``docs``.
+    Older repository layouts only had project README files, so those remain a
+    compatibility fallback when the ten textbook chapters are absent.
+    """
 
     config_path = config_path.resolve()
     root = config_path.parent
     book_entries = load_book_entries(config_path)
+    textbook_projects = [
+        entry
+        for entry in book_entries
+        if entry.path.match("docs/part-06-projects/project*.md")
+    ]
+    if len(textbook_projects) == 10:
+        return book_entries
+    if textbook_projects:
+        raise ValueError(
+            f"expected 10 textbook project chapters, found {len(textbook_projects)}"
+        )
+
     project_entries: list[BookEntry] = []
     for readme in sorted((root / "projects").glob("[0-9][0-9]-*/README.md")):
         relative = readme.relative_to(root)

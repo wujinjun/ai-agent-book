@@ -6,7 +6,7 @@
 %% id: training-learning-evidence-loop
 %% title: 企业培训学习与证据闭环
 %% alt: 课前诊断经过概念讲授、受控演示、学员实验、证据提交和评分；未达标则补练，达标进入综合项目与复盘
-flowchart LR
+flowchart TB
     A[课前诊断] --> B[概念讲授]
     B --> C[受控演示]
     C --> D[学员实验]

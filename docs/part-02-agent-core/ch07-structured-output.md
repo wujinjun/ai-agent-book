@@ -6,6 +6,8 @@
 
 自然语言适合人读，不适合作为稳定程序协议。本章学习 JSON Schema、Pydantic 校验、有限重试、部分解析与错误语义。前置知识为 Python 类型注解和第 4、6 章。
 
+本章把 [JSON Schema 2020-12](../references.md#ref-jsonschema2020)、[JSON 语法规范 RFC 8259](../references.md#ref-rfc8259)与 [Pydantic 数据模型](../references.md#ref-pydantic-models)分层使用：前两者定义交换与 Schema 约束，Pydantic 负责 Python 进程内验证；三者都不能代替业务规则。
+
 结构化输出的价值不只是“让模型返回 JSON”，而是建立从业务契约到可靠消费的验证流水线。主图依次展示 Schema 建模、三层校验、错误分类、有限重试、流式预览与最终提交。
 
 ![业务需求映射为 JSON Schema 或 Pydantic 契约，模型候选依次通过语法 Schema 和业务校验，按错误类型有限重试并在完整验收后提交](../assets/infographics/png/structured-output-validation-infographic-2x.png)
@@ -116,15 +118,15 @@ Schema 版本不是装饰字段。生产者升级前要判断旧消费者是否�
 
 幂等键至少包含输入哈希、Schema 版本和抽取策略版本。同一文档用新 Schema 重跑应生成新结果版本，而不是错误命中旧缓存；同一版本的网络重试则应复用同一幂等键，避免重复提交。
 
-## 常见误区、调试方法与工程实践
+## 结构化输出的调试原则
 
 误区：可解析 JSON 等于合法对象；自动补默认值总是安全；失败就无限重试。调试应区分语法错误、Schema 错误、业务错误和证据缺失，统计各字段失败率。Schema 演进需兼容策略，消费者不得假设新增字段永远存在。
 
-## 安全注意事项
+## 安全边界概览
 
 限制字符串长度和集合大小，防止超大输出；拒绝未知字段或明确处理；反序列化后仍需鉴权；不要执行模型生成的代码、路径或 SQL。
 
-## 总结、练习、面试与延伸阅读
+## 从候选对象到业务提交
 
 ### 从语法正确到业务可用
 
@@ -134,8 +136,12 @@ Schema 版本不是装饰字段。生产者升级前要判断旧消费者是否�
 %% id: structured-output-four-validation-layers
 %% title: 结构化输出四层验证边界
 %% alt: 展示 JSON 语法、Schema、领域不变量和外部数据库权限四层递进验证
-flowchart LR
-    Bytes --> JSON["JSON syntax"] --> Schema["Schema/Pydantic"] --> Domain["Domain invariants"] --> External["Database/permission"] --> Accepted
+flowchart TB
+    Bytes["模型输出字节"] --> JSON["1 JSON 语法<br/>能否解析"]
+    JSON --> Schema["2 Schema / Pydantic<br/>字段与类型"]
+    Schema --> Domain["3 领域不变量<br/>跨字段规则"]
+    Domain --> External["4 外部状态<br/>数据库 / 权限"]
+    External --> Accepted["可接受业务对象"]
 ```
 
 这一分层决定错误处理。JSON 少一个括号可以尝试一次格式修复；金额为负应把明确的验证错误反馈给模型；客户不存在不能通过“请重新猜一个 ID”修复，而应返回业务拒绝。将所有失败统一成一次模型重试，会增加成本并隐藏真正的数据问题。
@@ -221,14 +227,45 @@ Schema 演进要考虑生产者和消费者不同步。新增可选字段通常�
 
 Structured Output 把概率文本接到类型边界，但不提供真实性。练习：实现发票抽取模型、三类失败测试与有限重试；面试问题：JSON mode 与 JSON Schema 有什么差异？何时允许部分解析？延伸阅读：JSON Schema 规范与 Pydantic 当前文档。
 
-### 练习参考答案
+## 本章总结
 
-1. **发票抽取模型。** 使用 `ConfigDict(strict=True, extra="forbid")`；金额用十进制定点类型而非二进制浮点；币种使用受控枚举；发票日期与到期日由模型字段表达，`due_date >= invoice_date` 由领域校验器表达。供应商 ID 必须查询当前租户的供应商目录。
-2. **三类失败测试。** 语法层输入缺少闭合括号，断言 Parser 返回可修复错误；Schema 层输入缺字段或错误枚举，断言最多调用 Provider 两次；业务层使用不存在的供应商 ID，断言不再次调用模型并返回稳定的 `unknown_supplier`。
-3. **部分解析。** UI 可显示带 `draft` 标记的字段，但不得写入账务、调用支付 Tool 或生成审批令牌。连接完成后必须重新解析完整对象并执行整体校验，不能把多个字段级“局部通过”拼成正式对象。
-4. **面试题：JSON mode 与 JSON Schema。** JSON mode 主要提高语法上可解析 JSON 的概率；Schema 还约束字段、类型、枚举和必填项。两者都不能证明事实正确、调用者有权访问，或外部资源仍处于同一版本。
+Structured Output 把模型的自然语言候选接入类型系统，但可靠提交仍需要语法、Schema、领域不变量、外部事实和权限五类边界。只有模型能够依据明确反馈修复的错误才应进入有限重试；资源不存在、权限不足和业务拒绝必须由权威系统处理。部分对象只能作为界面草稿，不能触发工具或事务。下一章将在这个类型边界之上加入工具选择和受控执行循环。
 
-本章代码目录为 [`examples/structured_extractor/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/structured_extractor)，使用 Pydantic 2.11.7 提供严格 Schema、Provider 端口、确定性 Fake、最多三次的有限修复、敏感输入门禁和不泄漏内部 ValidationError 的稳定公共错误。
+## 课后练习
+
+### 编码题
+
+1. 设计一个严格的发票抽取模型：禁止额外字段，金额使用十进制定点类型，币种使用受控枚举，并把日期先后关系放入领域校验器。
+
+输入包含合法发票、额外字段、浮点金额和日期倒置；输出为类型化结果；检查标准是只有业务合法对象可进入提交层。
+
+### 故障实验
+
+2. 分别构造 JSON 语法错误、Schema 错误和外部供应商 ID 不存在三类失败，规定每类错误是否允许模型重试以及调用次数上限。
+
+### 设计题
+
+3. 为流式抽取界面设计 `draft → parsed → validated → committed` 状态转换，并说明连接中断时如何废弃草稿。
+4. 为 Schema v1 到 v2 设计一次“并行读、单版本写”的兼容迁移。
+
+### 概念题
+
+解释“结构可解析”“字段类型正确”“领域关系合法”和“外部事实存在”为什么是四个不同门禁。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. JSON mode 与 JSON Schema 有什么区别？
+2. Pydantic 校验成功为什么不代表事实正确？
+3. 哪些 ValidationError 值得反馈给模型，哪些必须直接停止？
+4. 为什么新增枚举值也可能破坏旧消费者？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 JSON Schema Draft 2020-12、RFC 8259 和 Pydantic 当前文档。本章代码目录为 [`examples/structured_extractor/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/structured_extractor)，使用 Pydantic 2.11.7 提供严格 Schema、Provider 端口、确定性 Fake、有限修复、敏感输入门禁和不泄漏内部 `ValidationError` 的稳定公共错误。
 
 ## 本章引用
 <!-- chapter-citations:start -->

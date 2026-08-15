@@ -1,0 +1,11 @@
+%% id: project6-textbook-data-minimization
+%% title: 办公数据最小化与保留
+%% alt: 原始邮件在 Provider 边界过滤为任务字段，草稿按短期保留，审计只保留摘要和业务标识，超期后分别删除
+flowchart LR
+    Raw["原始邮件 / 日历"] --> Filter["时间窗 + 所需字段"]
+    Filter --> Context["临时任务上下文"]
+    Context --> Draft["短期草稿"]
+    Draft --> Audit["digest + actor + target + result ID"]
+    Context --> Expire1["任务结束清理"]
+    Draft --> Expire2["按政策删除"]
+    Audit --> Archive["受控审计保留"]

@@ -6,6 +6,8 @@
 
 Agent 是模型、状态、动作、观察与控制循环的组合。本章学习 ReAct、Routing、Handoff、Workflow、自主程度、终止和失败恢复。前置知识为第 8 章。
 
+ReAct 提供了“推理—行动—观察”交替的代表性范式（参见 [ReAct 论文](../references.md#ref-yao2022)），MRKL 则展示了模块化神经与符号系统的另一种组织方式（参见 [MRKL Systems](../references.md#ref-karpas2022)）。本章 Runtime 是对这些思想的工程抽象，不绑定某篇论文的提示格式。
+
 ## 核心概念与架构图
 
 Agent Runtime 是受控状态机，而不是模型无限生成文本的循环。下图先给出最小状态转换，再逐步展开自主范围、转交和恢复机制。
@@ -166,7 +168,7 @@ assert policy.evaluate(
 %% id: research-runtime-layers-and-checkpoints
 %% title: 研究 Agent Runtime 的分层与 Checkpoint
 %% alt: 命令进入运行时，经上下文构建、模型决策、策略校验、工具执行和验收，每个安全边界保存事件与Checkpoint
-flowchart LR
+flowchart TB
     API["任务 API"] --> Load["加载状态 + 版本"]
     Load --> Context["Context Builder"]
     Context --> Model["Model Gateway"]
@@ -269,7 +271,7 @@ Agent 失败经常被笼统归为“模型不稳定”，但多数问题可以�
 
 安全上把自主程度视为权限参数；默认只读；升级权限需审批；终止器与预算器不能由模型关闭。
 
-## 总结、练习、面试与延伸阅读
+## Runtime 控制面的深化设计
 
 ### State、Observation 与 Action 的类型边界
 
@@ -310,17 +312,46 @@ Checkpoint 应写在安全边界，例如只读检索完成后或外部写操作
 
 测试采用确定性 Fake Model 驱动多个决策序列：一次成功、工具失败后恢复、重复无进展、审批中断、预算耗尽和 checkpoint 恢复。E2E 再用少量真实模型验证语言变化不会破坏控制边界。
 
-Agent Runtime 把不确定决策限制在可观察状态机内。练习：为 Tool Loop 加时间预算、取消和 checkpoint；面试问题：Workflow 与 Agent 如何选择？什么状态必须持久化？延伸阅读：Yao et al., *ReAct*。
+## 本章总结
 
-本章对应代码目录：基础 Tool Loop 位于 `src/ai_agent_book/tool_runtime.py`；[`examples/minimal_agent/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/minimal_agent) 提供独立的 ModelGateway、ToolRegistry、StateStore、Policy、Tracer 与 TerminationPolicy，并覆盖取消、预算、无进展、权限拒绝和崩溃恢复。
+Agent Runtime 把模型的不确定决策限制在可观察、可终止、可恢复的状态机内。State、Observation 和 Action 必须具有不同语义；完成状态由验收器判断，而不是由模型宣告。Workflow 与 Agent 不是二选一：常见生产架构由确定性 Workflow 管理审批和副作用，只把路径难枚举但结果可验证的局部决策交给 Agent。下一章将在这个运行时之上加入任务依赖、局部重规划和独立评审。
 
-## 练习参考答案
+## 课后练习
 
-1. 为 Tool Loop 增加时间预算时，记录单调时钟的截止时间，并在模型调用和工具调用前计算剩余时间；取消信号由 Runtime 传播。Checkpoint 保存业务截止时间而不是进程内计时器。恢复后重新计算剩余预算，不能重置为完整时长。
-2. Workflow 适合路径可枚举、风险高、审计要求强的业务；Agent 适合路径难枚举但结果可验证、失败可恢复的局部决策。常见方案是确定性 Workflow 控制审批和副作用，模型只在检索、分类或候选生成节点内决策。
-3. 必须持久化目标、状态版本、当前节点、结构化事实、已完成动作 ID、未决副作用、剩余预算、审批引用、错误分类和产物引用。模型客户端、数据库连接和临时协程不属于可恢复状态。
-4. 无进展不能只比较回答文本是否相同。可以规范化“工具名 + 参数 + 相关状态摘要”，并检查连续步骤是否新增证据、完成子目标或改变验收结果。达到阈值后停止、重规划或交给人工。
-5. 恢复测试先运行到安全 Checkpoint，再模拟进程终止并创建新的 Runtime 实例。断言其加载相同版本，已确认动作不会重放，未确认写操作先做状态核实，并最终产生与不中断路径一致的可验证结果。
+### 编码题
+
+1. 为 Tool Loop 增加单调时钟 Deadline、取消传播和 Checkpoint，说明恢复后如何计算剩余时间。
+
+输入为可注入 Clock 与重启前状态；输出为恢复后的剩余预算；检查标准是系统时钟回拨不会延长运行。
+
+### 设计题
+
+2. 分别为审批流程和开放式资料检索选择 Workflow 或 Agent，并解释路径可枚举性、风险和验收条件。
+3. 设计一个可恢复 `RunState`，列出必须持久化的字段和不能写入 State 的进程内对象。
+
+### 故障实验
+
+4. 设计无进展指纹，综合工具名、规范化参数、状态摘要和新增证据判断是否停止。
+5. 模拟进程在安全 Checkpoint 后崩溃，验证已确认副作用不重放、未确认写操作先核实状态。
+
+### 概念题
+
+比较消息历史、Run State、Checkpoint 与长期 Memory 的作用域和生命周期。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. LLM 与 Agent Runtime 的职责边界是什么？
+2. Workflow 与 Autonomous Agent 应如何选择？
+3. 为什么消息历史不能替代结构化 State？
+4. 最大步数为什么不足以构成完整终止策略？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 Yao 等人的 *ReAct*、MRKL、Reflexion 与 OpenTelemetry 规范。本章对应代码目录：基础 Tool Loop 位于 `src/ai_agent_book/tool_runtime.py`；[`examples/minimal_agent/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/minimal_agent) 提供独立的 ModelGateway、ToolRegistry、StateStore、Policy、Tracer 与 TerminationPolicy，并覆盖取消、预算、无进展、权限拒绝和崩溃恢复。
 
 ## 本章引用
 <!-- chapter-citations:start -->

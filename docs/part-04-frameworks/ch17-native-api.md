@@ -7,6 +7,10 @@
 
 学习目标是掌握核心控制流，并通过最小示例解释每一层为何存在。
 
+本章沿用 [ReAct](../references.md#ref-yao2022)的行动—观察思想，但把 Schema、错误语义和 Trace 分别落实到 [JSON Schema](../references.md#ref-jsonschema2020)、[Problem Details](../references.md#ref-rfc9457)与 [OpenTelemetry](../references.md#ref-otel-spec)等独立契约中，避免把整个 Runtime 锁进单一模型接口。
+
+**能力主线位置：** Prompt、Tool、Agent、RAG 与 Memory 原语 → 本章收束为框架无关 Runtime → 第18—22章用同一边界比较不同框架实现。
+
 先用原生 API 构建 Agent 的目的，是看清哪些职责属于稳定 Runtime 内核，哪些只是模型或框架适配。主图把请求、适配器、确定性控制内核、外部端口和测试证据分成五层。
 
 ![任务请求经模型适配器和结构化动作解析进入确定性 Agent Runtime 内核，模型检索工具存储通过端口连接真实适配器或 Fake，并由事件日志和测试验证](../assets/infographics/png/native-agent-runtime-infographic-2x.png)
@@ -23,7 +27,7 @@
 %% id: native-agent-runtime-layers
 %% title: 原生 Agent Runtime 分层
 %% alt: 请求依次经过类型化状态、模型网关、决策校验和工具注册表并由策略与追踪横向约束
-flowchart LR
+flowchart TB
     Request --> State["Typed State"] --> Model["Model Gateway"] --> Decision["Validated Decision"] --> Tools["Tool Registry"] --> State
     Decision --> Final["Final Output"]
 ```
@@ -52,12 +56,16 @@ flowchart TD
 %% id: native-runtime-evolution-path
 %% title: 从脚本到轻量 Runtime 的演进路径
 %% alt: 单工具脚本随着第二供应商持久状态审批和并发需求逐步抽象网关存储策略与事件协议
-flowchart LR
-    Script[单模型单工具脚本] --> Loop[受测 Tool Loop]
-    Loop --> Gateway[第二供应商出现后抽象 Model Gateway]
-    Gateway --> Store[需要恢复后抽象 Checkpoint Store]
-    Store --> Policy[加入预算权限和审批]
-    Policy --> Events[稳定 stream resume 事件协议]
+flowchart TB
+    Script["单模型、单工具脚本"] --> Loop["受测 Tool Loop"]
+    Loop --> Trigger1{"出现第二供应商?"}
+    Trigger1 -->|是| Gateway["抽象 Model Gateway"]
+    Trigger1 -->|否| Trigger2
+    Gateway --> Trigger2{"需要暂停与恢复?"}
+    Trigger2 -->|是| Store["抽象 Checkpoint Store"]
+    Trigger2 -->|否| Policy
+    Store --> Policy["预算、权限与审批策略"]
+    Policy --> Events["稳定的 stream / resume 事件协议"]
 ```
 
 抽象由已经出现的变化驱动，而不是预先模仿大型框架。这样每个接口都能对应真实测试和替代实现。
@@ -110,20 +118,12 @@ class FakeModelGateway:
 %% title: 原生 Runtime 的端口与适配器
 %% alt: Runtime核心依赖模型网关工具注册表状态存储策略追踪和终止端口，各端口可由Fake或生产适配器替换
 flowchart TB
-    Core["Agent Runtime Core"] --> MG["ModelGateway"]
-    Core --> TR["ToolRegistry"]
-    Core --> SS["StateStore"]
-    Core --> PO["Policy"]
-    Core --> TE["TerminationPolicy"]
-    Core --> Trace["Tracer"]
-    MG --> FakeM["Fake Model"]
-    MG --> Vendor["Vendor SDK Adapter"]
-    TR --> FakeT["Fake Tools"]
-    TR --> Domain["Domain Adapters"]
-    SS --> Memory["In-memory"]
-    SS --> SQL["PostgreSQL"]
-    Trace --> Noop["No-op"]
-    Trace --> OTel["OpenTelemetry"]
+    Core["Agent Runtime Core"] --> Decision["决策与动作端口<br/>ModelGateway / ToolRegistry / Policy"]
+    Core --> State["状态与终止端口<br/>StateStore / Tracer / TerminationPolicy"]
+    Decision --> DecisionFake["测试适配器<br/>Fake Model / Fake Tools"]
+    Decision --> DecisionProd["生产适配器<br/>Vendor SDK / Domain Tools"]
+    State --> StateFake["测试适配器<br/>In-memory / No-op"]
+    State --> StateProd["生产适配器<br/>PostgreSQL / OpenTelemetry"]
 ```
 
 端口不是为了追求“抽象层越多越好”。只有当测试需要 Fake 或出现第二个适配器时，接口才有明确价值。对只有一个稳定存储的十行脚本，先写简单函数即可；对需要恢复、审计和多模型路由的服务，端口能避免供应商类型扩散。
@@ -247,7 +247,7 @@ class RetryBudget:
 ## 误区、调试、实践与安全
 不要把供应商响应对象泄漏到所有业务层，不要重试权限错误，不要把对话历史当数据库。Trace 按 run/turn/tool 分层。模型密钥只在 Gateway；高风险动作在 Policy 层阻断。
 
-## 总结、练习、面试与阅读
+## 原生 Runtime 的深化设计
 
 ### 为什么先不用框架
 
@@ -302,15 +302,49 @@ Fake Model 接收消息并按脚本返回工具调用或最终输出。测试覆
 ### 常见误区、调试与安全
 
 常见误区是把原生 API 等同于无架构脚本、把所有异常统一重试、把消息列表当状态数据库。调试从完整事件顺序、结束原因与实际请求开始。安全上 Model Client 不拥有工具凭证，Policy 位于工具执行前，输出进入下游前验证，Trace 不存 secret。
-总结：原生 API 提供最高控制力，也要求团队承担运行时工程。练习：为轻量 Runtime 增加 checkpoint、取消和流事件；面试：何时应从原生 API 迁移框架？抽象 Model Gateway 的代价是什么？如何证明一次重试不会重复副作用？延伸阅读：目标模型的 Tool Calling、Streaming 与 Usage 官方文档。基础代码目录为 `src/ai_agent_book/`，可恢复独立工程位于 [`examples/minimal_agent/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/minimal_agent)。
+## 本章总结
 
-## 练习参考答案
+原生 API 提供最高控制力，也要求团队直接承担消息协议、状态、工具、错误、终止、恢复、Usage 与 Trace 的运行时工程。先实现受测的最小循环，才能判断框架究竟减少了哪些工作。内部协议应隔离供应商对象，重试应有唯一归属，写副作用需要幂等和状态核实。下一章将以 OpenAI Agents SDK 为例，观察框架如何提供 Runner、Tool、Handoff、Guardrail 和 Trace 原语。
 
-1. Checkpoint 保存内部 `RunState`、版本、下一节点、已完成 action ID 和预算；取消信号在模型与工具调用前检查并传播；流事件使用稳定内部类型，不直接暴露供应商流块。测试重启后已确认写动作不重放。
-2. 当团队需要框架已经稳定提供的持久图、人工中断、事件流或大量集成，且维护自建 Runtime 成本更高时可以迁移。先做一个垂直切片和回滚 ADR，不因示例代码更短就全量改写。
-3. `ModelGateway` 的代价是需要维护共同能力子集、错误映射、Usage 与流式事件转换；某些供应商特性可能需要扩展接口。收益是业务层与 SDK 解耦、可使用 Fake，并能集中控制重试与密钥。
-4. 证明重试不重复副作用需要业务幂等键、唯一约束、外部操作 ID 或 outbox，以及并发与超时注入测试。仅说 HTTP PUT“通常幂等”不够，必须验证目标服务的实际语义。
-5. 重试归属表应明确每类失败的唯一拥有层、最大尝试、截止时间和预算。关闭其他层的隐式重试，并在 Trace 中用父 attempt ID 验证一次用户请求产生的实际调用数。
+## 课后练习
+
+### 编码题
+
+1. 为轻量 Runtime 增加 Checkpoint、取消传播和稳定流事件，验证重启后已确认写动作不会重放。
+
+输入为崩溃前事件与持久状态；输出为恢复后的事件序列；检查标准是 Sequence 单调且副作用恰好收敛一次。
+
+### 设计题
+
+2. 为原生 Runtime 迁移框架写一份 ADR，包含触发条件、垂直切片、状态所有权和回滚路径。
+3. 设计 `ModelGateway` 的共同能力、错误映射、Usage 和流式事件接口，并标出供应商专有扩展。
+
+### 故障实验
+
+4. 使用幂等键、唯一约束和超时注入证明一次重试不会重复副作用。
+
+### 设计题
+
+5. 建立重试归属表，确保 SDK、网关、Runtime 和队列不会叠加重试。
+
+### 概念题
+
+说明先写原生 Runtime 能揭示哪些框架通常隐藏的状态、错误、终止和权限责任。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. 原生 API 何时比框架更合适？
+2. 何时应该从自建 Runtime 迁移到框架？
+3. 抽象 Model Gateway 会带来什么收益和代价？
+4. 如何证明恢复不会重复外部写操作？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括目标模型的 Tool Calling、Streaming 与 Usage 官方文档。基础代码目录为 `src/ai_agent_book/`，可恢复独立工程位于 [`examples/minimal_agent/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/minimal_agent)。
 
 ## 本章引用
 <!-- chapter-citations:start -->

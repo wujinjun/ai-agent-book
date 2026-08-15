@@ -1,0 +1,17 @@
+%% id: project10-textbook-run-sequence
+%% title: Run 提交、领取和完成时序
+%% alt: API 先提交数据库 queued Run 再发送 Redis 唤醒，Worker 用租户和租约短事务领取，事务外执行，最后仅相同 Worker 可提交结果
+sequenceDiagram
+    participant U as User
+    participant A as API
+    participant D as PostgreSQL
+    participant Q as Redis
+    participant W as Worker
+    U->>A: create run
+    A->>D: commit queued run + versions
+    A->>Q: push run_id wakeup
+    W->>D: claim with worker_id + lease
+    D-->>W: committed running state
+    W->>W: execute outside DB transaction
+    W->>D: heartbeat / cancellation checkpoint
+    W->>D: commit result if lease still owned

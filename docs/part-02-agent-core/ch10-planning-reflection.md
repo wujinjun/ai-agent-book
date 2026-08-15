@@ -6,6 +6,8 @@
 
 复杂任务需要分解，但规划本身也消耗时间并可能制造错误。本章学习 Plan-and-Execute、依赖、重规划、Reviewer 与成本控制。前置知识为第 9 章。
 
+计划与自我修订的研究线索可分别参见 [Plan-and-Solve](../references.md#ref-wang2023plan)、[Tree of Thoughts](../references.md#ref-yao2023tot)与 [Self-Refine](../references.md#ref-madaan2023)。它们展示的是可用机制，不意味着对任意任务增加 Planner 或 Reviewer 都能提高净收益。
+
 研究型 Agent 的价值来自显式任务依赖、证据交付和独立验收，而不是增加更多角色对话。主图把 Planner、Executor 与 Reviewer 放在共享状态周围，并把局部返工、整体重规划和预算终止同时画出。
 
 ![用户目标被 Planner 分解为带依赖预算和验收条件的任务，Executor 提交证据与产物，Reviewer 决定通过局部返工或整体重规划](../assets/infographics/png/planning-review-replan-infographic-2x.png)
@@ -39,7 +41,7 @@ flowchart LR
 %% id: planning-task-dependency-dag
 %% title: 研究任务依赖 DAG
 %% alt: 问题定义后搜索与资料读取形成证据表，冲突核对完成后才能撰写和评审报告
-flowchart LR
+flowchart TB
     Define[定义问题与验收] --> SearchA[搜索来源 A]
     Define --> SearchB[搜索来源 B]
     SearchA --> ReadA[读取与摘录]
@@ -285,7 +287,7 @@ flowchart TD
 
 规划文字不授予权限；每个动作仍单独鉴权。外部来源可能注入新目标，重规划器不得修改系统目标和预算。Reviewer 不接触执行密钥。
 
-## 总结、练习、面试与延伸阅读
+## 可执行计划与评审的深化设计
 
 ### 可执行计划的数据结构
 
@@ -326,17 +328,48 @@ Self-Critique 与 Executor 共享模型和上下文，容易重复相同盲点�
 
 安全上，Planner 只提议动作，Policy 仍逐步鉴权；Executor 使用最小权限；Reviewer 不持有写工具；计划与证据进入审计记录但敏感正文脱敏。测试注入搜索失败、互相冲突来源、循环依赖和恶意网页，验证系统能停止而不是继续自治。
 
-规划的价值是暴露依赖和验收，不是增加思考文本。练习：为技术调研设计带引用验收的计划并注入一次搜索失败；面试问题：何时规划过度？Reviewer 如何避免只复述 Executor？延伸阅读：Plan-and-Execute、Reflexion 与任务图相关论文。
+## 本章总结
 
-本章对应代码目录：`projects/08-research-workflow/`。
+规划的价值是暴露依赖、预算和验收条件，而不是增加一段看起来很完整的思考文本。计划必须是可验证任务图；失败后只重规划失败节点及其下游；Reviewer 按独立 Rubric 和证据逐项判断。规划、返修和反思本身也需要预算与无进展终止条件，否则它们会成为新的死循环。下一篇将把运行时从应用内部能力扩展到 MCP 工具协议、RAG 外部知识和跨会话 Memory。
 
-## 练习参考答案
+## 课后练习
 
-1. 技术调研计划可以包含：定义范围与验收、并行搜索官方来源、读取并提取证据、构建主张—证据表、核对冲突、撰写和评审。给搜索节点注入暂时失败时，只重试或替换该节点；已经验证的另一来源不应重跑。
-2. 规划过度的信号包括：计划 Token 超过执行 Token、节点大多只是措辞转换、频繁重规划但没有新增证据、任务本可一次确定性调用完成，以及 Reviewer 只修改表达而不改善验收指标。应通过对照实验决定是否移除相关阶段。
-3. Reviewer 避免复述 Executor 的方法是使用独立 rubric、原始证据和最小上下文，逐条输出结构化判断；能用代码验证的条目交给代码。使用不同模型可以降低部分相关错误，但不能替代清晰契约和人工抽检。
-4. DAG 校验至少覆盖重复 ID、未知依赖、自环、多节点循环、多个并行根节点和稳定拓扑顺序。运行时还要验证工具 allowlist、节点预算总和、最大节点数与产物 Schema。
-5. 对照实验必须固定任务集、工具、数据快照与总预算，同时报告成功、成本、延迟和重试。不能让带 Reviewer 的方案获得额外无限预算，否则比较无法回答“新增控制阶段是否值得”。
+### 设计题
+
+1. 为技术调研设计包含范围定义、并行搜索、证据提取、冲突核对、写作和评审的任务 DAG，并为每个节点写出验收条件。
+
+### 故障实验
+
+2. 给一个搜索节点注入暂时失败，说明哪些节点应重试、失效或保留，以及计划差异如何记录。
+
+### 设计题
+
+3. 为 Reviewer 设计结构化 Rubric，使其逐项引用证据，而不是重写 Executor 的完整产物。
+
+### 编码题
+
+4. 为 DAG 校验器补充重复 ID、未知依赖、自环、多节点循环和多个并行根节点测试设计。
+
+输入为合法与非法 DAG Fixture；输出为稳定错误码；检查标准是非法计划不会进入 Executor。
+
+### 概念题
+
+5. 设计 ReAct、Plan-and-Execute 和加入 Reviewer 三种策略的对照实验，固定任务集、工具、数据和总预算。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. 什么情况下 Planning 的成本大于收益？
+2. 局部重规划为什么不能重新解释原始目标？
+3. Reviewer 如何减少与 Executor 的相关错误？
+4. 为什么使用不同模型不能替代清晰的验收契约？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 Plan-and-Solve、Tree of Thoughts、Self-Refine、Reflexion 与任务图相关研究。本章对应代码目录为 `projects/08-research-workflow/`。
 
 ## 本章引用
 <!-- chapter-citations:start -->

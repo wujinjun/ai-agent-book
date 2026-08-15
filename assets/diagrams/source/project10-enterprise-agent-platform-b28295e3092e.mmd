@@ -1,0 +1,14 @@
+%% id: project10-textbook-failure-lifecycle
+%% title: 企业 Run 失败、DLQ 与重放状态机
+%% alt: 运行失败在预算内重试，耗尽后进入 DLQ，管理员审批绑定当前内容后重新排队，内容变化或审批过期则拒绝
+stateDiagram-v2
+    queued --> running: lease claimed
+    running --> succeeded
+    running --> retryable: transient failure
+    retryable --> queued: attempts remain
+    retryable --> dead_letter: budget exhausted
+    dead_letter --> replay_pending: admin issues bound approval
+    replay_pending --> queued: valid unused approval
+    replay_pending --> dead_letter: stale or expired approval
+    queued --> cancelled: user cancels
+    running --> cancelled: worker reaches checkpoint

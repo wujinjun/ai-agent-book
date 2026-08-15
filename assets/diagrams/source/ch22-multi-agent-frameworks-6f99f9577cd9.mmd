@@ -1,0 +1,10 @@
+%% id: crewai-flow-crew-boundary
+%% title: CrewAI Flow 与 Crew 的组合边界
+%% alt: 确定性 Flow 在受控节点调用探索型 Research Crew，并校验其 Artifact 后推进下一状态
+flowchart TB
+    Event["业务事件"] --> Flow["CrewAI Flow<br/>确定性状态与终止权"]
+    Flow --> ResearchCrew["Crew<br/>受限探索子任务"]
+    ResearchCrew --> Artifact["结构化 Artifact"]
+    Artifact --> Validate{"Schema、证据与策略通过?"}
+    Validate -->|否| Stop["拒绝或返工"]
+    Validate -->|是| Next["推进下一状态"]

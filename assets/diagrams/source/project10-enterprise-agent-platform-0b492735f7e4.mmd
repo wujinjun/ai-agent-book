@@ -1,0 +1,13 @@
+%% id: project10-textbook-capability-gate
+%% title: 平台能力调用门禁
+%% alt: Agent 候选能力调用依次经过版本允许列表租户策略用户权限参数预算和审批，调用结果写 Trace 和审计
+flowchart TB
+    Call["Candidate Tool / MCP / RAG Call"] --> Version{"Agent 版本允许?"}
+    Version --> Tenant{"租户策略允许?"}
+    Tenant --> Role{"主体获得动作权限?"}
+    Role --> Schema{"参数通过 Schema?"}
+    Schema --> Budget{"预算仍可用?"}
+    Budget --> Approval{"需要人工审批?"}
+    Approval -->|需要且已批准| Invoke["Invoke Adapter"]
+    Approval -->|无需审批| Invoke
+    Invoke --> Trace["Trace + 结果分类"]

@@ -1,0 +1,12 @@
+%% id: openai-sdk-production-guardrails
+%% title: SDK Agent 生产控制层
+%% alt: 输入经过 Guardrail 后由 Runner 在回合预算内调用工具或 MCP 并对结构化输出做业务校验和审计
+flowchart TB
+    Input[请求] --> InputGuard[输入 Guardrail]
+    InputGuard --> Runner[Runner + max turns]
+    Runner --> Tools[函数工具或 MCP]
+    Tools --> ToolPolicy[工具权限与审批]
+    Runner --> Output[Structured Output]
+    Output --> OutputGuard[输出 Guardrail]
+    OutputGuard --> Business[业务校验与授权]
+    Trace[脱敏 Trace] -.记录.-> Runner

@@ -582,6 +582,435 @@ def _build_portrait_infographic(
     )
 
 
+def _flat_svg_root(
+    *, title: str, description: str, body: list[str], view_box: str = "0 0 1024 1536"
+) -> str:
+    """Return a publication-safe, fully vector infographic document."""
+    _, _, width, height = (int(value) for value in view_box.split())
+    return "\n".join(
+        [
+            (
+                f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
+                f'viewBox="{view_box}" role="img" aria-labelledby="title desc">'
+            ),
+            f'<title id="title">{html.escape(title)}</title>',
+            f'<desc id="desc">{html.escape(description)}</desc>',
+            (
+                '<defs><marker id="flat-arrow" markerWidth="10" markerHeight="10" '
+                'refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" '
+                'fill="#486985"/></marker></defs>'
+            ),
+            '<rect x="0" y="0" width="1024" height="1536" fill="#F7F4EE"/>',
+            '<g font-family="Noto Sans SC, Source Han Sans SC, sans-serif">',
+            *body,
+            "</g></svg>",
+            "",
+        ]
+    )
+
+
+def _flat_box_svg(
+    x: int,
+    y: int,
+    width: int,
+    height: int,
+    *,
+    fill: str,
+    stroke: str,
+    radius: int = 18,
+    stroke_width: int = 3,
+) -> str:
+    return (
+        f'<rect x="{x}" y="{y}" width="{width}" height="{height}" rx="{radius}" '
+        f'fill="{fill}" stroke="{stroke}" stroke-width="{stroke_width}"/>'
+    )
+
+
+def _flat_arrow_svg(points: list[tuple[int, int]], *, dashed: bool = False) -> str:
+    coords = " ".join(f"{x},{y}" for x, y in points)
+    dash = ' stroke-dasharray="10 8"' if dashed else ""
+    return (
+        f'<polyline points="{coords}" fill="none" stroke="#486985" stroke-width="4" '
+        f'stroke-linecap="round" stroke-linejoin="round" marker-end="url(#flat-arrow)"{dash}/>'
+    )
+
+
+def _draw_flat_box(
+    draw: ImageDraw.ImageDraw,
+    box: tuple[int, int, int, int],
+    *,
+    fill: str,
+    stroke: str,
+    radius: int = 18,
+    stroke_width: int = 3,
+) -> None:
+    draw.rounded_rectangle(
+        box,
+        radius=radius,
+        fill=fill,
+        outline=stroke,
+        width=stroke_width,
+    )
+
+
+def _publish_flat_infographic(
+    *,
+    semantic_id: str,
+    title: str,
+    description: str,
+    source_path: str,
+    source_name: str,
+    body: list[str],
+    image: Image.Image,
+    split_at: int | None = None,
+) -> InfographicRecord:
+    """Publish a deterministic flat SVG/PNG pair and optional A/B reading panels."""
+    svg_text = _flat_svg_root(title=title, description=description, body=body)
+    svg_output = PUBLISH_ROOT / f"svg/{semantic_id}.svg"
+    png_output = PUBLISH_ROOT / f"png/{semantic_id}-2x.png"
+    svg_source = ASSET_ROOT / f"svg/{semantic_id}.svg"
+    png_source = ASSET_ROOT / f"png/{semantic_id}-2x.png"
+    for directory in {svg_output.parent, png_output.parent, svg_source.parent, png_source.parent}:
+        directory.mkdir(parents=True, exist_ok=True)
+    for output in (svg_output, svg_source):
+        output.write_text(svg_text, encoding="utf-8")
+    published = image.resize((1536, 2304), resample=Image.Resampling.LANCZOS)
+    for output in (png_output, png_source):
+        published.save(output, optimize=True)
+
+    if split_at is not None:
+        panels = (
+            ("a", "0 0 1024 720", (0, 0, 1024, 720)),
+            ("b", f"0 {split_at} 1024 {1536 - split_at}", (0, split_at, 1024, 1536)),
+        )
+        for suffix, view_box, crop_box in panels:
+            panel_svg = _flat_svg_root(
+                title=title,
+                description=description,
+                body=body,
+                view_box=view_box,
+            )
+            for root in (PUBLISH_ROOT, ASSET_ROOT):
+                (root / f"svg/{semantic_id}-{suffix}.svg").write_text(panel_svg, encoding="utf-8")
+            panel = image.crop(crop_box).resize(
+                ((crop_box[2] - crop_box[0]) * 3 // 2, (crop_box[3] - crop_box[1]) * 3 // 2),
+                resample=Image.Resampling.LANCZOS,
+            )
+            for root in (PUBLISH_ROOT, ASSET_ROOT):
+                panel.save(root / f"png/{semantic_id}-{suffix}-2x.png", optimize=True)
+
+    source = ASSET_ROOT / f"source/{source_name}"
+    return InfographicRecord(
+        semantic_id=semantic_id,
+        source_path=source_path,
+        source_asset=source.relative_to(ROOT).as_posix(),
+        svg_asset=svg_output.relative_to(ROOT).as_posix(),
+        png_asset=png_output.relative_to(ROOT).as_posix(),
+        width=1024,
+        height=1536,
+        source_sha256=_sha256(source),
+        svg_sha256=_sha256(svg_output),
+        png_sha256=_sha256(png_output),
+        generated_with="deterministic flat SVG/Pillow technical illustration",
+        generated_at="2026-08-15",
+    )
+
+
+def build_flat_storage_infographic() -> InfographicRecord:
+    """Build a flat storage map whose encoding does not depend on perspective or colour."""
+    semantic_id = "agent-data-storage-infographic"
+    title = "Agent 数据：按语义选择权威存储"
+    description = (
+        "业务事实、工件、向量、缓存和审计按一致性与生命周期映射到不同存储；"
+        "下半部分说明权威状态、可重建派生数据以及迁移、删除和恢复闭环。"
+    )
+    body: list[str] = [_svg_text(Label(512, 48, title, 29, "bold", "#24476B"))]
+    image = Image.new("RGB", (1024, 1536), "#F7F4EE")
+    draw = ImageDraw.Draw(image)
+    labels = [Label(512, 48, title, 29, "bold", "#24476B")]
+
+    data_items = (
+        ("租户 / 用户", "#E8EEF4", "#24476B"),
+        ("会话 / Run", "#E8F3F0", "#178F82"),
+        ("Artifact", "#F7EBDD", "#D9782D"),
+        ("Memory", "#EFE9F6", "#7656A5"),
+        ("Vector", "#E8F3F0", "#178F82"),
+        ("Cache", "#F7E5E4", "#B94A48"),
+        ("Audit", "#F7EBDD", "#D9782D"),
+        ("Checkpoint", "#E8EEF4", "#24476B"),
+    )
+    for index, (text_value, fill, stroke) in enumerate(data_items):
+        row, col = divmod(index, 4)
+        x, y = 48 + col * 242, 112 + row * 112
+        body.append(_flat_box_svg(x, y, 202, 76, fill=fill, stroke=stroke))
+        body.append(_svg_text(Label(x + 101, y + 45, text_value, 17, "bold", stroke)))
+        _draw_flat_box(draw, (x, y, x + 202, y + 76), fill=fill, stroke=stroke)
+        labels.append(Label(x + 101, y + 45, text_value, 17, "bold", stroke))
+
+    storage_cards = (
+        (55, "PostgreSQL", "权威事务与幂等记录", "#24476B", "#E8EEF4"),
+        (247, "对象存储", "文档与大工件", "#D9782D", "#F7EBDD"),
+        (439, "向量索引", "Chunk 与元数据", "#178F82", "#E8F3F0"),
+        (631, "Redis", "缓存与唤醒信号", "#B94A48", "#F7E5E4"),
+        (823, "审计存储", "追加写治理证据", "#7656A5", "#EFE9F6"),
+    )
+    body.append(_flat_arrow_svg([(512, 318), (512, 352)]))
+    _draw_arrow(draw, [(512, 318), (512, 352)])
+    for x, name, purpose, stroke, fill in storage_cards:
+        body.append(_flat_box_svg(x, 372, 162, 196, fill=fill, stroke=stroke))
+        body.extend(
+            (
+                _svg_text(Label(x + 81, 423, name, 18, "bold", stroke)),
+                _svg_text(
+                    Label(x + 81, 493, purpose.replace("与", "与\n", 1), 14, "regular", "#203449")
+                ),
+            )
+        )
+        _draw_flat_box(draw, (x, 372, x + 162, 568), fill=fill, stroke=stroke)
+        labels.extend(
+            (
+                Label(x + 81, 423, name, 18, "bold", stroke),
+                Label(x + 81, 493, purpose.replace("与", "与\n", 1), 14, "regular", "#203449"),
+            )
+        )
+    body.append(
+        _svg_text(
+            Label(
+                512, 650, "映射依据：一致性 · 查询方式 · 保留周期 · 可重建性", 18, "bold", "#486985"
+            )
+        )
+    )
+    labels.append(
+        Label(512, 650, "映射依据：一致性 · 查询方式 · 保留周期 · 可重建性", 18, "bold", "#486985")
+    )
+
+    body.append(_svg_text(Label(512, 754, "权威状态与派生数据分离", 25, "bold", "#24476B")))
+    labels.append(Label(512, 754, "权威状态与派生数据分离", 25, "bold", "#24476B"))
+    lower_cards = (
+        (72, "权威事实", "租户 · Run · 权限\n幂等键 · Outbox", "#24476B", "#E8EEF4"),
+        (377, "可重建派生", "缓存 · 向量 · 摘要\n索引 · 唤醒信号", "#178F82", "#E8F3F0"),
+        (682, "治理证据", "审计 · 版本 · 删除\n备份 · 恢复记录", "#7656A5", "#EFE9F6"),
+    )
+    for x, name, purpose, stroke, fill in lower_cards:
+        body.append(_flat_box_svg(x, 812, 270, 190, fill=fill, stroke=stroke))
+        body.extend(
+            (
+                _svg_text(Label(x + 135, 865, name, 20, "bold", stroke)),
+                _svg_text(Label(x + 135, 943, purpose, 16, "regular", "#203449")),
+            )
+        )
+        _draw_flat_box(draw, (x, 812, x + 270, 1002), fill=fill, stroke=stroke)
+        labels.extend(
+            (
+                Label(x + 135, 865, name, 20, "bold", stroke),
+                Label(x + 135, 943, purpose, 16, "regular", "#203449"),
+            )
+        )
+    lifecycle = ("版本迁移", "Checkpoint", "租户删除", "备份", "恢复演练", "回滚核验")
+    for index, text_value in enumerate(lifecycle):
+        x = 42 + index * 164
+        body.append(
+            _flat_box_svg(
+                x, 1110, 142, 74, fill="#FFFDF8", stroke="#486985", radius=12, stroke_width=2
+            )
+        )
+        body.append(_svg_text(Label(x + 71, 1154, text_value, 15, "bold", "#24476B")))
+        _draw_flat_box(
+            draw,
+            (x, 1110, x + 142, 1184),
+            fill="#FFFDF8",
+            stroke="#486985",
+            radius=12,
+            stroke_width=2,
+        )
+        labels.append(Label(x + 71, 1154, text_value, 15, "bold", "#24476B"))
+        if index < len(lifecycle) - 1:
+            points = [(x + 142, 1147), (x + 160, 1147)]
+            body.append(_flat_arrow_svg(points))
+            _draw_arrow(draw, points, width=3)
+    body.append(_flat_box_svg(96, 1300, 832, 120, fill="#F7E5E4", stroke="#B94A48"))
+    body.append(_svg_text(Label(512, 1344, "恢复验收门", 20, "bold", "#B94A48")))
+    body.append(
+        _svg_text(
+            Label(
+                512,
+                1388,
+                "缓存可重建 · Schema 可回滚 · 删除已传播 · 备份可恢复",
+                17,
+                "bold",
+                "#203449",
+            )
+        )
+    )
+    _draw_flat_box(draw, (96, 1300, 928, 1420), fill="#F7E5E4", stroke="#B94A48")
+    labels.extend(
+        (
+            Label(512, 1344, "恢复验收门", 20, "bold", "#B94A48"),
+            Label(
+                512,
+                1388,
+                "缓存可重建 · Schema 可回滚 · 删除已传播 · 备份可恢复",
+                17,
+                "bold",
+                "#203449",
+            ),
+        )
+    )
+    for label in labels:
+        draw.multiline_text(
+            (label.x, label.y),
+            label.text,
+            font=_font(label.size, label.weight),
+            fill=label.color,
+            anchor="mm",
+            align="center",
+            spacing=max(3, label.size // 4),
+        )
+    return _publish_flat_infographic(
+        semantic_id=semantic_id,
+        title=title,
+        description=description,
+        source_path="docs/part-05-engineering/ch25-storage.md",
+        source_name="agent-data-storage-infographic-base.png",
+        body=body,
+        image=image,
+        split_at=700,
+    )
+
+
+def build_flat_deployment_infographic() -> InfographicRecord:
+    """Build a flat, top-to-bottom release and deployment map."""
+    semantic_id = "agent-deployment-release-infographic"
+    title = "Agent 部署：镜像、拓扑、健康与可恢复发布"
+    description = (
+        "固定依赖经过多阶段构建形成最小非 root 镜像，配置与 Secret 从外部注入；"
+        "运行拓扑、健康语义和发布门禁共同形成可恢复交付链。"
+    )
+    body: list[str] = [_svg_text(Label(512, 48, title, 29, "bold", "#24476B"))]
+    image = Image.new("RGB", (1024, 1536), "#F7F4EE")
+    draw = ImageDraw.Draw(image)
+    labels = [Label(512, 48, title, 29, "bold", "#24476B")]
+
+    def add_box(
+        x: int, y: int, w: int, h: int, heading: str, detail: str, stroke: str, fill: str
+    ) -> None:
+        body.append(_flat_box_svg(x, y, w, h, fill=fill, stroke=stroke))
+        body.extend(
+            (
+                _svg_text(Label(x + w // 2, y + 45, heading, 19, "bold", stroke)),
+                _svg_text(Label(x + w // 2, y + h - 42, detail, 15, "regular", "#203449")),
+            )
+        )
+        _draw_flat_box(draw, (x, y, x + w, y + h), fill=fill, stroke=stroke)
+        labels.extend(
+            (
+                Label(x + w // 2, y + 45, heading, 19, "bold", stroke),
+                Label(x + w // 2, y + h - 42, detail, 15, "regular", "#203449"),
+            )
+        )
+
+    body.append(_svg_text(Label(86, 122, "01  可复现镜像", 18, "bold", "#24476B")))
+    labels.append(Label(86, 122, "01  可复现镜像", 18, "bold", "#24476B"))
+    add_box(62, 158, 250, 148, "依赖构建", "锁文件 · wheel · 扫描", "#24476B", "#E8EEF4")
+    add_box(387, 158, 250, 148, "最小运行镜像", "只复制运行产物", "#178F82", "#E8F3F0")
+    add_box(712, 158, 250, 148, "运行身份", "固定 digest · 非 root", "#7656A5", "#EFE9F6")
+    for points in ([(312, 232), (380, 232)], [(637, 232), (705, 232)]):
+        body.append(_flat_arrow_svg(points))
+        _draw_arrow(draw, points)
+
+    body.append(_svg_text(Label(86, 386, "02  配置与环境", 18, "bold", "#24476B")))
+    labels.append(Label(86, 386, "02  配置与环境", 18, "bold", "#24476B"))
+    add_box(62, 420, 280, 154, "Secret 外置", "密钥不进入镜像层", "#B94A48", "#F7E5E4")
+    add_box(
+        372, 420, 590, 154, "同一镜像，不同配置", "开发  →  测试  →  生产", "#178F82", "#E8F3F0"
+    )
+    points = [(342, 497), (365, 497)]
+    body.append(_flat_arrow_svg(points))
+    _draw_arrow(draw, points)
+
+    body.append(_svg_text(Label(86, 655, "03  运行拓扑", 18, "bold", "#24476B")))
+    labels.append(Label(86, 655, "03  运行拓扑", 18, "bold", "#24476B"))
+    add_box(62, 694, 180, 124, "Ingress", "TLS · 限流", "#24476B", "#E8EEF4")
+    add_box(298, 694, 250, 124, "API × N", "同步与流式入口", "#178F82", "#E8F3F0")
+    add_box(604, 694, 358, 124, "Worker × N", "长任务 · 租约 · 排空", "#7656A5", "#EFE9F6")
+    for points in ([(242, 756), (291, 756)], [(548, 756), (597, 756)]):
+        body.append(_flat_arrow_svg(points))
+        _draw_arrow(draw, points)
+    add_box(
+        132,
+        872,
+        760,
+        132,
+        "有状态基础设施",
+        "PostgreSQL · Redis · Object Store · Model Gateway",
+        "#D9782D",
+        "#F7EBDD",
+    )
+    for x in (423, 783):
+        points = [(x, 818), (x, 865)]
+        body.append(_flat_arrow_svg(points))
+        _draw_arrow(draw, points)
+
+    body.append(_svg_text(Label(86, 1080, "04  健康与发布", 18, "bold", "#24476B")))
+    labels.append(Label(86, 1080, "04  健康与发布", 18, "bold", "#24476B"))
+    health_cards = (
+        (62, "Startup", "初始化完成", "#178F82", "#E8F3F0"),
+        (252, "Liveness", "进程可响应", "#24476B", "#E8EEF4"),
+        (442, "Readiness", "必要依赖可用", "#D9782D", "#F7EBDD"),
+        (632, "滚动发布", "连接排空", "#7656A5", "#EFE9F6"),
+        (822, "失败恢复", "降级与回滚", "#B94A48", "#F7E5E4"),
+    )
+    for x, heading, detail, stroke, fill in health_cards:
+        add_box(x, 1114, 140, 130, heading, detail, stroke, fill)
+    body.append(_flat_box_svg(62, 1325, 900, 118, fill="#FFFDF8", stroke="#486985"))
+    body.append(_svg_text(Label(512, 1366, "05  发布证据与门禁", 20, "bold", "#24476B")))
+    body.append(
+        _svg_text(
+            Label(
+                512,
+                1408,
+                "Test · Scan · SBOM · Migration · Backup · Trace · Rollback",
+                16,
+                "bold",
+                "#486985",
+            )
+        )
+    )
+    _draw_flat_box(draw, (62, 1325, 962, 1443), fill="#FFFDF8", stroke="#486985")
+    labels.extend(
+        (
+            Label(512, 1366, "05  发布证据与门禁", 20, "bold", "#24476B"),
+            Label(
+                512,
+                1408,
+                "Test · Scan · SBOM · Migration · Backup · Trace · Rollback",
+                16,
+                "bold",
+                "#486985",
+            ),
+        )
+    )
+    for label in labels:
+        draw.multiline_text(
+            (label.x, label.y),
+            label.text,
+            font=_font(label.size, label.weight),
+            fill=label.color,
+            anchor="mm",
+            align="center",
+            spacing=max(3, label.size // 4),
+        )
+    return _publish_flat_infographic(
+        semantic_id=semantic_id,
+        title=title,
+        description=description,
+        source_path="docs/part-05-engineering/ch26-docker-deployment.md",
+        source_name="agent-deployment-release-infographic-base.png",
+        body=body,
+        image=image,
+    )
+
+
 def build_transformer_infographic() -> InfographicRecord:
     labels = [
         Label(512, 28, "Transformer：Attention 的信息路由", 27, "bold", "#24476B", 2),
@@ -1736,6 +2165,10 @@ def _b_specs() -> dict[str, PortraitSpec]:
 
 
 def build_b_infographic(semantic_id: str) -> InfographicRecord:
+    if semantic_id == "agent-data-storage-infographic":
+        return build_flat_storage_infographic()
+    if semantic_id == "agent-deployment-release-infographic":
+        return build_flat_deployment_infographic()
     spec = _b_specs()[semantic_id]
     return _build_portrait_infographic(
         semantic_id=spec.semantic_id,

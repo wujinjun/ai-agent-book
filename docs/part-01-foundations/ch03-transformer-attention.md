@@ -8,6 +8,8 @@
 
 前置知识为向量、Softmax 的直觉和第2章 Token 概念；本章核心示例只使用 Python 标准库。
 
+本章的数据流和术语以 [Transformer 原始论文](../references.md#ref-vaswani2017)为主；BERT 等编码器模型说明 Transformer 并不只服务于自回归生成，参见 [BERT](../references.md#ref-devlin2018)。后文对 Decoder-only 模型的讨论是工程侧重点，不是对整个 Transformer 家族的定义。
+
 下面的信息图把本章最容易混淆的概念放进一条完整路径：输入表示先投影为 Query、Key 与 Value，相关性分数在因果 Mask 约束下归一化，再按权重读取 Value；多头结果合并后进入残差、归一化与前馈层。图的最后同时标出 Decoder-only 的逐 Token 生成，以免把单层 Attention 和完整生成循环混为一谈。
 
 ![Transformer 中输入表示、Query Key Value、相关性与因果掩码、多头合并、前馈残差和逐 Token 解码的完整信息路由](../assets/infographics/png/transformer-attention-routing-infographic-2x.png)
@@ -87,7 +89,7 @@ flowchart LR
 %% id: decoder-only-prefill-decode-flow
 %% title: Decoder-only 模型的 Prefill 与 Decode 数据流
 %% alt: 提示 Token 先并行完成 Prefill 并建立 KV Cache，之后每轮 Decode 读取缓存生成一个 Token 并更新缓存
-flowchart LR
+flowchart TB
     Prompt["提示 Token 序列"] --> Prefill["Prefill<br/>并行处理全部输入"]
     Prefill --> Cache["KV Cache"]
     Cache --> Decode["Decode<br/>计算下一个 Token"]
@@ -178,7 +180,7 @@ Softmax 前把不可见位置设为负无穷是概念表达。低精度计算中
 %% id: attention-mask-composition
 %% title: 因果 Mask 与 Padding Mask 的组合
 %% alt: Query Key 分数矩阵同时应用只允许读取历史位置的因果掩码和排除批次填充位置的 Padding 掩码，之后才做稳定 Softmax
-flowchart LR
+flowchart TB
     Score[QK 相关性矩阵] --> Causal[因果 Mask：不可读未来]
     Padding[Batch 有效长度] --> Pad[Padding Mask：排除填充]
     Causal --> Combine[组合可见矩阵]
@@ -227,25 +229,44 @@ KV Cache 优化的是重复计算，不消除逐 Token 串行依赖，也不保�
 用 NumPy 实现稳定 Softmax、因果 Mask 和多头形状，并导出 SVG/PNG Heatmap。它是机制实验，不是训练
 模型，也不能从玩具权重推断真实 LLM 内部语义。
 
-### 练习参考答案与面试要点
+## 误区、安全与本章总结
 
-1. **因果 Mask。** 在 Softmax 前屏蔽 `key_position > query_position`；改变未来 Token 后，所有前缀
-   Query 的输出应不变。还需测试 Padding、全 Mask 与形状广播。
-2. **扩大上下文或 RAG。** 上下文适合任务所需且可承受的原始材料；RAG 适合外部、更新频繁且需引用
-   的知识。二者可组合，都不保证模型一定采用正确证据。
-3. **KV Cache。** 它复用历史 K/V、降低 Decode 重算；不能并行生成未来 Token、消除显存增长或提供
-   长期记忆。
-4. **Encoder/Decoder。** Encoder 可双向表示，常用于 Embedding/分类；Decoder-only 适合自回归生成；
-   具体任务还需比较质量、吞吐和部署约束。
+常见误区包括把 Attention 等同于人类注意、认为某个头必然对应一条语法规则、认为 Transformer 可以无限处理上下文，以及把“模型能读取文本”误解为“模型会服从文本”。特别是最后一点，不可信内容可能被模型错误当作指令，因此权限边界必须在模型之外。
 
-## 误区、安全、总结与练习
+Transformer 用 Attention 建立位置间的内容相关连接，以并行训练和可扩展性推动了 LLM；工程上还必须理解 Mask、KV Cache、Prefill/Decode、显存与解释边界，不能把一张权重图当成完整模型原因。下一章将从网络结构转向运行时生成，说明概率分布如何经过采样与停止条件形成输出。
 
-常见误区：Attention 等于人类注意；某个头必然对应某条语法规则；Transformer 可以无限处理上下文；模型能注意到文本就会遵守文本。特别是最后一点，不可信内容可能被模型错误当作指令，因此权限边界必须在模型之外。
+## 课后练习
 
-总结：Transformer 用 Attention 建立位置间的内容相关连接，以并行训练和可扩展性推动了 LLM；工程上
-还必须理解 Mask、KV Cache、Prefill/Decode、显存与解释边界，不能把一张权重图当成完整模型原因。
+### 编码题
 
-延伸阅读：Vaswani et al., *Attention Is All You Need*；Dao et al., *FlashAttention*。本章代码目录为 [`examples/attention_demo/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/attention_demo)，已用 Python 3.12 与 NumPy 2.5.1 验证张量形状、稳定 Softmax、因果 Mask、多头变形，并生成 SVG/PNG 热力图。图中的权重只用于机制教学，不构成因果解释。
+1. 在本章 Attention 示例中加入因果 Mask。输入为长度 4 的序列及一份只修改未来 Token 的对照序列；输出为两组前缀位置结果；检查标准是所有前缀 Query 的输出保持不变。
+
+### 设计题
+
+2. 对一份 200 页产品手册，比较“直接扩大上下文”和“RAG 检索”两种方案，给出质量、延迟、成本、引用和权限方面的选择依据。
+
+### 概念题
+
+3. 解释 KV Cache 复用了什么、没有复用什么，以及它为什么不能把自回归解码变成一次并行生成。
+4. 比较 Encoder、Encoder–Decoder 与 Decoder-only 在表示、生成和工程部署上的适用边界。
+
+### 故障实验
+
+将 Attention Mask 的一行误设为全屏蔽，记录 Softmax 输出中的异常，并说明生产实现应如何检测全 Mask、NaN 和形状广播错误。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. Query、Key 与 Value 分别承担什么职责？
+2. KV Cache 复用了什么，为什么不能消除逐 Token 解码的串行依赖？
+3. 为什么 Attention Heatmap 不能单独证明模型作出某个结论的原因？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 Vaswani 等人的 *Attention Is All You Need* 与 Dao 等人的 *FlashAttention*。本章代码目录为 [`examples/attention_demo/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/attention_demo)，已用 Python 3.12 与 NumPy 2.5.1 验证张量形状、稳定 Softmax、因果 Mask、多头变形，并生成 SVG/PNG 热力图。图中的权重只用于机制教学，不构成因果解释。
 
 ## 本章引用
 <!-- chapter-citations:start -->

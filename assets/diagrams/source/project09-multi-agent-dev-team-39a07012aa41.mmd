@@ -1,0 +1,14 @@
+%% id: project9-textbook-termination-gate
+%% title: Multi-Agent 硬终止门禁
+%% alt: 每次角色调用前检查时间消息和 Token 预算，更新后检查状态进展，只有测试和评审都通过才完成
+flowchart TD
+    Next["Next role"] --> Budget{"时间 / 消息 / Token 剩余?"}
+    Budget -->|否| StopBudget["stopped: budget exceeded"]
+    Budget -->|是| Act["role.act(state)"]
+    Act --> Ownership{"Schema 与字段所有权通过?"}
+    Ownership -->|否| StopInvalid["failed: invalid update"]
+    Ownership -->|是| Progress{"状态指纹新增?"}
+    Progress -->|否| StopLoop["stopped: no progress"]
+    Progress -->|是| Gate{"tests_passed AND review_approved?"}
+    Gate -->|是| Completed
+    Gate -->|否| Next

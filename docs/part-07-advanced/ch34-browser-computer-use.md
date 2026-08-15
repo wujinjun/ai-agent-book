@@ -7,6 +7,8 @@
 
 学习目标是掌握核心观察—动作循环，并实现一个需要审批的表单示例。前置知识为 Web、权限和第30章。
 
+浏览器与通用计算机操作的研究评测可分别参见 [WebArena](../references.md#ref-zhou2023webarena)和 [OSWorld](../references.md#ref-xie2024osworld)。基准成绩衡量特定环境中的任务完成，不会自动覆盖真实账号、动态页面、重复提交和高风险操作授权。
+
 Browser Agent 的关键不是“能点击”，而是每个动作后重新感知、验证和恢复。主图综合 DOM/可访问性树、截图、OCR、URL 与会话状态，并把语义定位、视觉降级、异常分支和安全边界分层展示。
 
 ![Browser Agent 综合 DOM 截图 OCR URL 会话状态定位目标，执行有限点击输入滚动下载上传动作后重新观测验证，并对页面变化遮挡超时重复提交登录过期进行恢复和安全治理](../assets/infographics/png/browser-agent-safety-infographic-2x.png)
@@ -72,7 +74,7 @@ stateDiagram-v2
 ## 误区、调试、实践与安全
 坐标点击脆弱；登录成功不代表有权执行所有操作；验证码不应绕过。凭证由浏览器/秘密系统持有，模型不读取明文；发送、购买、删除前展示具体对象并确认。
 
-## 总结、练习、面试与阅读
+## 浏览器执行与恢复的深化设计
 
 ### Observation：DOM、Screenshot 与 OCR
 
@@ -82,7 +84,7 @@ DOM 提供角色、名称、层级和可交互属性，适合稳定选择；Scre
 %% id: browser-multisource-observation
 %% title: DOM、Screenshot 与 OCR 观察融合
 %% alt: 页面同时产生 DOM 可访问树和 Screenshot，OCR 仅作为像素文本补充，融合观察经 Policy 后动作并复核
-flowchart LR
+flowchart TB
     Page --> DOM["DOM/accessibility tree"]
     Page --> Shot["Screenshot"] --> OCR
     DOM --> Observation
@@ -231,22 +233,41 @@ sequenceDiagram
 ### 常见误区、调试与安全
 
 常见误区：坐标稳定、登录即拥有授权、动作返回成功即完成、验证码可以自动处理。调试保存操作前后截图/DOM、选择器、URL 与事件，不保存凭证。页面诱导 Agent 上传文件或粘贴 Secret 时，Policy 拒绝。
-### 练习参考答案与面试要点
+## 本章总结
 
-1. **表单确认设计。** 参考答案应让批准绑定主体、Origin、业务对象、字段差异、Observation
-   Fingerprint、动作摘要与过期时间；执行携带业务幂等键，动作后查询服务端状态。
-2. **布局变化测试。** 同一个业务按钮分别改变 DOM 顺序、CSS 类与屏幕坐标。Role + Name 仍应
-   定位成功；若出现两个同名按钮必须返回歧义，不能默认点击第一个。
-3. **不确定超时。** 若提交后连接中断，先按业务键查询。查到记录则返回已有结果；查不到且接口
-   支持同键幂等时才重试；无法确定时进入人工核对。
-4. **面试要点。** DOM/Accessibility Tree 提供语义和结构，截图提供视觉可见性与 Canvas 信息，
-   OCR 是带置信度的补充。动作后再观察是因为驱动成功不等于业务成功；已有登录 Session 只证明
-   身份，不自动扩大本次任务授权。
+Browser Agent 需要把 DOM、截图、OCR 和应用状态组合成带来源的 Observation，再使用稳定定位器、前后条件和有限重试执行动作。网页变化、登录会话、下载、支付和提交表单都可能产生不可逆副作用，必须在业务事务边界实施审批和审计。下一章将扩展 Observation 的模态范围，讨论图像、音频、视频和复杂文档证据。
 
-总结：Browser/Computer Use 是观察—动作—再观察的受控闭环。它的工程质量由授权绑定、目标唯一性、
-业务幂等、结果验证和有限恢复共同决定，而不是由一次演示能否点击网页决定。延伸阅读包括 Web
-Accessibility、Playwright/WebDriver、安全浏览器自动化和 Human-in-the-Loop 资料。本章独立代码目录为
-[`examples/browser_safety_lab/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/browser_safety_lab)；项目 6、8 展示审批与长流程组合。
+## 课后练习
+
+### 设计题
+
+1. 为付款表单设计确认协议，让批准绑定主体、Origin、业务对象、字段差异、Observation Fingerprint、动作摘要和过期时间。
+
+### 编码题
+
+2. 在本地测试页中改变 DOM 顺序、CSS Class 和坐标，验证 Role + Name 定位仍成功；出现两个同名按钮时必须返回歧义而不是点击第一个。
+
+### 故障实验
+
+3. 模拟表单提交后连接中断。输入为可查询的业务幂等键；输出为已完成、可安全重试或未知状态；检查标准是未知状态不会盲目重复提交。
+
+### 概念题
+
+4. 比较 DOM/Accessibility Tree、Screenshot 与 OCR 的证据能力，并解释已有登录 Session 为什么不扩大本次任务授权。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. DOM、Accessibility Tree、Screenshot 与 OCR 如何互补？
+2. 表单提交后连接断开时为何不能立即重复点击？
+3. 已登录 Session 为什么不等于获得本次业务动作授权？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 WebArena、OSWorld、Web 可访问性语义、HTTP 幂等与 Agentic Security。项目6的审批外发与本章浏览器提交共享“内容绑定授权”原则。
 
 ## 本章引用
 <!-- chapter-citations:start -->

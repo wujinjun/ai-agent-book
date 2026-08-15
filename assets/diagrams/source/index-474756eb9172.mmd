@@ -1,0 +1,11 @@
+%% id: foundations-capability-dependencies
+%% title: LLM 基础能力依赖图
+%% alt: Token 与上下文进入 Transformer，生成机制产生文本，Embedding 支持语义检索并共同约束 Agent
+flowchart TB
+    Token["Token 与上下文"] --> Transformer["Transformer / Attention"]
+    Transformer --> Generation["生成与采样"]
+    Text["文本与文档"] --> Embedding["Embedding 表示"]
+    Embedding --> Retrieval["语义检索"]
+    Generation --> Boundary["模型能力边界"]
+    Retrieval --> Boundary
+    Boundary --> Agent["可受控的 Agent 输入"]

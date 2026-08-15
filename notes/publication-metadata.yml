@@ -139,5 +139,313 @@ glossary:
     category: 工作流
     aliases: [工作流]
     definition: 由显式节点、状态与转移规则约束的执行过程。
+  - term: LLM
+    category: 模型基础
+    aliases: [Large Language Model, 大语言模型]
+    definition: 在大规模语料上训练、能够基于上下文建模并生成语言序列的参数化模型；它本身不等同于聊天产品或 Agent。
+  - term: Tokenizer
+    category: 模型基础
+    aliases: [分词器]
+    definition: 在文本与 Token ID 序列之间进行编码和解码的组件，其词表与切分算法由具体模型决定。
+  - term: Context Window
+    category: 模型基础
+    aliases: [上下文窗口]
+    definition: 一次模型推理能够处理的输入与输出 Token 总量边界，不是跨会话自动保留的长期记忆。
+  - term: Logit
+    category: 模型基础
+    aliases: [未归一化分数]
+    definition: 模型在概率归一化前为候选 Token 给出的数值分数，经过 Softmax 后形成概率分布。
+  - term: Temperature
+    category: 模型基础
+    aliases: [温度]
+    definition: 调整候选 Token 概率分布尖锐程度的采样参数；它改变随机性，但不能替代事实校验。
+  - term: Top-p
+    category: 模型基础
+    aliases: [Nucleus Sampling, 核采样]
+    definition: 只从累计概率达到阈值 p 的最小候选集合中采样的解码策略。
+  - term: Top-k
+    category: 模型基础
+    aliases: []
+    definition: 只保留概率最高的 k 个候选 Token 参与采样的解码策略。
+  - term: KV Cache
+    category: 模型基础
+    aliases: [键值缓存]
+    definition: 自回归生成时复用历史 Token 注意力键和值的缓存，以减少重复计算并降低逐 Token 延迟。
+  - term: Pretraining
+    category: 模型基础
+    aliases: [预训练]
+    definition: 通过大规模数据与自监督目标学习通用表示和序列规律的训练阶段。
+  - term: SFT
+    category: 模型基础
+    aliases: [Supervised Fine-Tuning, 监督微调]
+    definition: 使用输入与期望输出样本继续训练模型，使其更稳定地遵循任务格式和指令。
+  - term: Alignment
+    category: 模型基础
+    aliases: [对齐]
+    definition: 通过数据、反馈训练与运行时策略，使模型行为更符合人类意图、安全约束和产品目标的过程。
+  - term: Decoder-only
+    category: 模型基础
+    aliases: [仅解码器架构]
+    definition: 使用因果注意力按序预测后续 Token 的 Transformer 架构，是现代生成式大语言模型的常见结构。
+  - term: JSON Schema
+    category: 工程
+    aliases: []
+    definition: 描述 JSON 数据类型、必填字段、取值约束和嵌套结构的机器可读规范。
+  - term: Pydantic
+    category: 工程
+    aliases: []
+    definition: 基于 Python 类型注解执行数据验证、序列化和 Schema 生成的库。
+  - term: Dependency Injection
+    category: 工程
+    aliases: [依赖注入]
+    definition: 由外部向组件提供依赖而非在组件内部创建依赖的设计方式，有利于测试、替换和权限隔离。
+  - term: Idempotency
+    category: 工程
+    aliases: [幂等性]
+    definition: 同一请求被重复执行时仍产生与执行一次等价的可观察结果，是工具重试和任务恢复的重要边界。
+  - term: Retry
+    category: 工程
+    aliases: [重试]
+    definition: 在明确的瞬时故障范围内再次执行操作的恢复策略，应同时限制次数、退避时间和可重试错误。
+  - term: Timeout
+    category: 工程
+    aliases: [超时]
+    definition: 为模型、工具、网络或任务执行设置的最长等待时间，用于阻止资源无限占用。
+  - term: Circuit Breaker
+    category: 工程
+    aliases: [熔断器]
+    definition: 当下游连续失败达到阈值时暂时拒绝调用，并在冷却后探测恢复的故障隔离机制。
+  - term: SSE
+    category: 工程
+    aliases: [Server-Sent Events]
+    definition: 服务器通过单向长连接持续向客户端推送事件的 HTTP 机制，常用于 Agent 流式响应与进度更新。
+  - term: WebSocket
+    category: 工程
+    aliases: []
+    definition: 在单一连接上支持客户端与服务器全双工消息传输的协议，适用于需要双向实时交互的 Agent 会话。
+  - term: Trace
+    category: 可观测性
+    aliases: [追踪]
+    definition: 一次端到端请求跨模型、工具、检索和服务边界的关联执行记录。
+  - term: Span
+    category: 可观测性
+    aliases: [追踪片段]
+    definition: Trace 中一个具有起止时间、属性、状态和父子关系的工作单元。
+  - term: SLI
+    category: 可观测性
+    aliases: [Service Level Indicator, 服务等级指标]
+    definition: 对可用性、延迟、正确率等服务行为的可测量指标。
+  - term: SLO
+    category: 可观测性
+    aliases: [Service Level Objective, 服务等级目标]
+    definition: 在指定时间窗口内对某项 SLI 设定的内部可靠性目标。
+  - term: SLA
+    category: 可观测性
+    aliases: [Service Level Agreement, 服务等级协议]
+    definition: 服务提供方与使用方约定的外部服务承诺，通常包含违约处理，不能与内部 SLO 混为一谈。
+  - term: Golden Dataset
+    category: 评估
+    aliases: [黄金数据集]
+    definition: 由代表性输入、期望行为、证据和评分标准组成的稳定评估集合，用于回归和版本比较。
+  - term: LLM-as-Judge
+    category: 评估
+    aliases: [模型裁判]
+    definition: 使用模型依据明确量表评判输出质量的方法，必须通过人工抽检、位置偏差测试和一致性分析校准。
+  - term: Faithfulness
+    category: 评估
+    aliases: [忠实度]
+    definition: 生成内容中的主张是否能够由给定证据支持的评估维度。
+  - term: Recall@K
+    category: 评估
+    aliases: [召回率@K]
+    definition: 前 K 个检索结果中覆盖相关文档或答案证据的比例。
+  - term: MRR
+    category: 评估
+    aliases: [Mean Reciprocal Rank, 平均倒数排名]
+    definition: 首个相关结果排名倒数的平均值，用于衡量相关结果是否靠前。
+  - term: Observation
+    category: Agent 机制
+    aliases: [观察]
+    definition: Agent 在一步执行后从工具、环境或用户获得并写回状态的可用信息。
+  - term: Action
+    category: Agent 机制
+    aliases: [动作]
+    definition: Agent 选择执行的下一步操作，例如调用工具、请求确认、移交或结束任务。
+  - term: State
+    category: Agent 机制
+    aliases: [状态]
+    definition: 工作流在当前时刻保存的任务事实、消息、工具结果、控制字段和恢复信息。
+  - term: ReAct
+    category: Agent 机制
+    aliases: [Reason and Act]
+    definition: 交替进行推理、动作和观察，使模型能够利用外部反馈逐步完成任务的 Agent 模式。
+  - term: Planning
+    category: Agent 机制
+    aliases: [规划]
+    definition: 在执行前或执行中形成目标、子任务、依赖和完成条件的过程。
+  - term: Reflection
+    category: Agent 机制
+    aliases: [反思]
+    definition: 根据执行结果与评价标准检查缺陷并提出修正的过程，不应被当作必然提升正确率的保证。
+  - term: Routing
+    category: Agent 机制
+    aliases: [路由]
+    definition: 根据请求特征、风险和能力边界选择模型、工具、工作流或处理者的控制决策。
+  - term: Termination Condition
+    category: Agent 机制
+    aliases: [终止条件]
+    definition: 判定 Agent 循环完成、失败、超预算或需要人工介入的显式规则。
+  - term: Tool
+    category: Agent 机制
+    aliases: [工具]
+    definition: 由宿主程序向模型暴露名称、说明和参数 Schema，并在受控边界内执行的外部能力。
+  - term: Tool Registry
+    category: Agent 机制
+    aliases: [工具注册表]
+    definition: 保存工具元数据、版本、权限、执行器和审计策略，并支持发现与路由的管理组件。
+  - term: MCP Client
+    category: 协议
+    aliases: [MCP 客户端]
+    definition: 在模型应用一侧连接 MCP Server、协商能力并调用工具或读取资源的协议参与方。
+  - term: MCP Server
+    category: 协议
+    aliases: [MCP 服务端]
+    definition: 通过 MCP 暴露工具、资源或提示并执行访问控制的服务端程序。
+  - term: MCP Resource
+    category: 协议
+    aliases: [MCP 资源, Resource]
+    definition: 由 URI 标识、可被客户端读取的上下文数据对象，与具有副作用的 Tool 不同。
+  - term: MCP Prompt
+    category: 协议
+    aliases: [MCP 提示, Prompt]
+    definition: MCP Server 提供的可发现提示模板或消息集合，用于复用特定任务的上下文组织方式。
+  - term: MCP Transport
+    category: 协议
+    aliases: [MCP 传输, Transport]
+    definition: MCP Client 与 Server 交换协议消息的通道，例如本地 stdio 或规范定义的远程传输。
+  - term: Chunking
+    category: 检索
+    aliases: [文本切分, 分块]
+    definition: 将文档拆成适合索引与检索的片段，同时保留语义完整性、来源位置和元数据的过程。
+  - term: Retriever
+    category: 检索
+    aliases: [检索器]
+    definition: 根据查询从索引或数据源返回候选证据及其分数、标识和元数据的组件。
+  - term: Sparse Retrieval
+    category: 检索
+    aliases: [稀疏检索]
+    definition: 基于词项、倒排索引和稀疏权重进行匹配的检索方法，BM25 是常见实现。
+  - term: Dense Retrieval
+    category: 检索
+    aliases: [稠密检索]
+    definition: 将查询和文档映射为稠密向量，再通过近邻搜索查找语义相关候选的方法。
+  - term: Citation
+    category: 检索
+    aliases: [引用]
+    definition: 把生成主张关联到可定位来源片段的机制，既服务读者核验，也支持评估与审计。
+  - term: HNSW
+    category: 检索
+    aliases: [Hierarchical Navigable Small World]
+    definition: 通过多层近邻图实现高召回近似向量搜索的索引结构。
+  - term: IVF
+    category: 检索
+    aliases: [Inverted File Index]
+    definition: 先按聚类中心缩小候选分区，再在选定分区内搜索的近似向量索引方法。
+  - term: pgvector
+    category: 检索
+    aliases: []
+    definition: 为 PostgreSQL 提供向量类型、距离运算符和近似索引能力的扩展。
+  - term: Metadata Filtering
+    category: 检索
+    aliases: [元数据过滤]
+    definition: 在检索前或检索中按租户、权限、时间、文档类型等结构化字段限制候选集合。
+  - term: Short-term Memory
+    category: 记忆
+    aliases: [短期记忆]
+    definition: 为当前会话或任务保留的近期消息、步骤与临时事实，通常受上下文或状态容量限制。
+  - term: Long-term Memory
+    category: 记忆
+    aliases: [长期记忆]
+    definition: 跨会话持久化并可按需检索的信息，需要明确写入、更新、遗忘和隐私策略。
+  - term: Semantic Memory
+    category: 记忆
+    aliases: [语义记忆]
+    definition: 对稳定事实、概念和用户偏好的抽象存储，不强调事件发生的完整时间序列。
+  - term: Episodic Memory
+    category: 记忆
+    aliases: [情景记忆]
+    definition: 保存特定事件、时间、参与者、动作与结果的经历记录。
+  - term: Dead Letter Queue
+    category: 工作流
+    aliases: [DLQ, 死信队列]
+    definition: 保存超过重试限制或无法处理任务的隔离队列，供诊断、修复和受控重放。
+  - term: Outbox Pattern
+    category: 工作流
+    aliases: [事务发件箱, Transactional Outbox, Outbox]
+    definition: 将业务变更与待发布事件写入同一事务，再由独立发布器投递，以降低双写不一致风险。
+  - term: Lease
+    category: 工作流
+    aliases: [租约]
+    definition: 在有限有效期内授予工作者处理任务的权利，过期后允许其他工作者接管。
+  - term: Fencing Token
+    category: 工作流
+    aliases: [栅栏令牌]
+    definition: 单调递增的所有权序号，用于阻止已失效工作者继续写入共享资源。
+  - term: Indirect Prompt Injection
+    category: 安全
+    aliases: [间接提示注入]
+    definition: 恶意指令隐藏在网页、文档、邮件或工具结果中，并在被 Agent 读取后影响其决策的攻击方式。
+  - term: Least Privilege
+    category: 安全
+    aliases: [最小权限]
+    definition: 只向主体授予完成当前任务所需的最少资源、动作和有效期权限的原则。
+  - term: Allowlist
+    category: 安全
+    aliases: [允许列表, 白名单]
+    definition: 仅允许显式批准的工具、参数、目标或数据范围通过的默认拒绝策略。
+  - term: Sandbox
+    category: 安全
+    aliases: [沙箱]
+    definition: 通过进程、文件系统、网络、凭证和资源限制隔离不可信代码或工具执行的环境。
+  - term: PII
+    category: 安全
+    aliases: [Personally Identifiable Information, 个人可识别信息]
+    definition: 能够单独或结合其他数据识别自然人的信息，需要按适用法规和组织策略保护。
+  - term: Data Exfiltration
+    category: 安全
+    aliases: [数据外泄]
+    definition: 数据通过未授权工具调用、提示、日志、网络请求或输出离开可信边界的安全事件。
+  - term: Excessive Agency
+    category: 安全
+    aliases: [过度代理权]
+    definition: Agent 被授予超出任务所需的权限、自治范围或执行能力，从而放大错误和攻击影响。
+  - term: Audit Log
+    category: 安全
+    aliases: [审计日志]
+    definition: 对身份、授权、输入摘要、工具动作、审批和结果进行防篡改或可追溯记录的日志。
+  - term: Threat Modeling
+    category: 安全
+    aliases: [威胁建模]
+    definition: 系统识别资产、信任边界、攻击者能力、滥用途径和缓解措施的安全设计过程。
+  - term: Container
+    category: 部署
+    aliases: [容器]
+    definition: 以镜像封装应用及依赖、共享宿主内核并通过隔离机制运行的部署单元。
+  - term: Health Check
+    category: 部署
+    aliases: [健康检查]
+    definition: 用于判断实例是否存活、是否就绪以及关键依赖是否可用的探测接口或命令。
+  - term: Secret
+    category: 部署
+    aliases: [密钥材料]
+    definition: API Key、令牌、私钥或数据库凭证等敏感配置，应通过专用存储注入而非写入代码或镜像。
+  - term: Multi-tenancy
+    category: 部署
+    aliases: [多租户]
+    definition: 同一平台为多个租户提供服务，同时在身份、数据、配额、密钥和审计上保持隔离的架构能力。
+  - term: Model Gateway
+    category: 部署
+    aliases: [模型网关]
+    definition: 统一承接模型鉴权、路由、限流、重试、成本记录和供应商适配的基础设施组件。
 
 references_file: notes/references.yml

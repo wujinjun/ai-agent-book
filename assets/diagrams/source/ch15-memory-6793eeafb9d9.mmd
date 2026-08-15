@@ -1,0 +1,17 @@
+%% id: memory-candidate-to-governed-record
+%% title: 候选记忆到受治理记录的完整写入流程
+%% alt: 事件提取候选后验证来源同意敏感性稳定性和冲突，写入版本记录并更新索引，失败或不确定进入跳过或待确认
+flowchart TD
+    Event["来源事件"] --> Extract["提取候选 + 类型"]
+    Extract --> Source{"来源可追踪？"}
+    Source -->|否| Skip["不写入"]
+    Source -->|是| Consent{"用途与同意允许？"}
+    Consent -->|否| Skip
+    Consent -->|是| Sensitive{"敏感或禁止？"}
+    Sensitive -->|是| Reject["拒绝 + 安全审计"]
+    Sensitive -->|否| Stable{"未来有用且相对稳定？"}
+    Stable -->|否| Session["仅会话 / 任务状态"]
+    Stable -->|是| Conflict{"与活动记录冲突？"}
+    Conflict -->|是| Review["待用户确认"]
+    Conflict -->|否| Write["幂等写入版本 + TTL"]
+    Write --> Index["更新结构索引 / 向量索引"]

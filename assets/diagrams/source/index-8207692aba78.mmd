@@ -1,0 +1,10 @@
+%% id: knowledge-assistant-evidence-state-evolution
+%% title: 企业知识助手从协议连接到证据与记忆
+%% alt: 员工问题经 Agent Runtime 通过 MCP 访问文档服务，RAG 产生带版本引用的证据，Memory 只保存治理后的偏好与事实，向量索引是文档主记录的派生物
+flowchart TB
+    User["员工 reader"] --> Runtime["Agent Runtime"]
+    Runtime --> MCP["MCP：文档/工单能力"]
+    MCP --> Master["Document 主记录 + ACL"]
+    Master --> Index["关键词/向量派生索引"]
+    Index --> RAG["RAG Evidence + Citation"] --> Runtime
+    Runtime --> Memory["受治理偏好/任务事实"]

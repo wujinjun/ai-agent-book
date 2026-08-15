@@ -30,53 +30,130 @@
 }
 @page {
   size: A4;
-  margin: 20mm 18mm 22mm;
-  @bottom-center { content: counter(page); color: #718096; font-size: 9pt; }
+  margin: 18mm 16.5mm 20mm;
+  @top-left {
+    content: "AI Agent 从零到实战 · 2026版";
+    color: #7a8793;
+    font-size: 7.5pt;
+  }
+  @top-right {
+    content: "原理 · 工程 · 项目";
+    color: #7a8793;
+    font-size: 7.5pt;
+  }
+  @bottom-center {
+    content: counter(page);
+    color: #718096;
+    font-size: 8.5pt;
+  }
 }
-html { font-size: 10.5pt; }
+@page cover {
+  margin: 22mm;
+  @top-left { content: none; }
+  @top-right { content: none; }
+  @bottom-center { content: none; }
+}
+@page part {
+  margin: 22mm;
+  @top-left { content: none; }
+  @top-right { content: none; }
+}
+html { font-size: 9.8pt; }
 body {
   max-width: none;
   margin: 0;
   color: #182534;
   font-family: "Book Noto Sans SC", sans-serif;
-  line-height: 1.72;
+  line-height: 1.6;
 }
-h1, h2, h3 { color: #172433; line-height: 1.28; break-after: avoid-page; }
+h1, h2, h3, h4 { color: #172433; line-height: 1.28; break-after: avoid-page; }
 h1 { margin-top: 0; font-size: 24pt; }
-h2 { margin-top: 1.8em; padding-top: 0.35em; border-top: 0.5pt solid #dce3ea; font-size: 16pt; }
+h2 { margin-top: 1.55em; padding-top: 0.3em; border-top: 0.5pt solid #dce3ea; font-size: 15.5pt; }
 h3 { font-size: 12.5pt; }
-p, li { orphans: 3; widows: 3; }
+p, li, blockquote { orphans: 3; widows: 3; }
 a { color: #315f87; text-decoration: none; }
 header#title-block-header {
-  display: flex;
-  min-height: 235mm;
+  page: cover;
+  display: grid;
+  min-height: 215mm;
+  box-sizing: border-box;
+  padding: 37mm 18mm 28mm;
+  border: 1.2pt solid #c9d4df;
   flex-direction: column;
-  justify-content: center;
+  align-content: center;
   text-align: center;
   break-after: page;
 }
-header#title-block-header h1 { font-size: 30pt; letter-spacing: -0.03em; }
-header#title-block-header .subtitle { color: #627184; font-size: 15pt; }
+header#title-block-header::before {
+  content: "PRINCIPLES · ENGINEERING · PROJECTS";
+  display: block;
+  margin-bottom: 16mm;
+  color: #315f87;
+  font-family: "Book Source Code Pro", monospace;
+  font-size: 9pt;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+header#title-block-header h1 {
+  max-width: 165mm;
+  margin: 0 auto;
+  font-size: 29pt;
+  letter-spacing: -0.035em;
+  line-height: 1.32;
+}
+header#title-block-header .title-main,
+header#title-block-header .title-detail { display: block; white-space: nowrap; }
+header#title-block-header .title-main { font-size: 31pt; }
+header#title-block-header .title-detail { margin-top: 4mm; font-size: 24pt; }
+header#title-block-header .subtitle { margin-top: 8mm; color: #627184; font-size: 14pt; }
+header#title-block-header .author { margin-top: 24mm; color: #46586a; font-size: 10pt; }
+header#title-block-header .date { color: #718096; font-size: 9pt; }
 nav#TOC {
-  columns: 2;
-  column-gap: 14mm;
-  font-size: 8.5pt;
+  columns: 1;
+  max-width: 160mm;
+  margin: 0 auto;
+  font-size: 9.2pt;
+  line-height: 1.4;
   break-after: page;
 }
 nav#TOC > h2 { column-span: all; margin-bottom: 10mm; border-top: 0; }
-nav#TOC ul { margin: 0; padding-left: 1.2em; }
-nav#TOC li { margin: 0.18em 0; break-inside: avoid; }
+nav#TOC ul { margin: 0; padding-left: 1.45em; }
+nav#TOC > ul { padding-left: 0; }
+nav#TOC li { margin: 0.22em 0; break-inside: avoid; }
+nav#TOC > ul > li { margin: 0 0 0.75em; padding-bottom: 0.35em; border-bottom: 0.4pt solid #e2e8ee; }
+nav#TOC > ul > li > a { color: #1f3347; font-size: 10.5pt; font-weight: 700; }
 nav#TOC a { color: #34495e; }
 section.level1 { break-before: page; }
+section.level1:has(> .part-opener-marker) {
+  box-sizing: border-box;
+  min-height: 220mm;
+  padding: 38mm 14mm 18mm;
+  border-top: 7mm solid #315f87;
+  border-bottom: 1pt solid #b9c8d6;
+  break-before: page;
+  break-after: page;
+}
+section.level1:has(> .part-opener-marker) h1 {
+  max-width: 145mm;
+  margin-bottom: 12mm;
+  color: #18334b;
+  font-size: 29pt;
+  line-height: 1.3;
+}
+.part-opener-marker { display: none; }
+section.level1:has(> .part-opener-marker) h2 { margin-top: 12mm; border-top: 0; color: #315f87; }
+section.level1:has(> .part-opener-marker) table { font-size: 9pt; }
 pre {
   break-inside: avoid-page;
-  padding: 8pt;
-  border: 0.5pt solid #dce3ea;
+  padding: 8pt 9pt;
+  border: 0.7pt solid #cbd6e0;
+  border-left: 2.5pt solid #315f87;
   border-radius: 5pt;
-  background: #f6f8fa;
+  background: #f2f5f7;
+  color: #142333;
   font-family: "Book Source Code Pro", "Book Noto Sans SC" !important;
-  font-size: 8pt;
-  line-height: 1.45;
+  font-size: 7.7pt;
+  line-height: 1.4;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -91,10 +168,12 @@ code {
   font-family: "Book Noto Sans SC", sans-serif !important;
 }
 table { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
+table { font-size: 8pt; line-height: 1.42; }
 thead { display: table-header-group; }
 tr { break-inside: avoid-page; }
-th, td { padding: 3pt; border: 0.5pt solid #dce3ea; vertical-align: top; }
-th { background: #edf2f6; }
+th, td { padding: 3pt; border: 0.5pt solid #ccd7e1; vertical-align: top; }
+th { background: #e8eef3; color: #1d3347; }
+blockquote { margin: 8pt 0; padding: 2pt 0 2pt 10pt; border-left: 2pt solid #7da0bd; color: #526476; }
 figure, .book-diagram { width: 100%; margin: 12pt auto; text-align: center; break-inside: avoid-page; }
 figure img, .book-diagram img { display: block; max-width: 100%; max-height: 210mm; margin: auto; }
 img[src*="infographics/"] { display: block; max-width: 100%; max-height: 178mm; margin: 10pt auto 5pt; break-inside: avoid-page; }
@@ -103,4 +182,5 @@ figcaption { margin-top: 5pt; color: #627184; font-size: 8pt; }
 .page-break { break-before: page; }
 @media print {
   a[href^="http"]::after { content: ""; }
+  section.level1:first-of-type { break-before: auto; }
 }

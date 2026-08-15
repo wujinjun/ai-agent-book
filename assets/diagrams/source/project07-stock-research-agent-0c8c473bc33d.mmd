@@ -1,0 +1,9 @@
+%% id: project7-textbook-time-semantics
+%% title: 研究数据的时间语义
+%% alt: 交易时刻、公告报告期与发布时间、新闻发布时间和系统抓取时间分别保留，最终报告使用明确截止时间
+flowchart LR
+    Trade["交易时刻"] --> Normalize["统一时区但保留原时区"]
+    Period["财报报告期"] --> Normalize
+    Publish["公告 / 新闻发布时间"] --> Normalize
+    Fetch["系统抓取时间"] --> Normalize
+    Normalize --> AsOf["报告 as_of 与数据版本"]

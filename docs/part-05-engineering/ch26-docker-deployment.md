@@ -7,6 +7,8 @@
 
 学习目标是掌握核心部署边界，并完成一个非 root、可健康检查的容器示例。前置知识为第23—25章。
 
+镜像与编排语义分别参考 [Dockerfile](../references.md#ref-dockerfile-docs)、[Compose Specification](../references.md#ref-compose-spec)和 [Kubernetes](../references.md#ref-kubernetes-docs)官方资料；供应链证据的层级模型参见 [SLSA](../references.md#ref-slsa)。本章不把本地 Compose 拓扑直接等同于生产高可用部署。
+
 部署链从可复现镜像开始，经过 Secret 外置、服务拓扑、健康语义和发布恢复，最终形成可审计交付过程。下图将“容器能启动”与“服务可以安全接流量”明确区分。
 
 ![多阶段构建生成最小非 root 镜像，Secret 在镜像外注入，入口 API Worker PostgreSQL Redis 对象存储组成拓扑，并通过健康检查滚动发布迁移备份 Trace 和回滚交付](../assets/infographics/png/agent-deployment-release-infographic-2x.png)
@@ -39,7 +41,7 @@ flowchart TB
 %% id: docker-multistage-security-build
 %% title: Docker 多阶段安全构建
 %% alt: 固定基础镜像在 Builder 安装锁定依赖并生成 wheel，Runtime 仅复制产物以非 root 和只读文件系统运行
-flowchart LR
+flowchart TB
     Base[固定 digest 的 Python 3.12] --> Builder[Builder 安装锁定依赖]
     Source[源码与 pyproject] --> Builder
     Builder --> Wheel[wheel 与依赖产物]
@@ -69,7 +71,7 @@ Readiness 不调用昂贵或不稳定的模型 API，否则上游故障会触发
 %% id: agent-cicd-release-gates
 %% title: Agent 容器 CI/CD 发布门禁
 %% alt: 代码依次经过测试安全扫描镜像构建 SBOM 签名部署烟测和观测门禁并在失败时回滚
-flowchart LR
+flowchart TB
     Commit[代码提交] --> Test[单元集成评估]
     Test --> Scan[依赖与镜像扫描]
     Scan --> Build[可复现镜像构建]
@@ -89,7 +91,7 @@ flowchart LR
 ## 误区、调试、实践与安全
 不要把 API Key 写入镜像层，不用 `latest`，不把数据库端口公开互联网。调试镜像架构、DNS、健康检查、时区和只读权限。CI 顺序为测试、扫描、构建、SBOM、签名、部署、烟测、回滚。
 
-## 总结、练习、面试与阅读
+## 可复制部署与发布治理的深化设计
 
 ### 可复现镜像与多阶段构建
 
@@ -238,12 +240,14 @@ SSE/WebSocket 在滚动发布中会断线，客户端必须按事件游标恢复
 %% id: deployment-schema-expand-contract
 %% title: 滚动发布中的 Expand/Migrate/Contract
 %% alt: 先扩展兼容 Schema，再部署新旧兼容代码和回填，验证后切换读取，观察期结束才删除旧字段，回滚始终保留旧路径
-flowchart LR
-    Expand[Expand 兼容 Schema] --> Compat[部署双版本兼容代码]
-    Compat --> Backfill[受控回填 + 校验]
-    Backfill --> Switch[切换读取/写入指针]
-    Switch --> Observe[观察与回滚窗口]
-    Observe --> Contract[Contract 删除旧结构]
+flowchart TB
+    Expand["Expand<br/>先增加兼容 Schema"] --> Compat["部署新旧结构均兼容的代码"]
+    Compat --> Backfill["受控回填并校验"]
+    Backfill --> Switch["切换读写指针"]
+    Switch --> Observe{"观察窗口稳定?"}
+    Observe -->|否| Rollback["回滚应用，继续保留旧结构"]
+    Rollback --> Compat
+    Observe -->|是| Contract["Contract<br/>删除旧结构"]
 ```
 
 大型索引和回填有锁、I/O 与复制延迟风险，必须在生产规模副本演练。回滚镜像前检查 Schema 仍兼容；
@@ -259,21 +263,46 @@ Liveness 只回答进程能否继续，不应因数据库短暂故障重启所�
 证明任务不丢、Secret 不泄漏、旧 Worker 不覆盖、客户端可恢复和告警可操作。`docker compose config`
 只能验证配置语法，不能证明这些运行时性质。
 
-### 练习参考答案与面试要点
+## 常见误区、调试与安全
 
-1. **项目 2 镜像。** Builder 生成 Wheel，Runtime 固定 Digest、非 Root、只读根目录；运行配置外置，
-   Liveness/Readiness 分离，Compose 数据服务仅绑定私网。
-2. **健康边界。** Liveness 失败触发重启，Readiness 失败只摘流量；昂贵模型调用不放健康检查，以免
-   上游故障制造重启风暴。
-3. **最终镜像扫描。** 多阶段只减少内容，不能证明复制产物安全；最终层、系统库和 Wheel 都需 SBOM
-   与扫描。
-4. **代理超时。** 它只结束客户端连接，不自动取消持久任务；取消由授权 API 与 Worker 协作处理。
+常见误区包括使用 `latest`、在镜像写入 Key、以 root 运行、把数据库端口暴露到互联网，以及只测试容器能否启动。调试时比较镜像架构、DNS、证书、代理缓冲、文件权限和健康日志；安全扫描仍不能替代最小镜像和运行时限制。
 
-### 常见误区、调试与安全
+## 本章总结
 
-常见误区是使用 `latest`、在镜像写 key、以 root 运行、把数据库端口暴露互联网、只测容器能启动。调试比较架构、DNS、证书、代理缓冲、文件权限和健康日志。安全扫描不替代最小镜像和运行时限制。
-总结：部署是可验证供应链、配置、网络、状态迁移和运营恢复的组合。延伸阅读包括 Docker、Compose、
-OCI、Nginx、SLSA 与目标容器平台官方文档；代码目录为各项目 `Dockerfile` 和根 Compose。
+部署不是把源码复制进容器，而是形成可验证的镜像、配置、Secret、网络、迁移、健康检查、排空、回滚和供应链契约。多阶段构建降低运行面，但不能替代最终镜像扫描；Readiness 与 Liveness 承担不同职责；数据库迁移必须与应用兼容窗口协调。下一章将处理超出 HTTP 生命周期的长任务和可靠工作队列。
+
+## 课后练习
+
+### 设计题
+
+1. 为项目 2 设计多阶段镜像和 Compose 拓扑。输出镜像边界、运行用户、只读文件系统、Secret、私网与健康检查清单。
+
+### 概念题
+
+2. 比较 Liveness 与 Readiness；说明为什么模型供应商短暂故障不应触发所有实例重启。
+3. 解释多阶段构建为什么不能替代最终镜像的 SBOM、依赖扫描和签名验证。
+
+### 编码题
+
+为容器增加 `HEALTHCHECK`、非 Root 用户和固定依赖版本。输出构建日志与 `docker inspect` 证据；检查标准是运行镜像不含构建工具和明文 Key。
+
+### 故障实验
+
+4. 让反向代理先于 Worker 超时，证明客户端断开后持久任务仍可能继续；给出授权取消和事件游标恢复方案。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. Startup、Liveness 与 Readiness 分别回答什么问题？
+2. 为什么滚动发布要求数据库 Schema 同时兼容新旧应用？
+3. 多阶段构建、镜像扫描、SBOM 与签名之间是什么关系？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 Docker、Compose、OCI、Nginx、SLSA 与目标容器平台官方文档；代码目录为各项目 `Dockerfile` 和根 Compose。
 
 ## 本章引用
 <!-- chapter-citations:start -->

@@ -1,0 +1,12 @@
+%% id: project9-textbook-topology-decision
+%% title: 是否拆分多 Agent 的决策
+%% alt: 任务先判断角色是否有独立权限工具或验证价值，没有则使用单 Agent，有则建立结构化交接并用基线评估
+flowchart TD
+    Task["候选任务"] --> Independent{"角色有独立信息、权限、工具或验证职责?"}
+    Independent -->|否| Single["单 Agent + 工具 / 工作流"]
+    Independent -->|是| Contract["定义 Artifact 与状态所有权"]
+    Contract --> Budget["轮数 / Token / 时间预算"]
+    Budget --> Compare["与单 Agent 基线比较"]
+    Compare --> Worth{"成功率提升值得成本?"}
+    Worth -->|否| Simplify["合并角色"]
+    Worth -->|是| Keep["保留最小有效拓扑"]

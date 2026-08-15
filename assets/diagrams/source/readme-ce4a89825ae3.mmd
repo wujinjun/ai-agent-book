@@ -1,0 +1,13 @@
+%% id: project6-provider-workflow-architecture
+%% title: 自动办公 Provider 与工作流架构
+%% alt: Mail Calendar Provider 经过时间窗口和隐私过滤进入 OfficeWorkflow，产生日报并由 Approval Service 控制 Webhook 发布
+flowchart TB
+    Mail["Mail Provider"] --> Filter["时间窗口与字段最小化"]
+    Calendar["Calendar Provider"] --> Filter
+    Filter --> Workflow["OfficeWorkflow"]
+    Workflow --> Draft["日报与动作草稿"]
+    Draft --> Approval{"Approval Service"}
+    Approval -->|通过| Publisher["Webhook / Office Adapter"]
+    Approval -->|拒绝| Audit["Audit Log"]
+    Workflow --> Audit
+    Publisher --> Audit

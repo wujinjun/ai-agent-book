@@ -36,10 +36,10 @@
     "width": 1024,
     "height": 1536,
     "source_sha256": "3b614a43d35020835c454ca785c214820f64d6c36ac9145d3b8c84657d9e654a",
-    "svg_sha256": "8340770e8bff1d39167a81e6458f962da21fdbb43ed46783441e9ef6ba99764b",
-    "png_sha256": "d19e1b610e97a086341eb996e89babcf54ff57c333a2092710fe4ea8a7f833d9",
-    "generated_with": "built-in imagegen (visual base) + deterministic SVG/Pillow semantic overlay",
-    "generated_at": "2026-08-11"
+    "svg_sha256": "f04a9eb0fec37975775a96fbaef8359db3693627921023863418e703b4cb07e6",
+    "png_sha256": "5a5f2db022c4a32c8272519ff1dcdbbbf69860112201ed74eaa6992608bcf1c2",
+    "generated_with": "deterministic flat SVG/Pillow technical illustration",
+    "generated_at": "2026-08-15"
   },
   {
     "semantic_id": "agent-deployment-release-infographic",
@@ -50,10 +50,10 @@
     "width": 1024,
     "height": 1536,
     "source_sha256": "63d14df21983f7a94ea4e79162652551fea1be1a37143eeb7f2d0cc338a8d0c5",
-    "svg_sha256": "8bd5afa47cffe2a94d1600585f873178aa8cebdeead9f3a1082b6244df89ca56",
-    "png_sha256": "1e8aed9a00626fa70ce2758d81e087c121e21b05a2a1693d7b0b87bb88a9b09b",
-    "generated_with": "built-in imagegen (visual base) + deterministic SVG/Pillow semantic overlay",
-    "generated_at": "2026-08-11"
+    "svg_sha256": "a30645a8389e8eef74ef6d8aca240e1da64591151ad98260a9793250ddb9b122",
+    "png_sha256": "e40cf127bbdd0470f899617973a838a22a3edd1859b932ed44f524ec0b61f974",
+    "generated_with": "deterministic flat SVG/Pillow technical illustration",
+    "generated_at": "2026-08-15"
   },
   {
     "semantic_id": "agent-evaluation-pipeline-infographic",

@@ -1,0 +1,17 @@
+%% id: project5-textbook-publish-sequence
+%% title: 内容绑定的 PR 评论发布时序
+%% alt: 系统显示精确报告与目标，审批者签发短期令牌，客户端验证提交和报告哈希并查询既有标记后发布
+sequenceDiagram
+    participant R as Review Service
+    participant H as Human
+    participant G as GitHub Client
+    R-->>H: repo + PR + commit + exact report
+    H-->>R: signed short-lived approval
+    R->>R: verify fields, digest, expiry
+    R->>G: find stable action marker
+    alt marker exists
+        G-->>R: return existing comment URL
+    else marker absent
+        R->>G: POST comment with marker
+        G-->>R: comment URL
+    end

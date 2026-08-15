@@ -1,0 +1,12 @@
+%% id: project7-textbook-claim-classification
+%% title: 报告陈述分类门
+%% alt: 每个候选陈述先判断是否有来源直接支持，有则作为事实并引用，无则判断是否为模型推断或未知，禁止伪装事实
+flowchart TD
+    Claim["候选陈述"] --> Supported{"来源直接支持?"}
+    Supported -->|是| Fact["Fact + citation + observed_at"]
+    Supported -->|否| Derived{"由已知证据合理推导?"}
+    Derived -->|是| Inference["Inference + assumptions"]
+    Derived -->|否| Unknown["Unknown / insufficient evidence"]
+    Fact --> Report
+    Inference --> Report
+    Unknown --> Report

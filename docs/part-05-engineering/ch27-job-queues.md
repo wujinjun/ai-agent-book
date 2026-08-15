@@ -7,6 +7,8 @@ Agent 任务会因搜索、工具和人工审批持续较久。本章讨论 Cele
 
 学习目标是掌握核心投递语义并设计可恢复的长任务示例。前置知识为第9、25—26章。
 
+Celery 与 Dramatiq 的具体配置以 [Celery](../references.md#ref-celery-docs)和 [Dramatiq](../references.md#ref-dramatiq-docs)当前文档为准。本章的租约、幂等、Checkpoint 和 DLQ 设计是跨框架可靠性原则，不能由某个 Broker 的“已确认投递”替代业务完成证明。
+
 长任务可靠性来自权威 Job 状态、租约、Checkpoint、错误分类和幂等语义，而不是简单把函数放进队列。主图从事务创建和 Outbox 开始，直到 Worker 执行、六种状态、重试分流和 DLQ 治理。
 
 ![API 在事务中创建 Job 与 Outbox 并发布唤醒信号，Worker 竞争租约和保存 Checkpoint，任务进入成功失败取消未知等状态，故障分类后有限重试或进入 DLQ](../assets/infographics/png/job-queue-reliability-infographic-2x.png)
@@ -77,7 +79,7 @@ flowchart TD
 ## 误区、调试、实践与安全
 “至少一次投递”不代表业务恰好一次；进度百分比不应伪造；超时后外部调用可能仍在执行。调试队列等待、执行时长、重试原因和僵尸任务。任务载荷不含密钥，队列网络隔离，DLQ 受审计。
 
-## 总结、练习、面试与阅读
+## 持久任务与可靠交付的深化设计
 
 ### 为什么 Agent 任务容易超时
 
@@ -250,21 +252,41 @@ Replay 由管理员触发，但尚未实现内容绑定的再次审批；SQLite 
 
 常见误区：队列自动保证只执行一次、HTTP 断开就取消任务、超时等于外部动作未完成、DLQ 可永远不看。测试覆盖重复投递、Worker 崩溃、租约恢复、取消、重试上限、审批恢复和外部写幂等。
 
-### 练习参考答案与面试要点
+## 本章总结
 
-1. **崩溃恢复实验。** 在领取后、Checkpoint 后、外部写返回前后、最终状态提交前分别终止 Worker。
-   断言租约过期可接管、旧 Worker 不能提交、已完成副作用不重复、Trace 能解释最终状态。
-2. **幂等消费。** 消息只携带稳定 Job ID；Handler 在事务中检查当前状态和 Event/Business Key，
-   条件更新后执行或返回既有结果。Ack 丢失导致重复消息时，业务状态仍收敛到同一结果。
-3. **取消与超时。** 取消是意图并需要协作检查；超时只是等待结束，远端可能仍执行。二者都不自动
-   回滚已发生副作用。
-4. **DLQ Replay。** 风险来自旧输入、权限变化、已发生副作用、修复不完整和批量重试风暴。应先
-   分类、对账、重新授权，再带原幂等键和新 Attempt 受控恢复。
+工作队列把长任务从请求生命周期分离，但可靠性来自权威 Job 状态、租约与 Fencing、幂等处理、有限重试、取消协作和受控 DLQ，而不是 Broker 名称。超时只结束等待，不能证明远端副作用停止；DLQ Replay 也必须重新授权和对账。下一章将建立跨 API、Worker、模型和工具的可观测证据链。
 
-总结：队列把长任务从请求中分离，可靠性来自权威状态、租约/Fencing、幂等、对账、有限重试和
-受控 DLQ。延伸阅读包括 Celery、RQ、Dramatiq、Redis/RabbitMQ 与分布式任务官方文档；代码目录为
-项目 8 和
-[`projects/10-enterprise-platform/`](https://github.com/wujinjun/ai-agent-book/tree/main/projects/10-enterprise-platform)。
+## 课后练习
+
+### 故障实验
+
+1. 分别在领取后、Checkpoint 后、外部写返回前后和最终提交前终止 Worker。输出每个注入点的最终状态、租约、重复副作用和 Trace；检查标准是系统最终收敛且旧 Worker 不能覆盖。
+
+### 编码题
+
+2. 实现只携带稳定 Job ID 的幂等消费者。输入包括重复投递与 Ack 丢失；输出为同一业务结果；检查标准是事件和业务状态都不会重复提交。
+
+### 概念题
+
+3. 比较取消、超时和失败三种状态，说明它们分别能否证明远端副作用没有发生。
+
+### 设计题
+
+4. 设计 DLQ Replay 工作流，包含分类、对账、重新授权、速率、审批、原幂等键和新 Attempt 证据。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. 至少一次投递为什么要求业务处理幂等？
+2. 租约、Fencing 与 Checkpoint 如何共同阻止旧 Worker 覆盖？
+3. DLQ Replay 为什么必须重新授权和对账？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 Celery、Dramatiq、Redis 队列语义、租约和 Outbox 模式。项目6、8与10分别展示审批外发、研究长任务和平台级 Worker 的可靠交付边界。
 
 ## 本章引用
 <!-- chapter-citations:start -->

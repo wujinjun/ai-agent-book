@@ -1,0 +1,15 @@
+%% id: agent-product-feedback-release-loop
+%% title: Agent 产品反馈与发布闭环
+%% alt: 用户问题转化为结果边界契约，经交互 Runtime 产生答案引用状态，并将反馈进入评估灰度发布和回滚
+flowchart TB
+    Need["用户问题"] --> Contract["结果与边界契约"]
+    Contract --> UX["交互、进度与用户控制"]
+    UX --> Runtime["Agent Runtime"]
+    Runtime --> Evidence["答案 / 引用 / 状态 / 成本"]
+    Evidence --> Feedback["用户反馈与线上结果"]
+    Feedback --> Eval["离线评估与回归"]
+    Eval --> Gate{"达到发布门禁?"}
+    Gate -->|否| Runtime
+    Gate -->|是| Release["灰度发布"]
+    Release --> Observe["监控与回滚阈值"]
+    Observe --> UX

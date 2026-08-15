@@ -1,0 +1,20 @@
+%% id: project4-textbook-two-plane-architecture
+%% title: 企业知识库离线摄取与在线查询双平面
+%% alt: 离线摄取把原始文档解析切分并构建候选索引，通过黄金集后激活；在线查询带主体权限检索活动索引并生成可引用回答
+flowchart TB
+    subgraph Ingest["离线摄取平面"]
+        Files["PDF / Office / Markdown"] --> Parse["受限 Parser"]
+        Parse --> Chunks["Chunk + Location + ACL"]
+        Chunks --> Embed["Embedding Adapter"]
+        Embed --> Candidate["Candidate Index Version"]
+        Candidate --> Gate["Recall / MRR / Integrity Gate"]
+        Gate --> Active["Active Index Alias"]
+    end
+    subgraph QueryPlane["在线查询平面"]
+        User["Principal + Tenant + Query"] --> ACL["授权过滤"]
+        ACL --> Retrieve["Hybrid Retrieval"]
+        Active --> Retrieve
+        Retrieve --> Rerank["Rerank"]
+        Rerank --> Answer["Grounded Answer"]
+        Answer --> Citation["Document / Page / Chunk"]
+    end

@@ -1,11 +1,16 @@
 # 第18章：OpenAI Agents SDK
 
-最后核对日期：2026-08-12；本章核心代码在全新 Python 3.12 隔离环境固定 `openai-agents==0.18.3`，6 个离线测试重新通过。OpenAI 官方开发者站当前确认 Responses API、工具契约、权限与停止边界等平台原则；具体 `Runner`、Handoff、Session 与 Tracing 接口仍以固定包、SDK 官方专站和本章测试共同为证，不能仅凭平台模型指南外推。
+最后核对日期：2026-08-12。
+
+!!! info "版本证据"
+    本章核心代码固定 `openai-agents==0.18.3`，并在 Python 3.12 隔离环境完成离线复核。Responses API、工具契约、权限与停止边界按平台官方资料核对；`Runner`、Handoff、Session 与 Tracing 接口以锁定包和 SDK 官方专站为准，不能从模型指南外推。
 
 ## 导读、目标与前置知识
 SDK 用少量原语管理 Agent、工具、handoff、guardrail、session 与 tracing。本章目标是理解它替开发者承担的运行时职责及适用边界。前置知识为第17章。
 
 学习目标是能够实现、测试和审查一个受限的 SDK Agent，而不是只运行 Quickstart。
+
+本章关于 Agent、Runner、Tool、Handoff 与 Guardrail 的版本敏感说明以 [OpenAI Agents 官方指南](../references.md#ref-openai-agents-guide)为主要依据；数据处理边界另参见 [平台数据控制说明](../references.md#ref-openai-data-controls)。锁定依赖和正文核对日期共同限定了代码结论的适用范围。
 
 本章只用稳定概念关系建立 SDK 心智模型，具体接口仍以锁定版本和官方文档为准。Runner 驱动一次 Run，Agent 组合指令、模型、工具和输出契约，Guardrail、Handoff、Session、MCP 与 Tracing 分别承担不同职责。
 
@@ -54,7 +59,7 @@ flowchart TD
 %% id: openai-sdk-production-guardrails
 %% title: SDK Agent 生产控制层
 %% alt: 输入经过 Guardrail 后由 Runner 在回合预算内调用工具或 MCP 并对结构化输出做业务校验和审计
-flowchart LR
+flowchart TB
     Input[请求] --> InputGuard[输入 Guardrail]
     InputGuard --> Runner[Runner + max turns]
     Runner --> Tools[函数工具或 MCP]
@@ -73,7 +78,7 @@ Guardrail 负责模型交互前后的检查，工具和数据库边界仍执行�
 ## 误区、调试、实践与安全
 Handoff 不自动意味着更优多 Agent；guardrail 不是数据库权限；Tracing 默认行为需要检查敏感数据设置。调试查看 Runner 回合、工具参数、handoff 目标和最终 output type。只在需要托管循环、handoff、session 或 Trace 时引入 SDK；短流程可直接用 Responses API。
 
-## 总结、练习、面试与官方阅读
+## SDK 原语与应用 Runtime 的边界
 
 ### Agent、Tool 与 Runner
 
@@ -218,22 +223,56 @@ MCP Server 提供工具发现和调用，但 Host 仍决定连接哪些 Server�
 Transport、OAuth、Origin、超时和生命周期属于 MCP/基础设施边界；SDK 集成不能让 Server 自动继承
 用户全部权限。版本敏感构造方式以 SDK 官方专站和隔离测试为准，本章不凭概念关系猜测代码。
 
-### 迁移 ADR 与练习参考答案
+### 迁移 ADR 与选型检查
 
 从原生 Runtime 迁移前记录 ADR：需要 SDK 的具体能力、替代方案、锁定版本、状态所有权、回退路径和
 评估结果。保留领域 Port，使框架 Adapter 可替换；不要让 SDK Result 类型渗透数据库 Schema 和所有
 业务服务。
 
-1. **Handoff 过滤测试。** 上游历史放入 PII 与无关 Tool Result，只允许接收方看到工单 ID、验证摘要、
-   未决任务和剩余预算；断言其 Tool Scope 没有扩大。
-2. **Guardrail 测试。** 用计数 ScriptedModel 验证阻塞 Tripwire 时调用次数为零；并行行为另写测试，
-   不从名称推断。
-3. **Session/Memory。** Session 保存对话顺序；Memory 只保存治理后的跨会话事实；Run State 保存审批、
-   副作用和 Checkpoint。三者具有不同生命周期和权限。
-4. **选型判断。** 单模型单工具且无需 Handoff/Session/Trace 时，原生 Responses/API Loop 更透明；需要
-   受测 Runner 原语时 SDK 才产生净收益。
-总结：SDK 用少量原语提供受测模型—工具运行时，但业务状态、权限、幂等、预算与评估仍由应用负责。
-延伸阅读与官方资料：[Agents SDK](https://openai.github.io/openai-agents-python/)、[Running agents](https://openai.github.io/openai-agents-python/running_agents/)、[Tracing](https://openai.github.io/openai-agents-python/tracing/)、[MCP](https://openai.github.io/openai-agents-python/mcp/)。本章对应代码目录为 [`examples/openai_agents_sdk/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/openai_agents_sdk)。
+选型检查需要回答：是否确实需要 Runner 的工具循环、Handoff、Session、Guardrail 或 Trace 原语；应用是否仍拥有业务 Run State；框架升级失败时能否回到原生 Adapter；SDK 类型是否被限制在边界层。单模型单工具且无需这些原语时，原生 API Loop 通常更透明。
+
+## 本章总结
+
+OpenAI Agents SDK 用少量原语提供模型—工具运行时，但业务状态、权限、幂等、预算、审批、Checkpoint 和最终评估仍由应用负责。Handoff 是权限域和任务所有权的转移，不是完整对话复制；Guardrail 的执行时机必须按锁定版本测试；Session、长期 Memory 与业务 Run State 具有不同生命周期。下一章将比较一种更强调 Python 类型、依赖注入和验证重试的框架设计。
+
+## 课后练习
+
+### 设计题
+
+1. 在上游历史放入 PII 与无关 Tool Result，设计 Handoff 过滤，只传工单 ID、验证摘要、未决任务和剩余预算。
+
+### 编码题
+
+2. 使用计数模型验证阻塞 Guardrail 触发时模型调用次数为零，并为并行 Guardrail 单独设计测试。
+
+输入为允许与拒绝 Fixture；输出为 Guardrail 状态和模型调用计数；检查标准是阻塞式拒绝不会产生模型费用。
+
+### 概念题
+
+3. 为 Session、长期 Memory 和 Run State 分别定义存储内容、权限、保留与删除策略。
+
+### 设计题
+
+4. 为从原生 Runtime 迁移 SDK 编写 ADR，保留领域 Port 和回退路径。
+
+### 故障实验
+
+让 Handoff 目标 Agent 请求上游未授权 PII，验证过滤后的上下文和目标工具权限都无法恢复该数据。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. Runner 管理哪些循环，应用 Runtime 还必须管理什么？
+2. Handoff 与 Agent-as-Tool 的区别是什么？
+3. Guardrail 为什么不能替代数据库授权？
+4. Session 为什么既不是长期 Memory，也不是业务 Checkpoint？
+
+## 延伸阅读与代码目录
+
+官方资料包括 [Agents SDK](https://openai.github.io/openai-agents-python/)、[Running agents](https://openai.github.io/openai-agents-python/running_agents/)、[Tracing](https://openai.github.io/openai-agents-python/tracing/) 和 [MCP](https://openai.github.io/openai-agents-python/mcp/)。本章对应代码目录为 [`examples/openai_agents_sdk/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/openai_agents_sdk)。
 
 ## 本章引用
 <!-- chapter-citations:start -->

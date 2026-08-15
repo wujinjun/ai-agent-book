@@ -1,0 +1,14 @@
+%% id: project3-textbook-jsonrpc-lifecycle
+%% title: MCP 初始化、发现与调用时序
+%% alt: Client 先初始化协商版本，再列出工具与资源，随后调用 Tool 或读取 Resource，Server 返回 Result 或稳定 JSON-RPC Error
+sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C->>S: initialize(protocolVersion, clientInfo)
+    S-->>C: capabilities + serverInfo
+    C->>S: tools/list
+    S-->>C: tool definitions + inputSchema
+    C->>S: resources/list
+    S-->>C: catalog://chapters
+    C->>S: tools/call(name, arguments)
+    S-->>C: result or JSON-RPC error

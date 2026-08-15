@@ -1,0 +1,12 @@
+%% id: decoder-only-prefill-decode-flow
+%% title: Decoder-only 模型的 Prefill 与 Decode 数据流
+%% alt: 提示 Token 先并行完成 Prefill 并建立 KV Cache，之后每轮 Decode 读取缓存生成一个 Token 并更新缓存
+flowchart TB
+    Prompt["提示 Token 序列"] --> Prefill["Prefill<br/>并行处理全部输入"]
+    Prefill --> Cache["KV Cache"]
+    Cache --> Decode["Decode<br/>计算下一个 Token"]
+    Decode --> New["追加一个 Token"]
+    New --> Cache
+    New --> Stop{"满足停止条件？"}
+    Stop -->|否| Decode
+    Stop -->|是| Output["完成输出"]

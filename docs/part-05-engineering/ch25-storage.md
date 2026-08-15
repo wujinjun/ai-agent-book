@@ -7,11 +7,17 @@
 
 学习目标是完成一个带事务、缓存和租户隔离的数据示例。前置知识为 SQL、事务和第15—16章。
 
+事务事实、暂态缓存与关系向量扩展的当前能力应分别按 [PostgreSQL](../references.md#ref-postgresql-docs)、[Redis](../references.md#ref-redis-docs)和 [pgvector](../references.md#ref-pgvector)官方文档核对。本章的“权威存储”判断来自业务一致性要求，不来自产品名称。
+
 Agent 平台的数据具有不同一致性、访问模式和保留周期，不能因为部署方便就塞入同一个存储。主图先按语义分类数据，再映射到权威事务库、对象存储、向量索引、缓存信号和审计存储。
 
-![租户会话 Run Artifact Memory Vector Cache Audit 等数据按语义映射到 PostgreSQL 对象存储向量索引 Redis 和审计存储，并覆盖 Checkpoint 迁移版本删除备份和恢复](../assets/infographics/png/agent-data-storage-infographic-2x.png)
+![租户会话 Run Artifact Memory Vector Cache Audit 等数据按语义映射到 PostgreSQL 对象存储向量索引 Redis 和审计存储](../assets/infographics/png/agent-data-storage-infographic-a-2x.png)
 
-*图 25-A：Agent 数据按语义选择权威存储。PostgreSQL 保存任务与幂等事实，Redis 只承担可重建缓存、锁或唤醒信号。*
+*图 25-A：按数据语义选择权威存储。Redis 是可重建缓存或唤醒信号，不应成为唯一 Run 事实来源。*
+
+![权威状态与可重建缓存分离后，系统继续处理 Checkpoint 迁移版本租户删除备份恢复演练回滚和一致性](../assets/infographics/png/agent-data-storage-infographic-b-2x.png)
+
+*图 25-B：数据生命周期与恢复。备份文件存在不等于可恢复，删除记录存在也不等于副本已经传播完成。*
 
 图 25-A 的恢复要求不是“有备份文件”，而是定期证明备份可恢复、迁移可回滚、缓存丢失可重建，并能在租户撤权或删除请求后追踪所有派生数据。
 
@@ -73,7 +79,7 @@ flowchart LR
 ## 误区、调试、实践与安全
 Redis 不是默认事实库；Checkpoint 不等于事务；向量库不自动隔离租户。调试慢查询、连接池、锁等待和缓存命中。启用最小数据库角色、传输/静态加密、备份恢复演练和删除流程。
 
-## 总结、练习、面试与阅读
+## Agent 状态与存储边界的深化设计
 
 ### 数据分类与事实来源
 
@@ -242,21 +248,42 @@ sequenceDiagram
 
 常见误区：Redis 是更快数据库、Checkpoint 等于事务、向量库自动多租户、备份存在就等于能恢复。工程实践从数据分类、明确事实来源、版本和生命周期开始，再做性能优化。
 
-### 练习参考答案与面试要点
+## 本章总结
 
-1. **任务状态表。** 至少包含租户、状态、Version、Worker/Fencing、租约、预算和时间；领取与完成
-   都用条件更新。状态变化与 Outbox Event 同事务写入，消费者按 Event ID 幂等。
-2. **跨租户测试。** 使用两个真实租户和同名业务 ID，分别验证普通查询、缓存命中、向量检索、
-   管理接口和备份导出。只测试 Repository 的一个方法不足以证明系统隔离。
-3. **缓存污染。** Key 包含 Tenant、Subject/Permission Version、Model、Prompt、Data Version 和
-   输入哈希；撤权提升权限版本，使旧条目不可命中。敏感结果设短 TTL 并支持主动失效。
-4. **事务边界。** 外部模型调用耗时且结果不确定，把它放进事务会长期占连接和锁；正确做法是先
-   提交待执行事实，事务外调用，再用幂等和条件更新提交结果。
+Agent 系统必须先区分权威业务状态、会话历史、Checkpoint、Memory、缓存、向量和审计，再选择 PostgreSQL、Redis、pgvector 等实现。Redis 不是所有状态的事实来源，向量索引也不是文档数据库。事务 Outbox、版本迁移、删除传播和租户隔离决定状态能否在故障后收敛。下一章将把这些状态组件放入可复制的容器与发布拓扑。
 
-总结：数据层必须为恢复、权限和审计提供确定证据。状态所有权、条件写入、Outbox、租约和删除血缘
-比“用了哪种数据库”更能决定可靠性。延伸阅读包括 PostgreSQL、Redis、pgvector 与所选迁移工具的
-官方文档；代码目录为项目 4 和
-[`projects/10-enterprise-platform/`](https://github.com/wujinjun/ai-agent-book/tree/main/projects/10-enterprise-platform)。
+## 课后练习
+
+### 设计题
+
+1. 设计持久任务状态表与 Outbox Event，至少包含租户、状态版本、Worker/Fencing、租约、预算和时间字段，并画出领取与完成的条件更新。
+
+### 编码题
+
+2. 编写跨租户测试：两个租户使用相同业务 ID，分别验证数据库查询、缓存、向量检索、管理接口和导出。输出测试矩阵；检查标准是所有越权路径返回零数据且 Trace 不含敏感内容。
+
+### 故障实验
+
+3. 构造“用户权限已撤销但缓存仍命中”的污染案例，修复缓存键与主动失效策略。
+4. 把模型调用放入数据库事务并注入 30 秒超时，观察连接与锁占用；再改为待执行事实 + 事务外调用 + 条件提交，对比结果。
+
+### 概念题
+
+解释权威状态、Checkpoint、Cache、Vector Index 与 Audit Log 为什么不能共用同一种一致性和删除策略。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. 为什么 Redis 不应默认成为 Run 的唯一事实来源？
+2. Checkpoint、Audit Log 与业务状态分别承担什么职责？
+3. 多租户隔离为何必须同时覆盖数据库、缓存、向量和备份？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 PostgreSQL 事务与行级安全、Redis 持久化语义、pgvector 索引和 Transactional Outbox。本章的数据边界在项目4、8与10中继续落地。
 
 ## 本章引用
 <!-- chapter-citations:start -->

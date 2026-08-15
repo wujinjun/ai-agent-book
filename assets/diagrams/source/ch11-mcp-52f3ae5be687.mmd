@@ -1,0 +1,17 @@
+%% id: mcp-rest-function-calling-relationship
+%% title: MCP、REST 与 Function Calling 的分工
+%% alt: 模型通过 Function Calling 提出动作，Host 使用 MCP 发现调用能力，MCP Adapter 复用 REST 业务服务
+sequenceDiagram
+    participant M as 模型
+    participant H as Agent Host + Policy
+    participant A as MCP Server Adapter
+    participant R as REST 业务服务
+    participant D as 权威数据库
+    M->>H: Function Calling 提议
+    H->>A: MCP 能力发现与调用
+    A->>R: 受控 API 请求
+    R->>D: 执行业务规则与读写
+    D-->>R: 权威结果
+    R-->>A: API 响应
+    A-->>H: MCP Observation
+    H-->>M: 受策略过滤的工具结果

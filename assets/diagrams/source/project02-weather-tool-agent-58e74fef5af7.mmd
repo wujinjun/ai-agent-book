@@ -1,0 +1,11 @@
+%% id: project2-textbook-dependency-plan
+%% title: 多工具依赖与并行边界
+%% alt: 天气查询与换算可并行，告警内容依赖它们的结果，因此在真实计划中必须等待汇总和审批
+flowchart LR
+    Request["任务"] --> Weather["天气查询"]
+    Request --> Convert["温度换算"]
+    Weather --> Join["结果汇总"]
+    Convert --> Join
+    Join --> Preview["生成告警预览"]
+    Preview --> Approval["人工审批"]
+    Approval --> Send["发送告警"]

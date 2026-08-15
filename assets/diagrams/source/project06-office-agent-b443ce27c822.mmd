@@ -1,0 +1,19 @@
+%% id: project6-textbook-approval-sequence
+%% title: 草稿审批与失效时序
+%% alt: 工作流保存草稿摘要和目标并展示给审批者，批准后发布前再次计算摘要，内容或目标变化则令牌失效
+sequenceDiagram
+    participant W as OfficeWorkflow
+    participant S as Approval Store
+    participant H as Human
+    participant P as Publisher
+    W->>S: report_id + digest + target + expiry
+    S-->>H: exact draft and destination
+    H-->>S: approve as principal
+    W->>S: claim current report
+    S->>S: verify token hash, digest, target, expiry
+    alt unchanged and approved
+        S-->>W: idempotency key
+        W->>P: publish with same key
+    else stale, wrong target or expired
+        S-->>W: reject
+    end

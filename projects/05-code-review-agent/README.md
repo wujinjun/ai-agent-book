@@ -15,7 +15,7 @@
 %% id: project5-code-review-pipeline
 %% title: 代码 Review Agent 分析管线
 %% alt: 仓库 Diff 并行经过确定性规则和 LLM Reviewer，发现去重按风险排序后生成带行号报告并等待评论审批
-flowchart LR
+flowchart TB
     Repo --> Diff --> Static["Deterministic Rules"] --> Findings
     Diff --> LLM["LLM Reviewer Adapter"] --> Findings
     Findings --> Deduplicate --> Report["line + rule + risk"]

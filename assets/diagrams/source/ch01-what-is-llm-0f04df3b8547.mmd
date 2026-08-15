@@ -1,0 +1,11 @@
+%% id: autoregressive-token-generation-loop
+%% title: 自回归 Token 生成循环
+%% alt: 已有 Token 上下文经过 Transformer 得到概率分布，解码选择 Token 并追加，直到满足停止条件
+flowchart TB
+    Context["已有 Token 上下文"] --> Forward["Transformer 前向计算"]
+    Forward --> Distribution["下一个 Token 概率分布"]
+    Distribution --> Decode["Temperature / Top-p / 约束解码"]
+    Decode --> Token["选择一个 Token 并追加"]
+    Token --> Stop{"满足停止条件?"}
+    Stop -->|否| Forward
+    Stop -->|是| Output["完成输出"]

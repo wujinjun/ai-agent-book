@@ -1,0 +1,16 @@
+%% id: project9-textbook-artifact-flow
+%% title: 多角色 Artifact 与证据流
+%% alt: Product 写验收条件，Planner 写计划，Coder 写版本化 Artifact，Tester 写测试证据，Reviewer 读取全部证据并决定，Coordinator 校验所有写入
+flowchart TB
+    Requirement --> Product["Product"] --> Criteria["Acceptance Criteria"]
+    Criteria --> Planner["Planner"] --> Plan
+    Plan --> Coder["Coder"] --> Artifact["Artifact version"]
+    Artifact --> Tester["Tester"] --> TestEvidence["Test Evidence"]
+    Artifact --> Reviewer["Reviewer"]
+    Criteria --> Reviewer
+    TestEvidence --> Reviewer --> Decision["Review Decision"]
+    Coordinator["Coordinator / Schema / Ownership"] -. validates .-> Product
+    Coordinator -. validates .-> Planner
+    Coordinator -. validates .-> Coder
+    Coordinator -. validates .-> Tester
+    Coordinator -. validates .-> Reviewer

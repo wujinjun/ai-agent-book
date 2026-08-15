@@ -1,0 +1,9 @@
+%% id: agent-evaluation-metric-map
+%% title: Agent 分层评估指标图
+%% alt: 任务成功由工具准确率检索召回引用忠实度安全拒绝成本延迟等分层指标共同解释
+flowchart TB
+    Success["主指标：Task Success Rate"] --> Action["行动层诊断<br/>工具选择、参数、终止"]
+    Action --> Evidence["证据层诊断<br/>Recall、nDCG、权限过滤"]
+    Evidence --> Answer["回答层诊断<br/>正确性、Faithfulness、Citation"]
+    Answer --> Safety["治理层诊断<br/>注入拒绝、越权、审批"]
+    Safety --> Efficiency["效率层诊断<br/>Token 成本、P95 延迟"]

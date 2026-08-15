@@ -1,0 +1,11 @@
+%% id: prompt-to-agent-control-stack
+%% title: 从 Prompt 到 Agent Loop 的控制栈
+%% alt: Prompt 进入结构化输出和工具运行时，再由 Agent 循环与规划评审形成受控长任务
+flowchart TB
+    Prompt["Prompt / Context"] --> Schema["Structured Output"]
+    Schema --> Tool["Tool Calling Runtime"]
+    Tool --> Loop["Agent Loop"]
+    Loop --> Plan["Planning / Reflection"]
+    Schema -.校验失败.-> Retry["有限重试"]
+    Tool -.高风险动作.-> Approval["人工审批"]
+    Plan -.未达目标.-> Loop

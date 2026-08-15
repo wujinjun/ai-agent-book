@@ -1,0 +1,13 @@
+%% id: agent-cicd-release-gates
+%% title: Agent 容器 CI/CD 发布门禁
+%% alt: 代码依次经过测试安全扫描镜像构建 SBOM 签名部署烟测和观测门禁并在失败时回滚
+flowchart TB
+    Commit[代码提交] --> Test[单元集成评估]
+    Test --> Scan[依赖与镜像扫描]
+    Scan --> Build[可复现镜像构建]
+    Build --> SBOM[SBOM 与签名]
+    SBOM --> Deploy[灰度部署]
+    Deploy --> Smoke[健康与任务烟测]
+    Smoke --> Observe{错误延迟安全指标}
+    Observe -->|达标| Promote[扩大发布]
+    Observe -->|失败| Rollback[回滚已签名版本]

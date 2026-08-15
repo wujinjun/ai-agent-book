@@ -7,13 +7,19 @@
 
 学习目标是完成一个可重复的性能示例和选型报告。前置知识为第5、13章。
 
+近似近邻算法与具体产品应分层核对：HNSW 的算法依据见 [原始论文](../references.md#ref-malkov2018)，本地索引、关系向量扩展与分布式服务的能力分别参考 [FAISS](../references.md#ref-faiss-wiki)、[pgvector](../references.md#ref-pgvector)和 [Milvus](../references.md#ref-milvus-docs)当前文档。
+
 向量数据库的生产难点不只在 HNSW 或 IVF 参数，还包括租户过滤、模型版本、索引切换与删除传播。下图把在线检索和离线迁移放进同一生命周期。
 
-![带版本和租户元数据的向量摄取记录进入 HNSW 或 IVF 索引，查询先权限过滤再近邻搜索和重排，模型变更通过影子索引双读原子切换和回滚完成](../assets/infographics/png/vector-index-migration-infographic-2x.png)
+![文档 Chunk、Embedding 与租户元数据形成版本化向量记录，并根据规模和服务目标选择 HNSW、IVF 或精确基线](../assets/infographics/png/vector-index-migration-infographic-a-2x.png)
 
-*图 16-A：向量索引、版本迁移与多租户隔离。索引结构影响召回和延迟，但不能替代数据库层面的权限过滤。*
+*图 16-A：向量记录与索引结构。模型版本、文档版本、租户元数据和距离度量共同决定索引语义。*
 
-图 16-A 的蓝绿索引表示活动索引和影子索引。新索引只有通过召回、权限、引用与延迟验证后才能原子切换；删除和撤权还要传播到 Chunk、向量、缓存和备份策略。
+![查询先做租户与 ACL 过滤再执行 ANN 和候选重排，新索引经双读影子验证后切换并保留回滚，更新撤权删除需要传播与审计](../assets/infographics/png/vector-index-migration-infographic-b-2x.png)
+
+*图 16-B：查询、迁移与删除生命周期。索引迁移不是原地覆盖，权限删除也不能只删除原文。*
+
+图 16-B 的蓝绿索引表示活动索引和影子索引。新索引只有通过召回、权限、引用与延迟验证后才能原子切换；删除和撤权还要传播到 Chunk、向量、缓存和备份策略。
 
 ## 核心原理与选型
 HNSW 构建多层邻接图，以内存换低延迟和高召回；IVF 先把向量分桶，再只搜索部分桶。近似检索参数影响召回、延迟、内存和构建时间。FAISS 适合本地算法与批处理；pgvector 适合已有 PostgreSQL 且需要事务/过滤；Milvus 等适合独立大规模服务；托管服务降低运维但增加成本与锁定。
@@ -43,12 +49,16 @@ LIMIT :top_k;
 %% id: vector-index-version-query-flow
 %% title: 向量索引版本与查询链路
 %% alt: 文档版本经指定 Embedding 模型写入索引版本并在查询时结合权限过滤返回来源和分数
-flowchart LR
-    Write["文档版本"] --> Embed["模型版本"] --> Index["索引版本"] --> Query["过滤+近邻"] --> Result["来源+分数"]
+flowchart TB
+    Write["文档版本"] --> Embed["Embedding 模型版本"]
+    Embed --> Index["索引版本"]
+    Principal["租户 / 主体 / ACL"] --> Query["过滤 + 近邻查询"]
+    Index --> Query
+    Query --> Result["来源 + 位置 + 分数 + 版本"]
 ```
 误区：向量库解决全部 RAG；更高维度一定更好；删除原文就等于删除向量。安全要求网络隔离、租户过滤、备份加密和可验证删除。
 
-## 总结、练习、面试与阅读
+## 近似索引、选型与迁移的深化设计
 
 ### 精确与近似最近邻
 
@@ -97,15 +107,20 @@ flowchart TD
 %% id: embedding-model-index-migration
 %% title: Embedding 模型与索引迁移
 %% alt: 新 Embedding 模型在独立集合回填向量并双读评估，通过后切换流量且保留旧索引回滚
-flowchart LR
-    Old[旧模型与 active 索引] --> Serve[线上服务]
-    Snapshot[同一文档快照] --> NewEmbed[新模型离线回填]
-    NewEmbed --> NewIndex[独立候选索引]
-    NewIndex --> Dual[双读黄金集与影子流量]
-    Dual --> Gate{召回延迟权限均达标}
-    Gate -->|是| Switch[原子切换]
-    Gate -->|否| Old
-    Switch --> Rollback[观察期保留旧索引]
+flowchart TB
+    Snapshot["同一文档快照"] --> Old["旧模型 + Active 索引"]
+    Snapshot --> NewEmbed["新模型离线回填"]
+    Old --> Serve["线上主服务"]
+    NewEmbed --> NewIndex["独立 Candidate 索引"]
+    Old --> Dual["黄金集双读 + 影子流量"]
+    NewIndex --> Dual
+    Dual --> Gate{"召回、延迟、权限均达标?"}
+    Gate -->|否| Keep["保持旧索引并分析差异"]
+    Keep --> Old
+    Gate -->|是| Switch["原子切换 Active 指针"]
+    Switch --> Observe["观察期保留旧索引"]
+    Observe -->|异常| Old
+    Observe -->|稳定| Retire["按政策归档旧索引"]
 ```
 
 不同模型和维度的向量不能混在同一空间。独立构建、双读比较和可回滚切换是安全迁移的基本边界。
@@ -253,21 +268,45 @@ docker compose up -d postgres
 
 常见误区是向量库自动完成 RAG、更高维度必然更准、索引参数可照抄、删除原文就等于删除向量。工程实践从精确基线和真实评估集开始，参数变更版本化，升级前后并行测试，并准备回滚。
 
-### 练习参考答案与面试要点
+## 本章总结
 
-1. **精确搜索与 HNSW。** 固定数据快照与查询集，用精确过滤后 Top-k 生成真值；逐级改变查询探索
-   参数，绘制 Recall@k—P95—内存曲线。不能只记录最快的一组参数。
-2. **过滤选择性。** 至少构造 100%、5% 和 0.1% 合法候选场景，断言零租户泄漏、返回数量、
-   Recall 与尾延迟；解释执行计划是否采用预过滤、后过滤或迭代扫描。
-3. **Embedding 迁移。** 候选索引携带模型、维度、预处理和数据快照版本；完成回填、黄金集、影子
-   双读、原子切换和回滚演练。直接原地覆盖不是可接受答案。
-4. **面试要点。** HNSW 用更多连接和搜索探索换召回与延迟；Metadata 过滤会改变合法候选空间和
-   执行路径；共享索引降低运维成本，但隔离与长尾过滤更复杂，独立索引隔离强却增加数量和发布成本。
+向量数据库提供相似性检索基础设施，不负责文档质量、权限语义和回答正确性。工程验收必须同时证明精确基线下的 Recall、尾延迟、零权限泄漏、更新与删除可见性，以及 Embedding 模型和索引的可回滚迁移。HNSW、IVF、FAISS、pgvector、Milvus 和托管服务没有脱离数据规模、过滤选择性、写入模式与运维能力的统一最佳答案。下一章将回到应用层，从原生 API 开始构建一个不依赖框架的轻量 Agent Runtime。
 
-总结：向量数据库提供相似性基础设施，不负责文档质量、权限语义和回答正确性。工程验收必须同时
-证明召回、尾延迟、零权限泄漏、更新/删除可见性和可回滚迁移。延伸阅读包括 FAISS、pgvector、
-Milvus、HNSW 与所选托管服务的官方文档；产品版本与参数应在选型当天复核。代码目录为
-[`projects/04-knowledge-agent/`](https://github.com/wujinjun/ai-agent-book/tree/main/projects/04-knowledge-agent)。
+## 课后练习
+
+### 编码题
+
+1. 固定数据快照与查询集，用精确过滤后的 Top-k 生成真值，绘制 HNSW 的 Recall@k、P95 和内存曲线。
+
+输入为版本化向量与过滤条件；输出为参数—指标曲线；检查标准是近似结果与 Exact Truth 使用相同 ACL。
+
+### 故障实验
+
+2. 构造 100%、5% 和 0.1% 合法候选三种过滤选择性，报告零租户泄漏、返回数量、Recall 和尾延迟。
+
+### 设计题
+
+3. 为 Embedding 模型升级设计候选索引回填、黄金集、影子双读、原子切换和回滚演练。
+4. 使用真实规模、更新率、过滤和 SLA，为 FAISS、pgvector 与专用向量服务写一份选型 ADR。
+
+### 概念题
+
+解释 HNSW、IVF 与精确检索分别牺牲或保留了什么，以及 Metadata 过滤为何会改变近似索引的有效候选空间。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. HNSW 与 IVF 分别用什么资源换取查询性能？
+2. Metadata 过滤为什么会改变 ANN 的召回和执行路径？
+3. 相同维度的新旧 Embedding 为什么也不能混用？
+4. 共享索引和独立租户索引各有什么隔离与运维代价？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 FAISS、pgvector、Milvus、HNSW 与所选托管服务的官方文档；产品版本与参数应在选型当天复核。代码目录为 [`projects/04-knowledge-agent/`](https://github.com/wujinjun/ai-agent-book/tree/main/projects/04-knowledge-agent)。
 
 ## 本章引用
 <!-- chapter-citations:start -->

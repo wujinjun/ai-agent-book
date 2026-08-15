@@ -25,7 +25,7 @@ python scripts/setup_training_env.py --target .training-workspace
 ## 离线与在线分层
 
 ```mermaid
-flowchart LR
+flowchart TB
     A[纯函数单元测试] --> B[本地 Mock 协议]
     B --> C[本地服务集成]
     C --> D{组织允许在线验证?}

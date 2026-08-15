@@ -7,9 +7,13 @@ Multi-Agent 的价值来自职责、上下文或权限隔离，而不是角色�
 
 学习目标是理解核心协调机制，并实现一个有终止条件的 Blackboard 示例。前置知识为第9—10、22章。
 
+多 Agent 会话式协作的代表性系统可参见 [AutoGen 论文](../references.md#ref-wu2023autogen)，Agent 任务评估的代表性基准可参见 [AgentBench](../references.md#ref-liu2023agentbench)。这些工作不能证明“角色越多越好”；本章要求始终与单 Agent 或确定性工作流基线比较。
+
+**能力主线位置：** 单 Agent 与确定性工作流 → 本章判断何时需要职责/权限/上下文隔离 → 第33—38章扩展到 Coding、Browser、多模态、企业架构和产品选型。
+
 ## 模式与架构
 
-多 Agent 的价值来自职责、权限或上下文边界，而不是角色数量。主图展示 Supervisor、Worker、Blackboard 与 Reviewer 的最小协调结构。
+主图把上述判断落到 Supervisor、Worker、Blackboard 与 Reviewer 的最小协调结构。
 
 下面的信息图把协作所需的共享状态、权限与终止机制放在同一视野。Supervisor 按任务契约分派三个边界化 Worker；Worker 只能使用自己的最小权限工具，并通过 Typed Blackboard 提交版本化 Artifact 和 Evidence；独立 Reviewer 按 Rubric 验收，底部运行时则检测依赖、死锁、预算和无进展。
 
@@ -57,7 +61,7 @@ flowchart TD
 ## 误区、调试、实践与安全
 角色人格不是能力隔离；多次同模型回答不等于独立证据；自然语言共享记忆易冲突。调试消息图、等待依赖和状态版本。不同 Agent 最小权限，避免通过消息转发秘密。
 
-## 总结、练习、面试与阅读
+## 协作模式与共享状态的深化设计
 
 ### Multi-Agent 的真实价值
 
@@ -228,17 +232,41 @@ Policy 拒绝都是一等终态。
 
 反模式包括角色数量按组织架构复制、自由群聊、所有 Agent 共享管理员工具、用自然语言投票替代规则、无限 Reviewer 循环、每个角色重复读全部上下文。安全上每个 Agent 最小权限，handoff 不升级 scope，消息/Memory 按租户隔离，秘密使用引用而不是正文转发。
 
-### 练习参考答案与面试要点
+## 本章总结
 
-1. **Reviewer 净收益。** 固定模型、数据和预算，比较无 Reviewer 基线；报告成功率差异及置信范围、
-   新增成本和返工次数。只列一个成功案例不构成证明。
-2. **环依赖。** 构造 A 等 B、B 等 A 的 Wait-for Graph，断言运行时在超时前检测环、保存状态并进入
-  人工/失败终态，而非继续对话。
-3. **面试要点。** Blackboard 是版本化事实与 Artifact Store，群聊只是消息；同模型实例错误高度相关，
-   不自动形成独立证据。无进展通过状态指纹与重复动作检测，完成由外部 Rubric 判定。
+Multi-Agent 的真实价值来自上下文、权限、能力或并行隔离，而不是角色扮演。Handoff、Supervisor、Blackboard、Debate 和 Reviewer 都需要任务契约、版本化 Artifact、共享状态、预算和终止策略。消息数量增加并不代表取得进展；系统必须用状态指纹和外部 Rubric 判定完成。下一章将把这些运行时原则应用到仓库级 Coding Agent。
 
-总结：Multi-Agent 是显式协调、版本化共享状态和可判定终止系统，不是角色扮演。延伸阅读包括分布式
-系统、Actor、Blackboard、Agent Orchestration 与协作评估资料；代码目录为项目 9。
+## 课后练习
+
+### 设计题
+
+1. 在固定模型、任务集和预算下比较有/无 Reviewer，输出成功率差异、成本、返工次数和置信范围，并预先声明实际意义阈值。
+
+### 故障实验
+
+2. 构造 Task A 等待 B、B 等待 A 的 Wait-for Graph，验证运行时在 Deadline 前检测环并进入可解释终态，而不是继续对话。
+
+### 概念题
+
+3. 比较 Blackboard 与群聊；解释同模型多角色为什么不自动产生独立证据，以及“无进展”和“完成”应分别如何判定。
+
+### 编码题
+
+实现状态指纹：输入为规范化任务状态、Artifact 哈希、证据集合和预算；输出为稳定 SHA-256；检查标准是只修改时间戳或措辞不会被误判为进展。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. Multi-Agent 相对单 Agent 的可测收益来自哪些隔离？
+2. Blackboard 与群聊在状态一致性上有什么差异？
+3. 系统如何检测死锁、无进展和循环转交？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 AutoGen、AgentBench、ReAct 以及分布式协调与 Wait-for Graph。项目9给出带共享状态、独立 Reviewer 和终止门的完整案例。
 
 ## 本章引用
 <!-- chapter-citations:start -->

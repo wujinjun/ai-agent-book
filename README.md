@@ -33,14 +33,15 @@ python -m http.server 8000 --directory output/html
 ## 下载已发布版本
 
 - [在线阅读预览（当前 P9 候选内容）](https://wujinjun.github.io/ai-agent-book/)
-- [完整出版包（HTML、PDF、EPUB）](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.1/ai-agent-book-output-v2026.8.1.zip)
-- [PDF（454 页 A4 版）](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.1/ai-agent-book-2026-v2026.8.1.pdf)
-- [EPUB3](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.1/ai-agent-book-2026-v2026.8.1.epub)
-- [SHA256 校验值](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.1/SHA256SUMS-v2026.8.1.txt)
+- [完整出版包（HTML、PDF、EPUB）](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.3/ai-agent-book-output-v2026.8.3.zip)
+- [PDF（685 页 A4 版）](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.3/ai-agent-book-2026-v2026.8.3.pdf)
+- [EPUB3](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.3/ai-agent-book-2026-v2026.8.3.epub)
+- [SHA256 校验值](https://github.com/wujinjun/ai-agent-book/releases/download/v2026.8.3/SHA256SUMS-v2026.8.3.txt)
 
-发行说明与全部附件见 [GitHub Release v2026.8.1](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.1)。
+发行说明与全部附件见 [GitHub Release v2026.8.3](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.3)。
+历史发行记录仍可从 [GitHub Release v2026.8.1](https://github.com/wujinjun/ai-agent-book/releases/tag/v2026.8.1) 与仓库变更记录查阅。
 
-在线阅读站已于 2026-08-08 在 GitHub Pages 实机验证首页、PDF 与 EPUB 下载均返回 HTTP 200。站点展示通过审计的仓库范围正式内容。454 页 PDF 使用固定版本的 OFL 中文与代码字体；本版本不表示七类外部活动通过。
+在线阅读站提供通过仓库内编辑终审的正式内容。685 页 PDF 使用固定版本的 OFL 中文与代码字体；本版本不表示实体设备、商业印刷或专业权利审查已经完成。
 
 ## 适合与不适合的读者
 

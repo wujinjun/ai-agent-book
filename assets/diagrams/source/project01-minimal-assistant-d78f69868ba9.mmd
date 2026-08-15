@@ -1,0 +1,14 @@
+%% id: project1-textbook-layered-architecture
+%% title: 最小 Assistant 分层架构
+%% alt: CLI 或 API 经过 AssistantService，分别访问 ConversationStore 和 ChatModel 端口，离线与在线适配器返回统一 ChatEvent
+flowchart TB
+    Client["CLI / HTTP Client"] --> Entry["main.py / API"]
+    Entry --> Service["AssistantService"]
+    Service --> StorePort["ConversationStore"]
+    Service --> ModelPort["ChatModel"]
+    StorePort --> JSONL["JSONL 教学存储"]
+    ModelPort --> Mock["MockChatModel"]
+    ModelPort --> Online["OpenAICompatibleChatModel"]
+    Mock --> Events["ChatEvent: delta / usage / error"]
+    Online --> Events
+    Events --> Client

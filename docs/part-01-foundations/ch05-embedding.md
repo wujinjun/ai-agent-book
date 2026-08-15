@@ -8,6 +8,8 @@ Embedding 把文本等对象映射为向量，使系统可以计算相关性并�
 
 前置知识为向量与第2章 Token 概念；核心内容聚焦表示、检索和评估边界。
 
+语义向量、稀疏检索和近似近邻分别有不同理论与工程来源：可对照 [Sentence-BERT](../references.md#ref-reimers2019)、[BM25 综述](../references.md#ref-robertson2009)和 [HNSW](../references.md#ref-malkov2018)。将它们组合成 Hybrid Search 是系统设计，不意味着三者共享同一种相关性假设。
+
 主图把“向量相近”到“可引用证据”之间经常被省略的控制点全部展开。稀疏与稠密检索只负责产生和排序候选；租户权限、版本时效和当前主张的支持关系是相互独立的证据门槛。
 
 ![文档切分和向量索引、稀疏与稠密混合检索、租户权限过滤、重排以及相关可见时效和主张支持验证的完整链路](../assets/infographics/png/embedding-retrieval-evidence-infographic-2x.png)
@@ -26,7 +28,7 @@ Embedding 模型把输入映射到固定维度的数值空间。训练目标使�
 %% id: embedding-semantic-search-pipeline
 %% title: 文档与查询的 Embedding 检索链路
 %% alt: 文档解析切分并生成向量写入索引，查询生成向量检索候选，再经权限过滤重排形成带来源上下文
-flowchart LR
+flowchart TB
     Docs["文档"] --> Parse["解析与清洗"]
     Parse --> Chunk["切分 + Metadata"]
     Chunk --> Embed["Embedding"]
@@ -345,17 +347,42 @@ flowchart TD
 
 常见误区：相似度 0.9 代表 90% 事实正确；向量数据库自动解决 RAG；把整份 PDF 作为一个 Chunk；只评估最终回答不评估召回；删除原文却保留可关联个人的向量。
 
-总结：Embedding 提供相关性表示，不提供真值、权限或引用。练习：为故障码手册设计 Chunk 与 Metadata；为测试接口增加维度校验；构造三个“关键词精确但语义不同”的查询，比较稀疏和稠密检索。面试问题：为什么 Reranker 常放在初检之后？为什么更换 Embedding 模型通常要重建索引？权限过滤应在哪一层执行？
+## 本章总结
 
-延伸阅读：Reimers & Gurevych, *Sentence-BERT*；Karpukhin et al., *Dense Passage Retrieval*；目标向量数据库和 Embedding 模型官方文档。本章代码目录为 [`examples/local_semantic_search/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/local_semantic_search)，提供版本化文档、租户候选过滤、稀疏检索、确定性 Hash 向量、RRF 与固定中英文查询集的 Recall@k/MRR 测试。Hash 向量只验证离线控制流，不替代真实 Embedding 模型评估。
+Embedding 提供相关性表示，不提供真值、权限或引用。检索质量需要用真实查询集评估，权限过滤必须在候选进入生成上下文之前执行；更换 Embedding 模型通常需要版本化重建索引，而不是在同一向量空间中混写。下一篇将开始构建 Agent 控制面，先从可版本化的 Prompt 与 Context 契约入手。
 
-## 练习参考答案
+## 课后练习
 
-1. 故障码手册可以按“故障码 + 车型范围 + 现象 + 前置检查 + 步骤”形成结构化父块，再把每个检查步骤作为子块检索。Metadata 至少包含文档 ID、版本、车型、故障码、章节、语言、权限和切分器版本。表格单元格应保留表头语义。
-2. 向量接口应拒绝维度不一致、零向量、非有限数值和与索引模型版本不匹配的输入。仅检查 Python 列表长度不够，还应在写入路径验证并记录模型标识。
-3. “P0301”“第一缸检测到失火”“发动机抖动但没有该故障码”可形成一组对照查询。第一项通常偏向稀疏，第二项适合稠密，第三项需要语义召回后再验证事实条件。结论必须来自实际排名与 Recall/MRR，而不是凭直觉宣布某一路获胜。
-4. Reranker 放在初检后，是因为对全库运行较昂贵的成对相关性模型成本过高；初检用高召回快速缩小候选，重排再优化前列精度。若初检漏掉相关文档，Reranker 无法恢复，因此两层必须分别评价。
-5. 权限过滤应尽量下推到检索存储层，并在所有缓存、融合与重排路径保持租户条件。生成模型的“请勿泄漏”不是访问控制。测试要证明不可见文档既不会返回，也不会出现在可访问的 Trace 中。
+### 设计题
+
+1. 为故障码手册设计父子 Chunk 与 Metadata。输出字段表和两个示例 Chunk；检查标准是故障码、车型、步骤、表头、版本和权限均可追溯。
+
+### 编码题
+
+2. 为向量接口增加维度、零向量、非有限数值和模型版本校验。输入为一组合法/非法向量 Fixture；输出为类型化错误；检查标准是非法输入不会写入索引。
+
+### 故障实验
+
+3. 构造“故障码精确匹配”“同义描述”“只有症状没有故障码”三类查询，比较稀疏、稠密与混合检索排名，并记录至少一个失败案例。
+
+### 概念题
+
+4. 为什么 Reranker 通常位于初检之后？初检漏掉相关文档时，Reranker 能否恢复？
+5. 权限过滤应在哪一层执行？设计一个能发现跨租户缓存或重排泄漏的测试。
+
+## 参考答案位置
+
+本章参考答案已移至[书末参考答案](../exercise-answers.md)，便于先独立完成练习再核对。
+
+## 面试问题
+
+1. 为什么 Reranker 通常位于初检之后？
+2. 为什么更换 Embedding 模型通常需要重建索引？
+3. 权限过滤应该在检索链的哪一层执行？
+
+## 延伸阅读与代码目录
+
+延伸阅读包括 Reimers 与 Gurevych 的 *Sentence-BERT*、Karpukhin 等人的 *Dense Passage Retrieval*，以及目标向量数据库和 Embedding 模型官方文档。本章代码目录为 [`examples/local_semantic_search/`](https://github.com/wujinjun/ai-agent-book/tree/main/examples/local_semantic_search)，提供版本化文档、租户候选过滤、稀疏检索、确定性 Hash 向量、RRF 与固定中英文查询集的 Recall@k/MRR 测试。Hash 向量只验证离线控制流，不替代真实 Embedding 模型评估。
 
 ## 本章引用
 <!-- chapter-citations:start -->
